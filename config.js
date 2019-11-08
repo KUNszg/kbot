@@ -1,5 +1,5 @@
-const oauth = '' 
-const youtube = '' 
+const oauth = '' // Bot's oauth, get from here: https://twitchapps.com/tmi - prefixed with oauth:
+const youtube = '' // YouTube auth key
 const randomTrack = '' 
 const randomFact = 'https://uselessfacts.jsph.pl/random.json?language=en' 
 const chat = 'https://some-random-api.ml/chatbot?message=' 
@@ -12,10 +12,10 @@ const hosts = 'https://decapi.me/twitch/hosts/'
 const bttv = 'https://decapi.me/bttv/emotes/' 
 const joke1 = 'https://official-joke-api.appspot.com/jokes/programming/random' 
 const joke2 = 'https://official-joke-api.appspot.com/random_joke'  
-const rl = 'https://api.gempir.com/channel/' 
+const rl = 'https://api.gempir.com/channel/' // Requires the channel to have gempir logs enabled
 const joemama = 'https://api.yomomma.info/' 
-const supinic = '' 
-const dubtrackRoom = '' 
-const discord = '' 
+const supinic = '' // Requires api access from supinic: https://supinic.com/api/
+const dubtrackRoom = '' // In the format: https://api.dubtrack.fm/room/<roomid>/playlist/active
+const discord = '' // Discord bot token
 
 module.exports = {oauth, youtube, randomTrack, randomFact, chat, locate, geonames, nasa1, nasa2, twitter, hosts, bttv, joke1, joke2, rl, joemama, supinic, dubtrackRoom, discord}
