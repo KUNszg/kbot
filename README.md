@@ -1,6 +1,7 @@
 # kbot
-very dank bot
+
 This is a bot made by KUNszg
+
 Fairly easy to get started
 
 1. `sudo git clone https://github.com/KUNszg/kbot.git`
