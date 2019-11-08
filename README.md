@@ -1,6 +1,6 @@
 # Getting Started
 
-This is a bot made by KUNszg
+This is a Twitch chatbot made by KUNszg
 
 Fairly easy to get started
 
