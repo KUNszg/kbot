@@ -1,4 +1,4 @@
-# kbot
+# Getting Started
 
 This is a bot made by KUNszg
 
