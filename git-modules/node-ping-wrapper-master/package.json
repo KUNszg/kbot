@@ -1,0 +1,17 @@
+{
+  "author": "Pavel Lang <langpavel@phpskelet.org> (https://github.com/langpavel)",
+  "name": "ping-wrapper",
+  "description": "Ping wrapper for node - one process listening on stdout is spawned, inherits from EventEmitter",
+  "version": "0.0.3",
+  "homepage": "https://github.com/langpavel/node-ping-wrapper",
+  "repository": {
+    "url": "git://github.com/langpavel/node-ping-wrapper.git"
+  },
+  "main": "ping",
+  "dependencies": {},
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
