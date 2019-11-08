@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 'use strict';
-	const api = require('./api-keys.js')
+	const api = require('./config.js')
 	const options = {
 		options: {
 			debug: true,
