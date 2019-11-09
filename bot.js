@@ -1426,7 +1426,7 @@
 			        	}
 			        }
 			    } 
-		        return user['username']  + ', my public repo OKayga 👉 https://github.com/KUNszg/kbot last commit: ' + format(DifftoSeconds) + ' ago';
+		        return user['username']  + ', my public repo Okayga 👉 https://github.com/KUNszg/kbot last commit: ' + format(DifftoSeconds) + ' ago';
 			}
 		},
 
