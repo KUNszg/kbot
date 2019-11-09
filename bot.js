@@ -1540,19 +1540,18 @@ const commandlist = [
 	      	const xd = trackObj.map(
 	      		i => i.name
 	      		);
-	      	const xdd = ((xd.sort(
-	      		).toString(
-	    		).replace(/,/g, " | "
-	    		).replace('rp |', ''
-	    		).replace('secret |', ''
-	    		).replace('pattern |', ''
-	    		).replace('eval |', ''
-	    		).replace('AlienPls |', ''
-	    		).replace('HONEYDETECTED |', ''
-	    		).replace('cookie |', ''
-	    		).replace('| ppBounce', ''
-	    		).replace('restart |', ''
-	    		).replace(/kb/g, '') + " |").split('|')).length;
+	      	const xdd = ((xd.sort().toString()
+	    		.replace(/,/g, " | ")
+	    		.replace('rp |', '')
+	    		.replace('secret |', '')
+	    		.replace('pattern |', '')
+	    		.replace('eval |', '')
+	    		.replace('AlienPls |', '')
+	    		.replace('HONEYDETECTED |', '')
+	    		.replace('cookie |', '')
+	    		.replace('| ppBounce', '')
+	    		.replace('restart |', '')
+	    		.replace(/kb/g, '') + " |").split('|')).length;
 	    		
 	  	  	if (talkedRecently3.has(user['user-id'])) { //if set has user id - ignore
 				return '';  	    
@@ -1565,19 +1564,18 @@ const commandlist = [
 	        }
 	        const xddd = xdd - 1
 	        return user['username'] + ", " + xddd + " active commands PogChamp 👉 (prefix: kb) | " + 
-	        	xd.sort(
-	        		).toString(
-		    		).replace(/,/g, " | "
-		    		).replace('rp |', ''
-		    		).replace('secret |', ''
-		    		).replace('pattern |', ''
-		    		).replace('eval |', ''
-		    		).replace('AlienPls |', ''
-		    		).replace('HONEYDETECTED |', ''
-		    		).replace('cookie |', ''
-		    		).replace('| ppBounce', ''
-		    		).replace('restart |', ''
-		    		).replace(/kb/g, '') + " |".split(' | ')
+	        	xd.sort().toString()
+		    		.replace(/,/g, " | ")
+		    		.replace('rp |', '')
+		    		.replace('secret |', '')
+		    		.replace('pattern |', '')
+		    		.replace('eval |', '')
+		    		.replace('AlienPls |', '')
+		    		.replace('HONEYDETECTED |', '')
+		    		.replace('cookie |', '')
+		    		.replace('| ppBounce', '')
+		    		.replace('restart |', '')
+		    		.replace(/kb/g, '') + " |".split(' | ')
 	     	
      		} catch(err) {
 				return user['username'] + ", " + err + " FeelsDankMan !!!";
