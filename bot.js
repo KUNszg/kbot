@@ -1306,18 +1306,17 @@
 					const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
 				 		.then(response => response.json());
 					const process = require('child_process');
-					kb.say(channel, '🤓 updating...')
 					await process.exec('cd /opt/kbot; git pull',function (err,stdout,stderr) {
-						kb.say(channel, 'successfuly pulled @master, ' + commits[0].sha.slice(0, 7) + ', commit ' + commits.length)
 					    if (err) {
 					        console.log("\n"+stderr);
 					    } else {
 					        console.log(stdout);
 					    }
 					});
-
+					await kb.say(channel, 'successfuly pulled @master, ' + commits[0].sha.slice(0, 7) + ', commit ' + commits.length)
 					const dateString = new Date().toLocaleString().split('/');
 					setTimeout(()=>{process.kill(process.pid)}, 3000);
+					return '🤓 updating...';
 				}
 			}
 		}, 
