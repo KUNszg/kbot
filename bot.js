@@ -1478,7 +1478,7 @@ kb.on("chat", async (channel, user, message, self) => {
 				    	}
 				    }
 				}
-
+						
 	    repeatedMessages[channel] = result;
 
 	    const colorList = [
@@ -1490,22 +1490,8 @@ kb.on("chat", async (channel, user, message, self) => {
 
 	    const colors = colorList[Math.floor(Math.random()*colorList.length)]
 		kb.say(channel, "/color " + colors);
-
-		const banphraseList = [
-			{banphrase: 'nigga'}, 
-			{banphrase: 'n1gga'}, 
-			{banphrase: 'n166a'}, 
-			{banphrase: 'nibba'}, 
-			{banphrase: 'n1gger'}, 
-			{banphrase: 'n166er'}, 
-			{banphrase: 'nlbba'}, 
-			{banphrase: 'nibber'}, 
-			{banphrase: 'negro'}, 
-			{banphrase: 'niga'},
-			{banphrase: ':joy:'}
-		];
 		
-		const banphraseFilter = banphraseList.filter(
+		const banphraseFilter = api.banphraseList.filter(
 			i => result.includes(i.banphrase)
 			);
 		const banphraseMap = banphraseFilter.map(
