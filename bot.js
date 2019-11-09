@@ -96,7 +96,19 @@
 				        var hours = Math.floor(seconds / (60*60));
 				        var minutes = Math.floor(seconds % (60*60) / 60);
 				        var seconds = Math.floor(seconds % 60);
-			        	return hours + 'h ' + minutes + 'm ' + seconds + "s";  
+				        if (hours === 0 && minutes != 0) {
+				        	return minutes + 'm ' + seconds + "s";
+				        } else {
+				        	if (minutes === 0 && hours === 0) {
+				        		return seconds + "s"
+				        	}
+				        	else if (seconds === 0 || hours === 0 && minutes === 0) {
+					        		return 'few seconds'
+				        	}
+				        	else {
+				        		return hours + 'h ' + minutes + 'm ' + seconds + "s"; 
+				        	}
+				        }
 				    } 
 				    const uptime = process.uptime();
 				    const os = require('os');
@@ -203,9 +215,32 @@
 	    		try {
 				    const space = await SpacexApiWrapper.getNextLaunch();
 				    const date = await space.launch_date_utc;
-				    const date2 = new Date(date).toLocaleDateString();
-				    const date3 = new Date(date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-
+				    const apiDate = new Date(date);
+				 	const serverDate = new Date();
+				 	const diff = Math.abs(serverDate-apiDate)
+			      	const DifftoSeconds = (diff / 1000).toFixed(0);
+			      	const toHours = (DifftoSeconds / 3600).toFixed(0);
+			      	function format(seconds){
+				        function pad(s){
+				        	return (s < 10 ? '0' : '') + s;
+						}
+				        var hours = Math.floor(seconds / (60*60));
+				        var minutes = Math.floor(seconds % (60*60) / 60);
+				        var seconds = Math.floor(seconds % 60);
+				        if (hours === 0 && minutes != 0) {
+				        	return minutes + 'm ' + seconds + "s";
+				        } else {
+				        	if (minutes === 0 && hours === 0) {
+				        		return seconds + "s"
+				        	}
+				        	else if (seconds === 0 || hours === 0 && minutes === 0) {
+					        		return 'few seconds'
+				        	}
+				        	else {
+				        		return hours + 'h ' + minutes + 'm ' + seconds + "s"; 
+				        	}
+				        }
+				    } 
 					if (talkedRecently.has(user['user-id'])) {
 			        	return '';  
 				    } else {   
@@ -214,9 +249,13 @@
 			              	talkedRecently.delete(user['user-id']);
 			            }, 15000);
 			        }
-			        return "Next upcoming 🚀 launch developed by SpaceX happens to be at (+2GMT time) day: " + date2 + ", hour: " + date3 +
-			        	", SpaceX is using: " + space.rocket.rocket_name + " rocket and the mission is called: " + space.mission_name +
-					    "🛰️ , it will be launched from: " + space.launch_site.site_name_long;
+			        if (toHours > 72) {
+			        	return "Next rocket launch by SpaceX in " + (toHours/24).toFixed(0) + "days, rocket " + space.rocket.rocket_name + ", mission " + space.mission_name +
+					    	", " + space.launch_site.site_name_long;
+			        } else {
+		      		 	return "Next rocket launch by SpaceX in " + format(DifftoSeconds) + ", rocket " + space.rocket.rocket_name + ", mission " + space.mission_name +
+						    ", " + space.launch_site.site_name_long;
+					}
 				} catch(err) {
 			  	    return user['username'] + ", " + err + " FeelsDankMan !!!";
 	        	}
@@ -757,13 +796,13 @@
 							 	location.geonames[0].fcodeName; 
 						}
 						else {
-							return user['username'] + ", location not found. Don't use special characters, use only characters existing in english alphabet."; 
+							return user['username'] + ", could not find given location or location does not exist KKona"; 
 						}
 					}
 				} catch(err) {
 					console.log(err);
 					if (err.message.includes("read property")) {
-						return user['username'] + ", could not find given location or location does not exist KKona";
+						return user['username'] + ", location not found. Don't use special characters, use only characters existing in english alphabet";
 					} else {
 						return user['username'] + ", " + err.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '') + " FeelsDankMan !!!";
 					}
@@ -1152,7 +1191,7 @@
 				try{
 	 				const dateMinute = new Date().getMinutes()
 	 				const time = await fetch("https://supinic.com/api/bot/active")
-			 			.then(response => response.json());
+			 			.then(response => response.json());	
 
 	 				if (talkedRecently.has(user['user-id'])) { 
 				        return ''; 
@@ -1163,9 +1202,31 @@
 			            }, 3000);
 			        }
 		 			if (time.data.filter(i => i.lastSeenTimestamp != null)) {
+				      	function format(seconds){
+					        function pad(s){
+					        	return (s < 10 ? '0' : '') + s;
+							}
+					        var hours = Math.floor(seconds / (60*60));
+					        var minutes = Math.floor(seconds % (60*60) / 60);
+					        var seconds = Math.floor(seconds % 60);
+					        if (hours === 0 && minutes != 0) {
+					        	return minutes + 'm ago';
+					        } else {
+					        	if (minutes === 0 && hours === 0) {
+					        		return seconds + "s ago"
+					        	}
+					        	else if (seconds === 0 || hours === 0 && minutes === 0) {
+						        		return 'just now'
+					        	}
+					        	else {
+					        		return hours + 'h ago'
+					        	}
+					        }
+					    } 
 		 				const bots = time.data.filter(i => i.lastSeenTimestamp != null).map(
-		 					i => ' ' + i.name + ' ' + ((new Date().getHours() - new Date(i.lastSeenTimestamp).getHours())*60 + 
-		 						dateMinute - (new Date(i.lastSeenTimestamp).getMinutes())) + ' min ago');
+		 					i => ' ' + i.name + ' ' + format(
+		 						(Math.abs(new Date() - new Date(i.lastSeenTimestamp)))/1000)
+		 					);
 	 					return user['username'] + ', active known bots MrDestructoid 👉' + bots;
 		 			}
 				} catch(err) {
@@ -1325,6 +1386,49 @@
 				}
 			}
 		}, 
+
+		{
+			name: prefix + 'github',
+			aliases: prefix + 'git',
+			invocation: async (channel, user, message, args) => {
+				if (talkedRecently2.has(user['user-id'])) {
+					return '';  				    
+				} else {   
+		     		talkedRecently2.add(user['user-id']);
+	            	setTimeout(() => {
+	         			talkedRecently2.delete(user['user-id']);
+		            }, 5000);
+		        }
+		        const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
+			 		.then(response => response.json());
+			 	const commitDate = new Date(commits[0].commit.committer.date);
+			 	const serverDate = new Date();
+			 	const diff = Math.abs(commitDate-serverDate)
+		      	const DifftoSeconds = (diff / 1000).toFixed(2);
+		      	function format(seconds){
+			        function pad(s){
+			        	return (s < 10 ? '0' : '') + s;
+					}
+			        var hours = Math.floor(seconds / (60*60));
+			        var minutes = Math.floor(seconds % (60*60) / 60);
+			        var seconds = Math.floor(seconds % 60);
+			        if (hours === 0 && minutes != 0) {
+			        	return minutes + 'm ' + seconds + "s";
+			        } else {
+			        	if (minutes === 0 && hours === 0) {
+			        		return seconds + "s"
+			        	}
+			        	else if (seconds === 0 || hours === 0 && minutes === 0) {
+			        		return 'just now!'
+			        	}
+			        	else {
+			        		return hours + 'h ' + minutes + 'm ' + seconds + "s"; 
+			        	}
+			        }
+			    } 
+		        return user['username']  + ', my public repo OKayga 👉 https://github.com/KUNszg/kbot last commit: ' + format(DifftoSeconds) + ' ago';
+			}
+		},
 
  		{
  			name: prefix + "commands",
