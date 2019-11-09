@@ -1579,7 +1579,7 @@ const commandlist = [
 	            }, 10000);
 	        }
 	        const xddd = xdd - 1
-	        return user['username'] + ", " + xddd + " active commands (prefix: kb) PogChamp 👉 | " + 
+	        return user['username'] + ", " + xddd + " active commands PogChamp 👉 (prefix: kb) | " + 
 	        	xd.sort(
 	        		).toString(
 		    		).replace(/,/g, " | "
