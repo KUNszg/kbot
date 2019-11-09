@@ -1303,6 +1303,8 @@
 				if (!perms[0]) {
 					return "";
 				} else {
+					/* TODO auto pulling from github (restart & update)
+
 					const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
 				 		.then(response => response.json());
 					const process = require('child_process');
@@ -1314,9 +1316,12 @@
 					    }
 					});
 					await kb.say(channel, 'successfuly pulled @master, ' + commits[0].sha.slice(0, 7) + ', commit ' + commits.length)
-					const dateString = new Date().toLocaleString().split('/');
+					
+					*/
+					//const dateString = new Date().toLocaleString().split('/');
 					setTimeout(()=>{process.kill(process.pid)}, 3000);
-					return '🤓 updating...';
+					return user['username'] + ', restarting Okayga'
+					//return '🤓 updating...';
 				}
 			}
 		}, 
