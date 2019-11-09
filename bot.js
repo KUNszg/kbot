@@ -506,7 +506,6 @@
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);
 					const json = await fetch(api.chat + msg.join("+").normalize("NFD").replace(/[\u0300-\u036f]/g, "")) //chat
 					 	.then(response => response.json());
-
 				 	function capitalizeFirstLetter(string) {
 	    				return string.charAt(0).toUpperCase() + string.slice(1);
 					}
