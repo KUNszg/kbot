@@ -88,6 +88,7 @@
 					const stats = fs.statSync("./bot.js");
 					const fileSizeInBytes = stats['size'];
 					const size = fileSizeInBytes / 1000
+					const used = process.memoryUsage().heapUsed / 1024 / 1024;
 			      	function format(seconds){
 				        function pad(s){
 				        	return (s < 10 ? '0' : '') + s;
@@ -119,8 +120,8 @@
 		              		talkedRecently.delete(user['user-id']);
 			            }, 8000);
 			        }
-		        	return user['username'] + ", my dank code is running for " + format(uptime) + ", has " + lines + " lines, file has " + 
-		        		size.toFixed(3) + " KB, host is up for " + up.toFixed(1) + "h (" + up2.toFixed(2) + " days) FeelsDankMan"; 
+		        	return user['username'] + ", my dank code is running for " + format(uptime) + ", has " + lines + " lines,  memory usage: " + 
+						    (used).toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " + up.toFixed(1) + "h (" + up2.toFixed(2) + " days) FeelsDankMan"; 
 				} catch(err) { 
 			  	    return user['username'] + ", " + err + " FeelsDankMan !!!";
 		        }
@@ -132,8 +133,7 @@
 			aliases: prefix + "ping \u{E0000}",
 		    invocation: async (channel, user, message, args, err) => {
 			    try {
-			    	const msg = message.split(' ').splice(2);
-			     	const used = process.memoryUsage().heapUsed / 1024 / 1024;
+			    	const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
 					if (talkedRecently.has(user['user-id'])) { //if set has user id - ignore
 			       	 	return '';   
 				    } else {   
@@ -156,13 +156,13 @@
 					        var hours = Math.floor(seconds / (60*60));
 					        var minutes = Math.floor(seconds % (60*60) / 60);
 					        var seconds = Math.floor(seconds % 60);
-					        if (hours === 0) {
+					        if (hours === 0 && minutes != 0) {
 					        	return minutes + 'm ' + seconds + "s";
 					        } else {
-					        	if (minutes === 0) {
+					        	if (minutes === 0 && hours === 0) {
 					        		return seconds + "s"
 					        	}
-					        	else if (seconds === 0) {
+					        	else if (seconds === 0 || hours === 0 && minutes === 0) {
 					        		return 'just now!'
 					        	}
 					        	else {
@@ -171,16 +171,15 @@
 					        }
 					    } 
 				        const ping = await kb.ping();
-					    return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻, latest commit: " + format(DifftoSeconds) + " ago, memory usage: " + 
-						    (used).toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%)";
+					    return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻, latest commit: (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + commits.length + "), "  + format(DifftoSeconds) + " ago";
 					}
 					else {
-						var ping = require('ping');
+						const ping = require('ping');
  
-						var hosts = [msg[0]];
+						const hosts = [msg[0]];
 						hosts.forEach(function(host){
 						    ping.sys.probe(host, function(isAlive){
-						        var mesg = isAlive ? 'host ' + host + ' is alive' : 'host ' + host + ' is dead';
+						        const mesg = isAlive ? 'host ' + host + ' is alive' : 'host ' + host + ' is dead';
 						        kb.say(channel, user['username'] + ', ' + mesg)
 						    });
 						});
@@ -1304,19 +1303,14 @@
 				if (!perms[0]) {
 					return "";
 				} else {
-					
-					/* TODO: auto git pull before restart
-
 					var process = require('child_process');
-					await process.exec('git pull',function (err,stdout,stderr) {
+					await process.exec('cd /opt/kbot; git pull',function (err,stdout,stderr) {
 					    if (err) {
 					        console.log("\n"+stderr);
 					    } else {
 					        console.log(stdout);
 					    }
 					});
-					
-					*/
 
 					const dateString = new Date().toLocaleString().split('/');
 					setTimeout(()=>{process.kill(process.pid)}, 2000);
