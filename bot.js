@@ -53,7 +53,7 @@
 		{ID: '458101504'}, //notkunszg
 		{ID: '103973901'} //alazymeme
 	];
-		
+
 	const denyAlien = [
 		{ID: "27574018"}, //magicbot123
 		{ID: "451162779"}, //alienplsbot
@@ -64,7 +64,7 @@
 		{ID: '130432430', username: 'acoffeer'},
 		{ID: '194557429', username: 'meacheese'},
 		{ID: '40379362', username: 'sinris'},
-		{ID: '52246729', username: 'kunszg'},
+		{ID: '52246729', username: 'kunszg'}, 
 		{ID: '191299545', username: 'thirteen'},
 		{ID: '31604719', username: 'agenttud'}, 
 		{ID: '181846301', username: 'baldcari'},
@@ -88,7 +88,6 @@
 					const stats = fs.statSync("./bot.js");
 					const fileSizeInBytes = stats['size'];
 					const size = fileSizeInBytes / 1000
-			      	
 			      	function format(seconds){
 				        function pad(s){
 				        	return (s < 10 ? '0' : '') + s;
@@ -144,8 +143,35 @@
 			            }, 5000);
 			        }
 				    if (!msg[0]) {
+				    	const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
+					 		.then(response => response.json());
+					 	const commitDate = new Date(commits[0].commit.committer.date);
+					 	const serverDate = new Date();
+					 	const diff = Math.abs(commitDate-serverDate)
+				      	const DifftoSeconds = (diff / 1000).toFixed(2);
+				      	function format(seconds){
+					        function pad(s){
+					        	return (s < 10 ? '0' : '') + s;
+							}
+					        var hours = Math.floor(seconds / (60*60));
+					        var minutes = Math.floor(seconds % (60*60) / 60);
+					        var seconds = Math.floor(seconds % 60);
+					        if (hours === 0) {
+					        	return minutes + 'm ' + seconds + "s";
+					        } else {
+					        	if (minutes === 0) {
+					        		return seconds + "s"
+					        	}
+					        	else if (seconds === 0) {
+					        		return 'just now!'
+					        	}
+					        	else {
+					        		return hours + 'h ' + minutes + 'm ' + seconds + "s"; 
+					        	}
+					        }
+					    } 
 				        const ping = await kb.ping();
-					    return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻, latency: " + ping*1000 + "ms, memory usage: " + 
+					    return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻, latest commit: " + format(DifftoSeconds) + " ago, memory usage: " + 
 						    (used).toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%)";
 					}
 					else {
@@ -1278,6 +1304,20 @@
 				if (!perms[0]) {
 					return "";
 				} else {
+					
+					/* TODO: auto git pull before restart
+
+					var process = require('child_process');
+					await process.exec('git pull',function (err,stdout,stderr) {
+					    if (err) {
+					        console.log("\n"+stderr);
+					    } else {
+					        console.log(stdout);
+					    }
+					});
+					
+					*/
+
 					const dateString = new Date().toLocaleString().split('/');
 					setTimeout(()=>{process.kill(process.pid)}, 2000);
 					return user['username'] + ', restarting... ('  + dateString[1] + '-' + dateString[0] + '-' + dateString[2] + ')';  
@@ -2003,10 +2043,9 @@ try {
 		}
 	else {
 			var Ping = require('./git-modules/node-ping-wrapper-master');
-
-			// load configuration from file 'config-default-' + process.platform
-			// Only linux is supported at the moment
+			
 			Ping.configure();
+
 			var ping = new Ping(msg1.join(" "));
 			
 			ping.on('ping', function(data){
