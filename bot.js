@@ -1715,7 +1715,7 @@ const dankeval = [
 			const checkChannelsMap = checkChannels.map(
 				i => i.ID
 				)
-		    if (channel === checkChannels[0] && user['user-id'] === "178087241") {
+		    if (channel === checkChannelsMap[0] && user['user-id'] === "178087241") {
 	    		return "AlienPls";
 	    	} else {
     			return '';
