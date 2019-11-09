@@ -156,13 +156,13 @@
 					        var hours = Math.floor(seconds / (60*60));
 					        var minutes = Math.floor(seconds % (60*60) / 60);
 					        var seconds = Math.floor(seconds % 60);
-					        if (hours === 0) {
+					        if (hours === 0 && minutes != 0) {
 					        	return minutes + 'm ' + seconds + "s";
 					        } else {
-					        	if (minutes === 0) {
+					        	if (minutes === 0 && hours === 0) {
 					        		return seconds + "s"
 					        	}
-					        	else if (seconds === 0) {
+					        	else if (seconds === 0 || hours === 0 && minutes === 0) {
 					        		return 'just now!'
 					        	}
 					        	else {
