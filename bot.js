@@ -54,11 +54,6 @@
 		{ID: '103973901'} //alazymeme
 	];
 
-	const denyAlien = [
-		{ID: "27574018"}, //magicbot123
-		{ID: "451162779"}, //alienplsbot
-		{ID: "438663539"} //EnlightenBot
-	];
 	const allowCookie = [
 		{ID: '178087241', username: 'kunszg'},
 		{ID: '130432430', username: 'acoffeer'},
