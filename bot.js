@@ -775,7 +775,7 @@
 		              		talkedRecently.delete(user['user-id']);
 		            	}, 6000);
 			        }
-			        const locate = await fetch("http://api.ipstack.com/" + msg.join(' ').normalize("NFD").replace(/[\u0300-\u036f]/g, "") + api.locate)
+			        const locate = await fetch("http://api.ipstack.com/" + msg.join(' ').normalize("NFD").replace(/[\u0300-\u036f]/g, "") + '?access_key=' + api.locate)
 						.then(response => response.json());
 
 					if (locate.type != null && hasNumber(msg[0])) {
@@ -2028,7 +2028,7 @@ disco.on('message', async msg => {
 		try{		
          	function firstLettertoLowerCase(string) {
 				return string.charAt(0).toLowerCase() + string.slice(1);
-				}
+			}
 			const arr = [
 			'general',
 			'general',
@@ -2087,22 +2087,6 @@ try {
 	        const ping = await kb.ping();
 		    msg.reply(", pong FeelsDankMan 🏓 ppHop 🏓💻, latency: " + ping*1000 + "ms, memory usage: " + 
 			    (used).toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%)");
-		}
-	else {
-			var Ping = require('./git-modules/node-ping-wrapper-master');
-			
-			Ping.configure();
-
-			var ping = new Ping(msg1.join(" "));
-			
-			ping.on('ping', function(data){
-				msg.reply((data.match[0].replace("R", "r").replace(":", "")));
-				ping.stop()
-			});
-			ping.on('fail', function(data){
-				msg.reply(", ping failed: " + data.match);
-				ping.stop();
-			});
 		}
     } catch(err) {
 			if (err.message.includes("undefined")) {
