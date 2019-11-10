@@ -152,6 +152,11 @@
 				    if (!msg[0]) {
 				    	const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
 					 		.then(response => response.json());
+					 	const commits2 = await fetch('https://api.github.com/repos/KUNszg/kbot/commits?page=2')
+					 		.then(response => response.json());
+				 		const commits3 = await fetch('https://api.github.com/repos/KUNszg/kbot/commits?page=3')
+					 		.then(response => response.json());	
+					 	const omegalul = commits.length + commits2.length + commits3.length; //make this bullshit work in one line instead of 5 different api calls
 					 	const commitDate = new Date(commits[0].commit.committer.date);
 					 	const serverDate = new Date();
 					 	const diff = Math.abs(commitDate-serverDate)
@@ -178,7 +183,7 @@
 					        }
 					    } 
 				        const ping = await kb.ping();
-					    return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻, latest commit: (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + commits.length + "), "  + format(DifftoSeconds) + " ago";
+					    return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻, latest commit: "   + format(DifftoSeconds) + " ago, (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + omegalul + ")";
 					}
 					else {
 						const ping = require('ping');
@@ -1486,7 +1491,7 @@ kb.on("chat", async (channel, user, message, self) => {
 		     "Green", "HotPink", "OrangeRed", "Red", "SeaGreen", 
 		     "SpringGreen", "YellowGreen" 
 	    ];
-
+	    
 	    const colors = colorList[Math.floor(Math.random()*colorList.length)]
 		kb.say(channel, "/color " + colors);
 		
@@ -1540,18 +1545,19 @@ const commandlist = [
 	      	const xd = trackObj.map(
 	      		i => i.name
 	      		);
-	      	const xdd = ((xd.sort().toString()
-	    		.replace(/,/g, " | ")
-	    		.replace('rp |', '')
-	    		.replace('secret |', '')
-	    		.replace('pattern |', '')
-	    		.replace('eval |', '')
-	    		.replace('AlienPls |', '')
-	    		.replace('HONEYDETECTED |', '')
-	    		.replace('cookie |', '')
-	    		.replace('| ppBounce', '')
-	    		.replace('restart |', '')
-	    		.replace(/kb/g, '') + " |").split('|')).length;
+	      	const xdd = ((xd.sort(
+	      		).toString(
+	    		).replace(/,/g, " | "
+	    		).replace('rp |', ''
+	    		).replace('secret |', ''
+	    		).replace('pattern |', ''
+	    		).replace('eval |', ''
+	    		).replace('AlienPls |', ''
+	    		).replace('HONEYDETECTED |', ''
+	    		).replace('cookie |', ''
+	    		).replace('| ppBounce', ''
+	    		).replace('restart |', ''
+	    		).replace(/kb/g, '') + " |").split('|')).length;
 	    		
 	  	  	if (talkedRecently3.has(user['user-id'])) { //if set has user id - ignore
 				return '';  	    
@@ -1564,18 +1570,19 @@ const commandlist = [
 	        }
 	        const xddd = xdd - 1
 	        return user['username'] + ", " + xddd + " active commands PogChamp 👉 (prefix: kb) | " + 
-	        	xd.sort().toString()
-		    		.replace(/,/g, " | ")
-		    		.replace('rp |', '')
-		    		.replace('secret |', '')
-		    		.replace('pattern |', '')
-		    		.replace('eval |', '')
-		    		.replace('AlienPls |', '')
-		    		.replace('HONEYDETECTED |', '')
-		    		.replace('cookie |', '')
-		    		.replace('| ppBounce', '')
-		    		.replace('restart |', '')
-		    		.replace(/kb/g, '') + " |".split(' | ')
+	        	xd.sort(
+	        		).toString(
+		    		).replace(/,/g, " | "
+		    		).replace('rp |', ''
+		    		).replace('secret |', ''
+		    		).replace('pattern |', ''
+		    		).replace('eval |', ''
+		    		).replace('AlienPls |', ''
+		    		).replace('HONEYDETECTED |', ''
+		    		).replace('cookie |', ''
+		    		).replace('| ppBounce', ''
+		    		).replace('restart |', ''
+		    		).replace(/kb/g, '') + " |".split(' | ')
 	     	
      		} catch(err) {
 				return user['username'] + ", " + err + " FeelsDankMan !!!";
