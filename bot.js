@@ -156,7 +156,7 @@
 					 		.then(response => response.json());
 				 		const commits3 = await fetch('https://api.github.com/repos/KUNszg/kbot/commits?page=3')
 					 		.then(response => response.json());	
-					 	const omegalul = commits.length + commits2.length + commits3.length; //make this bullshit work in one line instead of 5 different api calls
+				 		const omegalul = commits.length + commits2.length + commits3.length; //make this bullshit work in one line instead of 5 different api calls
 					 	const commitDate = new Date(commits[0].commit.committer.date);
 					 	const serverDate = new Date();
 					 	const diff = Math.abs(commitDate-serverDate)
@@ -509,7 +509,7 @@
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);
-					const json = await fetch(api.chat + msg.join("+").normalize("NFD").replace(/[\u0300-\u036f]/g, "")) //chat
+					const json = await fetch("https://some-random-api.ml/chatbot/beta?message=" + msg.join("+").normalize("NFD").replace(/[\u0300-\u036f]/g, "")) //chat
 					 	.then(response => response.json());
 				 	function capitalizeFirstLetter(string) {
 	    				return string.charAt(0).toUpperCase() + string.slice(1);
@@ -1479,9 +1479,9 @@ kb.on("chat", async (channel, user, message, self) => {
 		    		}
 		    		else if (repeatedMessages[channel] === result) {
 				      		result += " \u{E0000}";
-				    	}
-				    }
-				}
+			    	}
+			    }
+			}
 						
 	    repeatedMessages[channel] = result;
 
