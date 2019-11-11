@@ -156,7 +156,9 @@
 					 		.then(response => response.json());
 				 		const commits3 = await fetch('https://api.github.com/repos/KUNszg/kbot/commits?page=3')
 					 		.then(response => response.json());	
-				 		const omegalul = commits.length + commits2.length + commits3.length; //make this bullshit work in one line instead of 5 different api calls
+				 		const commits4 = await fetch('https://api.github.com/repos/KUNszg/kbot/commits?page=4')
+					 		.then(response => response.json());	
+				 		const omegalul = commits.length + commits2.length + commits3.length + commits4.length; //make this bullshit work in one line instead of 5 different api calls, slows down the command too
 					 	const commitDate = new Date(commits[0].commit.committer.date);
 					 	const serverDate = new Date();
 					 	const diff = Math.abs(commitDate-serverDate)
