@@ -252,7 +252,7 @@
 			            }, 15000);
 			        }
 			        if (toHours > 72) {
-			        	return "Next rocket launch by SpaceX in " + (toHours/24).toFixed(0) + "days, rocket " + space.rocket.rocket_name + ", mission " + space.mission_name +
+			        	return "Next rocket launch by SpaceX in " + (toHours/24).toFixed(0) + " days, rocket " + space.rocket.rocket_name + ", mission " + space.mission_name +
 					    	", " + space.launch_site.site_name_long;
 			        } else {
 		      		 	return "Next rocket launch by SpaceX in " + format(DifftoSeconds) + ", rocket " + space.rocket.rocket_name + ", mission " + space.mission_name +
