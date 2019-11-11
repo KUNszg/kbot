@@ -1388,6 +1388,49 @@
 			}
 		}, 
 
+		{
+			name: prefix + 'github',
+			aliases: prefix + 'git',
+			invocation: async (channel, user, message, args) => {
+				if (talkedRecently2.has(user['user-id'])) {
+					return '';  				    
+				} else {   
+		     		talkedRecently2.add(user['user-id']);
+	            	setTimeout(() => {
+	         			talkedRecently2.delete(user['user-id']);
+		            }, 5000);
+		        }
+		        const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
+			 		.then(response => response.json());
+			 	const commitDate = new Date(commits[0].commit.committer.date);
+			 	const serverDate = new Date();
+			 	const diff = Math.abs(commitDate-serverDate)
+		      	const DifftoSeconds = (diff / 1000).toFixed(2);
+		      	function format(seconds){
+			        function pad(s){
+			        	return (s < 10 ? '0' : '') + s;
+					}
+			        var hours = Math.floor(seconds / (60*60));
+			        var minutes = Math.floor(seconds % (60*60) / 60);
+			        var seconds = Math.floor(seconds % 60);
+			        if (hours === 0 && minutes != 0) {
+			        	return minutes + 'm ' + seconds + "s";
+			        } else {
+			        	if (minutes === 0 && hours === 0) {
+			        		return seconds + "s"
+			        	}
+			        	else if (seconds === 0 || hours === 0 && minutes === 0) {
+			        		return 'just now!'
+			        	}
+			        	else {
+			        		return hours + 'h ' + minutes + 'm ' + seconds + "s"; 
+			        	}
+			        }
+			    } 
+		        return user['username']  + ', my public repo Okayga 👉 https://github.com/KUNszg/kbot last commit: ' + format(DifftoSeconds) + ' ago';
+			}
+		},
+
  		{
  			name: prefix + "commands",
  			aliases: null,
