@@ -67,7 +67,8 @@
 		{ID: '411604091', username: 'Billy_Bones_U '}, 
 		{ID: '117691339', username: 'mm2pl'},
 		{ID: '188079764', username: 'EUviewer'},
-		{ID: '235611601', username: '21mtd'}
+		{ID: '235611601', username: '21mtd'},
+		{ID: '180744357', username: 'abcdemlg'}
 	];
 	const prefix = "kb ";
 	const talkedRecently = new Set();
@@ -788,13 +789,16 @@
 						if (!msg[0]) {
 							return user['username'] + ", please provide an IP or location to search :)";
 						}
-						else if (!hasNumber(msg[0]) && msg[0].match(/[a-z]/i)) {
+						else if (!hasNumber(msg[0]) && msg[0].match(/^\w+$/)) {
 							const location = await fetch(api.geonames + msg.join(' ').normalize("NFD").replace(/[\u0300-\u036f]/g, "") + '&maxRows=1&username=kunszg')
 							 	.then(response => response.json());
 						 	return user['username'] + ', results: ' + location.totalResultsCount + " | location: " + 
 							 	location.geonames[0].countryName.replace("ń", "n") + ", " + location.geonames[0].adminName1.replace("ń", "n") + ", " + 
 							 	location.geonames[0].name.replace("ń", "n") + " | population: " + location.geonames[0].population + ", info: " + 
 							 	location.geonames[0].fcodeName; 
+						}
+						else if (!msg[0].match(/^\w+$/)) {
+							return user['username'] + ', special character detected HONEYDETECTED'
 						}
 						else {
 							return user['username'] + ", could not find given location or location does not exist KKona"; 
@@ -803,7 +807,7 @@
 				} catch(err) {
 					console.log(err);
 					if (err.message.includes("read property")) {
-						return user['username'] + ", location not found. Don't use special characters, use only characters existing in english alphabet";
+						return user['username'] + ", location not found.";
 					} else {
 						return user['username'] + ", " + err.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '') + " FeelsDankMan !!!";
 					}
