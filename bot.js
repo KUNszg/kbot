@@ -972,6 +972,7 @@
 		{
 			name: prefix + "rp",
 			aliases: prefix + "randomplaysound",
+			permission: 'restricted',
 			invocation: async (channel, user, message, args) => {
 				try{
 					const playsound = await fetch("https://supinic.com/api/bot/playsound/list")
