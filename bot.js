@@ -1293,17 +1293,22 @@
 	     	name: prefix + "help",
 	      	aliases: null,
 	      	invocation: async (channel, user, args) => {
-		    	if (talkedRecently2.has(user['user-id'])) { //if set has user id - ignore
-					return '';  				    
-				} else {   
-		     		talkedRecently2.add(user['user-id']);
-	            	setTimeout(() => {
-	         			talkedRecently2.delete(user['user-id']);
-		            }, 5000);
-		        }
-	        	return user['username'] + ", kunszgbot is owned by KUNszg and " + " ALazyMeme ".replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join(""
-	        		).replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join("") + " , Node JS " + process.version + 
-	        		", running on a DigitalOcean droplet, use prefix 'kbot', for commands list use 'kbot commands'.";
+				try{
+			    	if (talkedRecently2.has(user['user-id'])) { //if set has user id - ignore
+						return '';  				    
+					} else {   
+			     		talkedRecently2.add(user['user-id']);
+		            	setTimeout(() => {
+		         			talkedRecently2.delete(user['user-id']);
+			            }, 5000);
+			        }
+		        	return user['username'] + ", kunszgbot is owned by KUNszg and " + " ALazyMeme ".replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join(""
+		        		).replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join("") + " , Node JS " + process.version + 
+		        		", running on a DigitalOcean droplet, use prefix 'kbot', for commands list use 'kbot commands'.";
+	      		} catch(err) {
+					console.log(err);
+					return user['username'] + err + ' FeelsDankMan !!!';
+				}
 	      	}
 	    },
 
@@ -1311,50 +1316,55 @@
 	    	name: prefix + "joemama",
 	    	aliases: prefix + "mama",
 	    	invocation: async (channel, user, message, args) => {
-	    		if (talkedRecently2.has(user['user-id'])) {
-					return '';  				    
-				} else {   
-		     		talkedRecently2.add(user['user-id']);
-	            	setTimeout(() => {
-	         			talkedRecently2.delete(user['user-id']);
-		            }, 5000);
-		        }
-	    		const fetchUrl = require("fetch").fetchUrl;
-				const joemama = await new Promise((Resolve, Reject) => {
-					fetchUrl(api.joemama, function(error, meta, body) {
-					    if (error) {
-					    	console.log(error);
-						   	Reject(error)
-					   	}
-					    else {
-						   	Resolve(body.toString())
-					   	}
-					})
-			  	});
-			  	const laughingEmotes = [ 
-			  		' 😬',
-			  		' 4Head',
-			  		' 4HEad',
-			  		' ArgieB8',
-			  		' FreakinStinkin',
-			  		' AlienPls',
-			  		' 🔥',
-			  		' FireSpeed',
-			  		' ConcernDoge',
-			  		' haHAA',
-			  		' CruW',
-			  		' :O',
-			  		' >(',
-			  		' OMEGALUL',
-			  		' LULW',
-			  		' CurseLit',
-			  		' 😂'
-			  	]
-			  	const emotesJoke = laughingEmotes[Math.floor(Math.random()*laughingEmotes.length)]
-			  	function firstLettertoLowerCase(string) {
-					return string.charAt(0).toLowerCase() + string.slice(1);
+    			try { 
+		    		if (talkedRecently2.has(user['user-id'])) {
+						return '';  				    
+					} else {   
+			     		talkedRecently2.add(user['user-id']);
+		            	setTimeout(() => {
+		         			talkedRecently2.delete(user['user-id']);
+			            }, 5000);
+			        }
+		    		const fetchUrl = require("fetch").fetchUrl;
+					const joemama = await new Promise((Resolve, Reject) => {
+						fetchUrl(api.joemama, function(error, meta, body) {
+						    if (error) {
+						    	console.log(error);
+							   	Reject(error)
+						   	}
+						    else {
+							   	Resolve(body.toString())
+						   	}
+						})
+				  	});
+				  	const laughingEmotes = [ 
+				  		' 😬',
+				  		' 4Head',
+				  		' 4HEad',
+				  		' ArgieB8',
+				  		' FreakinStinkin',
+				  		' AlienPls',
+				  		' 🔥',
+				  		' FireSpeed',
+				  		' ConcernDoge',
+				  		' haHAA',
+				  		' CruW',
+				  		' :O',
+				  		' >(',
+				  		' OMEGALUL',
+				  		' LULW',
+				  		' CurseLit',
+				  		' 😂'
+				  	]
+				  	const emotesJoke = laughingEmotes[Math.floor(Math.random()*laughingEmotes.length)]
+				  	function firstLettertoLowerCase(string) {
+						return string.charAt(0).toLowerCase() + string.slice(1);
+					}
+					return user['username'] + ', ' + firstLettertoLowerCase(joemama.split('"')[3]) + emotesJoke;
+	    		} catch(err) {
+					console.log(err);
+					return user['username'] + err + ' FeelsDankMan !!!';
 				}
-				return user['username'] + ', ' + firstLettertoLowerCase(joemama.split('"')[3]) + emotesJoke;
 	    	}
 	    },
 		
@@ -1362,32 +1372,37 @@
 			name: prefix + "restart",
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
-				const perms = allowEval.filter(
-					i => i.ID === user['user-id']
-				);
+				try {
+					const perms = allowEval.filter(
+						i => i.ID === user['user-id']
+					);
 
-				if (!perms[0]) {
-					return "";
-				} else {
-					/* TODO auto pulling from github (restart & update)
+					if (!perms[0]) {
+						return "";
+					} else {
+						/* TODO auto pulling from github (restart & update)
 
-					const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
-				 		.then(response => response.json());
-					const process = require('child_process');
-					await process.exec('cd /opt/kbot; git pull',function (err,stdout,stderr) {
-					    if (err) {
-					        console.log("\n"+stderr);
-					    } else {
-					        console.log(stdout);
-					    }
-					});
-					await kb.say(channel, 'successfuly pulled @master, ' + commits[0].sha.slice(0, 7) + ', commit ' + commits.length)
-					
-					*/
-					//const dateString = new Date().toLocaleString().split('/');
-					setTimeout(()=>{process.kill(process.pid)}, 3000);
-					return user['username'] + ', restarting Okayga'
-					//return '🤓 updating...';
+						const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
+					 		.then(response => response.json());
+						const process = require('child_process');
+						await process.exec('cd /opt/kbot; git pull',function (err,stdout,stderr) {
+						    if (err) {
+						        console.log("\n"+stderr);
+						    } else {
+						        console.log(stdout);
+						    }
+						});
+						await kb.say(channel, 'successfuly pulled @master, ' + commits[0].sha.slice(0, 7) + ', commit ' + commits.length)
+						
+						*/
+						//const dateString = new Date().toLocaleString().split('/');
+						setTimeout(()=>{process.kill(process.pid)}, 3000);
+						return user['username'] + ', restarting Okayga'
+						//return '🤓 updating...';
+					}
+				} catch(err) {
+					console.log(err);
+					return user['username'] + err + ' FeelsDankMan !!!';
 				}
 			}
 		}, 
@@ -1396,42 +1411,39 @@
 			name: prefix + 'github',
 			aliases: prefix + 'git',
 			invocation: async (channel, user, message, args) => {
-				if (talkedRecently2.has(user['user-id'])) {
-					return '';  				    
-				} else {   
-		     		talkedRecently2.add(user['user-id']);
-	            	setTimeout(() => {
-	         			talkedRecently2.delete(user['user-id']);
-		            }, 5000);
-		        }
-		        const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
-			 		.then(response => response.json());
-			 	const commitDate = new Date(commits[0].commit.committer.date);
-			 	const serverDate = new Date();
-			 	const diff = Math.abs(commitDate-serverDate)
-		      	const DifftoSeconds = (diff / 1000).toFixed(2);
-		      	function format(seconds){
-			        function pad(s){
-			        	return (s < 10 ? '0' : '') + s;
-					}
-			        var hours = Math.floor(seconds / (60*60));
-			        var minutes = Math.floor(seconds % (60*60) / 60);
-			        var seconds = Math.floor(seconds % 60);
-			        if (hours === 0 && minutes != 0) {
-			        	return minutes + 'm ' + seconds + "s";
-			        } else {
-			        	if (minutes === 0 && hours === 0) {
-			        		return seconds + "s"
-			        	}
-			        	else if (seconds === 0 || hours === 0 && minutes === 0) {
-			        		return 'just now!'
-			        	}
-			        	else {
-			        		return hours + 'h ' + minutes + 'm ' + seconds + "s"; 
-			        	}
-			        }
-			    } 
-		        return user['username']  + ', my public repo Okayga 👉 https://github.com/KUNszg/kbot last commit: ' + format(DifftoSeconds) + ' ago';
+				try {
+			        const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
+				 		.then(response => response.json());
+				 	const commitDate = new Date(commits[0].commit.committer.date);
+				 	const serverDate = new Date();
+				 	const diff = Math.abs(commitDate-serverDate)
+			      	const DifftoSeconds = (diff / 1000).toFixed(2);
+			      	function format(seconds){
+				        function pad(s){
+				        	return (s < 10 ? '0' : '') + s;
+						}
+				        var hours = Math.floor(seconds / (60*60));
+				        var minutes = Math.floor(seconds % (60*60) / 60);
+				        var seconds = Math.floor(seconds % 60);
+				        if (hours === 0 && minutes != 0) {
+				        	return minutes + 'm ' + seconds + "s";
+				        } else {
+				        	if (minutes === 0 && hours === 0) {
+				        		return seconds + "s"
+				        	}
+				        	else if (seconds === 0 || hours === 0 && minutes === 0) {
+				        		return 'just now!'
+				        	}
+				        	else {
+				        		return hours + 'h ' + minutes + 'm ' + seconds + "s"; 
+				        	}
+				        }
+				    } 
+			        return user['username']  + ', my public repo Okayga 👉 https://github.com/KUNszg/kbot last commit: ' + format(DifftoSeconds) + ' ago';
+		        } catch(err) {
+					console.log(err);
+					return user['username'] + err + ' FeelsDankMan !!!';
+				}
 			}
 		},
 
@@ -1491,6 +1503,7 @@ kb.on("chat", async (channel, user, message, self) => {
 						
 	    repeatedMessages[channel] = result;
 
+	    /*
 	    const colorList = [
 		     "Blue", "BlueViolet", "CadetBlue", "Chocolate", 
 		     "Coral", "DodgerBlue", "Firebrick", "GoldenRod", 
@@ -1507,6 +1520,7 @@ kb.on("chat", async (channel, user, message, self) => {
 		const banphraseMap = banphraseFilter.map(
 			i => i.banphrase
 			)
+			*/
 
 	    if (!result) {
 	    	kb.say(channel, "");
@@ -1546,7 +1560,7 @@ const commandlist = [
       invocation: (channel, user, args) => {
 		try{
 	      	const trackObj = commands.filter(
-				i => i.name
+				i => i.name && i.permission != 'admin'
 				);
 	      	const xd = trackObj.map(
 	      		i => i.name
