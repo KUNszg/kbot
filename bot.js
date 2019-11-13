@@ -13,7 +13,7 @@
 			username: 'kunszgbot',
 			password: api.oauth,
 		},
-		channels: ['kunszg','pajlada','nymn','crayzbeats','ourlordtalos','ali2465','kunszgbot','leebaxd','supinic','sinris','haywoodjabroni','haxk','rrraz','ourlordtalos','vesp3r'],
+		channels: ['kunszg','pajlada','nymn','ourlordtalos','ali2465','kunszgbot','leebaxd','supinic','sinris','haywoodjabroni','haxk','rrraz','ourlordtalos','vesp3r'],
 	};
 
 	const tmi = require('tmi.js');
@@ -550,6 +550,7 @@
 		{
 			name: prefix + "eval",
 			aliases: null,
+			permission: 'restricted',
 			invocation: async (channel, user, message, args) => {
 				try{
 					const msg = message.split(" ").splice(2);
@@ -605,6 +606,7 @@
 		{
 			name: prefix + "pattern",
 			aliases: null,
+			permission: 'restricted',
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '' + " ").split(" ").splice(2);
@@ -1371,6 +1373,7 @@
 		{
 			name: prefix + "restart",
 			aliases: null,
+			permission: 'restricted',
 			invocation: async (channel, user, message, args) => {
 				try {
 					const perms = allowEval.filter(
@@ -1458,6 +1461,7 @@
  		{
  			name: 'HONEYDETECTED',
  			aliases: null,
+ 			permission: 'restricted'
  			invocation: async (channel, user, message, args) => {
  				if (user['user-id'] != '68136884') {
  					return '';
@@ -1503,7 +1507,6 @@ kb.on("chat", async (channel, user, message, self) => {
 						
 	    repeatedMessages[channel] = result;
 
-	    /*
 	    const colorList = [
 		     "Blue", "BlueViolet", "CadetBlue", "Chocolate", 
 		     "Coral", "DodgerBlue", "Firebrick", "GoldenRod", 
@@ -1520,7 +1523,7 @@ kb.on("chat", async (channel, user, message, self) => {
 		const banphraseMap = banphraseFilter.map(
 			i => i.banphrase
 			)
-			*/
+			
 
 	    if (!result) {
 	    	kb.say(channel, "");
@@ -1560,24 +1563,12 @@ const commandlist = [
       invocation: (channel, user, args) => {
 		try{
 	      	const trackObj = commands.filter(
-				i => i.name && i.permission != 'admin'
+				i => i.name && i.permission != 'restricted'
 				);
 	      	const xd = trackObj.map(
 	      		i => i.name
 	      		);
-	      	const xdd = ((xd.sort(
-	      		).toString(
-	    		).replace(/,/g, " | "
-	    		).replace('rp |', ''
-	    		).replace('secret |', ''
-	    		).replace('pattern |', ''
-	    		).replace('eval |', ''
-	    		).replace('AlienPls |', ''
-	    		).replace('HONEYDETECTED |', ''
-	    		).replace('cookie |', ''
-	    		).replace('| ppBounce', ''
-	    		).replace('restart |', ''
-	    		).replace(/kb/g, '') + " |").split('|')).length;
+	      	const xdd = ((xd.sort().toString().replace(/,/g, " | ").replace(/kb/g, '') + " |").split('|')).length;
 	    		
 	  	  	if (talkedRecently3.has(user['user-id'])) { //if set has user id - ignore
 				return '';  	    
@@ -1590,19 +1581,7 @@ const commandlist = [
 	        }
 	        const xddd = xdd - 1
 	        return user['username'] + ", " + xddd + " active commands PogChamp 👉 (prefix: kb) | " + 
-	        	xd.sort(
-	        		).toString(
-		    		).replace(/,/g, " | "
-		    		).replace('rp |', ''
-		    		).replace('secret |', ''
-		    		).replace('pattern |', ''
-		    		).replace('eval |', ''
-		    		).replace('AlienPls |', ''
-		    		).replace('HONEYDETECTED |', ''
-		    		).replace('cookie |', ''
-		    		).replace('| ppBounce', ''
-		    		).replace('restart |', ''
-		    		).replace(/kb/g, '') + " |".split(' | ')
+	        	xd.sort().toString().replace(/,/g, " | ").replace(/kb/g, '') + " |".split(' | ')
 	     	
      		} catch(err) {
 				return user['username'] + ", " + err + " FeelsDankMan !!!";
@@ -1787,6 +1766,7 @@ const dankeval = [
     {
 		name: dankPrefix + 'cookie',
 		aliases: null,
+		permission: 'restricted',
 		invocation: async (channel, user, args) => {
 			const perms = allowCookie.filter(
 				i => i.ID === user['user-id']
@@ -1835,6 +1815,7 @@ const dankeval = [
 	{
 		name: 'ppBounce',
 		aliases: null,
+		permission: 'restricted',
 		invocation: async (channel, user, message, args) => {
 					    
 			const allowedChannels = [
