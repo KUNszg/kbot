@@ -1461,7 +1461,7 @@
  		{
  			name: 'HONEYDETECTED',
  			aliases: null,
- 			permission: 'restricted'
+ 			permission: 'restricted',
  			invocation: async (channel, user, message, args) => {
  				if (user['user-id'] != '68136884') {
  					return '';
