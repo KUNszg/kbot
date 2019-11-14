@@ -799,7 +799,7 @@
 							 	location.geonames[0].name.replace("ń", "n") + " | population: " + location.geonames[0].population + ", info: " + 
 							 	location.geonames[0].fcodeName; 
 						}
-						else if (!msg[0].match(/^\w+$/)) {
+						else if (!msg[0].match(/^\w+$/) && !msg[0].includes('.')) {
 							return user['username'] + ', special character detected HONEYDETECTED'
 						}
 						else {
@@ -1446,7 +1446,41 @@
 			        return user['username']  + ', my public repo Okayga 👉 https://github.com/KUNszg/kbot last commit: ' + format(DifftoSeconds) + ' ago';
 		        } catch(err) {
 					console.log(err);
-					return user['username'] + err + ' FeelsDankMan !!!';
+					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
+				}
+			}
+		},
+
+		{
+			name: prefix + 'suggest',
+			aliases: null,
+			invocation: async (channel, user, message, args) => {
+				try {
+					const msg = message.split(' ').splice(2);
+					const correctDate = new Date().toLocaleString().split('-');
+					fs.appendFileSync('./suggestions.js', '\n' + '"' + correctDate[1] + '-' + correctDate[0] + '-' + correctDate[2] + ' => ' + user['username'] + ": " + msg.join(' ') + '"')
+					return user['username'] + ', thanks for the suggestion, it will be processed eventually Kapp ';
+ 				} catch(err) {
+					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
+				}
+			}
+		},
+
+		{
+			name: prefix + 'supee',
+			aliases: prefix + 'sp',
+			permission: 'restricted',
+			invocation: async (channel, user, message, args) => {
+				try {
+					if (channel != '#supinic') {
+						return ''
+					} else {
+						let amount = 0;
+						fs.appendFileSync('./supee.js', ' "' + amount++ + '", ')
+						return user['username'] + ', supi went to toilet ' + fs.readFileSync('./supee.js').toString().split('",').length + ' times peepoSadDank 💦'
+					}
+				} catch(err) {
+					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
 				}
 			}
 		},
@@ -1534,7 +1568,7 @@ kb.on("chat", async (channel, user, message, self) => {
 		    		return;
 		    	}
 		    	else if (result.toLowerCase().includes(banphraseMap[0])) {
-		    		kb.say(channel, user['username'] + ', cmonBruh 1')
+		    		kb.say(channel, user['username'] + ', cmonBruh')
 		    		return;
 		    	}
 				else if (result.toLowerCase().startsWith(kb.getOptions().identity.password)) {
@@ -1628,86 +1662,6 @@ async function sendOnlineStatus() {
 }	
 setInterval(() => {sendOnlineStatus()}, 600000);
 
-const songSet = new Set();
-const isDubtrackOn = async () => {
-//check for state (vlc, dubtrack, off)
-const stateApi = await fetch('https://supinic.com/api/bot/song-request/state') 
-	.then(response => response.json());
-	//if state is not 'vlc' or 'off'  start polling Dubtrack API
-if (stateApi.data.state.toLowerCase() === 'vlc' || stateApi.data.state.toLowerCase() === 'off') {
-} else {
-	//get data about current song playing in Dubtrack
- 	const song = async () => {
-		function getData() {
-			fetch(`https://api.dubtrack.fm/room/supinic`)
-		  		.then(function(response) {
-			    	return response.json();
-			 	})
-		 		.then(function(json) {
-
-		 	 		if (json.data.currentSong === null) {	
-					} else {
-
-						if (songSet.has(json.data.currentSong.songid)) { 
-							return;  
-				  		} else {  
-				  	  		songSet.add(json.data.currentSong.songid);
-	   		    			setTimeout(() => {
-		             		// removes the song ID from the set after 10m
-	     	    				songSet.delete(json.data.currentSong.songid);
-	            			}, 600000);
-
-		   		    		if (songSet.size > 1) {
-		   		    			//get ID of the user that requested the song
-	   		    				const getRoom = async () => {
-								const room = await fetch(spi.dubtrackRoom)
-									.then(response => response.json());
-									//get name of the user with user ID
-									async function getUser() {
-										const getUser2 = await fetch("https://api.dubtrack.fm/user/" + room.data.song.userid)
-											.then(res => res.json());
-
-	    								kb.say('supinic', 'New song in dubtrack: ' + json.data.currentSong.name + 
-	    									", https://www.youtube.com/watch?v=" + json.data.currentSong.fkid + " requested by " + getUser2.data.username);
-	   		    					}
-									getUser()
-								}
-							  	getRoom()
-		   		    		}
-		     			}
-		     		}
-		 		});
-		 	}
-			getData();
-		}
-		setInterval(() => { song()}, 5000);
-	}
-}
-isDubtrackOn();
-
-//#todo > poznan api
-/*
-const pozSet = new Set();
-const zarzadzenie = async() => {
-	const stateApi = await fetch('http://bip.poznan.pl/api-json/bip/zarzadzenia-prezydenta/') 
-		.then(response => response.json());
-	if (pozSet.has(stateApi['bip.poznan.pl'].data[0].zarzadzenia.items[0].zarzadzenie[0].id)) { 
-		return;  
-	} else {  
-		pozSet.add(stateApi['bip.poznan.pl'].data[0].zarzadzenia.items[0].zarzadzenie[0].id);
-		setTimeout(() => {
-			pozSet.delete(stateApi['bip.poznan.pl'].data[0].zarzadzenia.items[0].zarzadzenie[0].id);
-		}, 3000000000);
-		kb.say('kunszg', '@kunszg Nowe rozporządzenie prezydenta Poznania KKurwa  👉 [' + 
-			stateApi['bip.poznan.pl'].data[0].zarzadzenia.items[0].zarzadzenie[0].id_klucz + ', ' + 
-			stateApi['bip.poznan.pl'].data[0].zarzadzenia.items[0].zarzadzenie[0].status + '] ' +  
-			stateApi['bip.poznan.pl'].data[0].zarzadzenia.items[0].zarzadzenie[0].tytul.replace(/&quot;/g, '"') + ' KKurwa Clap ');
-	}
-}
-
-setInterval(() => {zarzadzenie()}, 900000);
-*/
-
 const arr = [ 
   	' FeelsBadChamp ',
   	' 🔊 Bruh ',
@@ -1737,11 +1691,11 @@ const arr = [
   	' SansDefault ',
   	' SansDab '
 ];
-/*
+/* 
 setInterval(() => { 
 	const randomEmote = arr[Math.floor(Math.random()*arr.length)]; kb.action('haxk', randomEmote + '  🚨 ALERT')
 }, 1800000);
-*/
+*/ 
 
 const dankPrefix = '?';
 const talkedRecently2 = new Set();
