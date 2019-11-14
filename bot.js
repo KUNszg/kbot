@@ -1456,6 +1456,14 @@
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
 				try {
+					if (talkedRecently.has(user['user-id'])) { 
+		       		 	return '';  
+				    } else {   
+				     	talkedRecently.add(user['user-id']);
+			            setTimeout(() => {
+			              	talkedRecently.delete(user['user-id']);
+			            }, 8000);
+			        }
 					const msg = message.split(' ').splice(2);
 					const correctDate = new Date().toLocaleString().split('-');
 					fs.appendFileSync('./suggestions.js', '\n' + '"' + correctDate[1] + '-' + correctDate[0] + '-' + correctDate[2] + ' => ' + user['username'] + ": " + msg.join(' ') + '"')
@@ -1472,6 +1480,14 @@
 			permission: 'restricted',
 			invocation: async (channel, user, message, args) => {
 				try {
+					if (talkedRecently.has('supee')) { 
+		       		 	return '';  
+				    } else {   
+				     	talkedRecently.add('supee');
+			            setTimeout(() => {
+			              	talkedRecently.delete('supee');
+			            }, 30000);
+			        }
 					if (channel != '#supinic') {
 						return ''
 					} else {
