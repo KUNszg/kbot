@@ -1466,7 +1466,7 @@
 			        }
 					const msg = message.split(' ').splice(2);
 					const correctDate = new Date().toLocaleString().split('-');
-					fs.appendFileSync('./suggestions.js', '\n' + '"' + correctDate[1] + '-' + correctDate[0] + '-' + correctDate[2] + ' => ' + user['username'] + ": " + msg.join(' ') + '"')
+					fs.appendFileSync('./db/suggestions.js', '\n' + '"' + correctDate[1] + '-' + correctDate[0] + '-' + correctDate[2] + ' => ' + user['username'] + ": " + msg.join(' ') + '"')
 					return user['username'] + ', thanks for the suggestion, it will be processed eventually Kapp ';
  				} catch(err) {
 					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
@@ -1492,7 +1492,7 @@
 						return ''
 					} else {
 						let amount = 0;
-						fs.appendFileSync('./supee.js', ' "' + amount++ + '", ')
+						fs.appendFileSync('./db/supee.js', ' "' + amount++ + '", ')
 						return user['username'] + ', supi went to toilet ' + fs.readFileSync('./supee.js').toString().split('",').length + ' times peepoSadDank 💦'
 					}
 				} catch(err) {
