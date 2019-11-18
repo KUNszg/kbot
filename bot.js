@@ -68,7 +68,8 @@
 		{ID: '117691339', username: 'mm2pl'},
 		{ID: '188079764', username: 'EUviewer'},
 		{ID: '235611601', username: '21mtd'},
-		{ID: '180744357', username: 'abcdemlg'}
+		{ID: '180744357', username: 'abcdemlg'},
+		{ID: '275052455', username: 'vave2_'}
 	];
 	const prefix = "kb ";
 	const talkedRecently = new Set();
