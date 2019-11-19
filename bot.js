@@ -1529,8 +1529,8 @@ kb.on("chat", async (channel, user, message, self) => {
 	const input = message.split(' ') 
 	if (user['user-id'] === "441611405") return;
 	if (user['user-id'] === "81613973") return;
-	if (self) return;
-
+	if (user['user-id'] === "249408349") return;
+        if (self) return;
 	commands.forEach(async command => {
 		if (
 		    ((input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '').toLowerCase() === command.name) ||
