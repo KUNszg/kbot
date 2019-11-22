@@ -13,7 +13,7 @@
 			username: 'kunszgbot',
 			password: api.oauth,
 		},
-		channels: ['kunszg','pajlada','nymn','ourlordtalos','ali2465','kunszgbot','leebaxd','supinic','sinris','haywoodjabroni','haxk','rrraz','ourlordtalos','vesp3r'],
+		channels: ['kunszg','pajlada','nymn','ourlordtalos','ali2465','kunszgbot','leebaxd','sinris','haywoodjabroni','haxk','rrraz','ourlordtalos','vesp3r'],
 	};
 
 	const tmi = require('tmi.js');
@@ -49,7 +49,6 @@
 	const allowEval = [
 		{ID: "178087241"}, //kunszg
 		{ID: "229225576"}, //kunszgbot
-		{ID: '31400525'}, //supinic
 		{ID: '458101504'}, //notkunszg
 		{ID: '103973901'} //alazymeme
 	];
@@ -99,7 +98,7 @@
 				        	if (minutes === 0 && hours === 0) {
 				        		return seconds + "s"
 				        	}
-				        	else if (seconds === 0 || hours === 0 && minutes === 0) {
+				        	else if (seconds === 5 || hours === 0 && minutes === 0) {
 					        		return 'few seconds'
 				        	}
 				        	else {
@@ -130,7 +129,7 @@
 			            }, 8000);
 			        }
 		        	return user['username'] + ", my dank code is running for " + format(uptime) + ", has " + lines + " lines,  memory usage: " + 
-						    (used).toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " + up.toFixed(1) + "h (" + up2.toFixed(2) + " days) FeelsDankMan"; 
+						    (used).toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " + up.toFixed(1) + "h (" + up2.toFixed(2) + " days) FeelsDankMan"; //limit >72h timers to days instead
 				} catch(err) { 
 			  	    return user['username'] + ", " + err + " FeelsDankMan !!!";
 		        }
@@ -178,7 +177,7 @@
 					        	if (minutes === 0 && hours === 0) {
 					        		return seconds + "s"
 					        	}
-					        	else if (seconds === 0 || hours === 0 && minutes === 0) {
+					        	else if (seconds === 5 || hours === 0 && minutes === 0) {
 					        		return 'just now!'
 					        	}
 					        	else {
@@ -187,7 +186,7 @@
 					        }
 					    } 
 				        const ping = await kb.ping();
-					    return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻, latest commit: "   + format(DifftoSeconds) + " ago, (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + omegalul + ")";
+					    return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻, latest commit: "   + format(DifftoSeconds) + " ago, (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + omegalul + ")"; //limit >72h timers to days instead
 					}
 					else {
 						const ping = require('ping');
@@ -1529,6 +1528,7 @@ kb.on("chat", async (channel, user, message, self) => {
 	const input = message.split(' ') 
 	if (user['user-id'] === "441611405") return;
 	if (user['user-id'] === "81613973") return;
+	if (user['user-id'] === "249408349") return;
 	if (self) return;
 
 	commands.forEach(async command => {
@@ -1645,6 +1645,7 @@ kb.on("chat", async (channel, user, message, self) => {
 	const input = message.split(' ') 
     if (user['user-id'] === "441611405") return;
     if (user['user-id'] === "81613973") return;
+    if (user['user-id'] === "249408349") return;
   	if (self) return;
     commandlist.forEach(async command => {
 		if (
@@ -1862,6 +1863,7 @@ const dankeval = [
     ];
 
 kb.on("chat", async (channel, user, message, self) => {
+	if (user['user-id'] === "249408349") return;
 	if (self) return;
 
 	dankeval.forEach(async smart => {
@@ -1912,6 +1914,7 @@ kb.on("chat", async (channel, user, message, self) => {
 
 	*/
 
+/*
 {
 	  //active commands
 	  kb.on('chat', function (channel, user, message) { 
@@ -1983,6 +1986,7 @@ kb.on("chat", async (channel, user, message, self) => {
 	   kb.say("Supinic", username + " is continuing the gifted sub they got from " + sender + " PagChomp ")
 	 });
 	}
+	*/
 })
 
 const Discord = require('discord.js');
