@@ -1529,12 +1529,8 @@ kb.on("chat", async (channel, user, message, self) => {
 	if (user['user-id'] === "441611405") return;
 	if (user['user-id'] === "81613973") return;
 	if (user['user-id'] === "249408349") return;
-<<<<<<< HEAD
 	if (self) return;
-
-=======
-        if (self) return;
->>>>>>> f65dbc724567e6c93a2755e25bacb579596bad7a
+	
 	commands.forEach(async command => {
 		if (
 		    ((input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '').toLowerCase() === command.name) ||
