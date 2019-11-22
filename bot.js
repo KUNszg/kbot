@@ -68,7 +68,8 @@
 		{ID: '188079764', username: 'EUviewer'},
 		{ID: '235611601', username: '21mtd'},
 		{ID: '180744357', username: 'abcdemlg'},
-		{ID: '275052455', username: 'vave2_'}
+		{ID: '275052455', username: 'vave2_'},
+		{ID: '218312842', username: 'yaYEET_xD'}
 	];
 	const prefix = "kb ";
 	const talkedRecently = new Set();
@@ -1530,7 +1531,7 @@ kb.on("chat", async (channel, user, message, self) => {
 	if (user['user-id'] === "81613973") return;
 	if (user['user-id'] === "249408349") return;
 	if (self) return;
-	
+
 	commands.forEach(async command => {
 		if (
 		    ((input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '').toLowerCase() === command.name) ||
