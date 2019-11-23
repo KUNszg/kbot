@@ -1476,6 +1476,14 @@
 				 	const serverDate = new Date();
 				 	const diff = Math.abs(commitDate-serverDate)
 			      	const DifftoSeconds = (diff / 1000).toFixed(2);
+			      	if (talkedRecently2.has(user['user-id'])) { //if set has user id - ignore
+						return '';  				    
+					} else {   
+			     		talkedRecently2.add(user['user-id']);
+		            	setTimeout(() => {
+		         			talkedRecently2.delete(user['user-id']);
+			            }, 5000);
+			        }
 			      	function format(seconds){
 				        function pad(s){
 				        	return (s < 10 ? '0' : '') + s;
@@ -1819,10 +1827,25 @@ const dankeval = [
 	},
 
 	{
+		name: "kunszgbot",
+		aliases: "kunszgbot,",
+		invocation: async (channel, user, message, args) => {
+			if (talkedRecently2.has(user['user-id'])) { //if set has user id - ignore
+				return '';  				    
+			} else {   
+	     		talkedRecently2.add(user['user-id']);
+            	setTimeout(() => {
+         			talkedRecently2.delete(user['user-id']);
+	            }, 30000);
+	        }
+	        return 'get 🅱️inged back ' + user['username'] + ' peepoSadDank';
+		}
+	},
+
+	{
 		name: "AlienPls",
 		aliases: null,
-		invocation: async (channel, user, message, args) => {			
-		    
+		invocation: async (channel, user, message, args) => {   
 			const allowedChannels = [
 				{ID: '#supinic'},
 				{ID: '#nymn'},
