@@ -1360,7 +1360,7 @@
 			        }
 		        	return user['username'] + ", kunszgbot is owned by KUNszg and " + " ALazyMeme".replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join(""
 		        		).replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join("") + " , Node JS " + process.version + 
-		        		", running on a DigitalOcean droplet " + process.platform() + ' ' + process.arch() + ", for commands list use 'kb commands'.";
+		        		", running on a DigitalOcean droplet " + process.platform + ' ' + process.arch + ", for commands list use 'kb commands'.";
 	      		} catch(err) {
 					console.log(err);
 					return user['username'] + err + ' FeelsDankMan !!!';
