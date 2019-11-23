@@ -140,15 +140,15 @@
 					} else {
 						if (uptime>172800 && up>72) {
 							return user['username'] + ", my dank code is running for " +  uptime/86400 + ", has " + lines + " lines,  memory usage: " + 
-						    	used.toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " + up.toFixed(1) + "h (" +  up2.toFixed(2) + " days) FeelsDankMan";
+						    	used.toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " + up.toFixed(1) + "h (" +  up2.toFixed(2) + " days), commands used in this session " + commandsExecuted.length + " FeelsDankMan";
 						}
 						else if (uptime>172800 && up<72) {
 							return user['username'] + ", my dank code is running for " +  uptime/86400 + ", has " + lines + " lines,  memory usage: " + 
-						 	   used.toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " + up.toFixed(1) + "h FeelsDankMan";
+						 	   used.toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " + up.toFixed(1) + "h, commands used in this session " + commandsExecuted.length + " FeelsDankMan";
 						}
 						else {
 							return user['username'] + ", my dank code is running for " + format(uptime) + ", has " + lines + " lines,  memory usage: " + 
-						    	(used).toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " + up.toFixed(1) + "h (" + up2.toFixed(2) + " days) FeelsDankMan";
+						    	(used).toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " + up.toFixed(1) + "h (" + up2.toFixed(2) + " days), commands used in this session " + commandsExecuted.length + " FeelsDankMan";
 						}
 					}
 				} catch(err) { 
@@ -1360,7 +1360,7 @@
 			        }
 		        	return user['username'] + ", kunszgbot is owned by KUNszg and " + " ALazyMeme".replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join(""
 		        		).replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join("") + " , Node JS " + process.version + 
-		        		", running on a DigitalOcean droplet " + process.platform() + ' ' + process.arch() ", for commands list use 'kb commands'.";
+		        		", running on a DigitalOcean droplet " + process.platform() + ' ' + process.arch() + ", for commands list use 'kb commands'.";
 	      		} catch(err) {
 					console.log(err);
 					return user['username'] + err + ' FeelsDankMan !!!';
@@ -1668,7 +1668,6 @@ kb.on("chat", async (channel, user, message, self) => {
 					if (perf.stop().time>1000) {
 					 	kb.say(channel, result + ' [' + (perf.stop().time/1000).toFixed(2) + 's]');
 					} else {
-						commandsExecuted.push('1');
 					 	kb.say(channel, result);
 					}	
 				}				
