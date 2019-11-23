@@ -51,6 +51,7 @@
 		{ID: "178087241"}, //kunszg
 		{ID: "229225576"}, //kunszgbot
 		{ID: '458101504'}, //notkunszg
+		{ID: '31400525'}, //supinic
 		{ID: '103973901'} //alazymeme
 	];
 
