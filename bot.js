@@ -1936,7 +1936,6 @@ kb.on("chat", async (channel, user, message, self) => {
 	    (smart.aliases && message.split(' ')[0] === smart.aliases)
 	  ) {
 		    let result = await smart.invocation(channel, user, message);
-		    commandsExecuted.push('1');
 			if (result === "undefined") {
 		    	kb.say(channel, user['username'] + ", FeelsDankMan something fucked up")
 			} else {
@@ -1956,6 +1955,7 @@ kb.on("chat", async (channel, user, message, self) => {
 		    	return;
 		    }
 		    else {
+		    	commandsExecuted.push('1');
 		   		kb.say(channel, result);
 			}
 		}
