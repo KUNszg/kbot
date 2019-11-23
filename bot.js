@@ -37,6 +37,7 @@
 	const rUni = require('random-unicodes');
 	const SpacexApiWrapper = require("spacex-api-wrapper");
 	const fetch = require("node-fetch");
+	const perf = require('execution-time')();
 	const tmidocs = "https://github.com/tmijs/docs/tree/gh-pages/_posts/v1.4.2";
 	const nam = "🏍 🚑 NaM 🚜 🚓 🚛 🚕 NaM 🚚 🚗 🏎 🚜 🚓 🏍 NaM 🚕 🚜 🚕 🚛 🚕 🚚 🚗 SORRY FOR TRAFFIC NAM 🚕 🚜 🚕 🚓 🚛 🏎 🚑 🚒 NaM 🚓 🏍 🚓 🚜 NaM 🏎 🏎 🚜 NaM 🏎 🚜 🚓 🚜 NaM 🚑 🚑 NaM 🚗 🚗 🚚 NaM 🚗 🏎 🏎 🚚 🚛 NaM 🚓 🚜 🚕 🚜 🚙 🏍 NaM 🚙 🏍 🚌 🚲 NaM 🚌 🚐 🚌 🚒 NaM 🚎 🚒 🚙 🚕 🚕 🚑 🏍 🚓 🚜 🚛 NaM 🚚 🚚 🚗 🚗 🚜 🚓 NaM 🚑 🚒 🚑 🚲 🚒🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷";
 	const pajas = "⠄⠄⠄⢀⣀⣤⣤⣤⣤⣤⣤⣀⠄⠄⠄⠄⠄⠄⠄⣀⣀⣤⣀⠄⠄⠄⠄⠄ ⠄⠄⣴⣿⣿⣸⣿⣿⠿⠿⠿⠿⢿⣷⣦⡀⢠⣾⣿⣿⣿⣿⣿⣷⣄⠄⠄⠄ ⠄⢰⣿⣟⣛⣩⣵⣶⣿⣿⣿⣿⣷⣶⣭⣕⢹⣯⣶⣶⣶⣶⣶⣦⣿⣆⠄⠄ ⣴⣾⡟⣿⣿⣿⠿⣛⣭⣭⣶⣶⣭⣭⣝⠻⢃⣩⣭⣴⣶⣶⣶⣬⣍⣉⡂⠄ ⣿⣿⠃⣸⡟⣡⣾⣿⣿⣿⣿⢉⠉⣻⣿⣷⢈⣿⣿⣿⣿⣿⣿⣟⢉⠙⣿⣷ ⣿⣿⣿⣿⣧⠻⣿⣿⣿⣿⣿⣶⣴⡿⢟⣫⡬⣙⡛⠿⠿⠿⠿⠿⠷⠾⠛⣩ ⣸⣿⣿⣿⣿⣿⣶⠬⠭⠭⠭⠥⠶⣚⣿⠟⣱⣟⠿⠿⣿⣷⡶⠾⢛⣛⠉⠁ ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣥⣾⣿⣿⣷⣴⣶⣶⣾⣿⣿⣿⠇⠄ ⣿⣿⣿⣿⡿⠿⠿⠿⠿⣿⣿⣿⣿⠿⠿⠿⠟⣛⣛⣛⣛⣋⣭⣭⣶⣶⡾⠄ ⣿⣿⣿⣯⢸⣿⣿⢟⣛⣒⣒⣒⣒⣛⣛⣛⣋⣭⣭⣭⣭⣴⣶⠶⣶⠖⠄⠄ ⣿⣿⣿⣍⠢⣭⣭⣭⣭⣭⣭⣭⣛⣛⣛⣛⣛⣛⣛⣛⣭⣭⠶⠋⠄⠄⠄⠄ ⠄⣠⣦⣭⣭⣭⣝⣛⣓⣊⡩⠭⠭⠭⠭⠿⢛⣛⣋⣭⣌⡀⠄⠄⠄⠄⠄⠄ ⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠄⠄⠄⠄ ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠄⠄⠄ ";
@@ -107,7 +108,7 @@
 					const stats = fs.statSync("./bot.js");
 					const fileSizeInBytes = stats['size'];
 					const size = fileSizeInBytes/1000
-					const used = process.memoryUsage().heapUsed/2048;
+					const used = process.memoryUsage().heapUsed/1024/1024;
 				    const uptime = process.uptime();
 				    const os = require('os');
 				    const up = os.uptime()/3600; //system uptime in hours
@@ -145,7 +146,7 @@
 						}
 						else if (uptime>172800 && up<72) {
 							return user['username'] + ", my dank code is running for " + clientUptimeToDays + ", has " + lines + " lines,  memory usage: " + 
-						 	   usedToFixed + " MB (" + usedToPercent + "%), host is up for " + up.toFixed(1) + "h FeelsDankMan";
+						 	   usedToFixed + " MB (" + usedToPercent + "%), host is up for " + uptimeToFixed + "h FeelsDankMan";
 						}
 						else {
 							return user['username'] + ", my dank code is running for " + format(uptime) + ", has " + lines + " lines,  memory usage: " + 
@@ -206,7 +207,7 @@
 					 	const commitDate = new Date(commits[0].commit.committer.date);
 					 	const serverDate = new Date();
 					 	const diff = Math.abs(commitDate-serverDate)
-				      	const latestCommit = (diff / 1000).toFixed(2);
+				      	const latestCommit = (diff/1000).toFixed(2);
 				        const ping = await kb.ping();
 				        const latestCommitToDays = latestCommit/259200
 				        if (latestCommit>259200) {
@@ -1549,7 +1550,7 @@
  		},
 
 	];
-
+perf.start();
 kb.on("chat", async (channel, user, message, self) => {
 	const input = message.split(' ') 
 	if (user['user-id'] === "441611405") return;
@@ -1627,7 +1628,8 @@ kb.on("chat", async (channel, user, message, self) => {
 						return;
 					}
 				}
-					await kb.say(channel, result);				
+				const results = perf.stop(); 
+				await kb.say(channel, result + ' [' + (results.time/1000).toFixed(1) + 's]');				
  			}
  		}
 	});
