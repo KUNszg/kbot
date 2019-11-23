@@ -37,6 +37,7 @@
 	const rUni = require('random-unicodes');
 	const SpacexApiWrapper = require("spacex-api-wrapper");
 	const fetch = require("node-fetch");
+	const perf = require('execution-time')();
 	const tmidocs = "https://github.com/tmijs/docs/tree/gh-pages/_posts/v1.4.2";
 	const nam = "🏍 🚑 NaM 🚜 🚓 🚛 🚕 NaM 🚚 🚗 🏎 🚜 🚓 🏍 NaM 🚕 🚜 🚕 🚛 🚕 🚚 🚗 SORRY FOR TRAFFIC NAM 🚕 🚜 🚕 🚓 🚛 🏎 🚑 🚒 NaM 🚓 🏍 🚓 🚜 NaM 🏎 🏎 🚜 NaM 🏎 🚜 🚓 🚜 NaM 🚑 🚑 NaM 🚗 🚗 🚚 NaM 🚗 🏎 🏎 🚚 🚛 NaM 🚓 🚜 🚕 🚜 🚙 🏍 NaM 🚙 🏍 🚌 🚲 NaM 🚌 🚐 🚌 🚒 NaM 🚎 🚒 🚙 🚕 🚕 🚑 🏍 🚓 🚜 🚛 NaM 🚚 🚚 🚗 🚗 🚜 🚓 NaM 🚑 🚒 🚑 🚲 🚒🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷";
 	const pajas = "⠄⠄⠄⢀⣀⣤⣤⣤⣤⣤⣤⣀⠄⠄⠄⠄⠄⠄⠄⣀⣀⣤⣀⠄⠄⠄⠄⠄ ⠄⠄⣴⣿⣿⣸⣿⣿⠿⠿⠿⠿⢿⣷⣦⡀⢠⣾⣿⣿⣿⣿⣿⣷⣄⠄⠄⠄ ⠄⢰⣿⣟⣛⣩⣵⣶⣿⣿⣿⣿⣷⣶⣭⣕⢹⣯⣶⣶⣶⣶⣶⣦⣿⣆⠄⠄ ⣴⣾⡟⣿⣿⣿⠿⣛⣭⣭⣶⣶⣭⣭⣝⠻⢃⣩⣭⣴⣶⣶⣶⣬⣍⣉⡂⠄ ⣿⣿⠃⣸⡟⣡⣾⣿⣿⣿⣿⢉⠉⣻⣿⣷⢈⣿⣿⣿⣿⣿⣿⣟⢉⠙⣿⣷ ⣿⣿⣿⣿⣧⠻⣿⣿⣿⣿⣿⣶⣴⡿⢟⣫⡬⣙⡛⠿⠿⠿⠿⠿⠷⠾⠛⣩ ⣸⣿⣿⣿⣿⣿⣶⠬⠭⠭⠭⠥⠶⣚⣿⠟⣱⣟⠿⠿⣿⣷⡶⠾⢛⣛⠉⠁ ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣥⣾⣿⣿⣷⣴⣶⣶⣾⣿⣿⣿⠇⠄ ⣿⣿⣿⣿⡿⠿⠿⠿⠿⣿⣿⣿⣿⠿⠿⠿⠟⣛⣛⣛⣛⣋⣭⣭⣶⣶⡾⠄ ⣿⣿⣿⣯⢸⣿⣿⢟⣛⣒⣒⣒⣒⣛⣛⣛⣋⣭⣭⣭⣭⣴⣶⠶⣶⠖⠄⠄ ⣿⣿⣿⣍⠢⣭⣭⣭⣭⣭⣭⣭⣛⣛⣛⣛⣛⣛⣛⣛⣭⣭⠶⠋⠄⠄⠄⠄ ⠄⣠⣦⣭⣭⣭⣝⣛⣓⣊⡩⠭⠭⠭⠭⠿⢛⣛⣋⣭⣌⡀⠄⠄⠄⠄⠄⠄ ⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠄⠄⠄⠄ ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠄⠄⠄ ";
@@ -82,6 +83,7 @@
 		    aliases: prefix + "uptime \u{E0000}",
 		    invocation: async (channel, user, message, args) => {
 			 	try{
+			 		perf.start();
 			      	function format(seconds){
 				        function pad(s){
 				        	return (s < 10 ? '0' : '') + s;
@@ -157,7 +159,8 @@
 		    name: prefix + "ping",
 			aliases: prefix + "ping \u{E0000}",
 		    invocation: async (channel, user, message, args, err) => {
-			    try {
+			    try {	
+					perf.start();
 			    	const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
 			      	function format(seconds){
 				        function pad(s){
@@ -236,6 +239,7 @@
 		    aliases: prefix + "spacex \u{E0000}",
 		    invocation: async (channel, user, message, args) => {
 	    		try {
+	    			perf.start();
 				    const space = await SpacexApiWrapper.getNextLaunch();
 				    const date = await space.launch_date_utc;
 				    const apiDate = new Date(date);
@@ -290,6 +294,7 @@
 		    aliases: null,
 		    invocation: async (channel, user, message, args) => {
 	    		try {
+	    			perf.start();
 		        	const apod = await randomApod();
 
 	   				if (talkedRecently.has(user['user-id'])) { //if set has user id - ignore
@@ -313,6 +318,7 @@
 		    aliases: null,
 		    invocation: async (channel, user, message, args) => {
 	    		try {
+	    			perf.start();
 	    			const msg = message.split(" ").splice(2);
 	    			const random1 = await search(msg.join(" "), {
 			          	totalResults: 3,
@@ -356,6 +362,7 @@
 		    aliases: null,
 		    invocation: async (channel, user, message, args) => {
 			 	try{
+			 		perf.start();
 			 		const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);
 			        const options = {
 			          	api_key: api.randomTrack,
@@ -411,6 +418,7 @@
 		    aliases: null,
 		    invocation: async (channel, user, message, args) => {
 				try {
+					perf.start();
 					const json = await fetch(api.randomFact)
 					 	.then(response => response.json());
 
@@ -432,7 +440,9 @@
 		{
 			name: prefix + "channels",
 			aliases: prefix + "chn",
-			invocation: async (channel, user, message, args) => {				
+			invocation: async (channel, user, message, args) => {			
+			try {	
+				perf.start();
 				const length = kb.getChannels().length;
 				const joinedChannels = kb.getChannels().toString().split("").toString().replace(/,/g,"\u{E0000}").replace(/#/g, ", ").replace(","," ");
 				const msg = message.replace("\u{E0000}", "").split(" ").splice(2);	
@@ -470,7 +480,9 @@
 				        return "I'm active in " + length + " channels => " + joinedChannels + " 4Head";
 				    }
 				}
-
+			} catch(err) { 	
+		  	    	return user['username'] + ", " + err + " FeelsDankMan !!!";
+		  		}
 			}
 		},
 			
@@ -479,6 +491,7 @@
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
 				try {
+					perf.start();
 					const msg = message.split(" ").splice(2);
 					if (talkedRecently.has(user['user-id'])) {
 			        	return '';  
@@ -505,6 +518,7 @@
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
 				try {
+					perf.start();
 					const msg = message.split(" ").splice(2);	
 		 			if (talkedRecently.has(user['user-id'])) { //if set has user id - ignore
 			        	return '';  
@@ -531,6 +545,7 @@
 			aliases: prefix + "ct",
 			invocation: async (channel, user, message, args) => {
 				try {
+					perf.start();
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);
 					const json = await fetch("https://some-random-api.ml/chatbot/beta?message=" + msg.join("+").normalize("NFD").replace(/[\u0300-\u036f]/g, "")) //chat
 					 	.then(response => response.json());
@@ -573,6 +588,7 @@
 			permission: 'restricted',
 			invocation: async (channel, user, message, args) => {
 				try{
+					perf.start();
 					const msg = message.split(" ").splice(2);
 					const ping = await kb.ping();
 					const women = {};
@@ -629,6 +645,7 @@
 			permission: 'restricted',
 			invocation: async (channel, user, message, args) => {
 				try {
+					perf.start();
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '' + " ").split(" ").splice(2);
 					const emote = message.replace(/[\u{E0000}|\u{206d}]/gu, '' + " ").split(" ").splice(5);
 					const msgP = message.replace(/[\u{E0000}|\u{206d}]/gu, '' + " ").split(" ").splice(4);
@@ -759,6 +776,7 @@
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
 				try{
+					perf.start();
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);
 					function reverse(s) { 
 						let a = [ ...s ]; a.reverse(); return a.join(''); 
@@ -787,6 +805,7 @@
 			aliases: prefix + "location",
 			invocation: async (channel, user, message, args) => {
 				try{	
+					perf.start();
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);	
 				 	console.log(msg.join(' ').normalize("NFD").replace(/[\u0300-\u036f]/g, ""))
 					function hasNumber(myString) {
@@ -842,6 +861,7 @@
 			aliases: prefix + "asteroid",
 			invocation: async (channel, user, message, args) => {
 				try{	
+					perf.start();
 					const today = new Date().toLocaleDateString().split('/');
 					const today2 = today[2] + '-' + today[0] + '-' + today[1];
 					const neo = await fetch(api.nasa1 + today2 + api.nasa2)
@@ -874,6 +894,7 @@
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
 				try{
+					perf.start();
 					const msg = message.split(" ").splice(2);
 					const fetchUrl = require("fetch").fetchUrl;
 					const tweet = await new Promise((Resolve, Reject) => {
@@ -906,6 +927,7 @@
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
 				try{
+					perf.start();
 					const msg = message.split(" ").splice(2);
 					const hosts = await fetch(api.hosts + msg[0])
 						 .then(response => response.json());	
@@ -958,6 +980,7 @@
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
 				try{
+					perf.start();
 					const fetchUrl = require("fetch").fetchUrl;
 					const bttv = await new Promise((Resolve, Reject) => {
 						fetchUrl(api.bttv + channel.substring(1), function(error, meta, body){ 
@@ -995,6 +1018,7 @@
 			permission: 'restricted',
 			invocation: async (channel, user, message, args) => {
 				try{
+					perf.start();
 					const playsound = await fetch("https://supinic.com/api/bot/playsound/list")
 						 .then(response => response.json());
 			 		
@@ -1024,6 +1048,7 @@
 			aliases: prefix + "dubtrack",
 			invocation: async (channel, user, message, args) => {
 				try{
+					perf.start();
 				  	if(user['user-id'] === '68136884') {
 						return '';
 					} else {
@@ -1062,6 +1087,7 @@
  			aliases: prefix + '4head',
  			invocation: async (channel, user, message, args) => {
 				try{
+					perf.start();
 					const arr = [
 						'general',
 						'general',
@@ -1118,6 +1144,7 @@
  			aliases: prefix + "randomline",
  			invocation: async (channel, user, message, args) => {
 				try{
+					perf.start();
 	 				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
 	 				const fetchUrl = require("fetch").fetchUrl;
 	 				const allChannels = [
@@ -1217,6 +1244,7 @@
  			aliases: prefix + 'bot',
  			invocation: async (channel, user, message, args) => {
 				try{
+					perf.start();
 	 				const dateMinute = new Date().getMinutes()
 	 				const time = await fetch("https://supinic.com/api/bot/active")
 			 			.then(response => response.json());	
@@ -1269,6 +1297,7 @@
  			aliases: prefix + 'pepelaugh',
  			invocation: async (channel, user, message, args) => {
  				try{
+ 					perf.start();
 					const { readdirSync } = require('fs')
 					const getDirectories = source =>
 					  	readdirSync('/opt/kbot/node_modules', { withFileTypes: true })
@@ -1289,6 +1318,7 @@
 	      	aliases: null,
 	      	invocation: async (channel, user, message, args) => {
 	      		try{
+	      			perf.start();
 		        	const msg = message.split(" ").splice(2);
 			    
 				    if (talkedRecently2.has(user['user-id'])) { //if set has user id - ignore
@@ -1317,6 +1347,7 @@
 	      	aliases: null,
 	      	invocation: async (channel, user, args) => {
 				try{
+					perf.start();
 			    	if (talkedRecently2.has(user['user-id'])) { //if set has user id - ignore
 						return '';  				    
 					} else {   
@@ -1340,6 +1371,7 @@
 	    	aliases: prefix + "mama",
 	    	invocation: async (channel, user, message, args) => {
     			try { 
+    				perf.start();
 		    		if (talkedRecently2.has(user['user-id'])) {
 						return '';  				    
 					} else {   
@@ -1397,6 +1429,7 @@
 			permission: 'restricted',
 			invocation: async (channel, user, message, args) => {
 				try {
+					perf.start();
 					const perms = allowEval.filter(
 						i => i.ID === user['user-id']
 					);
@@ -1436,6 +1469,7 @@
 			aliases: prefix + 'git',
 			invocation: async (channel, user, message, args) => {
 				try {
+					perf.start();
 			        const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
 				 		.then(response => response.json());
 				 	const commitDate = new Date(commits[0].commit.committer.date);
@@ -1476,6 +1510,7 @@
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
 				try {
+					perf.start();
 					if (talkedRecently.has(user['user-id'])) { 
 		       		 	return '';  
 				    } else {   
@@ -1499,6 +1534,7 @@
 			permission: 'restricted',
 			invocation: async (channel, user, message, args) => {
 				try {
+					perf.start();
 					if (talkedRecently.has('supee')) { 
 		       		 	return '';  
 				    } else {   
@@ -1543,9 +1579,8 @@
  		},
 
 	];
-const perf = require('execution-time')();	
+
 kb.on("chat", async (channel, user, message, self) => {
-	perf.start();
 	const input = message.split(' ') 
 	if (user['user-id'] === "441611405") return;
 	if (user['user-id'] === "81613973") return;
@@ -1595,8 +1630,6 @@ kb.on("chat", async (channel, user, message, self) => {
 		const banphraseMap = banphraseFilter.map(
 			i => i.banphrase
 			)
-			
-
 	    if (!result) {
 	    	kb.say(channel, "");
 	    } else { 
@@ -1616,13 +1649,17 @@ kb.on("chat", async (channel, user, message, self) => {
 					if (channel === '#nymn') {
 						kb.say(channel, ' object peepoSquad')
 						return;
-					}
-					else {
+					} else {
 						kb.say(channel, ' object 🦍')
 						return;
 					}
-				}
-				await kb.say(channel, result + ' [' + (perf.stop().time/1000).toFixed(2) + 's]');				
+				} else {
+					if (perf.stop().time>1000) {
+					 	kb.say(channel, result + ' [' + (perf.stop().time/1000).toFixed(2) + 's]');
+					} else {
+					 	kb.say(channel, result);
+					}	
+				}				
  			}
  		}
 	});
