@@ -69,7 +69,8 @@
 		{ID: '235611601', username: '21mtd'},
 		{ID: '180744357', username: 'abcdemlg'},
 		{ID: '275052455', username: 'vave2_'},
-		{ID: '218312842', username: 'yaYEET_xD'}
+		{ID: '218312842', username: 'yaYEET_xD'},
+		{ID: "44710465", username: "MarcFryd"}
 	];
 	const prefix = "kb ";
 	const talkedRecently = new Set();
@@ -81,11 +82,6 @@
 		    aliases: prefix + "uptime \u{E0000}",
 		    invocation: async (channel, user, message, args) => {
 			 	try{
-					const fs = require("fs");
-					const stats = fs.statSync("./bot.js");
-					const fileSizeInBytes = stats['size'];
-					const size = fileSizeInBytes / 1000
-					const used = process.memoryUsage().heapUsed / 1024 / 1024;
 			      	function format(seconds){
 				        function pad(s){
 				        	return (s < 10 ? '0' : '') + s;
@@ -107,12 +103,22 @@
 				        	}
 				        }
 				    } 
+					const fs = require("fs");
+					const stats = fs.statSync("./bot.js");
+					const fileSizeInBytes = stats['size'];
+					const size = fileSizeInBytes/1000
+					const used = process.memoryUsage().heapUsed/2048;
 				    const uptime = process.uptime();
 				    const os = require('os');
-				    const up = os.uptime() / 3600; //system uptime in hours
-			        const up2 = os.uptime() / 86400; //system uptime in days
+				    const up = os.uptime()/3600; //system uptime in hours
+			        const up2 = os.uptime()/86400; //system uptime in days
 			        const linecount = require('linecount')
 			        const lines = await new Promise((resolve, reject) => { //line count	
+		        	const usedToFixed = used.toFixed(2);
+		        	const usedToPercent = ((used / 8000)*100).toFixed(2);
+		        	const uptimeToFixed = up.toFixed(1);
+		        	const uptimeToDaysFixed = up2.toFixed(2);
+		        	const clientUptimeToDays = uptime/86400;
 		        	linecount('./bot.js', (err, count) => {
 				       	if (err) {
 				            reject(err);
@@ -129,8 +135,23 @@
 		              		talkedRecently.delete(user['user-id']);
 			            }, 8000);
 			        }
-		        	return user['username'] + ", my dank code is running for " + format(uptime) + ", has " + lines + " lines,  memory usage: " + 
-						    (used).toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " + up.toFixed(1) + "h (" + up2.toFixed(2) + " days) FeelsDankMan"; //limit >72h timers to days instead
+			        if (up>72 && uptime<172800) {
+		        		return user['username'] + ", my dank code is running for " + format(uptime) + ", has " + lines + " lines,  memory usage: " + 
+						    usedToFixed + " MB (" + usedToPercent + "%), host is up for " + uptimeToDaysFixed + " days FeelsDankMan";
+					} else {
+						if (uptime>172800 && up>72) {
+							return user['username'] + ", my dank code is running for " + clientUptimeToDays + ", has " + lines + " lines,  memory usage: " + 
+						    	usedToFixed + " MB (" + usedToPercent + "%), host is up for " + uptimeToFixed + "h (" + uptimeToDaysFixed + " days) FeelsDankMan";
+						}
+						else if (uptime>172800 && up<72) {
+							return user['username'] + ", my dank code is running for " + clientUptimeToDays + ", has " + lines + " lines,  memory usage: " + 
+						 	   usedToFixed + " MB (" + usedToPercent + "%), host is up for " + up.toFixed(1) + "h FeelsDankMan";
+						}
+						else {
+							return user['username'] + ", my dank code is running for " + format(uptime) + ", has " + lines + " lines,  memory usage: " + 
+						    	(used).toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " + up.toFixed(1) + "h (" + up2.toFixed(2) + " days) FeelsDankMan";
+						}
+					}
 				} catch(err) { 
 			  	    return user['username'] + ", " + err + " FeelsDankMan !!!";
 		        }
@@ -143,6 +164,27 @@
 		    invocation: async (channel, user, message, args, err) => {
 			    try {
 			    	const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
+			      	function format(seconds){
+				        function pad(s){
+				        	return (s < 10 ? '0' : '') + s;
+						}
+				        var hours = Math.floor(seconds / (60*60));
+				        var minutes = Math.floor(seconds % (60*60) / 60);
+				        var seconds = Math.floor(seconds % 60);
+				        if (hours === 0 && minutes != 0) {
+				        	return minutes + 'm ' + seconds + "s";
+				        } else {
+				        	if (minutes === 0 && hours === 0) {
+				        		return seconds + "s"
+				        	}
+				        	else if (seconds === 5 || hours === 0 && minutes === 0) {
+				        		return 'just now!'
+				        	}
+				        	else {
+				        		return hours + 'h ' + minutes + 'm ' + seconds + "s"; 
+				        	}
+				        }
+				    } 
 					if (talkedRecently.has(user['user-id'])) { //if set has user id - ignore
 			       	 	return '';   
 				    } else {   
@@ -164,38 +206,21 @@
 					 	const commitDate = new Date(commits[0].commit.committer.date);
 					 	const serverDate = new Date();
 					 	const diff = Math.abs(commitDate-serverDate)
-				      	const DifftoSeconds = (diff / 1000).toFixed(2);
-				      	function format(seconds){
-					        function pad(s){
-					        	return (s < 10 ? '0' : '') + s;
-							}
-					        var hours = Math.floor(seconds / (60*60));
-					        var minutes = Math.floor(seconds % (60*60) / 60);
-					        var seconds = Math.floor(seconds % 60);
-					        if (hours === 0 && minutes != 0) {
-					        	return minutes + 'm ' + seconds + "s";
-					        } else {
-					        	if (minutes === 0 && hours === 0) {
-					        		return seconds + "s"
-					        	}
-					        	else if (seconds === 5 || hours === 0 && minutes === 0) {
-					        		return 'just now!'
-					        	}
-					        	else {
-					        		return hours + 'h ' + minutes + 'm ' + seconds + "s"; 
-					        	}
-					        }
-					    } 
+				      	const latestCommit = (diff / 1000).toFixed(2);
 				        const ping = await kb.ping();
-					    return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻, latest commit: "   + format(DifftoSeconds) + " ago, (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + omegalul + ")"; //limit >72h timers to days instead
+				        const latestCommitToDays = latestCommit/259200
+				        if (latestCommit>259200) {
+				        	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻, latest commit: "   + latestCommitToDays + " ago, (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + omegalul + ")"; 
+				        } else {
+					    	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻, latest commit: "   + format(latestCommit) + " ago, (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + omegalul + ")"; 
+						}
 					}
 					else {
 						const ping = require('ping');
- 
 						const hosts = [msg[0]];
 						hosts.forEach(function(host){
 						    ping.sys.probe(host, function(isAlive){
-						        const mesg = isAlive ? 'host ' + host + ' is alive' : 'host ' + host + ' is dead';
+						        const mesg = isAlive ? 'host ' + host + ' is alive FeelsGoodMan' : 'host ' + host + ' is dead FeelsBadMan';
 						        kb.say(channel, user['username'] + ', ' + mesg)
 						    });
 						});
