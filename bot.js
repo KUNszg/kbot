@@ -114,10 +114,6 @@
 			        const up2 = os.uptime()/86400; //system uptime in days
 			        const linecount = require('linecount')
 			        const lines = await new Promise((resolve, reject) => { //line count	
-		        	const usedToPercent = ((used / 8000)*100).toFixed(2);
-		        	const uptimeToFixed = up.toFixed(1);
-		        	const uptimeToDaysFixed = up2.toFixed(2);
-		        	const clientUptimeToDays = uptime/86400;
 		        	linecount('./bot.js', (err, count) => {
 				       	if (err) {
 				            reject(err);
@@ -136,15 +132,15 @@
 			        }
 			        if (up>72 && uptime<172800) {
 		        		return user['username'] + ", my dank code is running for " + format(uptime) + ", has " + lines + " lines,  memory usage: " + 
-						    used.toFixed(2) + " MB (" + usedToPercent + "%), host is up for " + uptimeToDaysFixed + " days FeelsDankMan";
+						    used.toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " +  up2.toFixed(2) + " days FeelsDankMan";
 					} else {
 						if (uptime>172800 && up>72) {
-							return user['username'] + ", my dank code is running for " + clientUptimeToDays + ", has " + lines + " lines,  memory usage: " + 
-						    	used.toFixed(2) + " MB (" + usedToPercent + "%), host is up for " + uptimeToFixed + "h (" + uptimeToDaysFixed + " days) FeelsDankMan";
+							return user['username'] + ", my dank code is running for " +  uptime/86400 + ", has " + lines + " lines,  memory usage: " + 
+						    	used.toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " + up.toFixed(1) + "h (" +  up2.toFixed(2) + " days) FeelsDankMan";
 						}
 						else if (uptime>172800 && up<72) {
-							return user['username'] + ", my dank code is running for " + clientUptimeToDays + ", has " + lines + " lines,  memory usage: " + 
-						 	   used.toFixed(2) + " MB (" + usedToPercent + "%), host is up for " + uptimeToFixed + "h FeelsDankMan";
+							return user['username'] + ", my dank code is running for " +  uptime/86400 + ", has " + lines + " lines,  memory usage: " + 
+						 	   used.toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " + up.toFixed(1) + "h FeelsDankMan";
 						}
 						else {
 							return user['username'] + ", my dank code is running for " + format(uptime) + ", has " + lines + " lines,  memory usage: " + 
@@ -207,9 +203,8 @@
 					 	const diff = Math.abs(commitDate-serverDate)
 				      	const latestCommit = (diff/1000).toFixed(2);
 				        const ping = await kb.ping();
-				        const latestCommitToDays = latestCommit/259200
 				        if (latestCommit>259200) {
-				        	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻, latest commit: "   + latestCommitToDays + " ago, (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + omegalul + ")"; 
+				        	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻, latest commit: "   + latestCommit/259200 + " ago, (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + omegalul + ")"; 
 				        } else {
 					    	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻, latest commit: "   + format(latestCommit) + " ago, (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + omegalul + ")"; 
 						}
