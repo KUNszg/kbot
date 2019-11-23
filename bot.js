@@ -37,7 +37,6 @@
 	const rUni = require('random-unicodes');
 	const SpacexApiWrapper = require("spacex-api-wrapper");
 	const fetch = require("node-fetch");
-	const perf = require('execution-time')();
 	const tmidocs = "https://github.com/tmijs/docs/tree/gh-pages/_posts/v1.4.2";
 	const nam = "🏍 🚑 NaM 🚜 🚓 🚛 🚕 NaM 🚚 🚗 🏎 🚜 🚓 🏍 NaM 🚕 🚜 🚕 🚛 🚕 🚚 🚗 SORRY FOR TRAFFIC NAM 🚕 🚜 🚕 🚓 🚛 🏎 🚑 🚒 NaM 🚓 🏍 🚓 🚜 NaM 🏎 🏎 🚜 NaM 🏎 🚜 🚓 🚜 NaM 🚑 🚑 NaM 🚗 🚗 🚚 NaM 🚗 🏎 🏎 🚚 🚛 NaM 🚓 🚜 🚕 🚜 🚙 🏍 NaM 🚙 🏍 🚌 🚲 NaM 🚌 🚐 🚌 🚒 NaM 🚎 🚒 🚙 🚕 🚕 🚑 🏍 🚓 🚜 🚛 NaM 🚚 🚚 🚗 🚗 🚜 🚓 NaM 🚑 🚒 🚑 🚲 🚒🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷";
 	const pajas = "⠄⠄⠄⢀⣀⣤⣤⣤⣤⣤⣤⣀⠄⠄⠄⠄⠄⠄⠄⣀⣀⣤⣀⠄⠄⠄⠄⠄ ⠄⠄⣴⣿⣿⣸⣿⣿⠿⠿⠿⠿⢿⣷⣦⡀⢠⣾⣿⣿⣿⣿⣿⣷⣄⠄⠄⠄ ⠄⢰⣿⣟⣛⣩⣵⣶⣿⣿⣿⣿⣷⣶⣭⣕⢹⣯⣶⣶⣶⣶⣶⣦⣿⣆⠄⠄ ⣴⣾⡟⣿⣿⣿⠿⣛⣭⣭⣶⣶⣭⣭⣝⠻⢃⣩⣭⣴⣶⣶⣶⣬⣍⣉⡂⠄ ⣿⣿⠃⣸⡟⣡⣾⣿⣿⣿⣿⢉⠉⣻⣿⣷⢈⣿⣿⣿⣿⣿⣿⣟⢉⠙⣿⣷ ⣿⣿⣿⣿⣧⠻⣿⣿⣿⣿⣿⣶⣴⡿⢟⣫⡬⣙⡛⠿⠿⠿⠿⠿⠷⠾⠛⣩ ⣸⣿⣿⣿⣿⣿⣶⠬⠭⠭⠭⠥⠶⣚⣿⠟⣱⣟⠿⠿⣿⣷⡶⠾⢛⣛⠉⠁ ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣥⣾⣿⣿⣷⣴⣶⣶⣾⣿⣿⣿⠇⠄ ⣿⣿⣿⣿⡿⠿⠿⠿⠿⣿⣿⣿⣿⠿⠿⠿⠟⣛⣛⣛⣛⣋⣭⣭⣶⣶⡾⠄ ⣿⣿⣿⣯⢸⣿⣿⢟⣛⣒⣒⣒⣒⣛⣛⣛⣋⣭⣭⣭⣭⣴⣶⠶⣶⠖⠄⠄ ⣿⣿⣿⣍⠢⣭⣭⣭⣭⣭⣭⣭⣛⣛⣛⣛⣛⣛⣛⣛⣭⣭⠶⠋⠄⠄⠄⠄ ⠄⣠⣦⣭⣭⣭⣝⣛⣓⣊⡩⠭⠭⠭⠭⠿⢛⣛⣋⣭⣌⡀⠄⠄⠄⠄⠄⠄ ⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠄⠄⠄⠄ ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠄⠄⠄ ";
@@ -115,7 +114,6 @@
 			        const up2 = os.uptime()/86400; //system uptime in days
 			        const linecount = require('linecount')
 			        const lines = await new Promise((resolve, reject) => { //line count	
-		        	const usedToFixed = used.toFixed(2);
 		        	const usedToPercent = ((used / 8000)*100).toFixed(2);
 		        	const uptimeToFixed = up.toFixed(1);
 		        	const uptimeToDaysFixed = up2.toFixed(2);
@@ -138,15 +136,15 @@
 			        }
 			        if (up>72 && uptime<172800) {
 		        		return user['username'] + ", my dank code is running for " + format(uptime) + ", has " + lines + " lines,  memory usage: " + 
-						    usedToFixed + " MB (" + usedToPercent + "%), host is up for " + uptimeToDaysFixed + " days FeelsDankMan";
+						    used.toFixed(2) + " MB (" + usedToPercent + "%), host is up for " + uptimeToDaysFixed + " days FeelsDankMan";
 					} else {
 						if (uptime>172800 && up>72) {
 							return user['username'] + ", my dank code is running for " + clientUptimeToDays + ", has " + lines + " lines,  memory usage: " + 
-						    	usedToFixed + " MB (" + usedToPercent + "%), host is up for " + uptimeToFixed + "h (" + uptimeToDaysFixed + " days) FeelsDankMan";
+						    	used.toFixed(2) + " MB (" + usedToPercent + "%), host is up for " + uptimeToFixed + "h (" + uptimeToDaysFixed + " days) FeelsDankMan";
 						}
 						else if (uptime>172800 && up<72) {
 							return user['username'] + ", my dank code is running for " + clientUptimeToDays + ", has " + lines + " lines,  memory usage: " + 
-						 	   usedToFixed + " MB (" + usedToPercent + "%), host is up for " + uptimeToFixed + "h FeelsDankMan";
+						 	   used.toFixed(2) + " MB (" + usedToPercent + "%), host is up for " + uptimeToFixed + "h FeelsDankMan";
 						}
 						else {
 							return user['username'] + ", my dank code is running for " + format(uptime) + ", has " + lines + " lines,  memory usage: " + 
@@ -1550,8 +1548,9 @@
  		},
 
 	];
-perf.start();
+const perf = require('execution-time')();	
 kb.on("chat", async (channel, user, message, self) => {
+	perf.start();
 	const input = message.split(' ') 
 	if (user['user-id'] === "441611405") return;
 	if (user['user-id'] === "81613973") return;
@@ -1628,8 +1627,7 @@ kb.on("chat", async (channel, user, message, self) => {
 						return;
 					}
 				}
-				const results = perf.stop(); 
-				await kb.say(channel, result + ' [' + (results.time/1000).toFixed(1) + 's]');				
+				await kb.say(channel, result + ' [' + (perf.stop().time/1000).toFixed(2) + 's]');				
  			}
  		}
 	});
