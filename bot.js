@@ -75,6 +75,7 @@
 		{ID: "44710465", username: "MarcFryd"}
 	];
 	const prefix = "kb ";
+	const commandsExecuted = [];
 	const talkedRecently = new Set();
 
 	const commands = [
@@ -135,7 +136,7 @@
 			        }
 			        if (up>72 && uptime<172800) {
 		        		return user['username'] + ", my dank code is running for " + format(uptime) + ", has " + lines + " lines,  memory usage: " + 
-						    used.toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " +  up2.toFixed(2) + " days FeelsDankMan";
+						    used.toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " +  up2.toFixed(2) + " days, commands used in this session " + commandsExecuted.length + " FeelsDankMan";
 					} else {
 						if (uptime>172800 && up>72) {
 							return user['username'] + ", my dank code is running for " +  uptime/86400 + ", has " + lines + " lines,  memory usage: " + 
@@ -208,9 +209,9 @@
 				      	const latestCommit = (diff/1000).toFixed(2);
 				        const ping = await kb.ping();
 				        if (latestCommit>259200) {
-				        	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻, latest commit: "   + latestCommit/259200 + " ago, (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + omegalul + ")"; 
+				        	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: "   + latestCommit/259200 + " ago (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + omegalul + ")"; 
 				        } else {
-					    	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻, latest commit: "   + format(latestCommit) + " ago, (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + omegalul + ")"; 
+					    	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: "   + format(latestCommit) + " ago (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + omegalul + ")"; 
 						}
 					}
 					else {
@@ -1357,9 +1358,9 @@
 		         			talkedRecently2.delete(user['user-id']);
 			            }, 5000);
 			        }
-		        	return user['username'] + ", kunszgbot is owned by KUNszg and " + " ALazyMeme ".replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join(""
+		        	return user['username'] + ", kunszgbot is owned by KUNszg and " + " ALazyMeme".replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join(""
 		        		).replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join("") + " , Node JS " + process.version + 
-		        		", running on a DigitalOcean droplet, use prefix 'kbot', for commands list use 'kbot commands'.";
+		        		", running on a DigitalOcean droplet " + process.platform() + ' ' + process.arch() ", for commands list use 'kb commands'.";
 	      		} catch(err) {
 					console.log(err);
 					return user['username'] + err + ' FeelsDankMan !!!';
@@ -1663,9 +1664,11 @@ kb.on("chat", async (channel, user, message, self) => {
 						return;
 					}
 				} else {
+					commandsExecuted.push('1');
 					if (perf.stop().time>1000) {
 					 	kb.say(channel, result + ' [' + (perf.stop().time/1000).toFixed(2) + 's]');
 					} else {
+						commandsExecuted.push('1');
 					 	kb.say(channel, result);
 					}	
 				}				
@@ -1784,24 +1787,6 @@ setInterval(() => {
 const dankPrefix = '?';
 const talkedRecently2 = new Set();
 const dankeval = [
-	{
-     	name: dankPrefix + "bot",
-      	aliases: dankPrefix + 'help',
-      	invocation: (channel, user, args) => {
-	    	if (talkedRecently2.has(user['user-id'])) { //if set has user id - ignore
-				return '';  				    
-			} else {   
-	     		talkedRecently2.add(user['user-id']);
-            	setTimeout(() => {
- 					talkedRecently2.delete(user['user-id']);
-	            }, 5000);
-	        }
-        	return user['username'] + ", kunszgbot is owned by KUNszg and " + " ALazyMeme ".replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join(""
-        		).replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join("") +  " , Node JS " + process.version + 
-        		", running on DigitalOcean server, use prefix 'kbot', for commands list use 'kbot commands'.";
-      	}
-    },
-
     {
 		name: dankPrefix + 'cookie',
 		aliases: null,
