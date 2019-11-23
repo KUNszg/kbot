@@ -1820,7 +1820,10 @@ const dankeval = [
          			talkedRecently2.delete(user['user-id']);
 	            }, 30000);
 	        }
-	        return 'get 🅱️inged back ' + user['username'] + ' peepoSadDank';
+	        if (user['user-id'] === '68136884') {
+	        	return ''
+	        }
+	        return 'get 🅱️inged back ' + user['username'] + ' FeelsDankMan';
 		}
 	},
 
