@@ -1531,7 +1531,7 @@
 			        }
 					const msg = message.split(' ').splice(2);
 					fs.appendFileSync('/opt/kbot/db/suggestions.js', '\n' + '"' + new Date().toLocaleDateString() + ', ' + new Date().toLocaleTimeString() + ' => ' + user['username'] + ": " + msg.join(' ') + '"')
-					return user['username'] + ', thanks for the suggestion, it will be processed eventually Kapp [ID ' fs.readFileSync('/opt/kbot/db/suggestions.js').toString().split('\n').join(' ').split('=>').length + ']';
+					return user['username'] + ', thanks for the suggestion, it will be processed eventually Kapp [ID ' + fs.readFileSync('/opt/kbot/db/suggestions.js').toString().split('\n').join(' ').split('=>').length + ']';
  				} catch(err) {
 					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
 				}
