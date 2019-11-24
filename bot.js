@@ -1566,6 +1566,28 @@
 			}
 		},
 
+		{
+			name: prefix + 'check',
+			aliases: null,
+			permission: 'restricted',
+			invocation: async (channel, user, message, args) => {
+				try {
+					const perms = allowEval.filter(
+						i => i.ID === user['user-id']
+					);
+					if (!perms[0]) {
+						return "";
+					} else {
+						perf.start();
+						const msg = message.split(' ')[2];
+						return fs.readFileSync('/opt/kbot/db/suggestions.js').toString().split('\n')[msg].split('=>')[1].replace(/"/g, '');
+					}
+				} catch(err) {
+					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
+				}
+			}
+		},
+
  		{
  			name: prefix + "commands",
  			aliases: null,
