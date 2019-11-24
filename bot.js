@@ -13,7 +13,7 @@
 			username: 'kunszgbot',
 			password: api.oauth,
 		},
-		channels: ['kunszg','pajlada','nymn','ourlordtalos','ali2465','kunszgbot','leebaxd','sinris','haywoodjabroni','haxk','rrraz','ourlordtalos','vesp3r'],
+		channels: ['kunszg','pajlada','supinic','nymn','ourlordtalos','ali2465','kunszgbot','leebaxd','sinris','haywoodjabroni','haxk','rrraz','ourlordtalos','vesp3r'],
 	};
 
 	const tmi = require('tmi.js');
@@ -2001,8 +2001,7 @@ kb.on("chat", async (channel, user, message, self) => {
 	})
 
 	*/
-
-/*
+	
 {
 	  //active commands
 	  kb.on('chat', function (channel, user, message) { 
@@ -2074,7 +2073,6 @@ kb.on("chat", async (channel, user, message, self) => {
 	   kb.say("Supinic", username + " is continuing the gifted sub they got from " + sender + " PagChomp ")
 	 });
 	}
-	*/
 })
 
 const Discord = require('discord.js');
