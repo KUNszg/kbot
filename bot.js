@@ -13,7 +13,7 @@
 			username: 'kunszgbot',
 			password: api.oauth,
 		},
-		channels: ['kunszg','pajlada','supinic','nymn','ourlordtalos','ali2465','kunszgbot','leebaxd','sinris','haywoodjabroni','haxk','rrraz','ourlordtalos','vesp3r'],
+		channels: ['kunszg','pajlada','supinic','nymn','ourlordtalos','itsgarosath','ali2465','kunszgbot','leebaxd','sinris','haywoodjabroni','haxk','rrraz','ourlordtalos','vesp3r'],
 	};
 
 	const tmi = require('tmi.js');
@@ -1520,15 +1520,22 @@
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
 				try {
-					perf.start();
-					if (talkedRecently.has(user['user-id'])) { 
-		       		 	return '';  
-				    } else {   
-				     	talkedRecently.add(user['user-id']);
-			            setTimeout(() => {
-			              	talkedRecently.delete(user['user-id']);
-			            }, 8000);
-			        }
+					const perms = allowEval.filter(
+						i => i.ID === user['user-id']
+					);
+					if (!perms[0]) {
+						return "";
+					} else {
+						perf.start();
+						if (talkedRecently.has(user['user-id'])) { 
+			       		 	return '';  
+					    } else {   
+					     	talkedRecently.add(user['user-id']);
+				            setTimeout(() => {
+				              	talkedRecently.delete(user['user-id']);
+				            }, 8000);
+				        }
+				    }
 					const msg = message.split(' ').splice(2);
 					fs.appendFileSync('/opt/kbot/db/suggestions.js', '\n' + '"' + new Date().toLocaleDateString() + ', ' + new Date().toLocaleTimeString() + ' => ' + user['username'] + ": " + msg.join(' ') + '"')
 					return user['username'] + ', thanks for the suggestion, it will be processed eventually Kapp [ID ' + fs.readFileSync('/opt/kbot/db/suggestions.js').toString().split('\n').join(' ').split('=>').length + ']';
@@ -1558,7 +1565,7 @@
 					} else {
 						let amount = 0;
 						fs.appendFileSync('/opt/kbot/db/supee.js', ' "' + amount++ + '", ')
-						return user['username'] + ', supi went to toilet ' + fs.readFileSync('./supee.js').toString().split('",').length + ' times peepoSadDank 💦'
+						return user['username'] + ', supi went to toilet ' + fs.readFileSync('./supee.js').toString().split('",').length-1 + ' times peepoSadDank 💦'
 					}
 				} catch(err) {
 					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
