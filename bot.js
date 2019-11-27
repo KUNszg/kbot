@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 
 'use strict';
+	const fs = require('fs');
 	const api = require('./config.js')
+	const channelOptions = fs.readFileSync('./db/channels.js').toString().split('"').filter(
+		function(i){ 
+			return i != null; 
+		}).join('').split(' ')
 	const options = {
 		options: {
 			debug: true,
@@ -13,7 +18,7 @@
 			username: 'kunszgbot',
 			password: api.oauth,
 		},
-		channels: ['kunszg','pajlada','supinic','nymn','ourlordtalos','itsgarosath','ali2465','kunszgbot','leebaxd','sinris','haywoodjabroni','haxk','rrraz','ourlordtalos','vesp3r'],
+		channels: channelOptions,
 	};
 
 	const tmi = require('tmi.js');
@@ -33,7 +38,6 @@
 	const rndSong = require('rnd-song');//rt command - random track using youtube search api
 	const rf = require('random-facts');//rf command - random fact
 	const count = require('mathjs');
-	const fs = require('fs');
 	const rUni = require('random-unicodes');
 	const SpacexApiWrapper = require("spacex-api-wrapper");
 	const fetch = require("node-fetch");
@@ -468,12 +472,13 @@
 				        return user['username'] + ", invalid parameter or no channel provided";
 				    }
 				    else if (msg[0] == "join") { 
+				       	 	fs.appendFileSync('./db/channels.js', ' "' + msg[1] + '"'); 
 				       	 	kb.join(msg[1]);
-				        	return "succesfully joined " + msg[1].split("").toString().replace(/,/g,"\u{E0000}") + " :) 👍";
+				        	return "succesfully joined :) 👍";
 				    }
 				    else if (msg[0] == "part") {
 				        kb.part(msg[1]);       
-				        return "done";
+				        return "parted channel for this session";
 				    }
 				    else if (!msg[0] && !msg[1]) {
 				        return "I'm active in " + length + " channels => " + joinedChannels + " 4Head";
