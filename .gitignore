@@ -1,4 +1,4 @@
 config.js
-suggestions.js
-supee.js
-channels.js
+db/suggestions.js
+db/supee.js
+db/channels.js

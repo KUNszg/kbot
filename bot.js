@@ -72,7 +72,8 @@ const allowCookie = [
 	{ID: '180744357', username: 'abcdemlg'},
 	{ID: '275052455', username: 'vave2_'},
 	{ID: '218312842', username: 'yaYEET_xD'},
-	{ID: "44710465", username: "MarcFryd"}
+	{ID: '44710465', username: 'MarcFryd'},
+	{ID: '49739598', username: 'thedangerousbros'}
 ];
 const prefix = "kb ";
 const commandsExecuted = [];
