@@ -530,11 +530,17 @@ const commands = [
 	              		talkedRecently.delete(user['user-id']);
 		            }, 5000);
 		        }
+		        const response = msg.join(" ").replace(/[\u{E0000}|\u{206d}]/gu, '').split("").map(i => i.charCodeAt(0).toString(2)).join(" ");
 				if (!msg.join(" ")) {
 					return user['username'] + ", please provide text to convert B)"
 				}
 				else {
-	  				return user['username'] + ", " + msg.join(" ").replace(/[\u{E0000}|\u{206d}]/gu, '').split("").map(i => i.charCodeAt(0).toString(2)).join(" ");
+					if (response.length > 500) {
+						return user['username'] + ', returned message is too long to be displayed in chat (>500 characters)';
+					}
+					else {
+		  				return user['username'] + ', ' + response;
+	  				}
 				}
 			} catch(err) {    	
 		  	    return user['username'] + ", " + err + " FeelsDankMan !!!";
@@ -1046,210 +1052,171 @@ const commands = [
 	},
 
 	{
-		name: prefix + "song",
-		aliases: prefix + "dubtrack",
+		name: prefix + '4Head',
+		aliases: prefix + '4head',
 		invocation: async (channel, user, message, args) => {
 			try{
 				perf.start();
-			  	if(user['user-id'] === '68136884') {
-					return '';
-				} else {
-					const dubtrack = await fetch("https://api.dubtrack.fm/room/supinic")
-			 			.then(response => response.json());
-		 		
-		 			if (talkedRecently.has(user['user-id'])) { 
-			        		return '';  
-			    		} else {   
-			     			talkedRecently.add(user['user-id']);
-		            			setTimeout(() => {
-		              				talkedRecently.delete(user['user-id']);
-		            			}, 5000);
-		        		}
-		 			if (channel != '#supinic') {
-		 				return user['username'] + ', that command is not available in this channel.'
-		 			}
-		 			else {
-				 		if (dubtrack.data.currentSong === null) {
-				 			return user['username'] + ', there is no song currently playing :/'
-				 		}
-				 	else {	
-				 		return user['username'] + ', current song in dubtrack: ' + dubtrack.data.currentSong.name + 
-				 			" " + "https://www.youtube.com/watch?v=" + dubtrack.data.currentSong.fkid;
-			 			}
-			 		}
+				const arr = [
+					'general',
+					'general',
+					'general',
+					'general',
+					'general',
+					'programming',
+					'programming'
+				];
+				function firstLettertoLowerCase(string) {
+					return string.charAt(0).toLowerCase() + string.slice(1);
 				}
-		 	} catch(err) {
-			 	return user['username'] + ", " + err + " FeelsDankMan !!!";
+
+		 		if (talkedRecently.has(user['user-id'])) { 
+			        return '';  
+			    } else {   
+			     	talkedRecently.add(user['user-id']);
+	            	setTimeout(() => {
+		              	talkedRecently.delete(user['user-id']);
+		            }, 4000);
+		        }
+
+				const randomPs = arr[Math.floor(Math.random()*arr.length)];
+
+				if (randomPs === 'programming') {
+					const joke = await fetch(api.joke1)
+			 			.then(response => response.json()); 
+
+		 			setTimeout(() => { 
+		 				kb.say(channel, firstLettertoLowerCase(joke[0].punchline.replace(/\./g, '')) + ' 4HEad '
+	 				)}, 3000);
+		 			return user['username'] + ', ' + firstLettertoLowerCase(joke[0].setup);
+		 		}
+		 		else if (randomPs === 'general') {
+		 			const jokeGeneral = await fetch(api.joke2) 
+			 			.then(response => response.json()); 
+
+		 			setTimeout(() => { 
+		 				kb.say(channel, firstLettertoLowerCase(jokeGeneral.punchline.replace(/\./g, '')) + ' 4HEad '
+	 				)}, 3000);
+		 			return user['username'] + ', ' + firstLettertoLowerCase(jokeGeneral.setup);
+		 		}
+	 		} catch(err) {
+				console.log(err);
+				return user['username'] + err + ' FeelsDankMan !!!';
 			}
 		}
-		},
+	},
 
-		{
-			name: prefix + '4Head',
-			aliases: prefix + '4head',
-			invocation: async (channel, user, message, args) => {
-				try{
-					perf.start();
-					const arr = [
-						'general',
-						'general',
-						'general',
-						'general',
-						'general',
-						'programming',
-						'programming'
-					];
-					function firstLettertoLowerCase(string) {
-						return string.charAt(0).toLowerCase() + string.slice(1);
-					}
-
-			 		if (talkedRecently.has(user['user-id'])) { 
-				        return '';  
-				    } else {   
-				     	talkedRecently.add(user['user-id']);
-		            	setTimeout(() => {
-			              	talkedRecently.delete(user['user-id']);
-			            }, 4000);
-			        }
-
-					const randomPs = arr[Math.floor(Math.random()*arr.length)];
-
-					if (randomPs === 'programming') {
-						const joke = await fetch(api.joke1)
-				 			.then(response => response.json()); 
-
-			 			setTimeout(() => { 
-			 				kb.say(channel, firstLettertoLowerCase(joke[0].punchline.replace(/\./g, '')) + ' 4HEad '
-		 				)}, 3000);
-			 			return user['username'] + ', ' + firstLettertoLowerCase(joke[0].setup);
-			 		}
-			 		else if (randomPs === 'general') {
-			 			const jokeGeneral = await fetch(api.joke2) 
-				 			.then(response => response.json()); 
-
-			 			setTimeout(() => { 
-			 				kb.say(channel, firstLettertoLowerCase(jokeGeneral.punchline.replace(/\./g, '')) + ' 4HEad '
-		 				)}, 3000);
-			 			return user['username'] + ', ' + firstLettertoLowerCase(jokeGeneral.setup);
-			 		}
-		 		} catch(err) {
-					console.log(err);
-					return user['username'] + err + ' FeelsDankMan !!!';
-				}
-			}
-		},
-
-		{
-			name: prefix + "rl",
-			aliases: prefix + "randomline",
-			invocation: async (channel, user, message, args) => {
-				try{
-					perf.start();
-	 				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
-	 				const fetchUrl = require("fetch").fetchUrl;
-	 				const allChannels = [
-	 				'nani',
-	 				'forsen',
-	 				'forsen',
-	 				'forsen',
-	 				'pajlada',
-	 				'pajlada',
-	 				'pajlada'
-	 				];
-		 			const randomChannel = allChannels[Math.floor(Math.random()*allChannels.length)]
-		 			if (user['user-id'] === '178087241') {
-		 				if (!msg[0]) {
-							const fetchUrl = require("fetch").fetchUrl;
-							const rl = await new Promise((Resolve, Reject) => {
-								fetchUrl(api.rl + randomChannel +  "/user/" + user['username'] + "/random", function(error, meta, body) { 
-								    if (error) {
-								    	console.log(error);
-									   	Reject(error)
-						   			}
-								    else {
-									   	Resolve(body.toString().replace(/"/g, ''))
-								   	}
-								})
-						  	});
-		 					return '#' + randomChannel.replace(/^(.{2})/,"$1\u{E0000}") + ', ' + user['username'] + ': ' + rl.toString()
-	 					} else {
-							const fetchUrl = require("fetch").fetchUrl;
-							const rl = await new Promise((Resolve, Reject) => {
-								fetchUrl(api.rl + randomChannel +  "/user/" + msg[0] + "/random", function(error, meta, body) { 
-								    if (error) {
-								    	console.log(error);
-									   	Reject(error)
-								   	}
-								    else {
-									   	Resolve(body.toString())
-								   	}
-								})
-						  	});
-						  	return '#' + randomChannel.replace(/^(.{2})/,"$1\u{E0000}") + ', ' + msg[0] + ": " + rl.toString().replace(/"/g, '')
-	 					}
-		 			} else {
-	 					if (!msg[0]) {
-		 					if (talkedRecently.has(user['user-id'])) { 
-				       		 	return '';    
-						    } else {   
-						     	talkedRecently.add(user['user-id']);
-					            setTimeout(() => {
-					              	talkedRecently.delete(user['user-id']);
-					            }, 5000);
-					        }
-							const rl = await new Promise((Resolve, Reject) => {
-								fetchUrl(api.rl + randomChannel +  "/user/" + user['username'] + "/random", function(error, meta, body) { 
-								    if (error) {
-								    	console.log(error);
-									   	Reject(error)
-								   	}
-								    else {
-									   	Resolve(body.toString().replace(/"/g, ''))
-								   	}
-								})
-						  	});
-		 					return '#' + randomChannel + ', ' + user['username'] + ': ' + rl.toString()
-	 					} else {
-	 						if (talkedRecently.has(user['user-id'])) { 
-					        	return ''; 
-					    	} else {
-						  		talkedRecently.add(user['user-id']);
-					            setTimeout(() => {
-					              	talkedRecently.delete(user['user-id']);
-					            }, 2000);
-					        }
-							const rl = await new Promise((Resolve, Reject) => {
-								fetchUrl(api.rl + randomChannel +  "/user/" + msg[0] + "/random", function(error, meta, body) { 
-								    if (error) {
-								    	console.log(error);
-									   	Reject(error)
-								   	}
-								    else {
-									   	Resolve(body.toString())
-								   	}
-								})
-						  	});
-						  	return '#' + randomChannel + ', ' + msg[0] + ": " + rl.toString().replace(/"/g, '')
-						}
-					}
-				} catch(err) {
-					console.log(err);
-					return user['username'] + err + ' FeelsDankMan !!!';
-				}		
-			}
-		},
-
-		{
-			name: prefix + 'bots',
-			aliases: prefix + 'bot',
-			invocation: async (channel, user, message, args) => {
+	{
+		name: prefix + "rl",
+		aliases: prefix + "randomline",
+		invocation: async (channel, user, message, args) => {
 			try{
 				perf.start();
- 				const dateMinute = new Date().getMinutes()
- 				const time = await fetch("https://supinic.com/api/bot/active")
+ 				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
+ 				const fetchUrl = require("fetch").fetchUrl;
+ 				const allChannels = [
+ 				'nani',
+ 				'forsen',
+ 				'forsen',
+ 				'forsen',
+ 				'pajlada',
+ 				'pajlada',
+ 				'pajlada'
+ 				];
+	 			const randomChannel = allChannels[Math.floor(Math.random()*allChannels.length)]
+	 			if (user['user-id'] === '178087241') {
+	 				if (!msg[0]) {
+						const fetchUrl = require("fetch").fetchUrl;
+						const rl = await new Promise((Resolve, Reject) => {
+							fetchUrl(api.rl + randomChannel +  "/user/" + user['username'] + "/random", function(error, meta, body) { 
+							    if (error) {
+							    	console.log(error);
+								   	Reject(error)
+					   			}
+							    else {
+								   	Resolve(body.toString().replace(/"/g, ''))
+							   	}
+							})
+					  	});
+	 					return '#' + randomChannel.replace(/^(.{2})/,"$1\u{E0000}") + ', ' + user['username'] + ': ' + rl.toString()
+ 					} else {
+						const fetchUrl = require("fetch").fetchUrl;
+						const rl = await new Promise((Resolve, Reject) => {
+							fetchUrl(api.rl + randomChannel +  "/user/" + msg[0] + "/random", function(error, meta, body) { 
+							    if (error) {
+							    	console.log(error);
+								   	Reject(error)
+							   	}
+							    else {
+								   	Resolve(body.toString())
+							   	}
+							})
+					  	});
+					  	return '#' + randomChannel.replace(/^(.{2})/,"$1\u{E0000}") + ', ' + msg[0] + ": " + rl.toString().replace(/"/g, '')
+ 					}
+	 			} else {
+ 					if (!msg[0]) {
+	 					if (talkedRecently.has(user['user-id'])) { 
+			       		 	return '';    
+					    } else {   
+					     	talkedRecently.add(user['user-id']);
+				            setTimeout(() => {
+				              	talkedRecently.delete(user['user-id']);
+				            }, 5000);
+				        }
+						const rl = await new Promise((Resolve, Reject) => {
+							fetchUrl(api.rl + randomChannel +  "/user/" + user['username'] + "/random", function(error, meta, body) { 
+							    if (error) {
+							    	console.log(error);
+								   	Reject(error)
+							   	}
+							    else {
+								   	Resolve(body.toString().replace(/"/g, ''))
+							   	}
+							})
+					  	});
+	 					return '#' + randomChannel + ', ' + user['username'] + ': ' + rl.toString()
+ 					} else {
+ 						if (talkedRecently.has(user['user-id'])) { 
+				        	return ''; 
+				    	} else {
+					  		talkedRecently.add(user['user-id']);
+				            setTimeout(() => {
+				              	talkedRecently.delete(user['user-id']);
+				            }, 2000);
+				        }
+						const rl = await new Promise((Resolve, Reject) => {
+							fetchUrl(api.rl + randomChannel +  "/user/" + msg[0] + "/random", function(error, meta, body) { 
+							    if (error) {
+							    	console.log(error);
+								   	Reject(error)
+							   	}
+							    else {
+								   	Resolve(body.toString())
+							   	}
+							})
+					  	});
+					  	return '#' + randomChannel + ', ' + msg[0] + ": " + rl.toString().replace(/"/g, '')
+					}
+				}
+			} catch(err) {
+				console.log(err);
+				return user['username'] + err + ' FeelsDankMan !!!';
+			}		
+		}
+	},
+
+	{
+		name: prefix + 'bots',
+		aliases: prefix + 'bot',
+		invocation: async (channel, user, message, args) => {
+			try{
+				perf.start();
+					const dateMinute = new Date().getMinutes()
+					const time = await fetch("https://supinic.com/api/bot/active")
 		 			.then(response => response.json());	
 
- 				if (talkedRecently.has(user['user-id'])) { 
+					if (talkedRecently.has(user['user-id'])) { 
 			        return ''; 
 		    	} else {
 				  	talkedRecently.add(user['user-id']);
@@ -1283,37 +1250,37 @@ const commands = [
 	 					i => ' ' + i.name + ' ' + format(
 	 						(Math.abs(new Date() - new Date(i.lastSeenTimestamp)))/1000)
 	 					);
- 					return user['username'] + ', active known bots MrDestructoid 👉' + bots;
+						return user['username'] + ', active known bots MrDestructoid 👉' + bots;
 	 			}
 			} catch(err) {
 				console.log(err);
 				return user['username'] + err + ' FeelsDankMan !!!';
 			}
 		}
-		},
+	},
 		
 	{
-			name: prefix + 'PepeLaugh',
-			aliases: prefix + 'pepelaugh',
-			invocation: async (channel, user, message, args) => {
-				try{
-					perf.start();
-				const { readdirSync } = require('fs')
-				const getDirectories = source =>
-				  	readdirSync('/opt/kbot/node_modules', { withFileTypes: true })
-				    	.filter(dirent => dirent.isDirectory())
-				    	.map(dirent => dirent.name)
-				
-				return user['username'] + ', my node_modules directory has ' + getDirectories().length + ' modules PepeLaugh'; 	
-				
-				} catch(err) {
+		name: prefix + 'PepeLaugh',
+		aliases: prefix + 'pepelaugh',
+		invocation: async (channel, user, message, args) => {
+			try{
+				perf.start();
+			const { readdirSync } = require('fs')
+			const getDirectories = source =>
+			  	readdirSync('/opt/kbot/node_modules', { withFileTypes: true })
+			    	.filter(dirent => dirent.isDirectory())
+			    	.map(dirent => dirent.name)
+			
+			return user['username'] + ', my node_modules directory has ' + getDirectories().length + ' modules PepeLaugh'; 	
+			
+			} catch(err) {
 				console.log(err);
 				return user['username'] + err + ' FeelsDankMan !!!';
 			}
-			}
-		},
+		}
+	},
 
-		{
+	{
       	name: prefix + "dank",
       	aliases: null,
       	invocation: async (channel, user, message, args) => {
@@ -1536,7 +1503,7 @@ const commands = [
 			    }
 				const msg = message.split(' ').splice(2);
 				fs.appendFileSync('/opt/kbot/db/suggestions.js', '\n' + '"' + new Date().toLocaleDateString() + ', ' + new Date().toLocaleTimeString() + ' => ' + user['username'] + ": " + msg.join(' ') + '"')
-				return user['username'] + ', thanks for the suggestion, it will be processed eventually Kapp [ID ' + fs.readFileSync('/opt/kbot/db/suggestions.js').toString().split('\n').join(' ').split('=>').length + ']';
+				return user['username'] + ', thanks for the suggestion, it will be processed eventually Kapp [ID ' + fs.readFileSync('/opt/kbot/db/suggestions.js').toString().split('\n').join(' ').split('=>').length -1 + ']';
 				} catch(err) {
 				return user['username'] + ', ' + err + ' FeelsDankMan !!!';
 			}
