@@ -193,17 +193,20 @@ const commands = [
 		            }, 5000);
 		        }
 			    if (!msg[0]) {
-			    	const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits?per_page=500')
+			    	const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits?per_page=100')
 				 		.then(response => response.json());
+			 		const commits2 = await fetch('https://api.github.com/repos/KUNszg/kbot/commits?page=2&per_page=100')
+				 		.then(response => response.json());
+				 	commitsCount = commits.length + commits2.length;
 				 	const commitDate = new Date(commits[0].commit.committer.date);
 				 	const serverDate = new Date();
 				 	const diff = Math.abs(commitDate-serverDate)
 			      	const latestCommit = (diff/1000).toFixed(2);
 			        const ping = await kb.ping();
 			        if (latestCommit>259200) {
-			        	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: "   + latestCommit/259200 + " ago (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + commits.length + ")"; 
+			        	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: "   + latestCommit/259200 + " ago (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + commitsCount + ")"; 
 			        } else {
-				    	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: "   + format(latestCommit) + " ago (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + commits.length + ")"; 
+				    	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: "   + format(latestCommit) + " ago (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + commitsCount + ")"; 
 					}
 				}
 				else {
@@ -459,12 +462,16 @@ const commands = [
 			    if (msg[0] && !msg[1]) {
 			        return user['username'] + ", invalid parameter or no channel provided";
 			    }
-			    else if (msg[0] == "join") { 
+			    else if (msg[0] == "join-session") { 
+		       	 	kb.join(msg[1]);
+		        	return "succesfully joined :) 👍";
+			    }
+			    else if (msg[0] == "join-save") { 
 		    		fs.appendFileSync('./db/channels.js', ' "' + msg[1] + '"'); 
 		       	 	kb.join(msg[1]);
 		        	return "succesfully joined :) 👍";
 			    }
-			    else if (msg[0] == "part") {
+			    else if (msg[0] == "part-session") {
 			        kb.part(msg[1]);       
 			        return "parted the channel for this session";
 			    }
@@ -1081,56 +1088,54 @@ const commands = [
 			name: prefix + '4Head',
 			aliases: prefix + '4head',
 			invocation: async (channel, user, message, args) => {
-			try{
-				perf.start();
-				const arr = [
-					'general',
-					'general',
-					'general',
-					'general',
-					'general',
-					'programming',
-					'programming'
-				];
-				function firstLettertoLowerCase(string) {
-					return string.charAt(0).toLowerCase() + string.slice(1);
+				try{
+					perf.start();
+					const arr = [
+						'general',
+						'general',
+						'general',
+						'general',
+						'general',
+						'programming',
+						'programming'
+					];
+					function firstLettertoLowerCase(string) {
+						return string.charAt(0).toLowerCase() + string.slice(1);
+					}
+
+			 		if (talkedRecently.has(user['user-id'])) { 
+				        return '';  
+				    } else {   
+				     	talkedRecently.add(user['user-id']);
+		            	setTimeout(() => {
+			              	talkedRecently.delete(user['user-id']);
+			            }, 4000);
+			        }
+
+					const randomPs = arr[Math.floor(Math.random()*arr.length)];
+
+					if (randomPs === 'programming') {
+						const joke = await fetch(api.joke1)
+				 			.then(response => response.json()); 
+
+			 			setTimeout(() => { 
+			 				kb.say(channel, firstLettertoLowerCase(joke[0].punchline.replace(/\./g, '')) + ' 4HEad '
+		 				)}, 3000);
+			 			return user['username'] + ', ' + firstLettertoLowerCase(joke[0].setup);
+			 		}
+			 		else if (randomPs === 'general') {
+			 			const jokeGeneral = await fetch(api.joke2) 
+				 			.then(response => response.json()); 
+
+			 			setTimeout(() => { 
+			 				kb.say(channel, firstLettertoLowerCase(jokeGeneral.punchline.replace(/\./g, '')) + ' 4HEad '
+		 				)}, 3000);
+			 			return user['username'] + ', ' + firstLettertoLowerCase(jokeGeneral.setup);
+			 		}
+		 		} catch(err) {
+					console.log(err);
+					return user['username'] + err + ' FeelsDankMan !!!';
 				}
-
-		 		if (talkedRecently.has(user['user-id'])) { 
-			        return '';  
-			    } else {   
-			     	talkedRecently.add(user['user-id']);
-	            	setTimeout(() => {
-		              	talkedRecently.delete(user['user-id']);
-		            }, 4000);
-		        }
-
-				const randomPs = arr[Math.floor(Math.random()*arr.length)];
-				console.log(randomPs)
-
-				if (randomPs === 'programming') {
-					const joke = await fetch(api.joke1)
-			 			.then(response => response.json()); 
-
-		 			setTimeout(() => { 
-		 				kb.say(channel, firstLettertoLowerCase(joke[0].punchline.replace(/\./g, '')) + ' 4HEad '
-	 				)}, 3000);
-		 			return user['username'] + ', ' + firstLettertoLowerCase(joke[0].setup);
-		 		}
-		 		else if (randomPs === 'general') {
-		 			const jokeGeneral = await fetch(api.joke2) 
-			 			.then(response => response.json()); 
-
-		 			setTimeout(() => { 
-		 				kb.say(channel, firstLettertoLowerCase(jokeGeneral.punchline.replace(/\./g, '')) + ' 4HEad '
-	 				)}, 3000);
-		 			return user['username'] + ', ' + firstLettertoLowerCase(jokeGeneral.setup);
-		 		}
-
-	 		} catch(err) {
-				console.log(err);
-				return user['username'] + err + ' FeelsDankMan !!!';
-			}
 			}
 		},
 
@@ -1138,99 +1143,99 @@ const commands = [
 			name: prefix + "rl",
 			aliases: prefix + "randomline",
 			invocation: async (channel, user, message, args) => {
-			try{
-				perf.start();
- 				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
- 				const fetchUrl = require("fetch").fetchUrl;
- 				const allChannels = [
- 				'nani',
- 				'forsen',
- 				'forsen',
- 				'forsen',
- 				'pajlada',
- 				'pajlada',
- 				'pajlada'
- 				];
-	 			const randomChannel = allChannels[Math.floor(Math.random()*allChannels.length)]
-	 			if (user['user-id'] === '178087241') {
-	 				if (!msg[0]) {
-						const fetchUrl = require("fetch").fetchUrl;
-						const rl = await new Promise((Resolve, Reject) => {
-							fetchUrl(api.rl + randomChannel +  "/user/" + user['username'] + "/random", function(error, meta, body) { 
-							    if (error) {
-							    	console.log(error);
-								   	Reject(error)
-					   			}
-							    else {
-								   	Resolve(body.toString().replace(/"/g, ''))
-							   	}
-							})
-					  	});
-	 					return '#' + randomChannel.replace(/^(.{2})/,"$1\u{E0000}") + ', ' + user['username'] + ': ' + rl.toString()
- 					} else {
-						const fetchUrl = require("fetch").fetchUrl;
-						const rl = await new Promise((Resolve, Reject) => {
-							fetchUrl(api.rl + randomChannel +  "/user/" + msg[0] + "/random", function(error, meta, body) { 
-							    if (error) {
-							    	console.log(error);
-								   	Reject(error)
-							   	}
-							    else {
-								   	Resolve(body.toString())
-							   	}
-							})
-					  	});
-					  	return '#' + randomChannel.replace(/^(.{2})/,"$1\u{E0000}") + ', ' + msg[0] + ": " + rl.toString().replace(/"/g, '')
- 					}
-	 			} else {
- 					if (!msg[0]) {
-	 					if (talkedRecently.has(user['user-id'])) { 
-			       		 	return '';    
-					    } else {   
-					     	talkedRecently.add(user['user-id']);
-				            setTimeout(() => {
-				              	talkedRecently.delete(user['user-id']);
-				            }, 5000);
-				        }
-						const rl = await new Promise((Resolve, Reject) => {
-							fetchUrl(api.rl + randomChannel +  "/user/" + user['username'] + "/random", function(error, meta, body) { 
-							    if (error) {
-							    	console.log(error);
-								   	Reject(error)
-							   	}
-							    else {
-								   	Resolve(body.toString().replace(/"/g, ''))
-							   	}
-							})
-					  	});
-	 					return '#' + randomChannel + ', ' + user['username'] + ': ' + rl.toString()
- 					} else {
- 						if (talkedRecently.has(user['user-id'])) { 
-				        	return ''; 
-				    	} else {
-					  		talkedRecently.add(user['user-id']);
-				            setTimeout(() => {
-				              	talkedRecently.delete(user['user-id']);
-				            }, 2000);
-				        }
-						const rl = await new Promise((Resolve, Reject) => {
-							fetchUrl(api.rl + randomChannel +  "/user/" + msg[0] + "/random", function(error, meta, body) { 
-							    if (error) {
-							    	console.log(error);
-								   	Reject(error)
-							   	}
-							    else {
-								   	Resolve(body.toString())
-							   	}
-							})
-					  	});
-					  	return '#' + randomChannel + ', ' + msg[0] + ": " + rl.toString().replace(/"/g, '')
+				try{
+					perf.start();
+	 				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
+	 				const fetchUrl = require("fetch").fetchUrl;
+	 				const allChannels = [
+	 				'nani',
+	 				'forsen',
+	 				'forsen',
+	 				'forsen',
+	 				'pajlada',
+	 				'pajlada',
+	 				'pajlada'
+	 				];
+		 			const randomChannel = allChannels[Math.floor(Math.random()*allChannels.length)]
+		 			if (user['user-id'] === '178087241') {
+		 				if (!msg[0]) {
+							const fetchUrl = require("fetch").fetchUrl;
+							const rl = await new Promise((Resolve, Reject) => {
+								fetchUrl(api.rl + randomChannel +  "/user/" + user['username'] + "/random", function(error, meta, body) { 
+								    if (error) {
+								    	console.log(error);
+									   	Reject(error)
+						   			}
+								    else {
+									   	Resolve(body.toString().replace(/"/g, ''))
+								   	}
+								})
+						  	});
+		 					return '#' + randomChannel.replace(/^(.{2})/,"$1\u{E0000}") + ', ' + user['username'] + ': ' + rl.toString()
+	 					} else {
+							const fetchUrl = require("fetch").fetchUrl;
+							const rl = await new Promise((Resolve, Reject) => {
+								fetchUrl(api.rl + randomChannel +  "/user/" + msg[0] + "/random", function(error, meta, body) { 
+								    if (error) {
+								    	console.log(error);
+									   	Reject(error)
+								   	}
+								    else {
+									   	Resolve(body.toString())
+								   	}
+								})
+						  	});
+						  	return '#' + randomChannel.replace(/^(.{2})/,"$1\u{E0000}") + ', ' + msg[0] + ": " + rl.toString().replace(/"/g, '')
+	 					}
+		 			} else {
+	 					if (!msg[0]) {
+		 					if (talkedRecently.has(user['user-id'])) { 
+				       		 	return '';    
+						    } else {   
+						     	talkedRecently.add(user['user-id']);
+					            setTimeout(() => {
+					              	talkedRecently.delete(user['user-id']);
+					            }, 5000);
+					        }
+							const rl = await new Promise((Resolve, Reject) => {
+								fetchUrl(api.rl + randomChannel +  "/user/" + user['username'] + "/random", function(error, meta, body) { 
+								    if (error) {
+								    	console.log(error);
+									   	Reject(error)
+								   	}
+								    else {
+									   	Resolve(body.toString().replace(/"/g, ''))
+								   	}
+								})
+						  	});
+		 					return '#' + randomChannel + ', ' + user['username'] + ': ' + rl.toString()
+	 					} else {
+	 						if (talkedRecently.has(user['user-id'])) { 
+					        	return ''; 
+					    	} else {
+						  		talkedRecently.add(user['user-id']);
+					            setTimeout(() => {
+					              	talkedRecently.delete(user['user-id']);
+					            }, 2000);
+					        }
+							const rl = await new Promise((Resolve, Reject) => {
+								fetchUrl(api.rl + randomChannel +  "/user/" + msg[0] + "/random", function(error, meta, body) { 
+								    if (error) {
+								    	console.log(error);
+									   	Reject(error)
+								   	}
+								    else {
+									   	Resolve(body.toString())
+								   	}
+								})
+						  	});
+						  	return '#' + randomChannel + ', ' + msg[0] + ": " + rl.toString().replace(/"/g, '')
+						}
 					}
-				}
-			} catch(err) {
-				console.log(err);
-				return user['username'] + err + ' FeelsDankMan !!!';
-			}		
+				} catch(err) {
+					console.log(err);
+					return user['username'] + err + ' FeelsDankMan !!!';
+				}		
 			}
 		},
 
