@@ -197,7 +197,7 @@ const commands = [
 				 		.then(response => response.json());
 			 		const commits2 = await fetch('https://api.github.com/repos/KUNszg/kbot/commits?page=2&per_page=100')
 				 		.then(response => response.json());
-				 	commitsCount = commits.length + commits2.length;
+				 	const commitsCount = commits.length + commits2.length;
 				 	const commitDate = new Date(commits[0].commit.committer.date);
 				 	const serverDate = new Date();
 				 	const diff = Math.abs(commitDate-serverDate)
