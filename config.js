@@ -20,5 +20,6 @@ const discord = ''
 const banphraseList = [
   ''
 ]; //put your custom banphrases in there
+const botusername = ''
 
 module.exports = {banphraseList, oauth, youtube, randomTrack, randomFact, chat, locate, geonames, nasa1, nasa2, twitter, hosts, bttv, joke1, joke2, rl, joemama, supinic, dubtrackRoom, discord}
