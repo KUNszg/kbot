@@ -74,7 +74,7 @@ const allowCookie = [
 	{ID: '218312842', username: 'yaYEET_xD'},
 	{ID: '44710465', username: 'MarcFryd'},
 	{ID: '49739598', username: 'thedangerousbros'},
-	{ID: '148973258', username: 'fabzeef'}
+	{ID: '148973258', username: 'fabzeef'},
 	{ID: '103973901', username: 'alazymeme'}
 ];
 const prefix = "kb ";
