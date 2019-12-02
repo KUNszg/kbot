@@ -14,7 +14,7 @@ const options = {
 		cluster: 'aws',
 	},
 	identity: {
-		username: 'kunszgbot',
+		username: api.botusername,
 		password: api.oauth,
 	},
 	channels: channelOptions,
