@@ -606,6 +606,7 @@ const commands = [
 				const perms = allowEval.filter(
 					i => i.ID === user['user-id']
 					);
+				const shell = require('child_process');
 
 				if (!perms[0]) {
 					return "";
