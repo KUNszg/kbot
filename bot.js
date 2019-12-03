@@ -1407,25 +1407,14 @@ const commands = [
 				if (!perms[0]) {
 					return "";
 				} else {
-					/* TODO auto pulling from github (restart & update)
-
 					const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
 				 		.then(response => response.json());
-					const process = require('child_process');
-					await process.exec('cd /opt/kbot; git pull',function (err,stdout,stderr) {
-					    if (err) {
-					        console.log("\n"+stderr);
-					    } else {
-					        console.log(stdout);
-					    }
-					});
-					await kb.say(channel, 'successfuly pulled @master, ' + commits[0].sha.slice(0, 7) + ', commit ' + commits.length)
+					const shell = require('child_process');
+					kb.say(channel, 'pulling from @master PogChamp 👉 ' + await shell.execSync('git pull')) //pull from github
 					
-					*/
-					//const dateString = new Date().toLocaleString().split('/');
-					setTimeout(()=>{process.kill(process.pid)}, 3000);
-					return user['username'] + ', restarting Okayga'
-					//return '🤓 updating...';
+					setTimeout(()=>{kb.say(channel, 'restarting Okayga ')}, 6000);
+					setTimeout(()=>{process.kill(process.pid)}, 10000);
+					return '';
 				}
 			} catch(err) {
 				console.log(err);
