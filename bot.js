@@ -1410,7 +1410,7 @@ const commands = [
 					const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
 				 		.then(response => response.json());
 					const shell = require('child_process');
-					kb.say(channel, 'pulling from @master PogChamp 👉 ' + await shell.execSync('git pull').replace(/+/g, '+').replace(/-/g, ' & -')) //pull from github
+					kb.say(channel, 'pulling from @master PogChamp 👉 ' + await shell.execSync('git pull').replace(/\+/g, '+').replace(/\-/g, ' & -')) //pull from github
 					
 					setTimeout(()=>{kb.say(channel, 'restarting Okayga ')}, 6000);
 					setTimeout(()=>{process.kill(process.pid)}, 10000);
