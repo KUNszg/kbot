@@ -136,20 +136,20 @@ const commands = [
 		            }, 8000);
 		        }
 		        if (up>72 && uptime<172800) {
-	        		return user['username'] + ", my dank code is running for " + format(uptime) + ", has " + lines + " lines,  memory usage: " + 
-					    used.toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " +  up2.toFixed(2) + " days, commands used in this session " + commandsExecuted.length + " FeelsDankMan";
+	        		return user['username'] + ", code is running for " + format(uptime) + ", has " + lines + " lines,  memory usage: " + 
+					    used.toFixed(2) + " MB, host is up for " +  up2.toFixed(2) + " days, commands used in this session " + commandsExecuted.length + " FeelsDankMan";
 				} else {
 					if (uptime>172800 && up>72) {
-						return user['username'] + ", my dank code is running for " +  uptime/86400 + ", has " + lines + " lines,  memory usage: " + 
-					    	used.toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " + up.toFixed(1) + "h (" +  up2.toFixed(2) + " days), commands used in this session " + commandsExecuted.length + " FeelsDankMan";
+						return user['username'] + ", code is running for " +  uptime/86400 + ", has " + lines + " lines,  memory usage: " + 
+					    	used.toFixed(2) + " MB, host is up for " + up.toFixed(1) + "h (" +  up2.toFixed(2) + " days), commands used in this session " + commandsExecuted.length + " FeelsDankMan";
 					}
 					else if (uptime>172800 && up<72) {
-						return user['username'] + ", my dank code is running for " +  uptime/86400 + ", has " + lines + " lines,  memory usage: " + 
-					 	   used.toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " + up.toFixed(1) + "h, commands used in this session " + commandsExecuted.length + " FeelsDankMan";
+						return user['username'] + ", code is running for " +  uptime/86400 + ", has " + lines + " lines,  memory usage: " + 
+					 	   used.toFixed(2) + " MB, host is up for " + up.toFixed(1) + "h, commands used in this session " + commandsExecuted.length + " FeelsDankMan";
 					}
 					else {
-						return user['username'] + ", my dank code is running for " + format(uptime) + ", has " + lines + " lines,  memory usage: " + 
-					    	(used).toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%), host is up for " + up.toFixed(1) + "h (" + up2.toFixed(2) + " days), commands used in this session " + commandsExecuted.length + " FeelsDankMan";
+						return user['username'] + ", code is running for " + format(uptime) + ", has " + lines + " lines,  memory usage: " + 
+					    	(used).toFixed(2) + " MB, host is up for " + up.toFixed(1) + "h (" + up2.toFixed(2) + " days), commands used in this session " + commandsExecuted.length + " FeelsDankMan";
 					}
 				}
 			} catch(err) { 
@@ -179,7 +179,7 @@ const commands = [
 			        		return seconds + "s"
 			        	}
 			        	else if (seconds === 5 || hours === 0 && minutes === 0) {
-			        		return 'just now!'
+			        		return '0s'
 			        	}
 			        	else {
 			        		return hours + 'h ' + minutes + 'm ' + seconds + "s"; 
@@ -1560,22 +1560,6 @@ const commands = [
 			return '';
 		}
 	},
-
-	{
-		name: 'HONEYDETECTED',
-		aliases: null,
-		permission: 'restricted',
-		invocation: async (channel, user, message, args) => {
-			perf.start();
-			if (user['user-id'] != '68136884') {
-				return '';
-			}
-			else {
-				return 'HONEYDETECTED POŁĄCZONO PONOWNIE KKurwa 7';
-			} 
-		}
-	},
-
 ];
 
 kb.on("chat", async (channel, user, message, self) => {
@@ -1771,6 +1755,20 @@ setInterval(() => {
 const dankPrefix = '?';
 const talkedRecently2 = new Set();
 const dankeval = [
+	{
+		name: 'RECONNECTED',
+		aliases: null,
+		invocation: async (channel, user, message, args) => {
+			perf.start();
+			if (user['user-id'] != '68136884') {
+				return '';
+			}
+			else {
+				return 'HONEYDETECTED POŁĄCZONO PONOWNIE KKurwa 7';
+			} 
+		}
+	},
+
     {
 		name: dankPrefix + 'cookie',
 		aliases: null,
