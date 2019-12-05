@@ -2168,13 +2168,3 @@ try {
 }
 
 disco.login(api.discord);
-
-
-
-"bbc"
-"bbc"
-"bbc"
-"bbc"
-"bbc"
-"bbc"
-"bbc"
