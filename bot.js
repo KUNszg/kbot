@@ -206,7 +206,7 @@ const commands = [
 			      	const latestCommit = (diff/1000).toFixed(2);
 			        const ping = await kb.ping();
 			        if (latestCommit>259200) {
-			        	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: "   + latestCommit/259200 + " ago (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + commitsCount + ")"; 
+			        	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: "   + (latestCommit/86400).toFixed(0)  + " ago (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + commitsCount + ")"; 
 			        } else {
 				    	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: "   + format(latestCommit) + " ago (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + commitsCount + ")"; 
 					}
