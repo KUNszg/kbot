@@ -52,8 +52,7 @@ const allowEval = [
 	{ID: '178087241'}, //kunszg
 	{ID: '229225576'}, //kunszgbot
 	{ID: '458101504'}, //notkunszg
-	{ID: '31400525'}, //supinic
-	{ID: '103973901'} //alazymeme
+	{ID: '31400525'} //supinic
 ];
 const allowCookie = [
 	{ID: '178087241', username: 'kunszg'},
@@ -75,7 +74,8 @@ const allowCookie = [
 	{ID: '44710465', username: 'MarcFryd'},
 	{ID: '49739598', username: 'thedangerousbros'},
 	{ID: '148973258', username: 'fabzeef'},
-	{ID: '103973901', username: 'alazymeme'}
+	{ID: '103973901', username: 'alazymeme'},
+	{ID: '122424957', username: 'Kippenkoppetje'}
 ];
 const prefix = "kb ";
 const commandsExecuted = [];
@@ -206,7 +206,7 @@ const commands = [
 			      	const latestCommit = (diff/1000).toFixed(2);
 			        const ping = await kb.ping();
 			        if (latestCommit>259200) {
-			        	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: "   + latestCommit/259200 + " ago (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + commitsCount + ")"; 
+			        	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: "   + (latestCommit/86400).toFixed(0) + " ago (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + commitsCount + ")"; 
 			        } else {
 				    	return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: "   + format(latestCommit) + " ago (master, " +  commits[0].sha.slice(0, 7)  + ", commit " + commitsCount + ")"; 
 					}
@@ -507,9 +507,13 @@ const commands = [
 		        }
 				if (!msg.join("")) {
 					return user['username'] + ", please provide binary code to convert :)"
-				}
-				else {
-	  				return user['username'] + ", " + msg.join(' ').split(" ").map(i => String.fromCharCode(parseInt(i, 2))).join("");
+				} else {
+					if (msg.join(' ').split(" ").map(i => String.fromCharCode(parseInt(i, 2))).join("") === "") {
+						return user['username'] + ', an error occured monkaS check if you are using correct octets (eg.:01010001)'
+					}
+					else {
+		  				return user['username'] + ", " + msg.join(' ').split(" ").map(i => String.fromCharCode(parseInt(i, 2))).join("");
+					}
 				}
 			} catch(err) {
   	   			return user['username'] + ", " + err + " FeelsDankMan !!!";
@@ -1326,9 +1330,9 @@ const commands = [
 	         			talkedRecently2.delete(user['user-id']);
 		            }, 5000);
 		        }
-	        	return user['username'] + ", kunszgbot is owned by KUNszg and " + " ALazyMeme".replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join(""
+	        	return user['username'] + ", kunszgbot is owned by KUNszg and " + " Sinris".replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join(""
 	        		).replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join("") + " , Node JS " + process.version + 
-	        		", running on a DigitalOcean droplet " + process.platform + ' ' + process.arch + ", for commands list use 'kb commands'.";
+	        		", running on Ionos VPS " + process.platform + ' ' + process.arch + ", for commands list use 'kb commands'.";
       		} catch(err) {
 				console.log(err);
 				return user['username'] + err + ' FeelsDankMan !!!';
@@ -1710,7 +1714,7 @@ kb.on("chat", async (channel, user, message, self) => {
 const pingAmount = [];
 async function sendOnlineStatus() {	
 	pingAmount.push('ping')
-	const test = (await fetch(api.supinic, { //supinic
+	const test = (await fetch(api.supinic, {
 	    method: 'PUT',
 		}).then(response => response.json()))
 	console.log(test)
@@ -1756,7 +1760,7 @@ const dankPrefix = '?';
 const talkedRecently2 = new Set();
 const dankeval = [
 	{
-		name: 'RECONNECTED',
+		name: 'HONEYDETECTED',
 		aliases: null,
 		invocation: async (channel, user, message, args) => {
 			perf.start();
@@ -1789,7 +1793,9 @@ const dankeval = [
 		              	talkedRecently.delete(user['user-id']);
 		            }, 15000);
 		        }
-				return '$remind ' + user['username'] + ' eat cookie :) in 121m';
+		        kb.say('kunszg', '$remind ' + user['username'] + ' eat cookie :) in 121m');
+		        setTimeout(()=>{kb.say(channel, user['username'] + ', you will be reminded to eat your cookie in 2 hours :)')}, 1000);
+				return '';
 			}
 		}
 	},
@@ -1864,12 +1870,10 @@ const dankeval = [
 		name: dankPrefix + "deval",
 		aliases: null,
 		invocation: async (channel, user, message, args) => {
-		try{
-			
-			if (user['user-id'] != "178087241")
-					return ''.replace(/[\u{E0000}|\u{206d}]/gu, '');
-			
-				else {
+			try{	
+				if (user['user-id'] != "178087241") {
+						return ''.replace(/[\u{E0000}|\u{206d}]/gu, '');
+				} else {
 					function reverse(s) {
 						return s.split('').reverse().join('');
 					}
@@ -1889,29 +1893,28 @@ const dankeval = [
 					const msg = message.split(" ");
 					const msg2 = msg.shift();
 					const ev = await eval('(async () => {' + msg.join(" ").replace(/[\u{E0000}|\u{206d}]/gu, '') + '})()');
-						console.log(ev);
-						return String(ev);
+					console.log(ev);
+					return String(ev);
 				}
-
 			} catch(err) {
 				console.log(err);
 				return user['username'] + ", " + err + " FeelsDankMan !!!";
-				}
 			}
-		},
+		}
+	},
 
-	 	{
-	      	name: "test",
-	      	aliases: "test \u{E0000}",
-	      	invocation: (channel, user, args) =>  {
-	        	if (user['user-id'] === "178087241" || user['user-id'] === "229225576") { //kunszg
-	            	return user['username'] + ", FeelsGoodMan test successful FeelsGoodMan";
-        		}
-	        	else {
-	    			return "";
-	    		}
-	    	}
-	    },
+		{
+      	name: "test",
+      	aliases: "test \u{E0000}",
+      	invocation: (channel, user, args) =>  {
+        	if (user['user-id'] === "178087241" || user['user-id'] === "229225576") { //kunszg
+            	return user['username'] + ", FeelsGoodMan test successful FeelsGoodMan";
+    		}
+        	else {
+    			return "";
+    		}
+    	}
+    },
     ];
 
 kb.on("chat", async (channel, user, message, self) => {
