@@ -1274,7 +1274,7 @@ const commands = [
 				perf.start();
 			const { readdirSync } = require('fs')
 			const getDirectories = source =>
-			  	readdirSync('/opt/kbot/node_modules', { withFileTypes: true })
+			  	readdirSync('./node_modules', { withFileTypes: true })
 			    	.filter(dirent => dirent.isDirectory())
 			    	.map(dirent => dirent.name)
 			
@@ -1497,9 +1497,9 @@ const commands = [
 			            }, 8000);
 			        }
 			    }
-			    	const ID = fs.readFileSync('/opt/kbot/db/suggestions.js').toString().split('\n').join(' ').split('=>').length
+			    	const ID = fs.readFileSync('./db/suggestions.js').toString().split('\n').join(' ').split('=>').length
 					const msg = message.split(' ').splice(2);
-					fs.appendFileSync('/opt/kbot/db/suggestions.js', '\n' + '"' + new Date().toLocaleDateString() + ', ' + new Date().toLocaleTimeString() + ' => ' + user['username'] + ": " + msg.join(' ') + '"')
+					fs.appendFileSync('./db/suggestions.js', '\n' + '"' + new Date().toLocaleDateString() + ', ' + new Date().toLocaleTimeString() + ' => ' + user['username'] + ": " + msg.join(' ') + '"')
 					return user['username'] + ', thanks for the suggestion, it will be processed eventually Kapp [ID ' + ID + ']';
 				} catch(err) {
 					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
@@ -1526,8 +1526,8 @@ const commands = [
 					return ''
 				} else {
 					let amount = 0;
-					fs.appendFileSync('./opt/kbot/db/supee.js', ' "' + amount++ + '", ')
-					return user['username'] + ', supi went to toilet ' + fs.readFileSync('./opt/kbot/db/supee.js').toString().split('",').length-1 + ' times peepoSadDank 💦'
+					fs.appendFileSync('./db/supee.js', ' "' + amount++ + '", ')
+					return user['username'] + ', supi went to toilet ' + fs.readFileSync('./db/supee.js').toString().split('",').length-1 + ' times peepoSadDank 💦'
 				}
 			} catch(err) {
 				return user['username'] + ', ' + err + ' FeelsDankMan !!!';
@@ -1549,7 +1549,7 @@ const commands = [
 				} else {
 					perf.start();
 					const msg = message.split(' ')[2];
-					return fs.readFileSync('/opt/kbot/db/suggestions.js').toString().split('\n')[msg].split('=>')[1].replace(/"/g, '');
+					return fs.readFileSync('./db/suggestions.js').toString().split('\n')[msg].split('=>')[1].replace(/"/g, '');
 				}
 			} catch(err) {
 				return user['username'] + ', ' + err + ' FeelsDankMan !!!';
