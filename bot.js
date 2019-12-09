@@ -1793,9 +1793,10 @@ const dankeval = [
 		              	talkedRecently.delete(user['user-id']);
 		            }, 15000);
 		        }
-		        kb.say('kunszg', '$remind ' + user['username'] + ' eat cookie :) in 121m');
-		        setTimeout(()=>{kb.say(channel, user['username'] + ', you will be reminded to eat your cookie in 2 hours :)')}, 1000);
-				return '';
+		       //todo 
+		       // kb.whisper('supibot', '$remind ' + user['username'] + ' eat cookie :) in 121m');
+		       // setTimeout(()=>{kb.say(channel, user['username'] + ', you will be reminded to eat your cookie in 2 hours :)')}, 1000);
+				return '$remind ' + user['username'] + ' eat cookie :) in 121m';
 			}
 		}
 	},
@@ -2053,7 +2054,7 @@ disco.on('message', async msg => {
 	  if (msg.content === '?uptime') {
 	    try{
 			const fs = require("fs");
-			const stats = fs.statSync("./haxk.js");
+			const stats = fs.statSync("./bot.js");
 			const fileSizeInBytes = stats['size'];
 			const size = fileSizeInBytes / 1000
 		      function format(seconds){
@@ -2075,7 +2076,7 @@ disco.on('message', async msg => {
 		        const linecount = require('linecount')
 		        const lines = await new Promise((resolve, reject) => { //line count
 		        	
-		        	linecount('./haxk.js', (err, count) => {
+		        	linecount('./bot.js', (err, count) => {
 				       	if (err) {
 				            reject(err);
 					    }
