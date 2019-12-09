@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 'use strict';
-//test
+
 const fs = require('fs');
 const api = require('./config.js');
 const channelOptions = fs.readFileSync('./db/channels.js').toString().split('"').filter(
