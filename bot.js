@@ -1330,7 +1330,7 @@ const commands = [
 	         			talkedRecently2.delete(user['user-id']);
 		            }, 5000);
 		        }
-	        	return user['username'] + ", kunszgbot is owned by KUNszg, sponsored by " + "Sinris and Alazymeme".replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join(""
+	        	return user['username'] + ", kunszgbot is owned by KUNszg, sponsored by " + "Sinris".replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join(""
 	        		).replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join("") + " , Node JS " + process.version + 
 	        		", running on Ionos VPS, Debian 9 GNU/" + process.platform + ' ' + process.arch + ", for commands list use 'kb commands'.";
       		} catch(err) {
