@@ -2017,10 +2017,10 @@ kb.on("chat", async (channel, user, message, self) => {
 	    kb.say("Supinic", username + " hosted supinic with " + viewers + " viewers HACKERMANS ")
 	  });
 
-	  kb.on("subgift", (channel, username, recipient, months) => {
+	  kb.on("subgift", (channel, username, streakMonths, recipient, userstate) => {
 	  	if (channel != "#supinic") return;
 	  	else
-	    kb.say("Supinic", username + " has gifted a sub to " + recipient + " and it's their " + months + " month/s resub! ppBounce ")
+	    kb.say("Supinic", username + " has gifted a sub to " + recipient + " and it's their " + streakMonths + " month/s resub! ppBounce ")
 	  });
 
 	  kb.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
