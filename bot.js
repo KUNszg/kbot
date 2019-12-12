@@ -84,7 +84,7 @@ const commands = [
 	{
 	    name: prefix + "uptime",
 	    aliases: prefix + "uptime \u{E0000}",
-	    description: 'displays informations about current runtime of the bot, lines, memory usage, host uptime and commands used in the current session',
+	    description: 'displays informations about current runtime of the bot, lines, memory usage, host uptime and commands used in the current session - cooldown 8s',
 	    invocation: async (channel, user, message, args) => {
 		 	try{
 		 		perf.start();
@@ -162,7 +162,7 @@ const commands = [
 	{
 	    name: prefix + "ping",
 		aliases: prefix + "ping \u{E0000}",
-		description: "syntax: kb ping [service] | no parameter - data about latest github activity | service - checks if server/domain is alive.",
+		description: "syntax: kb ping [service] | no parameter - data about latest github activity | service - checks if server/domain is alive - cooldown 5s",
 	    invocation: async (channel, user, message, args, err) => {
 		    try {	
 				perf.start();
@@ -238,7 +238,7 @@ const commands = [
 	{
 	    name: prefix + "spacex",
 	    aliases: prefix + "spacex \u{E0000}",
-    	description: "data from SpaceX about next launch rocket launch date, mission and launch site.",
+    	description: "data from SpaceX about next launch rocket launch date, mission and launch site - cooldown 15s",
 	    invocation: async (channel, user, message, args) => {
     		try {
     			perf.start();
@@ -294,7 +294,7 @@ const commands = [
 	{
 	    name: prefix + "apod",
 	    aliases: null,
-	    description: "syntax: kb apod [random] | no parameter - astronomical picture for today | random - APOD from a random day, data gathered from NASA's API reaching year 1997.",
+	    description: "syntax: kb apod [random] | no parameter - astronomical picture for today | random - APOD from a random day, data gathered from NASA's API reaching year 1997 - cooldown 6s",
 	    invocation: async (channel, user, message, args) => {
     		try {
     			perf.start();
@@ -1334,7 +1334,7 @@ const commands = [
     {
      	name: prefix + "help",
       	aliases: null,
-      	description: "syntax: kb help [command] | no parameter - shows basic information about bot, it's owner and host | command - shows description of a specified command.",
+      	description: "syntax: kb help [command] | no parameter - shows basic information about bot, it's owner and host | command - shows description of a specified command - cooldown 5s",
       	invocation: async (channel, user, message, args) => {
 			try{
 				perf.start();
