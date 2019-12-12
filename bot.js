@@ -8,7 +8,7 @@ const channelOptions = fs.readFileSync('./db/channels.js').toString().split('"')
 	function(i){return i != null;}).join('').split(' ')
 const options = {
 	options: {
-		debug: false,
+		debug: true,
 	},
 	connection: {
 		cluster: 'aws',
@@ -84,7 +84,7 @@ const commands = [
 	{
 	    name: prefix + "uptime",
 	    aliases: prefix + "uptime \u{E0000}",
-	    description: 'Displays informations about current runtime of the bot, lines, memory usage, host uptime and commands used in the current session';
+	    description: 'displays informations about current runtime of the bot, lines, memory usage, host uptime and commands used in the current session',
 	    invocation: async (channel, user, message, args) => {
 		 	try{
 		 		perf.start();
@@ -162,6 +162,7 @@ const commands = [
 	{
 	    name: prefix + "ping",
 		aliases: prefix + "ping \u{E0000}",
+		description: "syntax: kb ping [service] | no parameter - data about latest github activity | service - checks if server/domain is alive.",
 	    invocation: async (channel, user, message, args, err) => {
 		    try {	
 				perf.start();
@@ -216,7 +217,7 @@ const commands = [
 					const ping = require('ping');
 					const hosts = [msg[0]];
 					hosts.forEach(function(host){
-					    ping.sys.probe(host, function(isAlive){
+					    ping.sys.probe(host, function(isAlive) {
 					        const mesg = isAlive ? 'host ' + host + ' is alive FeelsGoodMan' : 'host ' + host + ' is dead FeelsBadMan';
 					        kb.say(channel, user['username'] + ', ' + mesg)
 					    });
@@ -237,6 +238,7 @@ const commands = [
 	{
 	    name: prefix + "spacex",
 	    aliases: prefix + "spacex \u{E0000}",
+    	description: "data from SpaceX about next launch rocket launch date, mission and launch site.",
 	    invocation: async (channel, user, message, args) => {
     		try {
     			perf.start();
@@ -292,10 +294,12 @@ const commands = [
 	{
 	    name: prefix + "apod",
 	    aliases: null,
+	    description: "syntax: kb apod [random] | no parameter - astronomical picture for today | random - APOD from a random day, data gathered from NASA's API reaching year 1997.",
 	    invocation: async (channel, user, message, args) => {
     		try {
     			perf.start();
-	        	const apod = await randomApod();
+    			const msg = message.split(' ').splice(2); 
+	        	const apodRandom = await randomApod();
 
    				if (talkedRecently.has(user['user-id'])) { //if set has user id - ignore
 	       			return '';  
@@ -305,8 +309,18 @@ const commands = [
                		 	talkedRecently.delete(user['user-id']);
 		            }, 6000);
 		        }
-			    return user['username'] + ", here is your random 🌌 picture of the day | " +
-		            apod.title + ": " + apod.image;
+		        if (msg[0] === 'random') {
+			    	return user['username'] + ", here is your random 🌌 picture of the day | " +
+		            	apodRandom.title + ": " + apodRandom.image;
+		        } else {
+		        	if (msg[0] != 'random' && msg[0] != '') {
+		        		return user['username'] + ', invalid parameter. See "kb help apod" for command syntax.'
+		        	} else {
+		        		const apodToday = await fetch('https://api.nasa.gov/planetary/apod' + api.nasa2.replace('&', '?'))
+				 			.then(response => response.json());
+			 			return user['username'] + ', APOD for today SeemsGood ' + apodToday.title + ' | ' + apodToday.hdurl + ' | by ' + apodToday.copyright 
+		     		}
+		        }
 			} catch(err) {
 		  	    return user['username'] + ", " + err + " FeelsDankMan !!!";
 	        }
@@ -1320,10 +1334,11 @@ const commands = [
     {
      	name: prefix + "help",
       	aliases: null,
-      	invocation: async (channel, user, args) => {
+      	description: "syntax: kb help [command] | no parameter - shows basic information about bot, it's owner and host | command - shows description of a specified command.",
+      	invocation: async (channel, user, message, args) => {
 			try{
 				perf.start();
-				const msg = message.split(' ').splice(2);
+				const msg = message.toLowerCase().split(' ').splice(2);
 		    	if (talkedRecently2.has(user['user-id'])) { //if set has user id - ignore
 					return '';  				    
 				} else {   
@@ -1331,19 +1346,17 @@ const commands = [
 	            	setTimeout(() => {
 	         			talkedRecently2.delete(user['user-id']);
 		            }, 5000);
-		        }
-		     
+	            }
 		        if (!msg[0]) {
-	        
 	        		return user['username'] + ", kunszgbot is owned by KUNszg, sponsored by " + "Sinris".replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join(""
 	        			).replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join("") + " , Node JS " + process.version + 
 	        			", running on Ionos VPS, Debian 9 GNU/" + process.platform + ' ' + process.arch + ", for commands list use 'kb commands'.";
       		
-      			} else if (commands.filter(i=>i.name.substring(3) === msg[0])) {
-      				if (commands.filter(i=>i.name.substring(3) === msg[0]) === []) {
+      			} else if (commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0])) {
+      				if (commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]) && commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]).length != 0) {
+      					return user['username'] + ', ' + commands.filter((i=>i.name.substring(3).toLowerCase() === msg[0])).map(i=>i.description)[0];
+      				} else if (commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]) && commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]).length === 0) {
       					return user['username'] + ', command does not exist or description for it is not ready yet :/ ';
-      				} else {
-      					return user['username'] + ', ' + commands.filter(i=>i.name.substring(3) === msg[0] + ' ' && i.description);
       				}
       			} else {
       				return user['username'] + ', internal error monkaS';
@@ -1351,7 +1364,7 @@ const commands = [
   			
       		} catch(err) {
 				console.log(err);
-				return user['username'] + err + ' FeelsDankMan !!!';
+				return user['username'] +', ' + err + ' FeelsDankMan !!!';
 			}
       	}
     },
@@ -1637,8 +1650,8 @@ kb.on("chat", async (channel, user, message, self) => {
 			i => result.includes(i.banphrase)
 			);
 		const banphraseMap = banphraseFilter.map(
-			i => i.banphrase
-			)
+			i => i.banphrase 
+			);
 	    if (!result) {
 	    	kb.say(channel, "");
 	    } else { 
@@ -1649,7 +1662,7 @@ kb.on("chat", async (channel, user, message, self) => {
 		    	else if (result.toLowerCase().includes(banphraseMap[0])) {
 		    		kb.say(channel, user['username'] + ', cmonBruh')
 		    		return;
-		    	}
+		    	} 
 				else if (result.toLowerCase().startsWith(kb.getOptions().identity.password)) {
 					kb.say(channel, user['username'] + ', TriHard oauth key');
 					return;
@@ -2170,8 +2183,7 @@ try {
  	const used = process.memoryUsage().heapUsed / 1024 / 1024;
    
 	if (talkedRecently.has(disco.user.tag)) { //if set has user id - ignore
-    return '';  
-    
+    	return '';  
     } else {   
      talkedRecently.add(disco.user.tag);
      setTimeout(() => {
