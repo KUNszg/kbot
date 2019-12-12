@@ -84,6 +84,7 @@ const commands = [
 	{
 	    name: prefix + "uptime",
 	    aliases: prefix + "uptime \u{E0000}",
+	    description: 'Displays informations about current runtime of the bot, lines, memory usage, host uptime and commands used in the current session';
 	    invocation: async (channel, user, message, args) => {
 		 	try{
 		 		perf.start();
@@ -1322,6 +1323,7 @@ const commands = [
       	invocation: async (channel, user, args) => {
 			try{
 				perf.start();
+				const msg = message.split(' ').splice(2);
 		    	if (talkedRecently2.has(user['user-id'])) { //if set has user id - ignore
 					return '';  				    
 				} else {   
@@ -1330,9 +1332,23 @@ const commands = [
 	         			talkedRecently2.delete(user['user-id']);
 		            }, 5000);
 		        }
-	        	return user['username'] + ", kunszgbot is owned by KUNszg, sponsored by " + "Sinris".replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join(""
-	        		).replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join("") + " , Node JS " + process.version + 
-	        		", running on Ionos VPS, Debian 9 GNU/" + process.platform + ' ' + process.arch + ", for commands list use 'kb commands'.";
+		     
+		        if (!msg[0]) {
+	        
+	        		return user['username'] + ", kunszgbot is owned by KUNszg, sponsored by " + "Sinris".replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join(""
+	        			).replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join("") + " , Node JS " + process.version + 
+	        			", running on Ionos VPS, Debian 9 GNU/" + process.platform + ' ' + process.arch + ", for commands list use 'kb commands'.";
+      		
+      			} else if (commands.filter(i=>i.name.substring(3) === msg[0])) {
+      				if (commands.filter(i=>i.name.substring(3) === msg[0]) === []) {
+      					return user['username'] + ', command does not exist or description for it is not ready yet :/ ';
+      				} else {
+      					return user['username'] + ', ' + commands.filter(i=>i.name.substring(3) === msg[0] + ' ' && i.description);
+      				}
+      			} else {
+      				return user['username'] + ', internal error monkaS';
+      			}
+  			
       		} catch(err) {
 				console.log(err);
 				return user['username'] + err + ' FeelsDankMan !!!';
