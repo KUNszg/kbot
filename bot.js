@@ -312,15 +312,11 @@ const commands = [
 		        if (msg[0] === 'random') {
 			    	return user['username'] + ", here is your random 🌌 picture of the day | " +
 		            	apodRandom.title + ": " + apodRandom.image;
-		        } else {
-		        	if (msg[0] != 'random' && msg[0] != '') {
-		        		return user['username'] + ', invalid parameter. See "kb help apod" for command syntax.'
-		        	} else {
-		        		const apodToday = await fetch('https://api.nasa.gov/planetary/apod' + api.nasa2.replace('&', '?'))
-				 			.then(response => response.json());
-			 			return user['username'] + ', APOD for today SeemsGood ' + apodToday.title + ' | ' + apodToday.hdurl + ' | by ' + apodToday.copyright 
-		     		}
-		        }
+	        	} else {
+	        		const apodToday = await fetch('https://api.nasa.gov/planetary/apod' + api.nasa2.replace('&', '?'))
+			 			.then(response => response.json());
+		 			return user['username'] + ', APOD for today SeemsGood ' + apodToday.title + ' | ' + apodToday.hdurl + ' | by ' + apodToday.copyright 
+	     		}   
 			} catch(err) {
 		  	    return user['username'] + ", " + err + " FeelsDankMan !!!";
 	        }
@@ -330,6 +326,7 @@ const commands = [
 	{
 	    name: prefix + "yt",
 	    aliases: null,
+	    description: "syntax: kb yt [query] | query - search for a YouTube video with provided query - cooldown 7s",
 	    invocation: async (channel, user, message, args) => {
     		try {
     			perf.start();
@@ -341,9 +338,8 @@ const commands = [
 		       	  	safeSearch: "strict",
 		          	key: api.youtube
 		        });
-    		 	console.log(msg)
 
-					if (talkedRecently.has(user['user-id'])) { //if set has user id - ignore
+				if (talkedRecently.has(user['user-id'])) { //if set has user id - ignore
         			return '';  
 	    		} else {   
 	     			talkedRecently.add(user['user-id']);
@@ -351,10 +347,10 @@ const commands = [
           				talkedRecently.delete(user['user-id']);
 		            }, 7000);
 		        }
-        		if (msg.length > 0) {
+        		if (msg[0].length > 0) {
 					return user['username'] + ", results with searched phrase '" + msg.join(" ") + "' => " + random1.results[0].link
         		}
-				else if (msg.length = 1) {
+				else if (!msg[0]) {
 					return user['username'] + ", please provide a phrase to search with :)";
 				}
         	} catch (err) {
@@ -374,6 +370,7 @@ const commands = [
 	{
 	    name: prefix + "rt",
 	    aliases: null,
+	    description: "syntax: kb rt [ID] | no parameter - returns a link to the list of genres | ID - search for the song in the specified genre (numeric ID) - cooldown 5s",
 	    invocation: async (channel, user, message, args) => {
 		 	try{
 		 		perf.start();
@@ -430,6 +427,7 @@ const commands = [
 	{
 	    name: prefix + "rf",
 	    aliases: null,
+	    description: "random fact. Provides facts about random stuff - cooldown 5s",
 	    invocation: async (channel, user, message, args) => {
 			try {
 				perf.start();
@@ -454,6 +452,7 @@ const commands = [
 	{
 		name: prefix + "channels",
 		aliases: prefix + "chn",
+		description: "displays all the channels the bot is currently in. | Permitted users syntax: kb chn [join-save/part-session/join-session] [channel] - cooldown 5s",
 		invocation: async (channel, user, message, args) => {			
 		try {	
 			perf.start();
@@ -508,6 +507,7 @@ const commands = [
 	{
 		name: prefix + "decode",
 		aliases: null,
+		description: "syntax: kb decode [binary] | binary - decode given full octet binary code into unicode characters - cooldown 5s",
 		invocation: async (channel, user, message, args) => {
 			try {
 				perf.start();
@@ -526,6 +526,9 @@ const commands = [
 					if (msg.join(' ').split(" ").map(i => String.fromCharCode(parseInt(i, 2))).join("") === "") {
 						return user['username'] + ', an error occured monkaS check if you are using correct octets (eg.:01010001)'
 					}
+					if (!msg.join(' ').includes(/\d/)) {
+						return user['username'] + ', you can decode only full octet binary code';
+					}
 					else {
 		  				return user['username'] + ", " + msg.join(' ').split(" ").map(i => String.fromCharCode(parseInt(i, 2))).join("");
 					}
@@ -539,6 +542,7 @@ const commands = [
 	{
 		name: prefix + "encode",
 		aliases: null,
+		description: "syntax: kb encode [character] | character - encode any character into binary code - cooldown 5s",
 		invocation: async (channel, user, message, args) => {
 			try {
 				perf.start();
@@ -572,6 +576,7 @@ const commands = [
 	{
 		name: prefix + "chat",
 		aliases: prefix + "ct",
+		description: "syntax: kb chat [message] | message - provide a message to chat with the AI bot, no parameter will return error",
 		invocation: async (channel, user, message, args) => {
 			try {
 				perf.start();
@@ -615,6 +620,7 @@ const commands = [
 		name: prefix + "eval",
 		aliases: null,
 		permission: 'restricted',
+		description: "debugging command, permitted users only - no cooldown",
 		invocation: async (channel, user, message, args) => {
 			try{
 				perf.start();
@@ -673,6 +679,7 @@ const commands = [
 		name: prefix + "pattern",
 		aliases: null,
 		permission: 'restricted',
+		description: "permitted users syntax: kb pattern [fast/slow] [pyramid/triangle] [height] [message] | Invalid or missing parameter will return an error - no cooldown",
 		invocation: async (channel, user, message, args) => {
 			try {
 				perf.start();
@@ -804,6 +811,7 @@ const commands = [
 	{
 		name: prefix + "reverse",
 		aliases: null,
+		description: "syntax: kb reverse [message] | message - reverse given word or sentence - cooldown 5s",
 		invocation: async (channel, user, message, args) => {
 			try{
 				perf.start();
@@ -833,6 +841,7 @@ const commands = [
 	{
 		name: prefix + "locate",
 		aliases: prefix + "location",
+		description: "syntax: kb locate [IP/message] | IP - provide an IP adress to search for its location | message - provide a non-numeric message to search for its location - cooldown 6s",
 		invocation: async (channel, user, message, args) => {
 			try{	
 				perf.start();
