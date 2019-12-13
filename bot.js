@@ -898,6 +898,7 @@ const commands = [
 	{
 		name: prefix + "neo",
 		aliases: prefix + "asteroid",
+		description: "shows information about a random Near Earth Object, that is close to Earth in current day. Data refreshes every 24h - cooldown 5s",
 		invocation: async (channel, user, message, args) => {
 			try{	
 				perf.start();
@@ -931,6 +932,7 @@ const commands = [
 	{
 		name: prefix + "twitter",
 		aliases: null,
+		description: "syntax: kb twitter [account] | no parameter - returns an error | account - returns latest tweet from specified user - cooldown 8s",
 		invocation: async (channel, user, message, args) => {
 			try{
 				perf.start();
@@ -954,7 +956,11 @@ const commands = [
 		              	talkedRecently.delete(user['user-id']);
 		            }, 8000);
 		        }
-				return user['username'] + ", " + tweet.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
+		        if (!msg[0]) {
+		        	return user['username'] + ', no account	name provided, see "kb help twitter" for explanation';
+		        } else {
+					return user['username'] + ", " + tweet.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
+				}
 			} catch(err) {
 			 	return user['username'] + ", " + err.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '') + " FeelsDankMan !!!";
 			}
