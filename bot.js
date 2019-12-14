@@ -4,6 +4,9 @@
 
 const fs = require('fs');
 const api = require('./config.js');
+
+// parse the channel list 
+// check for empty items in an array
 const channelOptions = fs.readFileSync('./db/channels.js').toString().split('"').filter(
 	function(i){return i != null;}).join('').split(' ')
 const options = {
@@ -29,6 +32,7 @@ const repeatedMessages = {
 kb.connect();
 kb.on('connected', (adress, port) => {
 
+kb.say('kunszg', 'reconnected KKona')
 const randomApod = require('random-apod'); //apod command - for random astro pic of the day
 const randomWords = require("random-words"); //yt command - for random words to use in youtube search
 const search = require("youtube-search"); // rt and yt commands - random video using random words api
@@ -42,11 +46,10 @@ const SpacexApiWrapper = require("spacex-api-wrapper");
 const fetch = require("node-fetch");
 const perf = require('execution-time')();
 const tmidocs = "https://github.com/tmijs/docs/tree/gh-pages/_posts/v1.4.2";
-const nam = "🏍 🚑 NaM 🚜 🚓 🚛 🚕 NaM 🚚 🚗 🏎 🚜 🚓 🏍 NaM 🚕 🚜 🚕 🚛 🚕 🚚 🚗 SORRY FOR TRAFFIC NAM 🚕 🚜 🚕 🚓 🚛 🏎 🚑 🚒 NaM 🚓 🏍 🚓 🚜 NaM 🏎 🏎 🚜 NaM 🏎 🚜 🚓 🚜 NaM 🚑 🚑 NaM 🚗 🚗 🚚 NaM 🚗 🏎 🏎 🚚 🚛 NaM 🚓 🚜 🚕 🚜 🚙 🏍 NaM 🚙 🏍 🚌 🚲 NaM 🚌 🚐 🚌 🚒 NaM 🚎 🚒 🚙 🚕 🚕 🚑 🏍 🚓 🚜 🚛 NaM 🚚 🚚 🚗 🚗 🚜 🚓 NaM 🚑 🚒 🚑 🚲 🚒🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷 🐷 🍓 🍑 🍊 🍋 🍍 NaM 🍐 🍏 🐬 🐳 NaM 🍆 🐙 🌷";
-const pajas = "⠄⠄⠄⢀⣀⣤⣤⣤⣤⣤⣤⣀⠄⠄⠄⠄⠄⠄⠄⣀⣀⣤⣀⠄⠄⠄⠄⠄ ⠄⠄⣴⣿⣿⣸⣿⣿⠿⠿⠿⠿⢿⣷⣦⡀⢠⣾⣿⣿⣿⣿⣿⣷⣄⠄⠄⠄ ⠄⢰⣿⣟⣛⣩⣵⣶⣿⣿⣿⣿⣷⣶⣭⣕⢹⣯⣶⣶⣶⣶⣶⣦⣿⣆⠄⠄ ⣴⣾⡟⣿⣿⣿⠿⣛⣭⣭⣶⣶⣭⣭⣝⠻⢃⣩⣭⣴⣶⣶⣶⣬⣍⣉⡂⠄ ⣿⣿⠃⣸⡟⣡⣾⣿⣿⣿⣿⢉⠉⣻⣿⣷⢈⣿⣿⣿⣿⣿⣿⣟⢉⠙⣿⣷ ⣿⣿⣿⣿⣧⠻⣿⣿⣿⣿⣿⣶⣴⡿⢟⣫⡬⣙⡛⠿⠿⠿⠿⠿⠷⠾⠛⣩ ⣸⣿⣿⣿⣿⣿⣶⠬⠭⠭⠭⠥⠶⣚⣿⠟⣱⣟⠿⠿⣿⣷⡶⠾⢛⣛⠉⠁ ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣥⣾⣿⣿⣷⣴⣶⣶⣾⣿⣿⣿⠇⠄ ⣿⣿⣿⣿⡿⠿⠿⠿⠿⣿⣿⣿⣿⠿⠿⠿⠟⣛⣛⣛⣛⣋⣭⣭⣶⣶⡾⠄ ⣿⣿⣿⣯⢸⣿⣿⢟⣛⣒⣒⣒⣒⣛⣛⣛⣋⣭⣭⣭⣭⣴⣶⠶⣶⠖⠄⠄ ⣿⣿⣿⣍⠢⣭⣭⣭⣭⣭⣭⣭⣛⣛⣛⣛⣛⣛⣛⣛⣭⣭⠶⠋⠄⠄⠄⠄ ⠄⣠⣦⣭⣭⣭⣝⣛⣓⣊⡩⠭⠭⠭⠭⠿⢛⣛⣋⣭⣌⡀⠄⠄⠄⠄⠄⠄ ⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠄⠄⠄⠄ ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠄⠄⠄ ";
 const allowFastramid = [
 	{ID: '178087241'}, //kunszg
-	{ID: '229225576'} //kunszgbot
+	{ID: '229225576'}, //kunszgbot
+	{ID: '40379362'} //sinris
 ];	
 const allowEval = [
 	{ID: '178087241'}, //kunszg
@@ -683,10 +686,10 @@ const commands = [
 		invocation: async (channel, user, message, args) => {
 			try {
 				perf.start();
-				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '' + " ").split(" ").splice(2);
-				const emote = message.replace(/[\u{E0000}|\u{206d}]/gu, '' + " ").split(" ").splice(5);
-				const msgP = message.replace(/[\u{E0000}|\u{206d}]/gu, '' + " ").split(" ").splice(4);
-				const emoteP = message.replace(/[\u{E0000}|\u{206d}]/gu, '' + " ").split(" ").splice(5);
+				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, "").split(" ").splice(2);
+				const emote = message.replace(/[\u{E0000}|\u{206d}]/gu, "").split(" ").splice(5);
+				const msgP = message.replace(/[\u{E0000}|\u{206d}]/gu, "").split(" ").splice(4);
+				const emoteP = message.replace(/[\u{E0000}|\u{206d}]/gu, "").split(" ").splice(5);
 				const patterns = [
 					{pattern: 'pyramid'},
 					{pattern: 'square'},
@@ -703,7 +706,7 @@ const commands = [
 				const patternChosen = patterns.filter( 
 					i => i.pattern === msg[1]
 				);
-				const perms = allowEval.filter(
+				const perms = allowFastramid.filter(
 					i => i.ID === user['user-id']
 				);
 				function hasNumber(myString) {
@@ -735,73 +738,78 @@ const commands = [
 					else if (!emote[0] || !emote.join(' ').match(/[a-z]/i)) {
 						return user['username'] + ', invalid fourth parameter (word) [err#5]';
 					}
-					else if (caseChosen[0].case === 'fast' && patternChosen[0].pattern === 'pyramid') {
-						function createPyramid (height) {
-						  	for (var i = 1; i <= height; i++) {
-						    	var row = '';
-
-						    	for (var j = 1; j <= i; j++) 
-					      		row += " " + emoteP[Math.floor(Math.random()*emoteP.length)]; 
-				  		  		kb.say(channel, row);
-							}
-						  	for (var i = height - 1; i > 0; i--) {
-						    	var row = '';
-
-						    	for (var j = i; j > 0; j--) 
-					  	  		row += " " + emoteP[Math.floor(Math.random()*emoteP.length)];
-				  		 		kb.say(channel, row);
-							}
-						}			
-						createPyramid(msgP[0]);
-						return "";
+					else if (user['user-id'] === '40379362' && msg[2]>50) { //sinris user id
+						return user['username'] + ", i can't allow pyramids higher than 50 FeelsBadMan";
 					}
-					else if (caseChosen[0].case === 'slow' && patternChosen[0].pattern === 'pyramid') {
-						function createPyramid (height) {
-					  		for (var i = 1; i <= height; i++) {
-						    	var row = '';
+					else {
+						if (caseChosen[0].case === 'fast' && patternChosen[0].pattern === 'pyramid') {
+							function createPyramid (height) {
+							  	for (var i = 1; i <= height; i++) {
+							    	var row = '';
 
-						    	for (var j = 1; j <= i; j++) 
-						      	row += " " + emoteP[Math.floor(Math.random()*emoteP.length)];
-					  		  	kb.say(channel, row);
-					  		  	sleep(1300);
-							}
-							for (var i = height - 1; i > 0; i--) {
-						    	var row = '';
+							    	for (var j = 1; j <= i; j++) 
+						      		row += " " + emoteP[Math.floor(Math.random()*emoteP.length)]; 
+					  		  		kb.say(channel, row);
+								}
+							  	for (var i = height - 1; i > 0; i--) {
+							    	var row = '';
 
-						    	for (var j = i; j > 0; j--) 
-						  	  	row += " " + emoteP[Math.floor(Math.random()*emoteP.length)];
-				  		 		kb.say(channel, row);
-				  		 		sleep(1300);
-							}
-						}					
-						createPyramid(msgP[0]);
-						return "";
-					}
-					else if (caseChosen[0].case === 'fast' && patternChosen[0].pattern === 'triangle') {
-						const randomE = emoteP[Math.floor(Math.random()*emoteP.length)]; 
-						function createTriangle (height) {
-							for(var i=1; i<=height; i++){
-						   		kb.say(channel, (' ' + randomE + ' ').repeat(i))
-							}
+							    	for (var j = i; j > 0; j--) 
+						  	  		row += " " + emoteP[Math.floor(Math.random()*emoteP.length)];
+					  		 		kb.say(channel, row);
+								}
+							}			
+							createPyramid(msgP[0]);
+							return "";
 						}
-						createTriangle(msgP[0]);
-						return '';
-					}
-					else if (caseChosen[0].case === 'slow' && patternChosen[0].pattern === 'triangle') {
-						const randomE = emoteP[Math.floor(Math.random()*emoteP.length)]; 
-						function createTriangle (height) {
-							for(var i=1; i<=height; i++){
-						   		kb.say(channel, (' ' + randomE + ' ').repeat(i))
-						   		sleep(1300);
-							}
+						else if (caseChosen[0].case === 'slow' && patternChosen[0].pattern === 'pyramid') {
+							function createPyramid (height) {
+						  		for (var i = 1; i <= height; i++) {
+							    	var row = '';
+
+							    	for (var j = 1; j <= i; j++) 
+							      	row += " " + emoteP[Math.floor(Math.random()*emoteP.length)];
+						  		  	kb.say(channel, row);
+						  		  	sleep(1300);
+								}
+								for (var i = height - 1; i > 0; i--) {
+							    	var row = '';
+
+							    	for (var j = i; j > 0; j--) 
+							  	  	row += " " + emoteP[Math.floor(Math.random()*emoteP.length)];
+					  		 		kb.say(channel, row);
+					  		 		sleep(1300);
+								}
+							}					
+							createPyramid(msgP[0]);
+							return "";
 						}
-						createTriangle(msgP[0]);
-						return '';
+						else if (caseChosen[0].case === 'fast' && patternChosen[0].pattern === 'triangle') {
+							const randomE = emoteP[Math.floor(Math.random()*emoteP.length)]; 
+							function createTriangle (height) {
+								for(var i=1; i<=height; i++){
+							   		kb.say(channel, (' ' + randomE + ' ').repeat(i))
+								}
+							}
+							createTriangle(msgP[0]);
+							return '';
+						}
+						else if (caseChosen[0].case === 'slow' && patternChosen[0].pattern === 'triangle') {
+							const randomE = emoteP[Math.floor(Math.random()*emoteP.length)]; 
+							function createTriangle (height) {
+								for(var i=1; i<=height; i++){
+							   		kb.say(channel, (' ' + randomE + ' ').repeat(i))
+							   		sleep(1300);
+								}
+							}
+							createTriangle(msgP[0]);
+							return '';
+						}
+						else if (patternChosen[0].pattern != 'pyramid' && patternChosen[0].pattern != 'triangle') {
+							return user['username'] + ', currently supporting only pyramid/triangle.'
+						}
 					}
-					else if (patternChosen[0].pattern != 'pyramid' && patternChosen[0].pattern != 'triangle') {
-						return user['username'] + ', currently supporting only pyramid/triangle.'
-					}
-				}
+				}	
 			} catch(err) {
 			 	return user['username'] + ", " + err + " FeelsDankMan !!!";
 			}	
@@ -1346,43 +1354,51 @@ const commands = [
      	}
     },
 
-    {
-     	name: prefix + "help",
-      	aliases: null,
-      	description: "syntax: kb help [command] | no parameter - shows basic information about bot, it's owner and host | command - shows description of a specified command - cooldown 5s",
-      	invocation: async (channel, user, message, args) => {
-			try{
+	{
+		name: prefix + "help",
+		aliases: null,
+		description: "syntax: kb help [command] | no parameter - shows basic information about bot, it's owner and host | command - shows description of a specified command - cooldown 5s",
+		invocation: async (channel, user, message, args) => {
+			try {
 				perf.start();
 				const msg = message.toLowerCase().split(' ').splice(2);
-		    	if (talkedRecently2.has(user['user-id'])) { //if set has user id - ignore
+				if (talkedRecently2.has(user['user-id'])) {
 					return '';  				    
 				} else {   
-		     		talkedRecently2.add(user['user-id']);
-	            	setTimeout(() => {
-	         			talkedRecently2.delete(user['user-id']);
-		            }, 5000);
-	            }
-		        if (!msg[0]) {
-	        		return user['username'] + ", kunszgbot is owned by KUNszg, sponsored by " + "Sinris".replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join(""
-	        			).replace(/^(.{2})/,"$1\u{E0000}").split("").reverse().join("") + " , Node JS " + process.version + 
-	        			", running on Ionos VPS, Debian 9 GNU/" + process.platform + ' ' + process.arch + ", for commands list use 'kb commands'.";
-      		
-      			} else if (commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0])) {
-      				if (commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]) && commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]).length != 0) {
-      					return user['username'] + ', ' + commands.filter((i=>i.name.substring(3).toLowerCase() === msg[0])).map(i=>i.description)[0];
-      				} else if (commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]) && commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]).length === 0) {
-      					return user['username'] + ', command does not exist or description for it is not ready yet :/ ';
-      				}
-      			} else {
-      				return user['username'] + ', internal error monkaS';
-      			}
-  			
-      		} catch(err) {
+					talkedRecently2.add(user['user-id']);
+					setTimeout(() => {
+						talkedRecently2.delete(user['user-id']);
+					}, 5000);
+				}
+
+				// if there is no parameter given, return basic command message. 
+				if (!msg[0]) {
+					return user['username'] + ", kunszgbot is owned by KUNszg, sponsored by " + "Sinris".replace(/^(.{2})/,"$1\u{E0000}") + " , Node JS " + process.version + 
+							", running on Ionos VPS, Debian 9 GNU/" + process.platform + ' ' + process.arch + ", for commands list use 'kb commands'.";
+
+				// filter for command names matching the given parameter.
+				} else if (commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0])) {
+					if (commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]) && commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]).length != 0) {
+						// if there is a specified command and the description exists - respond.
+						return user['username'] + ', ' + commands.filter((i=>i.name.substring(3).toLowerCase() === msg[0])).map(i=>i.description)[0];		
+					} else if (commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]) && commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]).length === 0) {
+						// if specified command does not exist, throw an error.
+						throw 'command does not exist.';
+					} else if (!(commands.filter((i=>i.name.substring(3).toLowerCase() === msg[0])).map(i=>i.description))){
+						// if specified command exists but there is no description for it, throw an error.
+						throw 'description for that command does not exist.'
+					}
+				} else {
+					// if something else that is not handled happens, throw an error.
+					throw 'internal error monkaS';
+				}
+			} catch(err) {
 				console.log(err);
-				return user['username'] +', ' + err + ' FeelsDankMan !!!';
+				// return the thrown error to chat
+				return user['username'] +', ' + err + ' ';
 			}
-      	}
-    },
+		}
+	},
 
     {
     	name: prefix + "joemama",
@@ -1464,7 +1480,7 @@ const commands = [
 					setTimeout(()=>{process.kill(process.pid)}, 10000);
 					return '';
 				}
-			} catch(err) {
+			} catch (err) {
 				console.log(err);
 				return user['username'] + err + ' FeelsDankMan !!!';
 			}
@@ -1772,41 +1788,6 @@ async function sendOnlineStatus() {
 }	
 setInterval(() => {sendOnlineStatus()}, 600000);
 
-const arr = [ 
-  	' FeelsBadChamp ',
-  	' 🔊 Bruh ',
-  	' 🔊 Bruh ',
-  	' 🔊 Bruh ',
-  	' 🔊 Bruh ',
-  	' 🔊 Bruh ',
-  	' Weirdga  ',
-  	' peepoSad ',
-  	' ManFeels ',
-  	' WeirdChamp ',
-  	' peepoMad ',
-  	' PepeDead ',
-  	' PepeDead ',
-  	' PepeDead ',
-  	' WeirderChamp ',
-  	' WeirdMe ',
-  	' gachiFeels ',
-  	' FeelsWeirdMan ',
-  	' pepeL ',
-  	' WeirdYou ',
-  	' WeebsOut ',
-  	' PepeHands ',
-  	' ppBeer ',
-  	' ppPoof ',
-  	' FeelsSuperWeirdMan ',
-  	' SansDefault ',
-  	' SansDab '
-];
-/* 
-setInterval(() => { 
-	const randomEmote = arr[Math.floor(Math.random()*arr.length)]; kb.action('haxk', randomEmote + '  🚨 ALERT')
-}, 1800000);
-*/ 
-
 const dankPrefix = '?';
 const talkedRecently2 = new Set();
 const dankeval = [
@@ -1844,9 +1825,6 @@ const dankeval = [
 		              	talkedRecently.delete(user['user-id']);
 		            }, 15000);
 		        }
-		       //todo 
-		       // kb.whisper('supibot', '$remind ' + user['username'] + ' eat cookie :) in 121m');
-		       // setTimeout(()=>{kb.say(channel, user['username'] + ', you will be reminded to eat your cookie in 2 hours :)')}, 1000);
 				return '$remind ' + user['username'] + ' eat cookie :) in 121m';
 			}
 		}
