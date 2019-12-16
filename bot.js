@@ -1371,25 +1371,25 @@ const commands = [
 					}, 5000);
 				}
 
-				// if there is no parameter given, return basic command message. 
+				// if there is no parameter given, return basic command message
 				if (!msg[0]) {
 					return user['username'] + ", kunszgbot is owned by KUNszg, sponsored by " + "Sinris".replace(/^(.{2})/,"$1\u{E0000}") + " , Node JS " + process.version + 
 							", running on Ionos VPS, Debian 9 GNU/" + process.platform + ' ' + process.arch + ", for commands list use 'kb commands'.";
 
-				// filter for command names matching the given parameter.
 				} else if (commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0])) {
+					// filter for command names matching the given parameter
 					if (commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]) && commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]).length != 0) {
-						// if there is a specified command and the description exists - respond.
+						// if there is a specified command and the description exists - respond
 						return user['username'] + ', ' + commands.filter((i=>i.name.substring(3).toLowerCase() === msg[0])).map(i=>i.description)[0];		
 					} else if (commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]) && commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]).length === 0) {
-						// if specified command does not exist, throw an error.
+						// if specified command does not exist, throw an error
 						throw 'command does not exist.';
 					} else if (!(commands.filter((i=>i.name.substring(3).toLowerCase() === msg[0])).map(i=>i.description))){
-						// if specified command exists but there is no description for it, throw an error.
+						// if specified command exists but there is no description for it, throw an error
 						throw 'description for that command does not exist.'
 					}
 				} else {
-					// if something else that is not handled happens, throw an error.
+					// if something else that is not handled happens, throw an error
 					throw 'internal error monkaS';
 				}
 			} catch(err) {
