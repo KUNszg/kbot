@@ -1376,15 +1376,15 @@ const commands = [
 					return user['username'] + ", kunszgbot is owned by KUNszg, sponsored by " + "Sinris".replace(/^(.{2})/,"$1\u{E0000}") + " , Node JS " + process.version + 
 							", running on Ionos VPS, Debian 9 GNU/" + process.platform + ' ' + process.arch + ", for commands list use 'kb commands'.";
 
-				} else if (commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0])) {
+				} else if (commands.filter(i => i.name.substring(3).toLowerCase() === msg[0])) {
 					// filter for command names matching the given parameter
-					if (commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]) && commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]).length != 0) {
+					if (commands.filter(i => i.name.substring(3).toLowerCase() === msg[0]) && commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]).length != 0) {
 						// if there is a specified command and the description exists - respond
 						return user['username'] + ', ' + commands.filter((i=>i.name.substring(3).toLowerCase() === msg[0])).map(i=>i.description)[0];		
-					} else if (commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]) && commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]).length === 0) {
+					} else if (commands.filter(i => i.name.substring(3).toLowerCase() === msg[0]) && commands.filter(i=>i.name.substring(3).toLowerCase() === msg[0]).length === 0) {
 						// if specified command does not exist, throw an error
 						throw 'command does not exist.';
-					} else if (!(commands.filter((i=>i.name.substring(3).toLowerCase() === msg[0])).map(i=>i.description))){
+					} else if (!(commands.filter((i => i.name.substring(3).toLowerCase() === msg[0])).map(i=>i.description))){
 						// if specified command exists but there is no description for it, throw an error
 						throw 'description for that command does not exist.'
 					}
@@ -1677,44 +1677,51 @@ kb.on("chat", async (channel, user, message, self) => {
 	    const colors = colorList[Math.floor(Math.random()*colorList.length)]
 		kb.say(channel, "/color " + colors);
 		
-		const banphraseFilter = api.banphraseList.filter(
-			i => result.includes(i.banphrase)
-			);
-		const banphraseMap = banphraseFilter.map(
-			i => i.banphrase 
-			);
-	    if (!result) {
-	    	kb.say(channel, "");
-	    } else { 
-		    	if (result.replace(/[\u{E0000}|\u{206d}]/gu, '') === "undefined") {
-		    		kb.say(channel, 'Internal error monkaS')
-		    		return;
-		    	}
-		    	else if (result.toLowerCase().includes(banphraseMap[0])) {
-		    		kb.say(channel, user['username'] + ', cmonBruh')
-		    		return;
-		    	} 
-				else if (result.toLowerCase().startsWith(kb.getOptions().identity.password)) {
-					kb.say(channel, user['username'] + ', TriHard oauth key');
-					return;
+		async function sendResponse() {
+			const test = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', { 
+				method: "POST",
+				url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+				body: "message=" + result,
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded"
+					},
+			}).then(response => response.json()))
+			if (test.banned === true) {	
+				kb.say(channel, user['username'] + ', the result is banphrased, I whispered it to you tho cmonBruh')
+    			kb.whisper(user['username'], result);
+    			return;
+			} else {
+				if (!result) {
+			    	kb.say(channel, "");
+			    } else { 
+				    	if (result.replace(/[\u{E0000}|\u{206d}]/gu, '') === "undefined") {
+				    		kb.say(channel, 'Internal error monkaS')
+				    		return;
+				    	}
+						else if (result.toLowerCase().startsWith(kb.getOptions().identity.password)) {
+							kb.say(channel, user['username'] + ', TriHard oauth key');
+							return;
+						}
+						else if (result.toLowerCase() === 'object') {
+							if (channel === '#nymn') {
+								kb.say(channel, ' object peepoSquad')
+								return;
+							} else {
+								kb.say(channel, ' object 🦍')
+								return;
+							}
+						} else {
+							commandsExecuted.push('1');
+							if (perf.stop().time>1000) {
+							 	kb.say(channel, result + ' [' + (perf.stop().time/1000).toFixed(2) + 's]');
+							} else {
+							 	kb.say(channel, result);
+							}	
+						}				
+		 			}
 				}
-				else if (result.toLowerCase() === 'object') {
-					if (channel === '#nymn') {
-						kb.say(channel, ' object peepoSquad')
-						return;
-					} else {
-						kb.say(channel, ' object 🦍')
-						return;
-					}
-				} else {
-					commandsExecuted.push('1');
-					if (perf.stop().time>1000) {
-					 	kb.say(channel, result + ' [' + (perf.stop().time/1000).toFixed(2) + 's]');
-					} else {
-					 	kb.say(channel, result);
-					}	
-				}				
- 			}
+			}
+			sendResponse()
  		}
 	});
 });
