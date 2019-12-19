@@ -2134,19 +2134,19 @@ disco.on('message', async msg => {
 		    }
 		});
 disco.on('message', async msg => {
- 	if (msg.content.split(' ')[0] === '?joke') {
+  if (msg.content.split(' ')[0] === '?joke') {
 		try{		
-        	function firstLettertoLowerCase(string) {
+         	function firstLettertoLowerCase(string) {
 				return string.charAt(0).toLowerCase() + string.slice(1);
 			}
 			const arr = [
-				'general',
-				'general',
-				'general',
-				'general',
-				'general',
-				'programming',
-				'programming'
+			'general',
+			'general',
+			'general',
+			'general',
+			'general',
+			'programming',
+			'programming'
 			]
 			const randomPs = arr[Math.floor(Math.random()*arr.length)];
 			console.log(randomPs)
@@ -2155,7 +2155,7 @@ disco.on('message', async msg => {
 		 			.then(response => response.json()); 
 	 			setTimeout(() => { 
 	 				msg.channel.send(firstLettertoLowerCase(joke[0].punchline.replace(/\./g, '')) + ' 😂'
- 				)}, 4000);
+	 				)}, 4000);
 	 			msg.reply( firstLettertoLowerCase(joke[0].setup));
 	 		}
 	 		else if (randomPs === 'general') {
@@ -2163,46 +2163,48 @@ disco.on('message', async msg => {
 		 			.then(response => response.json()); 
 	 			setTimeout(() => { 
 	 				msg.channel.send(firstLettertoLowerCase(jokeGeneral.punchline.replace(/\./g, '')) + ' 😂 '
- 				)}, 4000);
+	 				)}, 4000);
 	 			msg.reply(firstLettertoLowerCase(jokeGeneral.setup));
 	 		}
 
- 		} catch(err) {
-			console.log(err);
-			msg.reply(err);
-		}
-	}
-});
-{
-	const talkedRecently = new Set();
-	disco.on('message', async msg => {
-		if (msg.content.split(' ')[0] === '?ping') {
-			try {
-				const msg1 = msg.content.split(' ');
-				const msg2 = msg1.shift();
-			 	const used = process.memoryUsage().heapUsed / 1024 / 1024;
-			   
-				if (talkedRecently.has(disco.user.tag)) { //if set has user id - ignore
-			    	return '';  
-			    } else {   
-			     	talkedRecently.add(disco.user.tag);
-			     	setTimeout(() => {
-			      	// removes the user from the set after 10s
-			    	  	talkedRecently.delete(disco.user.tag);
-			        }, 5000);
-			    }
-			    if (!msg1[0]) {
-			        const ping = await kb.ping();
-				    msg.reply(", pong FeelsDankMan 🏓 ppHop 🏓💻, latency: " + ping*1000 + "ms, memory usage: " + 
-					    (used).toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%)");
+	 		} catch(err) {
+				console.log(err);
+				msg.reply(err);
 				}
-			} catch(err) {
-				if (err.message.includes("undefined")) {
-					msg.channel.send(err + ", N OMEGALUL")
-				}
-				msg.channel.send(err + " FeelsDankMan !!!");
 			}
+		});
+{
+const talkedRecently = new Set();
+disco.on('message', async msg => {
+  if (msg.content.split(' ')[0] === '?ping') {
+
+try {
+	const msg1 = msg.content.split(' ');
+	const msg2 = msg1.shift();
+ 	const used = process.memoryUsage().heapUsed / 1024 / 1024;
+   
+	if (talkedRecently.has(disco.user.tag)) { //if set has user id - ignore
+    	return '';  
+    } else {   
+     talkedRecently.add(disco.user.tag);
+     setTimeout(() => {
+      // removes the user from the set after 10s
+      talkedRecently.delete(disco.user.tag);
+            }, 5000);
+        }
+    if (!msg1[0]) {
+	        const ping = await kb.ping();
+		    msg.reply(", pong FeelsDankMan 🏓 ppHop 🏓💻, latency: " + ping*1000 + "ms, memory usage: " + 
+			    (used).toFixed(2) + " MB (" + ((used / 8000)*100).toFixed(2) + "%)");
+		}
+    } catch(err) {
+			if (err.message.includes("undefined")) {
+				msg.channel.send(err + ", N OMEGALUL")
+			}
+   			msg.channel.send(err + " FeelsDankMan !!!");
+    		}
 		}
 	})
 }
+
 disco.login(api.discord);
