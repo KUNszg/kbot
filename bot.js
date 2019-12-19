@@ -1647,85 +1647,110 @@ kb.on("chat", async (channel, user, message, self) => {
 		    (command.aliases && (input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '').toLowerCase() === command.aliases)
 		  ) {
 		    let result = await command.invocation(channel, user, message);
-			
-			if (result === "") { 
-			  	return;
-			}
 
 			else {
 				if (result === "undefined") {
-		    	kb.say(channel, "")
-		    		}
-		    	else {
+		    		kb.say(channel, "")
+	    		} else {
 		    		if (result === '' || result === ' ') {
 		    			return;
 		    		}
 		    		else if (repeatedMessages[channel] === result) {
-				      		result += " \u{E0000}";
+			      		result += " \u{E0000}";
 			    	}
 			    }
-			}
-					
-	    repeatedMessages[channel] = result;
+			}		
+		    repeatedMessages[channel] = result;
 
-	    const colorList = [
-		     "Blue", "BlueViolet", "CadetBlue", "Chocolate", 
-		     "Coral", "DodgerBlue", "Firebrick", "GoldenRod", 
-		     "Green", "HotPink", "OrangeRed", "Red", "SeaGreen", 
-		     "SpringGreen", "YellowGreen" 
-	    ];
-	    
-	    const colors = colorList[Math.floor(Math.random()*colorList.length)]
-		kb.say(channel, "/color " + colors);
-		
-		async function sendResponse() {
-			const test = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', { 
-				method: "POST",
-				url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-				body: "message=" + result,
-				headers: {
-					"Content-Type": "application/x-www-form-urlencoded"
-					},
-			}).then(response => response.json()))
-			if (test.banned === true) {	
-				kb.say(channel, user['username'] + ', the result is banphrased, I whispered it to you tho cmonBruh')
-    			kb.whisper(user['username'], result);
-    			return;
-			} else {
-				if (!result) {
-			    	kb.say(channel, "");
-			    } else { 
-				    	if (result.replace(/[\u{E0000}|\u{206d}]/gu, '') === "undefined") {
-				    		kb.say(channel, 'Internal error monkaS')
-				    		return;
-				    	}
-						else if (result.toLowerCase().startsWith(kb.getOptions().identity.password)) {
-							kb.say(channel, user['username'] + ', TriHard oauth key');
-							return;
-						}
-						else if (result.toLowerCase() === 'object') {
-							if (channel === '#nymn') {
-								kb.say(channel, ' object peepoSquad')
-								return;
-							} else {
-								kb.say(channel, ' object 🦍')
+		    const colorList = [
+			     "Blue", "BlueViolet", "CadetBlue", "Chocolate", 
+			     "Coral", "DodgerBlue", "Firebrick", "GoldenRod", 
+			     "Green", "HotPink", "OrangeRed", "Red", "SeaGreen", 
+			     "SpringGreen", "YellowGreen" 
+		    ];
+		    
+		    const colors = colorList[Math.floor(Math.random()*colorList.length)]
+			kb.say(channel, "/color " + colors);
+			
+			async function sendResponse() {
+				const test = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', { 
+					method: "POST",
+					url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+					body: "message=" + result,
+					headers: {
+						"Content-Type": "application/x-www-form-urlencoded"
+						},
+				}).then(response => response.json()))
+				if (channel === '#nymn') {
+					if (test.banned === true) {	
+						kb.say(channel, user['username'] + ', the result is banphrased, I whispered it to you tho cmonBruh')
+		    			kb.whisper(user['username'], result);
+		    			return;
+					} else {
+						if (!result) {
+					    	kb.say(channel, "");
+					    } else { 
+					    	if (result.replace(/[\u{E0000}|\u{206d}]/gu, '') === "undefined") {
+					    		kb.say(channel, 'Internal error monkaS')
+					    		return;
+					    	}
+							else if (result.toLowerCase().startsWith(kb.getOptions().identity.password)) {
+								kb.say(channel, user['username'] + ', TriHard oauth key');
 								return;
 							}
-						} else {
-							commandsExecuted.push('1');
-							if (perf.stop().time>1000) {
-							 	kb.say(channel, result + ' [' + (perf.stop().time/1000).toFixed(2) + 's]');
+							else if (result.toLowerCase() === 'object') {
+								if (channel === '#nymn') {
+									kb.say(channel, ' object peepoSquad')
+									return;
+								} else {
+									kb.say(channel, ' object 🦍')
+									return;
+								}
 							} else {
-							 	kb.say(channel, result);
-							}	
-						}				
-		 			}
+								commandsExecuted.push('1');
+								if (perf.stop().time>1000) {
+								 	kb.say(channel, result + ' [' + (perf.stop().time/1000).toFixed(2) + 's]');
+								} else {
+								 	kb.say(channel, result);
+								}	
+							}				
+			 			}
+					}
+				} else {
+					if (!result) {
+					    	kb.say(channel, "");
+					    } else { 
+					    	if (result.replace(/[\u{E0000}|\u{206d}]/gu, '') === "undefined") {
+					    		kb.say(channel, 'Internal error monkaS')
+					    		return;
+					    	}
+							else if (result.toLowerCase().startsWith(kb.getOptions().identity.password)) {
+								kb.say(channel, user['username'] + ', TriHard oauth key');
+								return;
+							}
+							else if (result.toLowerCase() === 'object') {
+								if (channel === '#nymn') {
+									kb.say(channel, ' object peepoSquad')
+									return;
+								} else {
+									kb.say(channel, ' object 🦍')
+									return;
+								}
+							} else {
+								commandsExecuted.push('1');
+								if (perf.stop().time>1000) {
+								 	kb.say(channel, result + ' [' + (perf.stop().time/1000).toFixed(2) + 's]');
+								} else {
+								 	kb.say(channel, result);
+								}	
+							}				
+			 			}	
+					}
 				}
-			}
-			sendResponse()
- 		}
+				sendResponse()
+	 		}	
+		});
 	});
-});
 const talkedRecently3 = new Set();
 const commandlist = [
     {
