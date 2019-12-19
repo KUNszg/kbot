@@ -1648,18 +1648,9 @@ kb.on("chat", async (channel, user, message, self) => {
 		  ) {
 		    let result = await command.invocation(channel, user, message);
 
-			else {
-				if (result === "undefined") {
-		    		kb.say(channel, "")
-	    		} else {
-		    		if (result === '' || result === ' ') {
-		    			return;
-		    		}
-		    		else if (repeatedMessages[channel] === result) {
-			      		result += " \u{E0000}";
-			    	}
-			    }
-			}		
+    		if (repeatedMessages[channel] === result) {
+	      		result += " \u{E0000}";
+	    	}		
 		    repeatedMessages[channel] = result;
 
 		    const colorList = [
