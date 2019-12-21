@@ -1855,18 +1855,6 @@ const dankeval = [
 	},
 
 	{
-		name: "!movie",
-		aliases: null,
-		invocation: async (channel, user, message, args) => {
-			if (channel === '#kunszg') {
-				return 'Star Wars: The Rise of Skywalker';
-			} else {
-				return '';
-			}
-		}
-	},
-
-	{
 		name: "kunszgbot",
 		aliases: "kunszgbot,",
 		invocation: async (channel, user, message, args) => {
