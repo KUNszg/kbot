@@ -57,7 +57,7 @@ const allowEval = [
 	{ID: '458101504'}, //notkunszg
 	{ID: '31400525'} //supinic
 ];
-const allowCookie = [
+const allowCookie = [ //prestige cookies: p1 1h, p2 30min, p3 20min
 	{ID: '178087241', username: 'kunszg'},
 	{ID: '130432430', username: 'acoffeer'},
 	{ID: '194557429', username: 'meacheese'},
@@ -77,7 +77,6 @@ const allowCookie = [
 	{ID: '44710465', username: 'MarcFryd'},
 	{ID: '49739598', username: 'thedangerousbros'},
 	{ID: '148973258', username: 'fabzeef'},
-	{ID: '103973901', username: 'alazymeme'},
 	{ID: '122424957', username: 'Kippenkoppetje'},
 	{ID: '180254567', username: 'cheat_on_wifesen'},
 	{ID: '25373513', username: 'JanzoMan'}
