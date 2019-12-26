@@ -1828,7 +1828,7 @@ const dankeval = [
 			} 
 		}
 	},
-
+/*
     {
 		name: dankPrefix + 'cookie',
 		aliases: null,
@@ -1852,7 +1852,7 @@ const dankeval = [
 				return '$remind ' + user['username'] + ' eat cookie :) in 121m';
 			}
 		}
-	},
+	},*/
 
 	{
 		name: "kunszgbot",
