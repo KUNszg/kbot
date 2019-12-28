@@ -1610,16 +1610,16 @@ const commands = [
 					return "";
 				} else {
 					const query = await new Promise((Reject, Resolve) => {
-						con.query('SELECT ID, message, username FROM suggestions WHERE ID="' + msg[0] + '"' , function (error, results, fields) {
+						con.query('SELECT ID, message, username, status FROM suggestions WHERE ID="' + msg[0] + '"' , function (error, results, fields) {
 							if (error) {
 								Reject(user['username'] + ', error xD 👉 ' + error);
 							} else {
 								if (results[0].ID != msg[0]) {
 									Resolve(user['username'] + ', such ID does not exist FeelsDankMan');
 								} else if (results[0].ID === msg[0]) {
-									Resolve(user['username'] + ', suggestion from user ' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
+									Resolve('from' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
 								} else {
-									Resolve(user['username'] + ', suggestion from user ' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
+									Resolve('from ' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
 								}
 							}
 						})
