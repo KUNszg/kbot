@@ -1600,9 +1600,6 @@ const commands = [
 			try {
 				perf.start();
 				const msg = message.split(' ')[2];
-				function hasNumber(myString) {
-				 	return /\d/.test(myString);
-				}
 				const perms = allowEval.filter(
 					i => i.ID === user['user-id']
 				);
@@ -1610,16 +1607,16 @@ const commands = [
 					return "";
 				} else {
 					const query = await new Promise((Reject, Resolve) => {
-						con.query('SELECT ID, message, username, status FROM suggestions WHERE ID="' + msg[0] + '"' , function (error, results, fields) {
+						con.query('SELECT ID, message, username, status FROM suggestions WHERE ID="' + msg + '"' , function (error, results, fields) {
 							if (error) {
 								Reject(user['username'] + ', error xD 👉 ' + error);
 							} else {
-								if (results[0].ID != msg[0]) {
+								if (results[0].ID != msg) {
 									Resolve(user['username'] + ', such ID does not exist FeelsDankMan');
-								} else if (results[0].ID === msg[0]) {
+								} else if (results[0].ID === msg) {
 									Resolve('from' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
 								} else {
-									Resolve('from ' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
+									Resolve(user['username'] + ', error eShrug');
 								}
 							}
 						})
