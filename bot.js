@@ -1623,7 +1623,7 @@ const commands = [
 								}
 							}
 						})
-					}
+					})
 				}
 				return query;
 			} catch(returnValue) {
