@@ -1554,22 +1554,37 @@ const commands = [
 						talkedRecently.delete(user['user-id']);
 					}, 8000);
 				}
-				con.query('SELECT message FROM suggestions WHERE message="' + msg.join(' ') + '"', function (error, results, fields) {
-					if (error) throw error;
-					if (results.length === 0) {
-						con.query('INSERT INTO suggestions (username, message, created) VALUES ("' + user['username'] + '", "' + msg.join(' ') + '", CURRENT_TIMESTAMP)' , function (error, results, fields) {
-							if (error) throw error;
-							con.query('SELECT ID FROM suggestions WHERE message="' + msg.join(' ') + '"', function (error, results, fields) {
-								if (error) throw error;
-								kb.say(channel, user['username'] + ', suggestion saved with ID ' + results[0].ID + ' PogChamp');
+				if (!msg[0]) {
+					return user['username'] + ', no message provided FeelsDankMan';
+				}
+				const query = await new Promise((Reject, Resolve) => {
+					con.query('SELECT message FROM suggestions WHERE message="' + msg.join(' ') + '"', function (error, results, fields) {
+						if (error) { 
+							kb.say(channel, user['username'] + ', error occured, dont use special characters please xD');
+							return;
+						}
+						if (results.length === 0) {
+							con.query('INSERT INTO suggestions (username, message, created) VALUES ("' + user['username'] + '", "' + msg.join(' ') + '", CURRENT_TIMESTAMP)' , function (error, results, fields) {
+								if (error) {
+									kb.say(channel, user['username'] + ', error occured, dont use special characters please xD');
+									return;
+								}
+								con.query('SELECT ID FROM suggestions WHERE message="' + msg.join(' ') + '"', function (error, results, fields) {
+									if (error) {
+										kb.say(channel, user['username'] + ', error occured, dont use special characters please xD');
+										return;
+									}
+									Resolve(user['username'] + ', suggestion saved with ID ' + results[0].ID + ' PogChamp');
+								})
 							})
-						})
-					} else {
-						throw "duplicate suggestion";
-					}
+						} else {
+							Resolve(user['username'] + ", duplicate suggestion.");
+						}
+					})
 				})
-			} catch(err) {
-				return user['username'] + ', ' + err + ' FeelsDankMan !!!';
+				return query;
+			} catch(returnValuen) {
+				return returnValue;
 			}
 		}
 	},
@@ -1619,11 +1634,7 @@ const commands = [
 				if (!perms[0]) {
 					return "";
 				} else {
-					if (hasNumber(msg)) {				
-						return fs.readFileSync('./db/suggestions.js').toString().split('\n')[msg].split('=>')[1].replace(/"/g, '');
-					} else if (!hasNumber(msg) && msg.includes('length')) {
-						return user['username']  + ', total of ' + fs.readFileSync('./db/suggestions.js').toString().split('=>').length + ' suggestions registered.';
-					}
+					return 'xDDDDD';
 				}
 			} catch(err) {
 				return user['username'] + ', ' + err + ' FeelsDankMan !!!';
@@ -2022,7 +2033,7 @@ const dankeval = [
 		        const query = await new Promise((Reject, Resolve) => {
 					con.query('SELECT username, rank FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
 						if (error) {
-							kb.say('kunszg', '@kunszg cookie error: ' + error)
+							Reject('kunszg', '@kunszg cookie error: ' + error)
 						} else {
 							if (results.length === 0) {
 								kb.say(channel, '');
