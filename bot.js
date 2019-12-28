@@ -1643,7 +1643,7 @@ const commands = [
 	{
 		name: prefix + 'cookie',
 		aliases: null,
-		description: ' soon ANELE',
+		description: ' ',
 		invocation: async (channel, user, message, args) => {
 			try {
 				perf.start();
@@ -1791,7 +1791,7 @@ const commands = [
 									if (error) {
 										throw error
 									} else {
-										kb.say(channels, user['username'] + ', your cookie reminder rank is now set to default (timer: 2h)  ppHop');
+										kb.say(channel, user['username'] + ', your cookie reminder rank is now set to default (timer: 2h)  ppHop');
 									}
 								})
 							}
