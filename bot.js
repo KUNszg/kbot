@@ -2022,7 +2022,7 @@ const dankeval = [
 		        const query = await new Promise((Reject, Resolve) => {
 					con.query('SELECT username, rank FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
 						if (error) {
-							Reject(error);
+							kb.say('kunszg', '@kunszg cookie error: ' + error)
 						} else {
 							if (results.length === 0) {
 								kb.say(channel, '');
@@ -2046,9 +2046,9 @@ const dankeval = [
 						}
 					})
 				})
-				return query;
-			} catch(err) {
-				return user['username'] + ", " + err + " FeelsDankMan !!!";
+				return query
+			} catch(returnValue) {
+				return returnValue;
 			}
 		}
 	},
