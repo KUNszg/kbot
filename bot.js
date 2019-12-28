@@ -2184,13 +2184,9 @@ kb.on("chat", async (channel, user, message, self) => {
 		    	kb.say(channel, user['username'] + ", FeelsDankMan something fucked up")
 		    	return;
 			} else {
-				if (result.replace(/[\u{E0000}|\u{206d}]/gu, '') === "undefined") {
-		    		kb.say(channel, user['username'] + ", FeelsDankMan something fucked up")
+		   		if (result === '') {
+		    		kb.say(channel, '')
 		    		return;
-	    		} 
-			    else if (result === '') {
-			    	kb.say(channel, '')
-			    	return;
 			    }
 	    		else if (repeatedMessages[channel] === result) {
 			      	result += " \u{E0000}";
