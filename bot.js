@@ -45,7 +45,22 @@ const rUni = require('random-unicodes');
 const SpacexApiWrapper = require("spacex-api-wrapper");
 const fetch = require("node-fetch");
 const perf = require('execution-time')();
-const tmidocs = "https://github.com/tmijs/docs/tree/gh-pages/_posts/v1.4.2";
+const mysql = require('mysql');
+const con = mysql.createConnection({
+	host: "localhost",
+	user: 'root', //api.db_user,
+	password: '', //api.db_pass,
+	database: "kbot"
+});
+con.connect(function(err) {
+  	if (err) {
+  		kb.say('kunszg', '@kunszg, database connection error monkaS')
+  		console.log(err)
+	} else {
+  		console.log("Connected!");
+  	}
+});
+
 const allowFastramid = [
 	{ID: '178087241'}, //kunszg
 	{ID: '229225576'}, //kunszgbot
@@ -1558,12 +1573,12 @@ const commands = [
 			            }, 8000);
 			        }
 			    }
-			    	const ID = fs.readFileSync('./db/suggestions.js').toString().split('\n').join(' ').split('=>').length
-					const msg = message.split(' ').splice(2);
-					fs.appendFileSync('./db/suggestions.js', '\n' + '"' + new Date().toLocaleDateString() + ', ' + new Date().toLocaleTimeString() + ' => ' + user['username'] + ": " + msg.join(' ') + '"')
-					return user['username'] + ', thanks for the suggestion, it will be processed eventually Kapp [ID ' + ID + ']';
-				} catch(err) {
-					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
+		    	const ID = fs.readFileSync('./db/suggestions.js').toString().split('\n').join(' ').split('=>').length
+				const msg = message.split(' ').splice(2);
+				fs.appendFileSync('./db/suggestions.js', '\n' + '"' + new Date().toLocaleDateString() + ', ' + new Date().toLocaleTimeString() + ' => ' + user['username'] + ": " + msg.join(' ') + '"')
+				return user['username'] + ', thanks for the suggestion, it will be processed eventually Kapp [ID ' + ID + ']';
+			} catch(err) {
+				return user['username'] + ', ' + err + ' FeelsDankMan !!!';
 			}
 		}
 	},
@@ -1626,6 +1641,173 @@ const commands = [
 	},
 
 	{
+		name: prefix + 'cookie',
+		aliases: null,
+		description: ' soon ANELE',
+		invocation: async (channel, user, message, args) => {
+			try {
+				perf.start();
+				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
+				if (talkedRecently.has(user['user-id'])) { 
+	       		 	return '';  
+			    } else {   
+			     	talkedRecently.add(user['user-id']);
+		            setTimeout(() => {
+		              	talkedRecently.delete(user['user-id']);
+		            }, 8000);
+		        }
+				switch (msg[0]) {
+					case 'register':
+						con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
+							if (error) throw error;
+							if (results.length === 0 || results[0].username === 0) {
+								kb.say(channel, user['username'] + ', you have been succesfully registered for a default reminder, if you are a prestige rank see "kb help cookie" for command syntax.');
+								con.query('INSERT INTO cookies (username, rank, created) VALUES ("' + user['username'] + '", "default_rank", CURRENT_TIMESTAMP)', function (error, results, fields) {
+									if (error) throw error;
+								})
+							} else if (results[0].username.toLowerCase() === user['username']) {
+								kb.say(channel, user['username'] + ', you are already registered for cookie reminders! type "kb help cookie" for command syntax.');
+							} else {
+								return '';
+							}
+						})
+						break;
+					case 'unregister':
+						con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
+							if (error) throw error;
+							if (results != 0) {
+								con.query('DELETE FROM cookies WHERE username="' + user['username'] + '"' , function (error, results, fields) {
+									if (error) throw error;
+									kb.say(channel, user['username'] + ', you are no longer registered for a cookie reminder.');
+								})
+							} else {
+								kb.say(channel, user['username'] + ", you are not registered for a cookie reminder, therefore you can't be unregistered FeelsDankMan");
+							}
+						})
+						break;
+					case 'status':
+						con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
+							if (error) throw error;
+							if (results.length === 0) {
+								kb.say(channel, user['username'] + ', you are not registered in the database, type "kb help cookie" for command syntax.');
+							} else {
+								con.query('SELECT username, rank, created FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) { 
+									if (error) {
+										throw error
+									} else {
+										kb.say(channel, user['username'] + ', your current rank is ' + results[0].rank);
+									}
+								})
+							}
+						})
+						break;
+					case 'p1':
+						con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
+							if (error) throw error;
+							if (results.length === 0) {
+								kb.say(channel, user['username'] + ', you are not registered in the database, type "kb help cookie" for command syntax.');
+							} else {
+								con.query('UPDATE cookies SET rank="p1", updated=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) { 
+									if (error) {
+										throw error
+									} else {
+										kb.say(channel, user['username'] + ', your cookie reminder rank is now set to prestige 1 (timer: 1h) KKona');
+									}
+								})
+							}
+						})
+						break;
+					case 'p2':
+						con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
+							if (error) throw error;
+							if (results.length === 0) {
+								kb.say(channel, user['username'] + ', you are not registered in the database, type "kb help cookie" for command syntax.');
+							} else {
+								con.query('UPDATE cookies SET rank="p2", updated=CURRENT_TIMESTAMP WHERE username="' + user['username'] +'"', function (error, results, fields) {
+									if (error) {
+										throw error
+									} else {
+										kb.say(channel, user['username'] + ', your cookie reminder rank is now set to prestige 2 (timer: 30m) KKona');
+									}
+								})
+							}
+						})
+						break;
+					case 'p3':
+						con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
+							if (error) throw error;
+							if (results.length === 0) {
+								kb.say(channel, user['username'] + ', you are not registered in the database, type "kb help cookie" for command syntax.');
+							} else {
+								con.query('UPDATE cookies SET rank="p3", updated=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) { 
+									if (error) {
+										throw error
+									} else {
+										kb.say(channel, user['username'] + ', your cookie reminder rank is now set to prestige 3 (timer: 20m) KKona');
+									}
+								})
+							}
+						})
+						break;
+					case 'p4':
+						con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
+							if (error) throw error;
+							if (results.length === 0) {
+								kb.say(channel, user['username'] + ', you are not registered in the database, type "kb help cookie" for command syntax.');
+							} else {
+								con.query('UPDATE cookies SET rank="p4", updated=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+									if (error) {
+										throw error
+									} else {
+										kb.say(channel, user['username'] + ', your cookie reminder rank is now set to prestige 4 (rank not available yet)');
+									}
+								})
+							}
+						})
+						break;
+					case 'p5':
+						con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
+							if (error) throw error;
+							if (results.length === 0) {
+								kb.say(channel, user['username'] + ', you are not registered in the database, type "kb help cookie" for command syntax.');
+							} else {
+								con.query('UPDATE cookies SET rank="p5", updated=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) { 
+									if (error) {
+										throw error
+									} else {
+										kb.say(channel, user['username'] + ', your cookie reminder rank is now set to prestige 5 (rank not available yet)');
+									}
+								})
+							}
+						})
+						break;
+					case 'default':
+						con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
+							if (error) throw error;
+							if (results.length === 0) {
+								kb.say(channel, user['username'] + ', you are not registered in the database, type "kb help cookie" for command syntax.');
+							} else {
+								con.query('UPDATE cookies SET rank="default_rank", updated=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) { 
+									if (error) {
+										throw error
+									} else {
+										kb.say(channels, user['username'] + ', your cookie reminder rank is now set to default (timer: 2h)  ppHop');
+									}
+								})
+							}
+						})
+						break;
+					default:
+						return user['username'] + ', invalid syntax. See "kb help cookie" for command help.';
+				}
+				return '';
+			} catch(err) {
+				return user['username'] + ', ' + err + ' FeelsDankMan !!!';
+			}
+		}
+	},
+
+	{
 		name: prefix + "commands",
 		aliases: null,
 		invocation: async (channel, user, message, args) => {
@@ -1647,7 +1829,10 @@ kb.on("chat", async (channel, user, message, self) => {
 		    (command.aliases && (input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '').toLowerCase() === command.aliases)
 		  ) {
 		    let result = await command.invocation(channel, user, message);
-
+			if (!result) {
+				kb.say(channel, '');
+				return;
+			}
     		if (repeatedMessages[channel] === result) {
 	      		result += " \u{E0000}";
 	    	}		
@@ -1828,31 +2013,53 @@ const dankeval = [
 			} 
 		}
 	},
-/*
+
     {
 		name: dankPrefix + 'cookie',
 		aliases: null,
 		permission: 'restricted',
 		invocation: async (channel, user, args) => {
-			const perms = allowCookie.filter(
-				i => i.ID === user['user-id']
-			);
-			console.log(perms)
-			if (!perms[0]) {
-				return "";
-			} else {
+			try {
 				if (talkedRecently.has(user['user-id'])) { 
-	        		return user['username'] + ', command is on cooldown PRChase';  
-		    	} else {   
+	       		 	return '';  
+			    } else {   
 			     	talkedRecently.add(user['user-id']);
 		            setTimeout(() => {
 		              	talkedRecently.delete(user['user-id']);
-		            }, 15000);
+		            }, 10000);
 		        }
-				return '$remind ' + user['username'] + ' eat cookie :) in 121m';
-			}
+				con.query('SELECT username, rank FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
+				if (error) {
+					throw error;
+				} else {
+					switch (results[0].rank) {
+						case 'p1':
+							kb.say(channel, '$remind ' + results[0].username + ' eat cookie :) in 3630s');
+							break;
+						case 'p2':
+							kb.say(channel, '$remind ' + results[0].username + ' eat cookie :) in 1830s');
+							break;
+						case 'p3':
+							kb.say(channel, '$remind ' + results[0].username + ' eat cookie :) in 1230s');
+							break;
+						case 'p4':
+							kb.say(channel, user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
+							break;
+						case 'p5':
+							kb.say(channel, user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
+							break;
+						default:
+							kb.say(channel, 'xD');
+							break;
+					}
+				}	
+			})
+			return '';
+		} catch(err) {
+			return user['username'] + ", " + err + " FeelsDankMan !!!";
 		}
-	},*/
+		}
+	},
 
 	{
 		name: "kunszgbot",
@@ -1974,7 +2181,6 @@ const dankeval = [
 kb.on("chat", async (channel, user, message, self) => {
 	if (user['user-id'] === "249408349") return;
 	if (self) return;
-
 	dankeval.forEach(async smart => {
 	if 
 	   (
@@ -1982,11 +2188,16 @@ kb.on("chat", async (channel, user, message, self) => {
 	    (smart.aliases && message.split(' ')[0] === smart.aliases)
 	  ) {
 		    let result = await smart.invocation(channel, user, message);
+		    if (!result) {
+		    	kb.say(channel, '');
+		    }
 			if (result === "undefined") {
 		    	kb.say(channel, user['username'] + ", FeelsDankMan something fucked up")
+		    	return;
 			} else {
 				if (result.replace(/[\u{E0000}|\u{206d}]/gu, '') === "undefined") {
 		    		kb.say(channel, user['username'] + ", FeelsDankMan something fucked up")
+		    		return;
 	    		} 
 			    else if (result === '') {
 			    	kb.say(channel, '')
