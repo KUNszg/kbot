@@ -76,8 +76,8 @@ const allowCookie = [ //prestige cookies: p1 1h, p2 30min, p3 20min
 	{ID: '178087241', username: 'kunszg'},
 	{ID: '130432430', username: 'acoffeer'},
 	{ID: '194557429', username: 'meacheese'},
-	{ID: '40379362', username: 'sinris'},
-	{ID: '52246729', username: 'kunszg'}, 
+	{ID: '40379362', username: 'sinris'}, //done
+	{ID: '52246729', username: 'kunszg'},  //done
 	{ID: '191299545', username: 'thirteen'},
 	{ID: '31604719', username: 'agenttud'}, 
 	{ID: '181846301', username: 'baldcari'},
@@ -1643,7 +1643,7 @@ const commands = [
 	{
 		name: prefix + 'cookie',
 		aliases: null,
-		description: 'after "kb cookie" type register/unregister to register or unregister from the database or status for your rank info. Supported cookie reminder ranks: default (2h), p1 (1h), p2 (30m), p3 (20m), to set a rank type for eg.:"kb cookie p1" - cooldown 10s',
+		description: 'after "kb cookie" type register/unregister to register or unregister from the database, type status for your rank info. Supported cookie reminder ranks: default (2h), p1 (1h), p2 (30m), p3 (20m), to set a rank type for eg.:"kb cookie p1" - cooldown 10s',
 		invocation: async (channel, user, message, args) => {
 			try {
 				perf.start();
