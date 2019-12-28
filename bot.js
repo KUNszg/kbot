@@ -11,7 +11,7 @@ const channelOptions = fs.readFileSync('./db/channels.js').toString().split('"')
 	function(i){return i != null;}).join('').split(' ')
 const options = {
 	options: {
-		debug: true,
+		debug: false,
 	},
 	connection: {
 		cluster: 'aws',
@@ -1619,7 +1619,7 @@ const commands = [
 								} else if (results[0].ID === msg[0]) {
 									Resolve(user['username'] + ', suggestion from user ' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
 								} else {
-									Reject(user['username'] + ', unknown error eShrug');
+									Resolve(user['username'] + ', suggestion from user ' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
 								}
 							}
 						})
