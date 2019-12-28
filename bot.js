@@ -2043,7 +2043,7 @@ const dankeval = [
 			     	talkedRecently.add(user['user-id']);
 		            setTimeout(() => {
 		              	talkedRecently.delete(user['user-id']);
-		            }, 10000);
+		            }, 18000);
 		        }
 		        const query = await new Promise((Reject, Resolve) => {
 					con.query('SELECT username, rank FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
