@@ -1556,7 +1556,7 @@ const commands = [
 				}
 				if (!msg[0]) {
 					return user['username'] + ', no message provided FeelsDankMan';
-				} else if (!msg.join(' ').match(/^\w+$/)) {
+				} else if ((/^[\x00-\x7F]+$/.test(msg.join(' '))) === false) {
 					return user['username'] + ', special character detected HONEYDETECTED';
 				} else {
 					const query = await new Promise((Reject, Resolve) => {
@@ -1606,30 +1606,22 @@ const commands = [
 				if (!perms[0]) {
 					return "";
 				} else {
-					con.query('SELECT MAX(ID) FROM suggestions', function (error, results1, fields) {
-						if (results1[0].ID < msg) {
-							kb.say(user['username'] + ', such ID does not exist');
-							return;
-						} else {
-							async function respo() {
-								const query = await new Promise((Reject, Resolve) => {
-									con.query('SELECT ID, message, username, status FROM suggestions WHERE ID="' + msg + '"' , function (error, results, fields) {
-										if (error) {
-											Reject(user['username'] + ', error xD 👉 ' + error);
-										} else {
-											if (results[0].ID === msg) {
-												Resolve('from' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
-											} else {
-												Resolve('from ' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
-											}
-										}
-									});
-								});
-								return query;
+					const query = await new Promise((Reject, Resolve) => {
+						con.query('SELECT ID, message, username, status FROM suggestions WHERE ID="' + msg + '"' , function (error, results, fields) {
+							if (error) {
+								Reject(user['username'] + ', error xD 👉 ' + error);
+							} else {
+								if (!results[0].ID) {
+									Resolve(user['username'] + ', such ID does not exist FeelsDankMan');
+								} else if (results[0].ID === msg) {
+									Resolve('from' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
+								} else {
+									Resolve('from ' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
+								}
 							}
-							return respo()
-						}
-					});
+						})
+					})
+					return query;
 				}
 			} catch(returnValue) {
 				return returnValue;
