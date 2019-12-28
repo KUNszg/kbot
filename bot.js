@@ -54,7 +54,7 @@ const con = mysql.createConnection({
 });
 con.connect(function(err) {
   	if (err) {
-  		kb.say('kunszg', '@kunszg, database connection error monkaS')
+  		kb.say('supinic', '@kunszg, database connection error monkaS')
   		console.log(err)
 	} else {
   		console.log("Connected!");
@@ -73,28 +73,15 @@ const allowEval = [
 	{ID: '31400525'} //supinic
 ];
 const allowCookie = [ //prestige cookies: p1 1h, p2 30min, p3 20min
-	{ID: '178087241', username: 'kunszg'},
-	{ID: '130432430', username: 'acoffeer'},
 	{ID: '194557429', username: 'meacheese'},
-	{ID: '40379362', username: 'sinris'}, //done
-	{ID: '52246729', username: 'kunszg'},  //done
-	{ID: '191299545', username: 'thirteen'},
-	{ID: '31604719', username: 'agenttud'}, 
-	{ID: '181846301', username: 'baldcari'},
-	{ID: '41237206', username: 'asakiwaru '}, 
+	{ID: '52246729', username: 'thirteenn '},
+	{ID: '181846301', username: 'baldcari'}, 
 	{ID: '411604091', username: 'Billy_Bones_U '}, 
-	{ID: '117691339', username: 'mm2pl'},
-	{ID: '188079764', username: 'EUviewer'},
-	{ID: '235611601', username: '21mtd'},
-	{ID: '180744357', username: 'abcdemlg'},
 	{ID: '275052455', username: 'vave2_'},
-	{ID: '218312842', username: 'yaYEET_xD'},
-	{ID: '44710465', username: 'MarcFryd'},
+	{ID: '218312842', username: 'yaYEET_xD'}, //no
 	{ID: '49739598', username: 'thedangerousbros'},
 	{ID: '148973258', username: 'fabzeef'},
-	{ID: '122424957', username: 'Kippenkoppetje'},
-	{ID: '180254567', username: 'cheat_on_wifesen'},
-	{ID: '25373513', username: 'JanzoMan'}
+	{ID: '122424957', username: 'Kippenkoppetje'}
 ];
 const prefix = "kb ";
 const commandsExecuted = [];
@@ -102,7 +89,7 @@ const talkedRecently = new Set();
 const commands = [
 	{
 	    name: prefix + "uptime",
-	    aliases: prefix + "uptime \u{E0000}",
+	    aliases: null,
 	    description: 'displays informations about current runtime of the bot, lines, memory usage, host uptime and commands used in the current session - cooldown 8s',
 	    invocation: async (channel, user, message, args) => {
 		 	try{
@@ -180,7 +167,7 @@ const commands = [
 
 	{
 	    name: prefix + "ping",
-		aliases: prefix + "ping \u{E0000}",
+		aliases: null,
 		description: "syntax: kb ping [service] | no parameter - data about latest github activity | service - checks if server/domain is alive - cooldown 5s",
 	    invocation: async (channel, user, message, args, err) => {
 		    try {	
@@ -256,7 +243,7 @@ const commands = [
 
 	{
 	    name: prefix + "spacex",
-	    aliases: prefix + "spacex \u{E0000}",
+	    aliases: null,
     	description: "data from SpaceX about next launch rocket launch date, mission and launch site - cooldown 15s",
 	    invocation: async (channel, user, message, args) => {
     		try {
@@ -499,12 +486,12 @@ const commands = [
 			    }
 			    else if (msg[0] == "join-session") { 
 		       	 	kb.join(msg[1]);
-		        	return "succesfully joined :) 👍";
+		        	return "successfully joined :) 👍";
 			    }
 			    else if (msg[0] == "join-save") { 
 		    		fs.appendFileSync('./db/channels.js', ' "' + msg[1] + '"'); 
 		       	 	kb.join(msg[1]);
-		        	return "succesfully joined :) 👍";
+		        	return "successfully joined :) 👍";
 			    }
 			    else if (msg[0] == "part-session") {
 			        kb.part(msg[1]);       
@@ -1557,26 +1544,30 @@ const commands = [
 		aliases: null,
 		invocation: async (channel, user, message, args) => {
 			try {
-				const perms = allowEval.filter(
-					i => i.ID === user['user-id']
-				);
-				if (!perms[0]) {
-					return "";
-				} else {
-					perf.start();
-					if (talkedRecently.has(user['user-id'])) { 
-		       		 	return '';  
-				    } else {   
-				     	talkedRecently.add(user['user-id']);
-			            setTimeout(() => {
-			              	talkedRecently.delete(user['user-id']);
-			            }, 8000);
-			        }
-			    }
-		    	const ID = fs.readFileSync('./db/suggestions.js').toString().split('\n').join(' ').split('=>').length
-				const msg = message.split(' ').splice(2);
-				fs.appendFileSync('./db/suggestions.js', '\n' + '"' + new Date().toLocaleDateString() + ', ' + new Date().toLocaleTimeString() + ' => ' + user['username'] + ": " + msg.join(' ') + '"')
-				return user['username'] + ', thanks for the suggestion, it will be processed eventually Kapp [ID ' + ID + ']';
+				perf.start();
+				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2)
+				if (talkedRecently.has(user['user-id'])) { 
+					return '';
+				} else {   
+					talkedRecently.add(user['user-id']);
+					setTimeout(() => {
+						talkedRecently.delete(user['user-id']);
+					}, 8000);
+				}
+				con.query('SELECT message FROM suggestions WHERE message="' + msg.join(' ') + '"', function (error, results, fields) {
+					if (error) throw error;
+					if (results.length === 0) {
+						con.query('INSERT INTO suggestions (username, message, created) VALUES ("' + user['username'] + '", "' + msg.join(' ') + '", CURRENT_TIMESTAMP)' , function (error, results, fields) {
+							if (error) throw error;
+							con.query('SELECT ID FROM suggestions WHERE message="' + msg.join(' ') + '"', function (error, results, fields) {
+								if (error) throw error;
+								kb.say(channel, user['username'] + ', suggestion saved with ID ' + results[0].ID + ' PogChamp');
+							})
+						})
+					} else {
+						throw "duplicate suggestion";
+					}
+				})
 			} catch(err) {
 				return user['username'] + ', ' + err + ' FeelsDankMan !!!';
 			}
@@ -1661,12 +1652,12 @@ const commands = [
 						con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
 							if (error) throw error;
 							if (results.length === 0 || results[0].username === 0) {
-								kb.say(channel, user['username'] + ', you have been succesfully registered for a default reminder, if you are a prestige rank see "kb help cookie" for command syntax.');
+								kb.say(channel, user['username'] + ', you have been successfully registered for a default reminder, if you are a prestige rank see "kb help cookie" for command syntax.');
 								con.query('INSERT INTO cookies (username, rank, created) VALUES ("' + user['username'] + '", "default_rank", CURRENT_TIMESTAMP)', function (error, results, fields) {
 									if (error) throw error;
 								})
-							} else if (results[0].username.toLowerCase() === user['username']) {
-								kb.say(channel, user['username'] + ', you are already registered for cookie reminders! type "kb help cookie" for command syntax.');
+							} else if (results[0].username === user['username']) {
+								kb.say(channel, user['username'] + ', you are already registered for cookie reminders, type "kb help cookie" for command syntax.');
 							} else {
 								return '';
 							}
@@ -2029,42 +2020,33 @@ const dankeval = [
 		            }, 10000);
 		        }
 				con.query('SELECT username, rank FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
-				if (error) {
-					throw error;
-				} else {
-					if (results.length === 0) {
-						kb.say(channel, '');
+					if (error) {
+						throw error;
 					} else {
-						switch (results[0].rank) {
-							case 'p1':
-								kb.say(channel, '$remind ' + results[0].username + ' eat cookie :) in 3630s');
-								break;
-							case 'p2':
-								kb.say(channel, '$remind ' + results[0].username + ' eat cookie :) in 1830s');
-								break;
-							case 'p3':
-								kb.say(channel, '$remind ' + results[0].username + ' eat cookie :) in 1230s');
-								break;
-							case 'p4':
-								kb.say(channel, user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
-								break;
-							case 'p5':
-								kb.say(channel, user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
-								break;
-							case 'default_rank':
-								kb.say(channel, '$remind ' + results[0].username + ' eat cookie :) in 121m');
-								break;
-							default:
-								kb.say(channel, user['username'] + ', monkaS switch statement error');
-								break;
+						if (results.length === 0) {
+							kb.say(channel, '');
+						} else {
+							if (results[0].rank === 'p1') {
+								return '$remind ' + results[0].username + ' eat cookie :) in 3630s';
+							} else if (results[0].rank === 'p2') {
+								return '$remind ' + results[0].username + ' eat cookie :) in 1830s';
+							} else if (results[0].rank === 'p3') {
+								return '$remind ' + results[0].username + ' eat cookie :) in 1230s';
+							} else if (results[0].rank === 'p4') {
+								return user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.';
+							} else if (results[0].rank === 'p5') {
+								return user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.';
+							} else if (results[0].rank === 'default_rank') {
+								return '$remind ' + results[0].username + ' eat cookie :) in 121m';
+							} else {
+								return user['username'] + ', monkaS switch statement error';
+							}
 						}
-					}
-				}	
-			})
-			return '';
-		} catch(err) {
-			return user['username'] + ", " + err + " FeelsDankMan !!!";
-		}
+					}	
+				})
+			} catch(err) {
+				return user['username'] + ", " + err + " FeelsDankMan !!!";
+			}
 		}
 	},
 
