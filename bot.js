@@ -2019,11 +2019,12 @@ const dankeval = [
 		              	talkedRecently.delete(user['user-id']);
 		            }, 10000);
 		        }
-				con.query('SELECT username, rank FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
-					function (x) {
+		        const xD = await new Promise((Reject, Resolve) => {
+					con.query('SELECT username, rank FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
 						if (error) {
-							throw error;
+							Reject(error);
 						} else {
+							Resolve();
 							if (results.length === 0) {
 								kb.say(channel, '');
 							} else {
@@ -2044,8 +2045,7 @@ const dankeval = [
 								}
 							}
 						}
-					}
-					return x(results[0].username);	
+					})
 				})
 			} catch(err) {
 				return user['username'] + ", " + err + " FeelsDankMan !!!";
