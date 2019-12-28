@@ -1556,34 +1556,37 @@ const commands = [
 				}
 				if (!msg[0]) {
 					return user['username'] + ', no message provided FeelsDankMan';
-				}
-				const query = await new Promise((Reject, Resolve) => {
-					con.query('SELECT message FROM suggestions WHERE message="' + msg.join(' ') + '"', function (error, results, fields) {
-						if (error) { 
-							kb.say(channel, user['username'] + ', error occured, dont use special characters please xD');
-							return;
-						}
-						if (results.length === 0) {
-							con.query('INSERT INTO suggestions (username, message, created) VALUES ("' + user['username'] + '", "' + msg.join(' ') + '", CURRENT_TIMESTAMP)' , function (error, results, fields) {
-								if (error) {
-									kb.say(channel, user['username'] + ', error occured, dont use special characters please xD');
-									return;
-								}
-								con.query('SELECT ID FROM suggestions WHERE message="' + msg.join(' ') + '"', function (error, results, fields) {
+				} else if (!msg.join(' ').match(/^\w+$/)) {
+					return user['username'] + ', special character detected HONEYDETECTED';
+				} else {
+					const query = await new Promise((Reject, Resolve) => {
+						con.query('SELECT message FROM suggestions WHERE message="' + msg.join(' ') + '"', function (error, results, fields) {
+							if (error) { 
+								kb.say(channel, user['username'] + ', error occured xD');
+								return;
+							}
+							if (results.length === 0) {
+								con.query('INSERT INTO suggestions (username, message, created) VALUES ("' + user['username'] + '", "' + msg.join(' ') + '", CURRENT_TIMESTAMP)' , function (error, results, fields) {
 									if (error) {
-										kb.say(channel, user['username'] + ', error occured, dont use special characters please xD');
+										kb.say(channel, user['username'] + ', error occured xD');
 										return;
 									}
-									Resolve(user['username'] + ', suggestion saved with ID ' + results[0].ID + ' PogChamp');
+									con.query('SELECT ID FROM suggestions WHERE message="' + msg.join(' ') + '"', function (error, results, fields) {
+										if (error) {
+											kb.say(channel, user['username'] + ', error occured xD');
+											return;
+										}
+										Resolve(user['username'] + ', suggestion saved with ID ' + results[0].ID + ' PogChamp');
+									})
 								})
-							})
-						} else {
-							Resolve(user['username'] + ", duplicate suggestion.");
-						}
+							} else {
+								Resolve(user['username'] + ", duplicate suggestion.");
+							}
+						})
 					})
-				})
-				return query;
-			} catch(returnValuen) {
+					return query;
+				}
+			} catch(returnValue) {
 				return returnValue;
 			}
 		}
