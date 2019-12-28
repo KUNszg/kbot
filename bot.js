@@ -1616,7 +1616,7 @@ const commands = [
 								} else if (results[0].ID === msg) {
 									Resolve('from' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
 								} else {
-									Resolve(user['username'] + ', error eShrug');
+									Resolve('from ' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
 								}
 							}
 						})
