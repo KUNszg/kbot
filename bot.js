@@ -1624,8 +1624,8 @@ const commands = [
 							}
 						})
 					})
+					return query;
 				}
-				return query;
 			} catch(returnValue) {
 				return returnValue;
 			}
