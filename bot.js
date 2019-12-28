@@ -1643,7 +1643,7 @@ const commands = [
 	{
 		name: prefix + 'cookie',
 		aliases: null,
-		description: ' ',
+		description: 'after "kb cookie" type register/unregister to register or unregister from the database or status for your rank info. Supported cookie reminder ranks: default (2h), p1 (1h), p2 (30m), p3 (20m), to set a rank type for eg.:"kb cookie p1" - cooldown 10s',
 		invocation: async (channel, user, message, args) => {
 			try {
 				perf.start();
