@@ -2032,25 +2032,32 @@ const dankeval = [
 				if (error) {
 					throw error;
 				} else {
-					switch (results[0].rank) {
-						case 'p1':
-							kb.say(channel, '$remind ' + results[0].username + ' eat cookie :) in 3630s');
-							break;
-						case 'p2':
-							kb.say(channel, '$remind ' + results[0].username + ' eat cookie :) in 1830s');
-							break;
-						case 'p3':
-							kb.say(channel, '$remind ' + results[0].username + ' eat cookie :) in 1230s');
-							break;
-						case 'p4':
-							kb.say(channel, user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
-							break;
-						case 'p5':
-							kb.say(channel, user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
-							break;
-						default:
-							kb.say(channel, 'xD');
-							break;
+					if (results.length === 0) {
+						kb.say(channel, '');
+					} else {
+						switch (results[0].rank) {
+							case 'p1':
+								kb.say(channel, '$remind ' + results[0].username + ' eat cookie :) in 3630s');
+								break;
+							case 'p2':
+								kb.say(channel, '$remind ' + results[0].username + ' eat cookie :) in 1830s');
+								break;
+							case 'p3':
+								kb.say(channel, '$remind ' + results[0].username + ' eat cookie :) in 1230s');
+								break;
+							case 'p4':
+								kb.say(channel, user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
+								break;
+							case 'p5':
+								kb.say(channel, user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
+								break;
+							case 'default_rank':
+								kb.say(channel, '$remind ' + results[0].username + ' eat cookie :) in 121m');
+								break;
+							default:
+								kb.say(channel, user['username'] + ', monkaS switch statement error');
+								break;
+						}
 					}
 				}	
 			})
