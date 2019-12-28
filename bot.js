@@ -2019,34 +2019,34 @@ const dankeval = [
 		              	talkedRecently.delete(user['user-id']);
 		            }, 10000);
 		        }
-		        const xD = await new Promise((Reject, Resolve) => {
+		        const query = await new Promise((Reject, Resolve) => {
 					con.query('SELECT username, rank FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
 						if (error) {
 							Reject(error);
 						} else {
-							Resolve();
 							if (results.length === 0) {
 								kb.say(channel, '');
 							} else {
 								if (results[0].rank === 'p1') {
-									return '$remind ' + x + ' eat cookie :) in 3630s';
+									Resolve('$remind ' + results[0].username + ' eat cookie :) in 3630s');
 								} else if (results[0].rank === 'p2') {
-									return '$remind ' + x + ' eat cookie :) in 1830s';
+									Resolve('$remind ' + results[0].username + ' eat cookie :) in 1830s');
 								} else if (results[0].rank === 'p3') {
-									return '$remind ' + x + ' eat cookie :) in 1230s';
+									Resolve('$remind ' + results[0].username + ' eat cookie :) in 1230s');
 								} else if (results[0].rank === 'p4') {
-									return user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.';
+									Resolve(user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
 								} else if (results[0].rank === 'p5') {
-									return user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.';
+									Resolve(user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
 								} else if (results[0].rank === 'default_rank') {
-									return '$remind ' + x + ' eat cookie :) in 121m';
+									Resolve('$remind ' + results[0].username + ' eat cookie :) in 121m');
 								} else {
-									return user['username'] + ', monkaS switch statement error';
+									Resolve(user['username'] + ', monkaS switch statement error');
 								}
 							}
 						}
 					})
 				})
+				return query;
 			} catch(err) {
 				return user['username'] + ", " + err + " FeelsDankMan !!!";
 			}
