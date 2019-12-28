@@ -1606,23 +1606,30 @@ const commands = [
 				if (!perms[0]) {
 					return "";
 				} else {
-					const query = await new Promise((Reject, Resolve) => {
-						con.query('SELECT ID, message, username, status FROM suggestions WHERE ID="' + msg + '"' , function (error, results, fields) {
-							if (results.length === 0) {
-								Resolve(user['username'] + ', such ID does not exist LUL');
+					con.query('SELECT MAX(ID) FROM suggestions', function (error, results1, fields) {
+						if (results1[0].ID < msg) {
+							kb.say(user['username'] + ', such ID does not exist');
+							return;
+						} else {
+							async function respo() {
+								const query = await new Promise((Reject, Resolve) => {
+									con.query('SELECT ID, message, username, status FROM suggestions WHERE ID="' + msg + '"' , function (error, results, fields) {
+										if (error) {
+											Reject(user['username'] + ', error xD 👉 ' + error);
+										} else {
+											if (results[0].ID === msg) {
+												Resolve('from' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
+											} else {
+												Resolve('from ' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
+											}
+										}
+									});
+								});
+								return query;
 							}
-							if (error) {
-								Reject(user['username'] + ', error xD 👉 ' + error);
-							} else {
-								if (results[0].ID === msg) {
-									Resolve('from' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
-								} else {
-									Resolve('from ' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
-								}
-							}
-						})
-					})
-					return query;
+							return respo()
+						}
+					});
 				}
 			} catch(returnValue) {
 				return returnValue;
