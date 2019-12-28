@@ -1593,6 +1593,46 @@ const commands = [
 	},
 
 	{
+		name: prefix + 'check',
+		aliases: null,
+		permission: 'restricted',
+		invocation: async (channel, user, message, args) => {
+			try {
+				perf.start();
+				const msg = message.split(' ')[2];
+				function hasNumber(myString) {
+				 	return /\d/.test(myString);
+				}
+				const perms = allowEval.filter(
+					i => i.ID === user['user-id']
+				);
+				if (!perms[0]) {
+					return "";
+				} else {
+					const query = await new Promise((Reject, Resolve) => {
+						con.query('SELECT ID, message, username FROM suggestions WHERE ID="' + msg[0] + '"' , function (error, results, fields) {
+							if (error) {
+								Reject(user['username'] + ', error xD 👉 ' + error);
+							} else {
+								if (results[0].ID != msg[0]) {
+									Resolve(user['username'] + ', such ID does not exist FeelsDankMan');
+								} else if (results[0].ID === msg[0]) {
+									Resolve(user['username'] + ', suggestion from user ' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
+								} else {
+									Reject(user['username'] + ', unknown error eShrug');
+								}
+							}
+						})
+					}
+				}
+				return query;
+			} catch(returnValue) {
+				return returnValue;
+			}
+		}
+	},
+
+	{
 		name: prefix + 'supee',
 		aliases: prefix + 'sp',
 		permission: 'restricted',
@@ -1613,31 +1653,6 @@ const commands = [
 					let amount = 0;
 					fs.appendFileSync('./db/supee.js', ' "' + amount++ + '", ')
 					return user['username'] + ', supi went to toilet ' + fs.readFileSync('./db/supee.js').toString().split('",').length-1 + ' times peepoSadDank 💦'
-				}
-			} catch(err) {
-				return user['username'] + ', ' + err + ' FeelsDankMan !!!';
-			}
-		}
-	},
-
-	{
-		name: prefix + 'check',
-		aliases: null,
-		permission: 'restricted',
-		invocation: async (channel, user, message, args) => {
-			try {
-				perf.start();
-				const msg = message.split(' ')[2];
-				function hasNumber(myString) {
-				 	return /\d/.test(myString);
-				}
-				const perms = allowEval.filter(
-					i => i.ID === user['user-id']
-				);
-				if (!perms[0]) {
-					return "";
-				} else {
-					return 'xDDDDD';
 				}
 			} catch(err) {
 				return user['username'] + ', ' + err + ' FeelsDankMan !!!';
@@ -2043,16 +2058,46 @@ const dankeval = [
 							} else {
 								if (results[0].rank === 'p1') {
 									Resolve('$remind ' + results[0].username + ' eat cookie :) in 3630s');
+									con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+										if (error) {
+											kb.say(channel, user['username'] + ", error LUL")
+										}
+									})
 								} else if (results[0].rank === 'p2') {
 									Resolve('$remind ' + results[0].username + ' eat cookie :) in 1830s');
+									con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+										if (error) {
+											kb.say(channel, user['username'] + ", error LUL")
+										}
+									})
 								} else if (results[0].rank === 'p3') {
 									Resolve('$remind ' + results[0].username + ' eat cookie :) in 1230s');
+									con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+										if (error) {
+											kb.say(channel, user['username'] + ", error LUL")
+										}
+									})
 								} else if (results[0].rank === 'p4') {
 									Resolve(user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
+									con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+										if (error) {
+											kb.say(channel, user['username'] + ", error LUL")
+										}
+									})
 								} else if (results[0].rank === 'p5') {
 									Resolve(user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
+									con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+										if (error) {
+											kb.say(channel, user['username'] + ", error LUL")
+										}
+									})
 								} else if (results[0].rank === 'default_rank') {
 									Resolve('$remind ' + results[0].username + ' eat cookie :) in 121m');
+									con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+										if (error) {
+											kb.say(channel, user['username'] + ", error LUL")
+										}
+									})
 								} else {
 									Resolve(user['username'] + ', monkaS switch statement error');
 								}
