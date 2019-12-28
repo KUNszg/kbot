@@ -1611,7 +1611,7 @@ const commands = [
 							if (error) {
 								Reject(user['username'] + ', error xD 👉 ' + error);
 							} else {
-								if (results[0].ID != msg) {
+								if (!results[0].ID) {
 									Resolve(user['username'] + ', such ID does not exist FeelsDankMan');
 								} else if (results[0].ID === msg) {
 									Resolve('from' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
