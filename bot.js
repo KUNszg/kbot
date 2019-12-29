@@ -2036,6 +2036,7 @@ const dankeval = [
 		 			console.log(results)
 		 			if (results[0].reminders === false) {
 		 				kb.say(channel, '');
+		 				return;
 		 			} else {
 		 				async function respo() {
 					        const query = await new Promise((Reject, Resolve) => {
