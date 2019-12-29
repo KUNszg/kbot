@@ -1703,6 +1703,8 @@ const commands = [
 					case 'status':
 						const cookieStatus = await fetch('https://api.roaringiron.com/cooldown/' + user['username'])
 				 			.then(response => response.json());
+			 			const cookiesEaten = await fetch('https://api.roaringiron.com/user/' + user['username'])
+				 			.then(response => response.json());
 						con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
 							if (error) throw error;
 							if (results.length === 0) {
@@ -1712,7 +1714,7 @@ const commands = [
 									if (error) {
 										throw error
 									} else {
-										kb.say(channel, user['username'] + ', Your current reminder rank is ' + results[0].rank + '- time left until next cookie: ' + cookieStatus.time_left_unformatted);
+										kb.say(channel, user['username'] + ', Your current reminder rank is ' + results[0].rank + ' (' + cookiesEaten.rank + ') - time left until next cookie: ' + cookieStatus.time_left_unformatted + ' - cookies: ' + cookiesEaten.cookies);
 									}
 								})
 							}
