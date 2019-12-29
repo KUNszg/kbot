@@ -91,7 +91,6 @@ const commands = [
 	    description: 'displays informations about current runtime of the bot, lines, memory usage, host uptime and commands used in the current session - cooldown 8s',
 	    invocation: async (channel, user, message, args) => {
 		 	try{
-		 		perf.start();
 		      	function format(seconds){
 			        function pad(s){
 			        	return (s < 10 ? '0' : '') + s;
@@ -169,7 +168,6 @@ const commands = [
 		description: "syntax: kb ping [service] | no parameter - data about latest github activity | service - checks if server/domain is alive - cooldown 5s",
 	    invocation: async (channel, user, message, args, err) => {
 		    try {	
-				perf.start();
 		    	const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
 		      	function format(seconds){
 			        function pad(s){
@@ -245,7 +243,6 @@ const commands = [
     	description: "data from SpaceX about next launch rocket launch date, mission and launch site - cooldown 15s",
 	    invocation: async (channel, user, message, args) => {
     		try {
-    			perf.start();
 			    const space = await SpacexApiWrapper.getNextLaunch();
 			    const date = await space.launch_date_utc;
 			    const apiDate = new Date(date);
@@ -301,7 +298,6 @@ const commands = [
 	    description: "syntax: kb apod [random] | no parameter - astronomical picture for today | random - APOD from a random day, data gathered from NASA's API reaching year 1997 - cooldown 6s",
 	    invocation: async (channel, user, message, args) => {
     		try {
-    			perf.start();
     			const msg = message.split(' ').splice(2); 
 	        	const apodRandom = await randomApod();
 
@@ -333,7 +329,6 @@ const commands = [
 	    description: "syntax: kb yt [query] | query - search for a YouTube video with provided query - cooldown 7s",
 	    invocation: async (channel, user, message, args) => {
     		try {
-    			perf.start();
     			const msg = message.split(" ").splice(2);
     			const random1 = await search(msg.join(" "), {
 		          	totalResults: 3,
@@ -377,7 +372,6 @@ const commands = [
 	    description: "syntax: kb rt [ID] | no parameter - returns a link to the list of genres | ID - search for the song in the specified genre (numeric ID) - cooldown 5s",
 	    invocation: async (channel, user, message, args) => {
 		 	try{
-		 		perf.start();
 		 		const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);
 		        const options = {
 		          	api_key: api.randomTrack,
@@ -434,7 +428,6 @@ const commands = [
 	    description: "random fact. Provides facts about random stuff - cooldown 5s",
 	    invocation: async (channel, user, message, args) => {
 			try {
-				perf.start();
 				const json = await fetch(api.randomFact)
 				 	.then(response => response.json());
 
@@ -459,7 +452,6 @@ const commands = [
 		description: "displays all the channels the bot is currently in. | Permitted users syntax: kb chn [join-save/part-session/join-session] [channel] - cooldown 5s",
 		invocation: async (channel, user, message, args) => {			
 		try {	
-			perf.start();
 			const length = kb.getChannels().length;
 			const joinedChannels = kb.getChannels().toString().split("").toString().replace(/,/g,"\u{E0000}").replace(/#/g, ", ").replace(","," ");
 			const msg = message.replace("\u{E0000}", "").split(" ").splice(2);	
@@ -514,7 +506,6 @@ const commands = [
 		description: "syntax: kb decode [binary] | binary - decode given full octet binary code into unicode characters - cooldown 5s",
 		invocation: async (channel, user, message, args) => {
 			try {
-				perf.start();
 				const msg = message.split(" ").splice(2);
 				if (talkedRecently.has(user['user-id'])) {
 		        	return '';  
@@ -549,7 +540,6 @@ const commands = [
 		description: "syntax: kb encode [character] | character - encode any character into binary code - cooldown 5s",
 		invocation: async (channel, user, message, args) => {
 			try {
-				perf.start();
 				const msg = message.split(" ").splice(2);	
 	 			if (talkedRecently.has(user['user-id'])) { //if set has user id - ignore
 		        	return '';  
@@ -583,7 +573,6 @@ const commands = [
 		description: "syntax: kb chat [message] | message - provide a message to chat with the AI bot, no parameter will return error",
 		invocation: async (channel, user, message, args) => {
 			try {
-				perf.start();
 				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);
 				const json = await fetch("https://some-random-api.ml/chatbot/beta?message=" + msg.join("+").normalize("NFD").replace(/[\u0300-\u036f]/g, "")) //chat
 				 	.then(response => response.json());
@@ -627,7 +616,6 @@ const commands = [
 		description: "debugging command, permitted users only - no cooldown",
 		invocation: async (channel, user, message, args) => {
 			try{
-				perf.start();
 				const msg = message.split(" ").splice(2);
 				const ping = await kb.ping();
 				const women = {};
@@ -686,7 +674,6 @@ const commands = [
 		description: "permitted users syntax: kb pattern [fast/slow] [pyramid/triangle] [height] [message] | Invalid or missing parameter will return an error - no cooldown",
 		invocation: async (channel, user, message, args) => {
 			try {
-				perf.start();
 				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, "").split(" ").splice(2);
 				const emote = message.replace(/[\u{E0000}|\u{206d}]/gu, "").split(" ").splice(5);
 				const msgP = message.replace(/[\u{E0000}|\u{206d}]/gu, "").split(" ").splice(4);
@@ -823,7 +810,6 @@ const commands = [
 		description: "syntax: kb reverse [message] | message - reverse given word or sentence - cooldown 5s",
 		invocation: async (channel, user, message, args) => {
 			try{
-				perf.start();
 				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);
 				function reverse(s) { 
 					let a = [ ...s ]; a.reverse(); return a.join(''); 
@@ -853,7 +839,6 @@ const commands = [
 		description: "syntax: kb locate [IP/message] | IP - provide an IP adress to search for its location | message - provide a non-numeric message to search for its location - cooldown 6s",
 		invocation: async (channel, user, message, args) => {
 			try{	
-				perf.start();
 				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);	
 			 	console.log(msg.join(' ').normalize("NFD").replace(/[\u0300-\u036f]/g, ""))
 				function hasNumber(myString) {
@@ -910,7 +895,6 @@ const commands = [
 		description: "shows information about a random Near Earth Object, that is close to Earth in current day. Data refreshes every 24h - cooldown 5s",
 		invocation: async (channel, user, message, args) => {
 			try{	
-				perf.start();
 				const today = new Date().toLocaleDateString().split('/');
 				const today2 = today[2] + '-' + today[0] + '-' + today[1];
 				const neo = await fetch(api.nasa1 + today2 + api.nasa2)
@@ -944,7 +928,6 @@ const commands = [
 		description: "syntax: kb twitter [account] | no parameter - returns an error | account - returns latest tweet from specified user - cooldown 8s",
 		invocation: async (channel, user, message, args) => {
 			try{
-				perf.start();
 				const msg = message.split(" ").splice(2);
 				const fetchUrl = require("fetch").fetchUrl;
 				const tweet = await new Promise((Resolve, Reject) => {
@@ -981,7 +964,6 @@ const commands = [
 		aliases: null,
 		invocation: async (channel, user, message, args) => {
 			try{
-				perf.start();
 				const msg = message.split(" ").splice(2);
 				const hosts = await fetch(api.hosts + msg[0])
 					 .then(response => response.json());	
@@ -1034,7 +1016,6 @@ const commands = [
 		aliases: null,
 		invocation: async (channel, user, message, args) => {
 			try{
-				perf.start();
 				const fetchUrl = require("fetch").fetchUrl;
 				const bttv = await new Promise((Resolve, Reject) => {
 					fetchUrl(api.bttv + channel.substring(1), function(error, meta, body){ 
@@ -1072,10 +1053,8 @@ const commands = [
 		permission: 'restricted',
 		invocation: async (channel, user, message, args) => {
 			try{
-				perf.start();
 				const playsound = await fetch("https://supinic.com/api/bot/playsound/list")
 					 .then(response => response.json());
-		 		
 		 		const randomPs = playsound.data.playsounds[Math.floor(Math.random()*playsound.data.playsounds.length)]
 	        	if (channel === "#supinic") {
 		        	if (talkedRecently.has(user['user-id'])) { 
@@ -1102,7 +1081,6 @@ const commands = [
 		aliases: prefix + '4head',
 		invocation: async (channel, user, message, args) => {
 			try{
-				perf.start();
 				const arr = [
 					'general',
 					'general',
@@ -1157,7 +1135,6 @@ const commands = [
 		aliases: prefix + "randomline",
 		invocation: async (channel, user, message, args) => {
 			try{
-				perf.start();
  				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
  				const fetchUrl = require("fetch").fetchUrl;
  				const allChannels = [
@@ -1257,12 +1234,11 @@ const commands = [
 		aliases: prefix + 'bot',
 		invocation: async (channel, user, message, args) => {
 			try{
-				perf.start();
-					const dateMinute = new Date().getMinutes()
-					const time = await fetch("https://supinic.com/api/bot/active")
-		 			.then(response => response.json());	
+				const dateMinute = new Date().getMinutes()
+				const time = await fetch("https://supinic.com/api/bot/active")
+	 			.then(response => response.json());	
 
-					if (talkedRecently.has(user['user-id'])) { 
+				if (talkedRecently.has(user['user-id'])) { 
 			        return ''; 
 		    	} else {
 				  	talkedRecently.add(user['user-id']);
@@ -1310,15 +1286,12 @@ const commands = [
 		aliases: prefix + 'pepelaugh',
 		invocation: async (channel, user, message, args) => {
 			try{
-				perf.start();
-			const { readdirSync } = require('fs')
-			const getDirectories = source =>
-			  	readdirSync('./node_modules', { withFileTypes: true })
-			    	.filter(dirent => dirent.isDirectory())
-			    	.map(dirent => dirent.name)
-			
-			return user['username'] + ', my node_modules directory has ' + getDirectories().length + ' modules PepeLaugh'; 	
-			
+				const { readdirSync } = require('fs')
+				const getDirectories = source =>
+				  	readdirSync('./node_modules', { withFileTypes: true })
+			    		.filter(dirent => dirent.isDirectory())
+				    	.map(dirent => dirent.name)
+				return user['username'] + ', my node_modules directory has ' + getDirectories().length + ' modules PepeLaugh'; 	
 			} catch(err) {
 				console.log(err);
 				return user['username'] + err + ' FeelsDankMan !!!';
@@ -1331,7 +1304,6 @@ const commands = [
       	aliases: null,
       	invocation: async (channel, user, message, args) => {
       		try{
-      			perf.start();
 	        	const msg = message.split(" ").splice(2);
 		    
 			    if (talkedRecently2.has(user['user-id'])) { //if set has user id - ignore
@@ -1361,7 +1333,6 @@ const commands = [
 		description: "syntax: kb help [command] | no parameter - shows basic information about bot, it's owner and host | command - shows description of a specified command - cooldown 5s",
 		invocation: async (channel, user, message, args) => {
 			try {
-				perf.start();
 				const msg = message.toLowerCase().split(' ').splice(2);
 				if (talkedRecently2.has(user['user-id'])) {
 					return '';  				    
@@ -1406,7 +1377,6 @@ const commands = [
     	aliases: prefix + "mama",
     	invocation: async (channel, user, message, args) => {
 			try { 
-				perf.start();
 	    		if (talkedRecently2.has(user['user-id'])) {
 					return '';  				    
 				} else {   
@@ -1464,7 +1434,6 @@ const commands = [
 		permission: 'restricted',
 		invocation: async (channel, user, message, args) => {
 			try {
-				perf.start();
 				const perms = allowEval.filter(
 					i => i.ID === user['user-id']
 				);
@@ -1493,7 +1462,6 @@ const commands = [
 		aliases: prefix + 'git',
 		invocation: async (channel, user, message, args) => {
 			try {
-				perf.start();
 		        const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
 			 		.then(response => response.json());
 			 	const commitDate = new Date(commits[0].commit.committer.date);
@@ -1542,7 +1510,6 @@ const commands = [
 		aliases: null,
 		invocation: async (channel, user, message, args) => {
 			try {
-				perf.start();
 				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2)
 				if (talkedRecently.has(user['user-id'])) { 
 					return '';
@@ -1596,7 +1563,6 @@ const commands = [
 		permission: 'restricted',
 		invocation: async (channel, user, message, args) => {
 			try {
-				perf.start();
 				const msg = message.split(' ')[2];
 				const perms = allowEval.filter(
 					i => i.ID === user['user-id']
@@ -1633,7 +1599,6 @@ const commands = [
 		permission: 'restricted',
 		invocation: async (channel, user, message, args) => {
 			try {
-				perf.start();
 				if (talkedRecently.has('supee')) { 
 	       		 	return '';  
 			    } else {   
@@ -1661,7 +1626,6 @@ const commands = [
 		description: 'after "kb cookie" type register/unregister to register or unregister from the database, type status for your rank info. Supported cookie reminder ranks: default (2h), p1 (1h), p2 (30m), p3 (20m), to set a rank type for eg.:"kb cookie p1" - cooldown 10s',
 		invocation: async (channel, user, message, args) => {
 			try {
-				perf.start();
 				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
 				if (talkedRecently.has(user['user-id'])) { 
 	       		 	return '';  
@@ -1918,11 +1882,7 @@ kb.on("chat", async (channel, user, message, self) => {
 								}
 							} else {
 								commandsExecuted.push('1');
-								if (perf.stop().time>1000) {
-								 	kb.say(channel, result + ' [' + (perf.stop().time/1000).toFixed(2) + 's]');
-								} else {
-								 	kb.say(channel, result);
-								}	
+							 	kb.say(channel, result);
 							}				
 			 			}
 					}
@@ -1948,11 +1908,7 @@ kb.on("chat", async (channel, user, message, self) => {
 								}
 							} else {
 								commandsExecuted.push('1');
-								if (perf.stop().time>1000) {
-								 	kb.say(channel, result + ' [' + (perf.stop().time/1000).toFixed(2) + 's]');
-								} else {
-								 	kb.say(channel, result);
-								}	
+					 			kb.say(channel, result);
 							}				
 			 			}	
 					}
@@ -2038,7 +1994,6 @@ const dankeval = [
 		name: 'HONEYDETECTED',
 		aliases: null,
 		invocation: async (channel, user, message, args) => {
-			perf.start();
 			if (user['user-id'] != '68136884') {
 				return '';
 			}
@@ -2075,8 +2030,6 @@ const dankeval = [
 								if (results[0].rank === 'p1') {
 									if (cookieApi.can_claim === false) {
 										kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 1h intervals. To force your cookie reminder do "kb cookie force" in chat.');
-										Resolve('');
-										return '';
 									} else {
 										Resolve('$remind ' + results[0].username + ' eat cookie :) in 3630s');
 										con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
@@ -2088,8 +2041,6 @@ const dankeval = [
 								} else if (results[0].rank === 'p2') {
 									if (cookieApi.can_claim === false) {
 										kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 30m intervals. To force your cookie reminder do "kb cookie force" in chat.');
-										Resolve('');
-										return '';
 									} else {
 										Resolve('$remind ' + results[0].username + ' eat cookie :) in 1830s');
 										con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
@@ -2101,8 +2052,6 @@ const dankeval = [
 								} else if (results[0].rank === 'p3') {
 									if (cookieApi.can_claim === false) {
 										kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 20m intervals. To force your cookie reminder do "kb cookie force" in chat.');
-										Resolve('');
-										return '';
 									} else {
 										Resolve('$remind ' + results[0].username + ' eat cookie :) in 1230s');
 										con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
@@ -2114,8 +2063,6 @@ const dankeval = [
 								} else if (results[0].rank === 'p4') {
 									if (cookieApi.can_claim === false) {
 										kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait intervals. To force your cookie reminder do "kb cookie force" in chat.');
-										Resolve('');
-										return '';
 									} else {
 										Resolve(user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
 										con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
@@ -2127,8 +2074,6 @@ const dankeval = [
 								} else if (results[0].rank === 'p5') {
 									if (cookieApi.can_claim === false) {
 										kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait intervals. To force your cookie reminder do "kb cookie force" in chat.');
-										Resolve('');
-										return '';
 									} else {
 										Resolve(user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
 										con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
@@ -2140,8 +2085,6 @@ const dankeval = [
 								} else if (results[0].rank === 'default_rank') {
 									if (cookieApi.can_claim === false) {
 										kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 2h intervals. To force your cookie reminder do "kb cookie force" in chat.');
-										Resolve('');
-										return '';
 									} else {
 										Resolve('$remind ' + results[0].username + ' eat cookie :) in 121m');
 										con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
@@ -2285,11 +2228,8 @@ kb.on("chat", async (channel, user, message, self) => {
 	if (user['user-id'] === "249408349") return;
 	if (self) return;
 	dankeval.forEach(async smart => {
-	if 
-	   (
-	    (message.split(' ')[0] === smart.name) ||
-	    (smart.aliases && message.split(' ')[0] === smart.aliases)
-	  ) {
+	if ((message.split(' ')[0] === smart.name) ||
+	    (smart.aliases && message.split(' ')[0] === smart.aliases)) {
 		    let result = await smart.invocation(channel, user, message);
 		    if (!result) {
 		    	kb.say(channel, '');
@@ -2309,10 +2249,9 @@ kb.on("chat", async (channel, user, message, self) => {
 		    repeatedMessages[channel] = result;
 		    if (result === "undefined") {
 		    	return;
-		    }
-		    else {
+		    } else {
 		    	commandsExecuted.push('1');
-		   		kb.say(channel, result);
+		   		kb.say(channel, result.replace('undefined', ''));
 			}
 		}
 	});
