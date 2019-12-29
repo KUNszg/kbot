@@ -2045,7 +2045,7 @@ const dankeval = [
 			     	talkedRecently.add(user['user-id']);
 		            setTimeout(() => {
 		              	talkedRecently.delete(user['user-id']);
-		            }, 18000);
+		            }, 5000);
 		        }
 		        const cookieApi = await fetch('https://api.roaringiron.com/cooldown/' + user['username'])
 		 			.then(response => response.json());
@@ -2059,6 +2059,7 @@ const dankeval = [
 							} else {
 								if (results[0].rank === 'p1') {
 									if (cookieApi.can_claim != true) {
+										kb.whisper(user['username'] + 'cookie is still on cooldown, try again in ' + cookieApi.time_left_formatted + ' (1h cooldown)')
 										return '';
 									} else {
 										Resolve('$remind ' + results[0].username + ' eat cookie :) in 3630s');
@@ -2070,6 +2071,7 @@ const dankeval = [
 									}
 								} else if (results[0].rank === 'p2') {
 									if (cookieApi.can_claim != true) {
+										kb.whisper(user['username'] + 'cookie is still on cooldown, try again in ' + cookieApi.time_left_formatted + ' (30m cooldown)')
 										return '';
 									} else {
 										Resolve('$remind ' + results[0].username + ' eat cookie :) in 1830s');
@@ -2081,6 +2083,7 @@ const dankeval = [
 									}
 								} else if (results[0].rank === 'p3') {
 									if (cookieApi.can_claim != true) {
+										kb.whisper(user['username'] + 'cookie is still on cooldown, try again in ' + cookieApi.time_left_formatted + ' (20m cooldown)')
 										return '';
 									} else {
 										Resolve('$remind ' + results[0].username + ' eat cookie :) in 1230s');
