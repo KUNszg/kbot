@@ -75,10 +75,8 @@ const allowEval = [
 const allowCookie = [ //prestige cookies: p1 1h, p2 30min, p3 20min
 	{ID: '194557429', username: 'meacheese'},
 	{ID: '52246729', username: 'thirteenn '},
-	{ID: '181846301', username: 'baldcari'}, 
 	{ID: '411604091', username: 'Billy_Bones_U '}, 
 	{ID: '275052455', username: 'vave2_'},
-	{ID: '218312842', username: 'yaYEET_xD'}, //no
 	{ID: '49739598', username: 'thedangerousbros'},
 	{ID: '148973258', username: 'fabzeef'},
 	{ID: '122424957', username: 'Kippenkoppetje'}
@@ -1703,6 +1701,8 @@ const commands = [
 						})
 						break;
 					case 'status':
+						const cookieStatus = await fetch('https://api.roaringiron.com/cooldown/' + user['username'])
+				 			.then(response => response.json());
 						con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
 							if (error) throw error;
 							if (results.length === 0) {
@@ -1712,7 +1712,7 @@ const commands = [
 									if (error) {
 										throw error
 									} else {
-										kb.say(channel, user['username'] + ', your current rank is ' + results[0].rank);
+										kb.say(channel, user['username'] + ', Your current reminder rank is ' + results[0].rank + '- time left until next cookie: ' + cookieStatus.time_left_unformatted);
 									}
 								})
 							}
@@ -2045,6 +2045,8 @@ const dankeval = [
 		              	talkedRecently.delete(user['user-id']);
 		            }, 18000);
 		        }
+		        const cookieApi = await fetch('https://api.roaringiron.com/cooldown/' + user['username'])
+		 			.then(response => response.json());
 		        const query = await new Promise((Reject, Resolve) => {
 					con.query('SELECT username, rank FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
 						if (error) {
@@ -2054,47 +2056,71 @@ const dankeval = [
 								kb.say(channel, '');
 							} else {
 								if (results[0].rank === 'p1') {
-									Resolve('$remind ' + results[0].username + ' eat cookie :) in 3630s');
-									con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
-										if (error) {
-											kb.say(channel, user['username'] + ", error LUL")
-										}
-									})
+									if (cookieApi.can_claim != true) {
+										return '';
+									} else {
+										Resolve('$remind ' + results[0].username + ' eat cookie :) in 3630s');
+										con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+											if (error) {
+												kb.say(channel, user['username'] + ", database error LUL")
+											}
+										})
+									}
 								} else if (results[0].rank === 'p2') {
-									Resolve('$remind ' + results[0].username + ' eat cookie :) in 1830s');
-									con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
-										if (error) {
-											kb.say(channel, user['username'] + ", error LUL")
-										}
-									})
+									if (cookieApi.can_claim != true) {
+										return '';
+									} else {
+										Resolve('$remind ' + results[0].username + ' eat cookie :) in 1830s');
+										con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+											if (error) {
+												kb.say(channel, user['username'] + ", database error LUL")
+											}
+										})
+									}
 								} else if (results[0].rank === 'p3') {
-									Resolve('$remind ' + results[0].username + ' eat cookie :) in 1230s');
-									con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
-										if (error) {
-											kb.say(channel, user['username'] + ", error LUL")
-										}
-									})
+									if (cookieApi.can_claim != true) {
+										return '';
+									} else {
+										Resolve('$remind ' + results[0].username + ' eat cookie :) in 1230s');
+										con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+											if (error) {
+												kb.say(channel, user['username'] + ", database error LUL")
+											}
+										})
+									}
 								} else if (results[0].rank === 'p4') {
-									Resolve(user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
-									con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
-										if (error) {
-											kb.say(channel, user['username'] + ", error LUL")
-										}
-									})
+									if (cookieApi.can_claim != true) {
+										return '';
+									} else {
+										Resolve(user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
+										con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+											if (error) {
+												kb.say(channel, user['username'] + ", database error LUL")
+											}
+										})
+									}
 								} else if (results[0].rank === 'p5') {
-									Resolve(user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
-									con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
-										if (error) {
-											kb.say(channel, user['username'] + ", error LUL")
-										}
-									})
+									if (cookieApi.can_claim != true) {
+										return '';
+									} else {
+										Resolve(user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
+										con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+											if (error) {
+												kb.say(channel, user['username'] + ", database error LUL")
+											}
+										})
+									}
 								} else if (results[0].rank === 'default_rank') {
-									Resolve('$remind ' + results[0].username + ' eat cookie :) in 121m');
-									con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
-										if (error) {
-											kb.say(channel, user['username'] + ", error LUL")
-										}
-									})
+									if (cookieApi.can_claim != true) {
+										return '';
+									} else {
+										Resolve('$remind ' + results[0].username + ' eat cookie :) in 121m');
+										con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+											if (error) {
+												kb.say(channel, user['username'] + ", database error LUL")
+											}
+										})
+									}
 								} else {
 									Resolve(user['username'] + ', monkaS switch statement error');
 								}
