@@ -2034,8 +2034,9 @@ const dankeval = [
 		 			.then(response => response.json());
 		 		con.query('SELECT reminders FROM cookieModule', function (error, results, fields) {
 		 			console.log(results)
-		 			if (results[0].reminders === 'false') {
-		 				return '';
+		 			if (results[0].reminders === false) {
+		 				kb.say(channel, '');
+		 				return;
 		 			} else {
 		 				async function respo() {
 					        const query = await new Promise((Reject, Resolve) => {
@@ -2124,7 +2125,6 @@ const dankeval = [
 						respo()
 					}
 				})
-				return '';
 			} catch(returnValue) {
 				return returnValue;
 			}
