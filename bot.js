@@ -2276,7 +2276,7 @@ kb.on("chat", async (channel, user, message, self) => {
 		    	return;
 		    } else {
 		    	commandsExecuted.push('1');
-		   		kb.say(channel, result);
+		   		kb.say(channel, result.toString());
 			}
 		}
 	});
