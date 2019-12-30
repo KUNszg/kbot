@@ -1136,7 +1136,7 @@ const commands = [
 					talkedRecently.add(user['user-id']);
 					setTimeout(() => {
 						talkedRecently.delete(user['user-id']);
-					}, 3000);
+					}, 2000);
 				}
 				function format(seconds){
 					function pad(s){
