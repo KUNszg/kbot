@@ -2302,17 +2302,21 @@ kb.on("chat", async (channel, user, message, self) => {
 				}
 			})
 		} else if (channel === '#haxk') {
-			con.query('INSERT INTO logs_haxk (username, message, date) VALUES ("' + user['username'] + '", "' + message.replace(/[\u{E0000}|\u{206d}]/gu, '') + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
-				if (error) {
-					console.log(error);
-					con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
-						if (error) {
-							console.log(error);
-							throw error;
-						}
-					})
-				}
-			})
+			if (message === '????' || message === '') {
+				return
+			} else {
+				con.query('INSERT INTO logs_haxk (username, message, date) VALUES ("' + user['username'] + '", "' + message.replace(/[\u{E0000}|\u{206d}]/gu, '') + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+							if (error) {
+								console.log(error);
+								throw error;
+							}
+						})
+					}
+				})
+			}
 		} else {
 			return;
 		}
