@@ -72,15 +72,7 @@ const allowEval = [
 	{ID: '458101504'}, //notkunszg
 	{ID: '31400525'} //supinic
 ];
-const allowCookie = [ //prestige cookies: p1 1h, p2 30min, p3 20min
-	{ID: '194557429', username: 'meacheese'},
-	{ID: '52246729', username: 'thirteenn '},
-	{ID: '411604091', username: 'Billy_Bones_U '}, 
-	{ID: '275052455', username: 'vave2_'},
-	{ID: '49739598', username: 'thedangerousbros'},
-	{ID: '148973258', username: 'fabzeef'},
-	{ID: '122424957', username: 'Kippenkoppetje'}
-];
+
 const prefix = "kb ";
 const commandsExecuted = [];
 const talkedRecently = new Set();
@@ -1831,7 +1823,6 @@ kb.on("chat", async (channel, user, message, self) => {
 	const input = message.split(' ') 
 	if (user['user-id'] === "441611405") return;
 	if (user['user-id'] === "81613973") return;
-	if (user['user-id'] === "249408349") return;
 	if (self) return;
 
 	commands.forEach(async command => {
@@ -2247,7 +2238,7 @@ const dankeval = [
     		}
     	}
     },
-    ];
+];
 
 kb.on("chat", async (channel, user, message, self) => {
 	if (user['user-id'] === "249408349") return;
@@ -2296,6 +2287,24 @@ kb.on("chat", async (channel, user, message, self) => {
 	})
 
 	*/
+
+	kb.on('message', function (channel, user, message) {
+		if (channel === '#nymn') {
+			con.query('INSERT INTO logs_nymn (username, message, date) VALUES ("' + user['username'] + '", "' + message + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+				if (error) {
+					console.log(error);
+					con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+						if (error) {
+							console.log(error);
+							throw error;
+						}
+					})
+				}
+			})
+		} else {
+			return;
+		}
+	})
 	
 {
 	  //active commands
