@@ -2125,6 +2125,7 @@ const dankeval = [
 						respo()
 					}
 				})
+				return '';
 			} catch(returnValue) {
 				return returnValue;
 			}
