@@ -203,7 +203,9 @@ const commands = [
 				 		.then(response => response.json());
 			 		const commits2 = await fetch('https://api.github.com/repos/KUNszg/kbot/commits?page=2&per_page=100')
 				 		.then(response => response.json());
-				 	const commitsCount = commits.length + commits2.length;
+			 		const commits3 = await fetch('https://api.github.com/repos/KUNszg/kbot/commits?page=3&per_page=100')
+				 		.then(response => response.json());
+				 	const commitsCount = commits.length + commits2.length + commits3.length;
 				 	const commitDate = new Date(commits[0].commit.committer.date);
 				 	const serverDate = new Date();
 				 	const diff = Math.abs(commitDate-serverDate)
@@ -1441,8 +1443,6 @@ const commands = [
 				if (!perms[0]) {
 					return "";
 				} else {
-					const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
-				 		.then(response => response.json());
 					const shell = require('child_process');
 					kb.say(channel, 'pulling from @master PogChamp 👉 ' + await shell.execSync('git pull').toString().replace(/-{2,}/g, "").replace(/\+{2,}/g, "")) //pull from github
 					
