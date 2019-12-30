@@ -2038,94 +2038,90 @@ const dankeval = [
 		 				return '';
 		 			} else {
 		 				async function respo() {
-		 					try {
-						        const query = await new Promise((Reject, Resolve) => {
-									con.query('SELECT username, rank FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
-										if (error) {
-											Reject('kunszg', '@kunszg cookie error: ' + error)
+					        const query = await new Promise((Reject, Resolve) => {
+								con.query('SELECT username, rank FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
+									if (error) {
+										Reject('kunszg', '@kunszg cookie error: ' + error)
+									} else {
+										if (results.length === 0) {
+											kb.say(channel, '');
 										} else {
-											if (results.length === 0) {
-												kb.say(channel, '');
-											} else {
-												if (results[0].rank === 'p1') {
-													if (cookieApi.seconds_left<3580) {
-														kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 1h intervals. To force your cookie reminder do "kb cookie force" in chat.');
-													} else {
-														Resolve('$remind ' + results[0].username + ' eat cookie :) in 1h');
-														con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
-															if (error) {
-																kb.say(channel, user['username'] + ", database error LUL")
-															}
-														})
-													}
-												} else if (results[0].rank === 'p2') {
-													if (cookieApi.seconds_left<1780) {
-														kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 30m intervals. To force your cookie reminder do "kb cookie force" in chat.');
-													} else {
-														Resolve('$remind ' + results[0].username + ' eat cookie :) in 30m');
-														con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
-															if (error) {
-																kb.say(channel, user['username'] + ", database error LUL")
-															}
-														})
-													}
-												} else if (results[0].rank === 'p3') {
-													if (cookieApi.seconds_left<1180) {
-														kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 20m intervals. To force your cookie reminder do "kb cookie force" in chat.');
-													} else {
-														Resolve('$remind ' + results[0].username + ' eat cookie :) in 20m');
-														con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
-															if (error) {
-																kb.say(channel, user['username'] + ", database error LUL")
-															}
-														})
-													}
-												} else if (results[0].rank === 'p4') {
-													if (cookieApi.can_claim === false) {
-														kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait intervals. To force your cookie reminder do "kb cookie force" in chat.');
-													} else {
-														Resolve(user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
-														con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
-															if (error) {
-																kb.say(channel, user['username'] + ", database error LUL")
-															}
-														})
-													}
-												} else if (results[0].rank === 'p5') {
-													if (cookieApi.can_claim === false) {
-														kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait intervals. To force your cookie reminder do "kb cookie force" in chat.');
-													} else {
-														Resolve(user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
-														con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
-															if (error) {
-																kb.say(channel, user['username'] + ", database error LUL")
-															}
-														})
-													}
-												} else if (results[0].rank === 'default_rank') {
-													if (cookieApi.cookieApi<7180) {
-														kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 2h intervals. To force your cookie reminder do "kb cookie force" in chat.');
-													} else {
-														Resolve('$remind ' + results[0].username + ' eat cookie :) in 2h');
-														con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
-															if (error) {
-																kb.say(channel, user['username'] + ", database error LUL")
-															}
-														})
-													}
+											if (results[0].rank === 'p1') {
+												if (cookieApi.seconds_left<3580) {
+													kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 1h intervals. To force your cookie reminder do "kb cookie force" in chat.');
 												} else {
-													Resolve(user['username'] + ', monkaS switch statement error');
+													Resolve('$remind ' + results[0].username + ' eat cookie :) in 1h');
+													con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+														if (error) {
+															kb.say(channel, user['username'] + ", database error LUL")
+														}
+													})
 												}
+											} else if (results[0].rank === 'p2') {
+												if (cookieApi.seconds_left<1780) {
+													kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 30m intervals. To force your cookie reminder do "kb cookie force" in chat.');
+												} else {
+													Resolve('$remind ' + results[0].username + ' eat cookie :) in 30m');
+													con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+														if (error) {
+															kb.say(channel, user['username'] + ", database error LUL")
+														}
+													})
+												}
+											} else if (results[0].rank === 'p3') {
+												if (cookieApi.seconds_left<1180) {
+													kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 20m intervals. To force your cookie reminder do "kb cookie force" in chat.');
+												} else {
+													Resolve('$remind ' + results[0].username + ' eat cookie :) in 20m');
+													con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+														if (error) {
+															kb.say(channel, user['username'] + ", database error LUL")
+														}
+													})
+												}
+											} else if (results[0].rank === 'p4') {
+												if (cookieApi.can_claim === false) {
+													kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait intervals. To force your cookie reminder do "kb cookie force" in chat.');
+												} else {
+													Resolve(user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
+													con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+														if (error) {
+															kb.say(channel, user['username'] + ", database error LUL")
+														}
+													})
+												}
+											} else if (results[0].rank === 'p5') {
+												if (cookieApi.can_claim === false) {
+													kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait intervals. To force your cookie reminder do "kb cookie force" in chat.');
+												} else {
+													Resolve(user['username'] + ', the rank you have set is currently not supported, see "kb help cookie" for command syntax.');
+													con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+														if (error) {
+															kb.say(channel, user['username'] + ", database error LUL")
+														}
+													})
+												}
+											} else if (results[0].rank === 'default_rank') {
+												if (cookieApi.cookieApi<7180) {
+													kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 2h intervals. To force your cookie reminder do "kb cookie force" in chat.');
+												} else {
+													Resolve('$remind ' + results[0].username + ' eat cookie :) in 2h');
+													con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
+														if (error) {
+															kb.say(channel, user['username'] + ", database error LUL")
+														}
+													})
+												}
+											} else {
+												Resolve(user['username'] + ', monkaS switch statement error');
 											}
 										}
-									})
+									}
 								})
-								return query
-							} catch (respond) {
-								return respond;
-							}
+							})
+							return query
 						}
-						respo()
+						return respo()
 					}
 				})
 				return '';
