@@ -1155,7 +1155,7 @@ const commands = [
 						}
 					}
 				}
-				if (!msg[0] && channel === '#nymn') {
+				if (channel === '#nymn') {
 					con.query('SELECT ID, username, message, date FROM logs_nymn ORDER BY RAND() LIMIT 1', function (error, results, fields) {
 						if (error) {
 							con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
@@ -1169,13 +1169,13 @@ const commands = [
 							const messageDate = results[0].date;
 							const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
 							if (timeDifference/1000/3600 > 48) {
-								kb.say(channel, user['username'] + ', (' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username + ': ' + results[0].message.replace('????', ''))
+								kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username + ': ' + results[0].message.replace('????', ''))
 							} else {
-								kb.say(channel, user['username'] + ', (' + format(timeDifference/1000) + ' ago) ' + results[0].username + ': ' + results[0].message.replace('????', ''))
+								kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username + ': ' + results[0].message.replace('????', ''))
 							}
 						}
 					})
-				} else if (!msg[0] && channel === '#haxk') {
+				} else if (channel === '#haxk') {
 					con.query('SELECT ID, username, message, date FROM logs_haxk ORDER BY RAND() LIMIT 1', function (error, results, fields) {
 						if (error) {
 							con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
@@ -1189,9 +1189,29 @@ const commands = [
 							const messageDate = results[0].date;
 							const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
 							if (timeDifference/1000/3600 > 48) {
-								kb.say(channel, user['username'] + ', (' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username + ': ' + results[0].message.replace('????', ''))
+								kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username + ': ' + results[0].message.replace('????', ''))
 							} else {
-								kb.say(channel, user['username'] + ', (' + format(timeDifference/1000) + ' ago) ' + results[0].username + ': ' + results[0].message.replace('????', ''))
+								kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username + ': ' + results[0].message.replace('????', ''))
+							}
+						}
+					})
+				} else if (channel === '#supinic') {
+					con.query('SELECT ID, username, message, date FROM logs_supinic ORDER BY RAND() LIMIT 1', function (error, results, fields) {
+						if (error) {
+							con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+								if (error) {
+									console.log(error);
+									throw error;
+								}
+							})
+						} else {
+							const serverDate = new Date().getTime();
+							const messageDate = results[0].date;
+							const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+							if (timeDifference/1000/3600 > 48) {
+								kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username + ': ' + results[0].message.replace('????', ''))
+							} else {
+								kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username + ': ' + results[0].message.replace('????', ''))
 							}
 						}
 					})
@@ -2293,6 +2313,22 @@ kb.on("chat", async (channel, user, message, self) => {
 				return;
 			} else {
 				con.query('INSERT INTO logs_haxk (username, message, date) VALUES ("' + user['username'] + '", "' + message.replace(/[\u{E0000}|\u{206d}]/gu, '') + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+							if (error) {
+								console.log(error);
+								throw error;
+							}
+						})
+					}
+				})
+			}
+		} else if (channel === '#supinic') {
+			if (user['user-id'] === '229225576' || message === '') {
+				return;
+			} else {
+				con.query('INSERT INTO logs_supinic (username, message, date) VALUES ("' + user['username'] + '", "' + message.replace(/[\u{E0000}|\u{206d}]/gu, '') + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
 					if (error) {
 						console.log(error);
 						con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
