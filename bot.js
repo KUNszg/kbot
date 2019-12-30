@@ -1129,93 +1129,76 @@ const commands = [
 		aliases: prefix + "randomline",
 		invocation: async (channel, user, message, args) => {
 			try{
- 				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
- 				const fetchUrl = require("fetch").fetchUrl;
- 				const allChannels = [
- 				'nani',
- 				'forsen',
- 				'forsen',
- 				'forsen',
- 				'pajlada',
- 				'pajlada',
- 				'pajlada'
- 				];
-	 			const randomChannel = allChannels[Math.floor(Math.random()*allChannels.length)]
-	 			if (user['user-id'] === '178087241') {
-	 				if (!msg[0]) {
-						const fetchUrl = require("fetch").fetchUrl;
-						const rl = await new Promise((Resolve, Reject) => {
-							fetchUrl(api.rl + randomChannel +  "/user/" + user['username'] + "/random", function(error, meta, body) { 
-							    if (error) {
-							    	console.log(error);
-								   	Reject(error)
-					   			}
-							    else {
-								   	Resolve(body.toString().replace(/"/g, ''))
-							   	}
-							})
-					  	});
-	 					return '#' + randomChannel.replace(/^(.{2})/,"$1\u{E0000}") + ', ' + user['username'] + ': ' + rl.toString()
- 					} else {
-						const fetchUrl = require("fetch").fetchUrl;
-						const rl = await new Promise((Resolve, Reject) => {
-							fetchUrl(api.rl + randomChannel +  "/user/" + msg[0] + "/random", function(error, meta, body) { 
-							    if (error) {
-							    	console.log(error);
-								   	Reject(error)
-							   	}
-							    else {
-								   	Resolve(body.toString())
-							   	}
-							})
-					  	});
-					  	return '#' + randomChannel.replace(/^(.{2})/,"$1\u{E0000}") + ', ' + msg[0] + ": " + rl.toString().replace(/"/g, '')
- 					}
-	 			} else {
- 					if (!msg[0]) {
-	 					if (talkedRecently.has(user['user-id'])) { 
-			       		 	return '';    
-					    } else {   
-					     	talkedRecently.add(user['user-id']);
-				            setTimeout(() => {
-				              	talkedRecently.delete(user['user-id']);
-				            }, 5000);
-				        }
-						const rl = await new Promise((Resolve, Reject) => {
-							fetchUrl(api.rl + randomChannel +  "/user/" + user['username'] + "/random", function(error, meta, body) { 
-							    if (error) {
-							    	console.log(error);
-								   	Reject(error)
-							   	}
-							    else {
-								   	Resolve(body.toString().replace(/"/g, ''))
-							   	}
-							})
-					  	});
-	 					return '#' + randomChannel + ', ' + user['username'] + ': ' + rl.toString()
- 					} else {
- 						if (talkedRecently.has(user['user-id'])) { 
-				        	return ''; 
-				    	} else {
-					  		talkedRecently.add(user['user-id']);
-				            setTimeout(() => {
-				              	talkedRecently.delete(user['user-id']);
-				            }, 2000);
-				        }
-						const rl = await new Promise((Resolve, Reject) => {
-							fetchUrl(api.rl + randomChannel +  "/user/" + msg[0] + "/random", function(error, meta, body) { 
-							    if (error) {
-							    	console.log(error);
-								   	Reject(error)
-							   	}
-							    else {
-								   	Resolve(body.toString())
-							   	}
-							})
-					  	});
-					  	return '#' + randomChannel + ', ' + msg[0] + ": " + rl.toString().replace(/"/g, '')
+				const msg = message.split(' ').splice(2);
+				if (talkedRecently.has(user['user-id'])) { 
+					return ''; 
+				} else {
+					talkedRecently.add(user['user-id']);
+					setTimeout(() => {
+						talkedRecently.delete(user['user-id']);
+					}, 3000);
+				}
+				function format(seconds){
+					function pad(s){
+						return (s < 10 ? '0' : '') + s;
+					}
+					var hours = Math.floor(seconds / (60*60));
+					var minutes = Math.floor(seconds % (60*60) / 60);
+					var seconds = Math.floor(seconds % 60);
+					if (hours === 0 && minutes != 0) {
+						return minutes + 'm ' + seconds + "s";
+					} else {
+						if (minutes === 0 && hours === 0) {
+							return seconds + "s"
+						} else {
+							return hours + 'h ' + minutes + 'm ' + seconds + "s"; 
+						}
 					}
 				}
+				if (!msg[0] && channel === '#nymn') {
+					con.query('SELECT ID, username, message, date FROM logs_nymn ORDER BY RAND() LIMIT 1', function (error, results, fields) {
+						if (error) {
+							con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+								if (error) {
+									console.log(error);
+									throw error;
+								}
+							})
+						} else {
+							const serverDate = new Date().getTime();
+							const messageDate = results[0].date;
+							const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+							if (timeDifference/1000/3600 > 48) {
+								kb.say(channel, user['username'] + ', (' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username + ': ' + results[0].message.replace('????', ''))
+							} else {
+								kb.say(channel, user['username'] + ', (' + format(timeDifference/1000) + ' ago) ' + results[0].username + ': ' + results[0].message.replace('????', ''))
+							}
+						}
+					})
+				} else if (!msg[0] && channel === '#haxk') {
+					con.query('SELECT ID, username, message, date FROM logs_haxk ORDER BY RAND() LIMIT 1', function (error, results, fields) {
+						if (error) {
+							con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+								if (error) {
+									console.log(error);
+									throw error;
+								}
+							})
+						} else {
+							const serverDate = new Date().getTime();
+							const messageDate = results[0].date;
+							const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+							if (timeDifference/1000/3600 > 48) {
+								kb.say(channel, user['username'] + ', (' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username + ': ' + results[0].message.replace('????', ''))
+							} else {
+								kb.say(channel, user['username'] + ', (' + format(timeDifference/1000) + ' ago) ' + results[0].username + ': ' + results[0].message.replace('????', ''))
+							}
+						}
+					})
+				} else {
+					return '';
+				}
+				return '';
 			} catch(err) {
 				console.log(err);
 				return user['username'] + err + ' FeelsDankMan !!!';
