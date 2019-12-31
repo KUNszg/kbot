@@ -1688,9 +1688,9 @@ const commands = [
 						})
 						break;
 					case 'status':
-						const cookieStatus = await fetch('https://api.roaringiron.com/cooldown/' + user['username'])
+						const cookieStatus = await fetch('https://api.roaringiron.com/cooldown/' + user['user-id'] + '?id=true')
 				 			.then(response => response.json());
-			 			const cookiesEaten = await fetch('https://api.roaringiron.com/user/' + user['username'])
+			 			const cookiesEaten = await fetch('https://api.roaringiron.com/user/' + user['user-id'] + '?id=true')
 				 			.then(response => response.json());
 						con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
 							if (error) throw error;
