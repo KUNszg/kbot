@@ -2493,4 +2493,3 @@ try {
 
 disco.login(api.discord);
 
-module.exports={kb, con}
