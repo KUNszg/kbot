@@ -1441,7 +1441,13 @@ const commands = [
 					const shell = require('child_process');
 					kb.say(channel, 'pulling from @master PogChamp 👉 ' + await shell.execSync('git pull').toString().replace(/-{2,}/g, "").replace(/\+{2,}/g, "")) //pull from github
 					
-					setTimeout(()=>{kb.say(channel, 'restarting Okayga ')}, 6000);
+					setTimeout(()=>{
+						if (channel === '#nymn') {
+							kb.say('nymn', 'restarting... pajaWalk1 pajaWalk2 pajaWalk3 🚪')
+						} else {
+							kb.say(channel, 'restarting KKona ')
+						}
+					}, 6000);
 					setTimeout(()=>{process.kill(process.pid)}, 10000);
 					return '';
 				}
