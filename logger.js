@@ -22,13 +22,12 @@ const kb = new tmi.client(options);
 
 kb.connect();
 kb.on('connected', (adress, port) => {
-	const mysql = require('mysql');
+	const mysql = require('mysql2');
 	const con = mysql.createConnection({
 		host: "localhost",
 		user: api.db_user,
 		password: api.db_pass,
 		database: "kbot",
-		charset: "utf8mb4_general_ci"
 	});
 	con.connect(function(err) {
 	  	if (err) {
@@ -41,7 +40,7 @@ kb.on('connected', (adress, port) => {
 	kb.on('message', function (channel, user, message) {
 		const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '')
 		if (channel === '#nymn') {
-			if (user['user-id'] === '229225576' || message === '') {
+			if (user['user-id'] === '229225576' || msg === '') {
 				return;
 			} else { 
 				con.query('INSERT INTO logs_nymn (username, message, date) ' +  
@@ -59,7 +58,7 @@ kb.on('connected', (adress, port) => {
 				})
 			}
 		} else if (channel === '#haxk') {
-			if (user['user-id'] === '229225576' || message === '') {
+			if (user['user-id'] === '229225576' || msg === '') {
 				return;
 			} else {
 				con.query('INSERT INTO logs_haxk (username, message, date) ' + 
@@ -77,7 +76,7 @@ kb.on('connected', (adress, port) => {
 				})
 			}
 		} else if (channel === '#supinic') {
-			if (user['user-id'] === '229225576' || message === '') {
+			if (user['user-id'] === '229225576' || msg === '') {
 				return;
 			} else {
 				con.query('INSERT INTO logs_supinic (username, message, date) ' +  
