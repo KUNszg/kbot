@@ -1169,9 +1169,9 @@ const commands = [
 							const messageDate = results[0].date;
 							const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
 							if (timeDifference/1000/3600 > 48) {
-								kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username + ': ' + results[0].message.replace(/\?/g, ''))
+								kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username + ': ' + results[0].message)
 							} else {
-								kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username + ': ' + results[0].message.replace(/\?/g, ''))
+								kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username + ': ' + results[0].message)
 							}
 						}
 					})
@@ -1189,9 +1189,9 @@ const commands = [
 							const messageDate = results[0].date;
 							const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
 							if (timeDifference/1000/3600 > 48) {
-								kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username + ': ' + results[0].message.replace(/\?/g, ''))
+								kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username + ': ' + results[0].message)
 							} else {
-								kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username + ': ' + results[0].message.replace(/\?/g, ''))
+								kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username + ': ' + results[0].message)
 							}
 						}
 					})
@@ -1209,9 +1209,9 @@ const commands = [
 							const messageDate = results[0].date;
 							const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
 							if (timeDifference/1000/3600 > 48) {
-								kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username + ': ' + results[0].message.replace(/\?/g, ''))
+								kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username + ': ' + results[0].message)
 							} else {
-								kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username + ': ' + results[0].message.replace(/\?/g, ''))
+								kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username + ': ' + results[0].message)
 							}
 						}
 					})
