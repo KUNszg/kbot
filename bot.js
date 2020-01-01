@@ -1443,12 +1443,12 @@ const commands = [
 					
 					setTimeout(()=>{
 						if (channel === '#nymn') {
-							kb.say('nymn', 'restarting... pajaWalk1 pajaWalk2 pajaWalk3 🚪')
+							kb.say('nymn', 'restarting pajaWalk1 pajaWalk2 pajaWalk3 🚪')
 						} else {
 							kb.say(channel, 'restarting KKona ')
 						}
-					}, 6000);
-					setTimeout(()=>{process.kill(process.pid)}, 10000);
+					}, 4000);
+					setTimeout(()=>{process.kill(process.pid)}, 6000);
 					return '';
 				}
 			} catch (err) {
