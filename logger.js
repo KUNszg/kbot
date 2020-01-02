@@ -33,7 +33,6 @@ const ignoreList = [
 	'97661864',
 	'413480192'
 ];
-const filterBots = ignoreList.filter(i => i === user['user-id'])
 
 kb.connect();
 kb.on('connected', (adress, port) => {
