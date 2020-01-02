@@ -1215,10 +1215,7 @@ const commands = [
 							}
 						}
 					})
-				} else {
-					return '';
-				}
-				if (typeof msg[0] !== 'undefined' && msg[0] != '') {
+				} else if (typeof msg[0] !== 'undefined' && msg[0] != '') {
 					if (channel === '#nymn') {
 						con.query('SELECT ID, username, message, date FROM logs_nymn WHERE username="' + msg[0] + '" ORDER BY RAND() LIMIT 1', function (error, results, fields) {
 							if (error) {
