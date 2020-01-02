@@ -26,12 +26,14 @@ const ignoreList = [
 	'100135110', // StreamElements 
 	'122770725', // Scriptorex 
 	'442600612', // Mm_sUtilityBot 
-	'465732747', // 465732747 
+	'465732747', // charlestonbieber 
 	'469718952', // wayt00dank 
 	'64313471', // HuwoBot 
 	'425363834', // ThePositiveBot 
 	'97661864', // botnextdoor
-	'413480192' // futuregadget8 
+	'413480192', // futuregadget8 
+	'132134724', // gazatu2
+	'62541963' //snusbot
 ];
 
 kb.connect();
@@ -95,6 +97,24 @@ kb.on('connected', (adress, port) => {
 				return;
 			} else {
 				con.query('INSERT INTO logs_supinic (username, message, date) ' +  
+					'VALUES ("' + user['username'] + '", "' + msg + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+					if (error) {
+						console.log(error);
+						con.query('INSERT INTO error_logs (error_message, date) ' + 
+							'VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+							if (error) {
+								console.log(error);
+								throw error;
+							}
+						})
+					}
+				})
+			}
+		} else if (channel === '#pajlada') {
+			if (filterBots.length != 0  || msg === '') {
+				return;
+			} else {
+				con.query('INSERT INTO logs_pajlada (username, message, date) ' +  
 					'VALUES ("' + user['username'] + '", "' + msg + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
 					if (error) {
 						console.log(error);

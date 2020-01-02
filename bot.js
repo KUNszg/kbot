@@ -1194,6 +1194,25 @@ const commands = [
 							}
 						}
 					})
+				} else if (channel === '#pajlada' && !msg[0]) {
+					con.query('SELECT ID, username, message, date FROM logs_pajlada ORDER BY RAND() LIMIT 1', function (error, results, fields) {
+						if (error) {
+							con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+								if (error) {
+									console.log(error);
+									throw error;
+								}
+							})
+						} else {
+							const messageDate = results[0].date;
+							const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+							if (timeDifference/1000/3600 > 48) {
+								kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username.replace(/^(.{2})/,"$1\u{E0000}") + ': ' + results[0].message)
+							} else {
+								kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username.replace(/^(.{2})/,"$1\u{E0000}") + ': ' + results[0].message)
+							}
+						}
+					})
 				} else if (channel === '#supinic' && !msg[0]) {
 					con.query('SELECT ID, username, message, date FROM logs_supinic ORDER BY RAND() LIMIT 1', function (error, results, fields) {
 						if (error) {
@@ -1225,7 +1244,8 @@ const commands = [
 								})
 							} else {
 								if (!results[0]) {
-									kb.say(channel, user['username'] + ', there is no user in my database with that name :/')
+									kb.say(channel, user['username'] + ', there is no user in my database with that name :/');
+									return;
 								} else {
 									const messageDate = results[0].date;
 									const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
@@ -1249,7 +1269,33 @@ const commands = [
 								})
 							} else {
 								if (!results[0]) {
-									kb.say(channel, user['username'] + ', there is no user in my database with that name :/')
+									kb.say(channel, user['username'] + ', there is no user in my database with that name :/');
+									return;
+								} else {
+									const messageDate = results[0].date;
+									const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+									if (timeDifference/1000/3600 > 48) {
+										kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username.replace(/^(.{2})/,"$1\u{E0000}") + ': ' + results[0].message)
+									} else {
+										kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username.replace(/^(.{2})/,"$1\u{E0000}") + ': ' + results[0].message)
+									}
+								}
+							}
+						})
+					} else if (channel === '#pajlada') {
+						con.query('SELECT ID, username, message, date FROM logs_pajlada WHERE username="' + msg[0] + '" ORDER BY RAND() LIMIT 1', function (error, results, fields) {
+							if (error) {
+								con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+									console.log(results)
+									if (error) {
+										console.log(error);
+										throw error;
+									}
+								})
+							} else {
+								if (!results[0]) {
+									kb.say(channel, user['username'] + ', there is no user in my database with that name :/');
+									return;
 								} else {
 									const messageDate = results[0].date;
 									const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
@@ -1272,7 +1318,8 @@ const commands = [
 								})
 							} else {
 								if (!results[0]) {
-									kb.say(channel, user['username'] + ', there is no user in my database with that name :/')
+									kb.say(channel, user['username'] + ', there is no user in my database with that name :/');
+									return;
 								} else {
 									const messageDate = results[0].date;
 									const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
@@ -1284,6 +1331,8 @@ const commands = [
 								}
 							}
 						})
+					} else {
+						return '';
 					}
 				} else {
 					return '';
@@ -1293,6 +1342,145 @@ const commands = [
 				console.log(err);
 				return user['username'] + err + ' FeelsDankMan !!!';
 			}		
+		}
+	},
+
+	{
+		name: prefix + 'rq',
+		aliases: prefix + 'randomquote',
+		invocation: async (channel, user, message, args) => {
+			try {
+				const serverDate = new Date().getTime();
+				if (talkedRecently.has(user['user-id'])) { 
+					return ''; 
+				} else {
+					talkedRecently.add(user['user-id']);
+					setTimeout(() => {
+						talkedRecently.delete(user['user-id']);
+					}, 2000);
+				}
+				function format(seconds){
+					function pad(s){
+						return (s < 10 ? '0' : '') + s;
+					}
+					var hours = Math.floor(seconds / (60*60));
+					var minutes = Math.floor(seconds % (60*60) / 60);
+					var seconds = Math.floor(seconds % 60);
+					if (hours === 0 && minutes != 0) {
+						return minutes + 'm ' + seconds + "s";
+					} else {
+						if (minutes === 0 && hours === 0) {
+							return seconds + "s"
+						} else {
+							return hours + 'h ' + minutes + 'm ' + seconds + "s"; 
+						}
+					}
+				}
+				if (channel === '#nymn') {
+					con.query('SELECT ID, username, message, date FROM logs_nymn WHERE username="' + user['username'] + '" ORDER BY RAND() LIMIT 1', function (error, results, fields) {
+						if (error) {
+							con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+								if (error) {
+									console.log(error);
+									throw error;
+								}
+							})
+						} else {
+							if (!results[0]) {
+								kb.say(channel, user['username'] + ', there is no user in my database with that name :/');
+								return;
+							} else {
+								const messageDate = results[0].date;
+								const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+								if (timeDifference/1000/3600 > 48) {
+									kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username.replace(/^(.{2})/,"$1\u{E0000}") + ': ' + results[0].message)
+								} else {
+									kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username.replace(/^(.{2})/,"$1\u{E0000}") + ': ' + results[0].message)
+								}
+							}
+						}
+					})
+				} else if (channel === '#haxk') {
+					con.query('SELECT ID, username, message, date FROM logs_haxk WHERE username="' + user['username']  + '" ORDER BY RAND() LIMIT 1', function (error, results, fields) {
+						if (error) {
+							con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+								console.log(results)
+								if (error) {
+									console.log(error);
+									throw error;
+								}
+							})
+						} else {
+							if (!results[0]) {
+								kb.say(channel, user['username'] + ', there is no user in my database with that name :/');
+								return;
+							} else {
+								const messageDate = results[0].date;
+								const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+								if (timeDifference/1000/3600 > 48) {
+									kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username.replace(/^(.{2})/,"$1\u{E0000}") + ': ' + results[0].message)
+								} else {
+									kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username.replace(/^(.{2})/,"$1\u{E0000}") + ': ' + results[0].message)
+								}
+							}
+						}
+					})
+				} else if (channel === '#supinic') {
+					con.query('SELECT ID, username, message, date FROM logs_supinic WHERE username="' + user['username']  + '" ORDER BY RAND() LIMIT 1', function (error, results, fields) {
+						if (error) {
+							con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+								if (error) {
+									console.log(error);
+									throw error;
+								}
+							})
+						} else {
+							if (!results[0]) {
+								kb.say(channel, user['username'] + ', there is no user in my database with that name :/');
+								return;
+							} else {
+								const messageDate = results[0].date;
+								const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+								if (timeDifference/1000/3600 > 48) {
+									kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username.replace(/^(.{2})/,"$1\u{E0000}") + ': ' + results[0].message)
+								} else {
+									kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username.replace(/^(.{2})/,"$1\u{E0000}") + ': ' + results[0].message)
+								}
+							}
+						}
+					})
+				} else if (channel === '#pajlada') {
+					con.query('SELECT ID, username, message, date FROM logs_pajlada WHERE username="' + user['username']  + '" ORDER BY RAND() LIMIT 1', function (error, results, fields) {
+						if (error) {
+							con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+								if (error) {
+									console.log(error);
+									throw error;
+								}
+							})
+						} else {
+							if (!results[0]) {
+								kb.say(channel, user['username'] + ', there is no user in my database with that name :/');
+								return;
+							} else {
+								const messageDate = results[0].date;
+								const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+								if (timeDifference/1000/3600 > 48) {
+									kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username.replace(/^(.{2})/,"$1\u{E0000}") + ': ' + results[0].message)
+								} else {
+									kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username.replace(/^(.{2})/,"$1\u{E0000}") + ': ' + results[0].message)
+								}
+							}
+						}
+					})
+				} else {
+					return '';
+				}
+ 				return '';
+			} catch(err) {
+				console.log(err);
+				return user['username'] + err + ' FeelsDankMan !!!';
+			}
 		}
 	},
 
