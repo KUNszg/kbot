@@ -1130,6 +1130,7 @@ const commands = [
 		invocation: async (channel, user, message, args) => {
 			try {
 				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
+				const serverDate = new Date().getTime();
 				if (talkedRecently.has(user['user-id'])) { 
 					return ''; 
 				} else {
@@ -1165,7 +1166,6 @@ const commands = [
 								}
 							})
 						} else {
-							const serverDate = new Date().getTime();
 							const messageDate = results[0].date;
 							const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
 							if (timeDifference/1000/3600 > 48) {
@@ -1185,7 +1185,6 @@ const commands = [
 								}
 							})
 						} else {
-							const serverDate = new Date().getTime();
 							const messageDate = results[0].date;
 							const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
 							if (timeDifference/1000/3600 > 48) {
@@ -1205,7 +1204,6 @@ const commands = [
 								}
 							})
 						} else {
-							const serverDate = new Date().getTime();
 							const messageDate = results[0].date;
 							const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
 							if (timeDifference/1000/3600 > 48) {
@@ -1226,12 +1224,11 @@ const commands = [
 									}
 								})
 							} else {
-								const serverDate = new Date().getTime();
-								const messageDate = results[0].date;
-								const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
 								if (!results[0]) {
 									kb.say(channel, user['username'] + ', there is no user in my database with that name :/')
 								} else {
+									const messageDate = results[0].date;
+									const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
 									if (timeDifference/1000/3600 > 48) {
 										kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username.replace(/^(.{2})/,"$1\u{E0000}") + ': ' + results[0].message)
 									} else {
@@ -1251,12 +1248,11 @@ const commands = [
 									}
 								})
 							} else {
-								const serverDate = new Date().getTime();
-								const messageDate = results[0].date;
-								const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
 								if (!results[0]) {
 									kb.say(channel, user['username'] + ', there is no user in my database with that name :/')
 								} else {
+									const messageDate = results[0].date;
+									const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
 									if (timeDifference/1000/3600 > 48) {
 										kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username.replace(/^(.{2})/,"$1\u{E0000}") + ': ' + results[0].message)
 									} else {
@@ -1275,12 +1271,11 @@ const commands = [
 									}
 								})
 							} else {
-								const serverDate = new Date().getTime();
-								const messageDate = results[0].date;
-								const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
 								if (!results[0]) {
 									kb.say(channel, user['username'] + ', there is no user in my database with that name :/')
 								} else {
+									const messageDate = results[0].date;
+									const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
 									if (timeDifference/1000/3600 > 48) {
 										kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username.replace(/^(.{2})/,"$1\u{E0000}") + ': ' + results[0].message)
 									} else {
