@@ -1218,7 +1218,7 @@ const commands = [
 				} else {
 					return '';
 				}
-				if (typeof msg[0] !== 'undefined' || msg[0] != '') {
+				if (typeof msg[0] !== 'undefined' && msg[0] != '') {
 					con.query('SELECT ID, username, message, date FROM logs_nymn WHERE username="' + msg[0] + '"', function (error, results, fields) {
 						if (error) {
 							con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
