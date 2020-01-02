@@ -20,18 +20,18 @@ const options = {
 const tmi = require('tmi.js');
 const kb = new tmi.client(options);
 const ignoreList = [
-	'268612479',
-	'68136884',
-	'229225576',
-	'100135110',
-	'122770725',
-	'442600612',
-	'465732747',
-	'469718952',
-	'64313471',
-	'425363834',
-	'97661864',
-	'413480192'
+	'268612479', // titlechange_bot 
+	'68136884', // Supibot 
+	'229225576', // kunszgbot
+	'100135110', // StreamElements 
+	'122770725', // Scriptorex 
+	'442600612', // Mm_sUtilityBot 
+	'465732747', // 465732747 
+	'469718952', // wayt00dank 
+	'64313471', // HuwoBot 
+	'425363834', // ThePositiveBot 
+	'97661864', // botnextdoor
+	'413480192' // futuregadget8 
 ];
 
 kb.connect();
@@ -54,7 +54,6 @@ kb.on('connected', (adress, port) => {
 	kb.on('message', function (channel, user, message) {
 		const filterBots = ignoreList.filter(i => i === user['user-id'])
 		const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '')
-		console.log(filterBots)
 		if (channel === '#nymn') {
 			if (filterBots.length != 0 || msg === '') {
 				return;
