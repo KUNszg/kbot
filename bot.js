@@ -1279,10 +1279,6 @@ const commands = [
 								}
 							}
 						})
-					} else {
-						kb.say(channel, '');
-						return;
-					}
 				} else {
 					return '';
 				}
