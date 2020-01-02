@@ -1240,6 +1240,7 @@ const commands = [
 						con.query('SELECT ID, username, message, date FROM logs_haxk WHERE username="' + msg[0] + '" ORDER BY RAND() LIMIT 1', function (error, results, fields) {
 							if (error) {
 								con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+									console.log(results)
 									if (error) {
 										console.log(error);
 										throw error;
