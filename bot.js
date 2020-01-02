@@ -1128,7 +1128,7 @@ const commands = [
 		name: prefix + "rl",
 		aliases: prefix + "randomline",
 		invocation: async (channel, user, message, args) => {
-			try{
+			try {
 				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
 				if (talkedRecently.has(user['user-id'])) { 
 					return ''; 
@@ -1279,6 +1279,7 @@ const commands = [
 								}
 							}
 						})
+					}
 				} else {
 					return '';
 				}
