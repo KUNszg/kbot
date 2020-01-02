@@ -9,6 +9,6 @@ Fairly easy to get started
 3. `npm i -f`
 4. Edit the api keys in `config.js`
 
-#Notice:
+# Notice:
 - bot is not meant to run on other machines (most likely won't work because of database integration)
 - it's meant to be a project that you get inspired of, i don't take any responsibility for damage on other machines
