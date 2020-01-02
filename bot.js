@@ -1155,7 +1155,7 @@ const commands = [
 						}
 					}
 				}
-				if (channel === '#nymn') {
+				if (channel === '#nymn' && !msg[0]) {
 					con.query('SELECT ID, username, message, date FROM logs_nymn ORDER BY RAND() LIMIT 1', function (error, results, fields) {
 						if (error) {
 							con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
@@ -1175,7 +1175,7 @@ const commands = [
 							}
 						}
 					})
-				} else if (channel === '#haxk') {
+				} else if (channel === '#haxk' && !msg[0]) {
 					con.query('SELECT ID, username, message, date FROM logs_haxk ORDER BY RAND() LIMIT 1', function (error, results, fields) {
 						if (error) {
 							con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
@@ -1195,7 +1195,7 @@ const commands = [
 							}
 						}
 					})
-				} else if (channel === '#supinic') {
+				} else if (channel === '#supinic' && !msg[0]) {
 					con.query('SELECT ID, username, message, date FROM logs_supinic ORDER BY RAND() LIMIT 1', function (error, results, fields) {
 						if (error) {
 							con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
@@ -1212,6 +1212,85 @@ const commands = [
 								kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username + ': ' + results[0].message)
 							} else {
 								kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username + ': ' + results[0].message)
+							}
+						}
+					})
+				} else {
+					return '';
+				}
+				if (typeof msg[0] !== 'undefined' || msg[0] != '') {
+					con.query('SELECT ID, username, message, date FROM logs_nymn WHERE username="' + msg[0] + '"', function (error, results, fields) {
+						if (error) {
+							con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+								if (error) {
+									console.log(error);
+									throw error;
+								}
+							})
+						} else {
+							if (channel === '#nymn' && msg[0].includes(results[0].username)) {
+								con.query('SELECT ID, username, message, date FROM logs_nymn WHERE username="' + msg[0] + '" ORDER BY RAND() LIMIT 1', function (error, results, fields) {
+									if (error) {
+										con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+											if (error) {
+												console.log(error);
+												throw error;
+											}
+										})
+									} else {
+										const serverDate = new Date().getTime();
+										const messageDate = results[0].date;
+										const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+										if (timeDifference/1000/3600 > 48) {
+											kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username + ': ' + results[0].message)
+										} else {
+											kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username + ': ' + results[0].message)
+										}
+									}
+								})
+							} else if (channel === '#haxk' && msg[0].includes(results[0].username)) {
+								con.query('SELECT ID, username, message, date FROM logs_haxk WHERE username="' + msg[0] + '" ORDER BY RAND() LIMIT 1', function (error, results, fields) {
+									if (error) {
+										con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+											if (error) {
+												console.log(error);
+												throw error;
+											}
+										})
+									} else {
+										const serverDate = new Date().getTime();
+										const messageDate = results[0].date;
+										const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+										if (timeDifference/1000/3600 > 48) {
+											kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username + ': ' + results[0].message)
+										} else {
+											kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username + ': ' + results[0].message)
+										}
+									}
+								})
+							} else if (channel === '#supinic'  && msg[0].includes(results[0].username)) {
+								con.query('SELECT ID, username, message, date FROM logs_supinic WHERE username="' + msg[0] + '" ORDER BY RAND() LIMIT 1', function (error, results, fields) {
+									if (error) {
+										con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+											if (error) {
+												console.log(error);
+												throw error;
+											}
+										})
+									} else {
+										const serverDate = new Date().getTime();
+										const messageDate = results[0].date;
+										const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+										if (timeDifference/1000/3600 > 48) {
+											kb.say(channel, '(' + timeDifference/1000/3600/24 + 'd ago) ' + results[0].username + ': ' + results[0].message)
+										} else {
+											kb.say(channel, '(' + format(timeDifference/1000) + ' ago) ' + results[0].username + ': ' + results[0].message)
+										}
+									}
+								})
+							} else {
+								kb.say(channel, '');
+								return;
 							}
 						}
 					})
