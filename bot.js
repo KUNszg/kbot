@@ -1129,7 +1129,7 @@ const commands = [
 		aliases: prefix + "randomline",
 		invocation: async (channel, user, message, args) => {
 			try{
-				const msg = message.split(' ').splice(2);
+				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
 				if (talkedRecently.has(user['user-id'])) { 
 					return ''; 
 				} else {
@@ -1228,7 +1228,7 @@ const commands = [
 								}
 							})
 						} else {
-							if (channel === '#nymn' && msg[0].includes(results[0].username)) {
+							if (channel === '#nymn' && msg[0] === results[0].username) {
 								con.query('SELECT ID, username, message, date FROM logs_nymn WHERE username="' + msg[0] + '" ORDER BY RAND() LIMIT 1', function (error, results, fields) {
 									if (error) {
 										con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
