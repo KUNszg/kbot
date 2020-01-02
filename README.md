@@ -11,4 +11,4 @@ Fairly easy to get started
 
 # Notice:
 - bot is not meant to run on other machines (most likely won't work because of database integration)
-- it's meant to be a project that you get inspired of, i don't take any responsibility for damage on other machines
+- it's meant to be a project that you get inspired of, I don't take any responsibility for damage on other machines
