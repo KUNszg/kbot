@@ -1697,7 +1697,7 @@ const commands = [
 					return "";
 				} else {
 					const shell = require('child_process');
-					kb.say(channel, 'pulling from @master PogChamp 👉 ' + await shell.execSync('git pull').toString().replace(/-{2,}/g, "").replace(/\+{2,}/g, "")) //pull from github
+					kb.say(channel, 'pulling from @master PogChamp 👉 ' + await shell.execSync('sudo git pull').toString().replace(/-{2,}/g, "").replace(/\+{2,}/g, "")) //pull from github
 					
 					setTimeout(()=>{
 						if (channel === '#nymn') {
