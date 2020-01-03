@@ -2192,8 +2192,6 @@ const dankeval = [
 		              	talkedRecently.delete(user['user-id']);
 		            }, 18000);
 		        }
-		        const cookieApi = await fetch('https://api.roaringiron.com/cooldown/' + user['username'])
-		 			.then(response => response.json());
 		 		con.query('SELECT reminders FROM cookieModule', function (error, results, fields) {
 		 			console.log(results)
 		 			if (results[0].reminders === false) {
@@ -2201,6 +2199,8 @@ const dankeval = [
 		 				return;
 		 			} else {
 		 				async function respo() {
+					        const cookieApi = await fetch('https://api.roaringiron.com/cooldown/' + user['username'])
+		 						.then(response => response.json());
 		 					const cookieStatus = await fetch('https://api.roaringiron.com/cooldown/' + user['user-id'] + '?id=true')
 				 				.then(response => response.json());
 					        const query = await new Promise((Reject, Resolve) => {
