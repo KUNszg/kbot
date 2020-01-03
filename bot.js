@@ -2200,9 +2200,9 @@ const dankeval = [
 		 				kb.say(channel, '');
 		 				return;
 		 			} else {
-		 				const cookieStatus = await fetch('https://api.roaringiron.com/cooldown/' + user['user-id'] + '?id=true')
-				 			.then(response => response.json());
 		 				async function respo() {
+		 					const cookieStatus = await fetch('https://api.roaringiron.com/cooldown/' + user['user-id'] + '?id=true')
+				 				.then(response => response.json());
 					        const query = await new Promise((Reject, Resolve) => {
 								con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
 									if (error) {
