@@ -2199,9 +2199,9 @@ const dankeval = [
 		 				return;
 		 			} else {
 		 				async function respo() {
-					        const cookieApi = await fetch('https://api.roaringiron.com/cooldown/' + user['username'])
+					        const cookieApi = await fetch('https://api.roaringiron.com/cooldown/' + user['user-id'] + '?id=true')
 		 						.then(response => response.json());
-		 					const cookieStatus = await fetch('https://api.roaringiron.com/cooldown/' + user['user-id'] + '?id=true')
+		 					const cookieStatus = await fetch('https://api.roaringiron.com/user/' + user['user-id'] + '?id=true')
 				 				.then(response => response.json());
 					        const query = await new Promise((reject, resolve) => {
 								con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
@@ -2211,7 +2211,7 @@ const dankeval = [
 										if (results.length === 0) {
 											kb.say(channel, '');
 										} else {
-											if (cookieApi.prestige === 1) {
+											if (cookieStatus.prestige === 1) {
 												if (cookieApi.seconds_left<3580) {
 													kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 1h intervals. To force your cookie reminder do "kb cookie force" in chat.');
 												} else {
@@ -2222,7 +2222,7 @@ const dankeval = [
 														}
 													})
 												}
-											} else if (cookieApi.prestige === 2) {
+											} else if (cookieStatus.prestige === 2) {
 												if (cookieApi.seconds_left<1780) {
 													kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 30m intervals. To force your cookie reminder do "kb cookie force" in chat.');
 												} else {
@@ -2233,7 +2233,7 @@ const dankeval = [
 														}
 													})
 												}
-											} else if (cookieApi.prestige === 4) {
+											} else if (cookieStatus.prestige === 4) {
 												if (cookieApi.seconds_left<1180) {
 													kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 20m intervals. To force your cookie reminder do "kb cookie force" in chat.');
 												} else {
@@ -2244,7 +2244,7 @@ const dankeval = [
 														}
 													})
 												}
-											} else if (cookieApi.prestige === 4) {
+											} else if (cookieStatus.prestige === 4) {
 												if (cookieApi.can_claim === false) {
 													kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait intervals. To force your cookie reminder do "kb cookie force" in chat.');
 												} else {
@@ -2255,7 +2255,7 @@ const dankeval = [
 														}
 													})
 												}
-											} else if (cookieApi.prestige === 5) {
+											} else if (cookieStatus.prestige === 5) {
 												if (cookieApi.can_claim === false) {
 													kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait intervals. To force your cookie reminder do "kb cookie force" in chat.');
 												} else {
@@ -2266,7 +2266,7 @@ const dankeval = [
 														}
 													})
 												}
-											} else if (cookieApi.prestige === 0) {
+											} else if (cookieStatus.prestige === 0) {
 												if (cookieApi.cookieApi<7180) {
 													kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 2h intervals. To force your cookie reminder do "kb cookie force" in chat.');
 												} else {
