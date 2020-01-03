@@ -2284,14 +2284,14 @@ const dankeval = [
 									}
 								})
 							})
-							return query
+							return query.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').replace(/\d/g, '').replace(/\./g, '').replace('undefined', '');
 						}
 						respo()
 					}
 				})
 				return '';
 			} catch(returnValue) {
-				return returnValue.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').replace(/\d/g, '').replace(/\./g, '').replace('undefined', '');
+				return returnValue.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').replace(/\d/g, '').replace(/\./g, '');
 			}
 		}
 	},
