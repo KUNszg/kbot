@@ -40,14 +40,14 @@ kb.connect();
 kb.on('connected', (adress, port) => {
 	const mysql = require('mysql2');
 	const con = mysql.createConnection({
-		host: "localhost:3306",
+		host: "localhost",
 		user: "root",
 		password: "",
 		database: "kbot",
 	});
 	con.connect(function(err) {
 	  	if (err) {
-	  		kb.say('supinic', '@kunszg, database connection error monkaS')
+	  		kb.say('kunszg', '@kunszg, database connection error monkaS')
 	  		console.log(err)
 		} else {
 	  		console.log("Connected!");
