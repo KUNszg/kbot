@@ -924,13 +924,13 @@ const commands = [
 			try{
 				const msg = message.split(" ").splice(2);
 				const fetchUrl = require("fetch").fetchUrl;
-				const tweet = await new Promise((Resolve, Reject) => {
+				const tweet = await new Promise((resolve, reject) => {
 					fetchUrl(api.twitter + msg[0], function(error, meta, body) { 
 					    if (error) {
-						   	Reject(error)
+						   	reject(error)
 					   	}
 					    else {
-						   	Resolve(body.toString())
+						   	resolve(body.toString())
 					   	}
 					})
 			  	});
@@ -990,13 +990,13 @@ const commands = [
 	        } catch(err) {
 	        	const msg = message.split(" ").splice(2);
         		const fetchUrl = require("fetch").fetchUrl;
-				const foo = await new Promise((Resolve, Reject) => {
+				const foo = await new Promise((resolve, reject) => {
 					fetchUrl(api.hosts + msg[0], function(error, meta, body) { 
 					    if (error) {
-						   	Reject(error)
+						   	reject(error)
 					   }
 					    else {
-						   	Resolve(body.toString())
+						   	resolve(body.toString())
 					   }
 					})
 		  		});
@@ -1011,13 +1011,13 @@ const commands = [
 		invocation: async (channel, user, message, args) => {
 			try{
 				const fetchUrl = require("fetch").fetchUrl;
-				const bttv = await new Promise((Resolve, Reject) => {
+				const bttv = await new Promise((resolve, reject) => {
 					fetchUrl(api.bttv + channel.substring(1), function(error, meta, body){ 
 					    if (error) {
-						   	Reject(error)
+						   	reject(error)
 					   	}
 					    else {
-						   	Resolve(body.toString())
+						   	resolve(body.toString())
 					   	}
 					})
 			  	});
@@ -1641,14 +1641,14 @@ const commands = [
 		            }, 5000);
 		        }
 	    		const fetchUrl = require("fetch").fetchUrl;
-				const joemama = await new Promise((Resolve, Reject) => {
+				const joemama = await new Promise((resolve, reject) => {
 					fetchUrl(api.joemama, function(error, meta, body) {
 					    if (error) {
 					    	console.log(error);
-						   	Reject(error)
+						   	reject(error)
 					   	}
 					    else {
-						   	Resolve(body.toString())
+						   	resolve(body.toString())
 					   	}
 					})
 			  	});
@@ -1783,7 +1783,7 @@ const commands = [
 				} else if ((/^[\x00-\x7F]+$/.test(msg.join(' '))) === false) {
 					return user['username'] + ', special character detected HONEYDETECTED';
 				} else {
-					const query = await new Promise((Reject, Resolve) => {
+					const query = await new Promise((reject, resolve) => {
 						con.query('SELECT message FROM suggestions WHERE message="' + msg.join(' ') + '"', function (error, results, fields) {
 							if (error) { 
 								kb.say(channel, user['username'] + ', error occured xD');
@@ -1800,11 +1800,11 @@ const commands = [
 											kb.say(channel, user['username'] + ', error occured xD');
 											return;
 										}
-										Resolve(user['username'] + ', suggestion saved with ID ' + results[0].ID + ' PogChamp');
+										resolve(user['username'] + ', suggestion saved with ID ' + results[0].ID + ' PogChamp');
 									})
 								})
 							} else {
-								Resolve(user['username'] + ", duplicate suggestion.");
+								resolve(user['username'] + ", duplicate suggestion.");
 							}
 						})
 					})
@@ -1829,17 +1829,17 @@ const commands = [
 				if (!perms[0]) {
 					return "";
 				} else {
-					const query = await new Promise((Reject, Resolve) => {
+					const query = await new Promise((reject, resolve) => {
 						con.query('SELECT ID, message, username, status FROM suggestions WHERE ID="' + msg + '"' , function (error, results, fields) {
 							if (error) {
-								Reject(user['username'] + ', error xD 👉 ' + error);
+								reject(user['username'] + ', error xD 👉 ' + error);
 							} else {
 								if (!results[0].ID) {
-									Resolve(user['username'] + ', such ID does not exist FeelsDankMan');
+									resolve(user['username'] + ', such ID does not exist FeelsDankMan');
 								} else if (results[0].ID === msg) {
-									Resolve('from' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
+									resolve('from' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
 								} else {
-									Resolve('from ' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
+									resolve('from ' + results[0].username + ': ' + results[0].message + ' | status: ' + results[0].status);
 								}
 							}
 						})
@@ -2203,10 +2203,10 @@ const dankeval = [
 		 						.then(response => response.json());
 		 					const cookieStatus = await fetch('https://api.roaringiron.com/cooldown/' + user['user-id'] + '?id=true')
 				 				.then(response => response.json());
-					        const query = await new Promise((Reject, Resolve) => {
+					        const query = await new Promise((reject, resolve) => {
 								con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', function (error, results, fields) {
 									if (error) {
-										Reject('kunszg', '@kunszg cookie error: ' + error)
+										reject('kunszg', '@kunszg cookie error: ' + error)
 									} else {
 										if (results.length === 0) {
 											kb.say(channel, '');
@@ -2278,7 +2278,7 @@ const dankeval = [
 													})
 												}
 											} else {
-												kb.say(channel, user['username'] + ', monkaS switch statement error');
+												kb.say(channel, '')
 											}
 										}
 									}
