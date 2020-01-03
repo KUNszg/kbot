@@ -18,4 +18,4 @@ const supinic = 'https://supinic.com/api/bot/active?auth_user=<authuser>&auth_ke
 const dubtrackRoom = 'https://api.dubtrack.fm/room/<roomid>/playlist/active'
 const discord = ''
 
-module.exports = {banphraseList, oauth, youtube, randomTrack, randomFact, chat, locate, geonames, nasa1, nasa2, twitter, hosts, bttv, joke1, joke2, rl, joemama, supinic, dubtrackRoom, discord}
+module.exports = {oauth, youtube, randomTrack, randomFact, chat, locate, geonames, nasa1, nasa2, twitter, hosts, bttv, joke1, joke2, rl, joemama, supinic, dubtrackRoom, discord}
