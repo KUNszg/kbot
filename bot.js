@@ -47,9 +47,9 @@ const fetch = require("node-fetch");
 const perf = require('execution-time')();
 const mysql = require('mysql');
 const con = mysql.createConnection({
-	host: "localhost",
+	host: "localhost:3306",
 	user: api.db_user,
-	password: api.db_pass,
+	password: "",
 	database: "kbot"
 });
 con.connect(function(err) {

@@ -40,9 +40,9 @@ kb.connect();
 kb.on('connected', (adress, port) => {
 	const mysql = require('mysql2');
 	const con = mysql.createConnection({
-		host: "localhost",
+		host: "localhost:3306",
 		user: api.db_user,
-		password: api.db_pass,
+		password: "",
 		database: "kbot",
 	});
 	con.connect(function(err) {
