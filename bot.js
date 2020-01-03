@@ -2291,7 +2291,7 @@ const dankeval = [
 				})
 				return '';
 			} catch(returnValue) {
-				return returnValue;
+				return returnValue.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').replace(/\d/g, '').replace(/\./g, '').replace('undefined', '');
 			}
 		}
 	},
