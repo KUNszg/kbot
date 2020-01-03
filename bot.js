@@ -48,7 +48,7 @@ const perf = require('execution-time')();
 const mysql = require('mysql');
 const con = mysql.createConnection({
 	host: "localhost:3306",
-	user: api.db_user,
+	user: "root",
 	password: "",
 	database: "kbot"
 });
