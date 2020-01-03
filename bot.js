@@ -1600,8 +1600,8 @@ const commands = [
 
 				// if there is no parameter given, return basic command message
 				if (!msg[0]) {
-					return user['username'] + ", kunszgbot is owned by KUNszg, sponsored by " + "Sinris".replace(/^(.{2})/,"$1\u{E0000}") + " , Node JS " + process.version + 
-							", running on Ionos VPS, Debian 9 GNU/" + process.platform + ' ' + process.arch + ", for commands list use 'kb commands'.";
+					return user['username'] + ", kunszgbot is owned by KUNszg, sponsored by " + "Sinris".replace(/^(.{2})/,"$1\u{E0000}") + ' and ' + 'Leppunen'.replace(/^(.{2})/,"$1\u{E0000}") + " , Node JS " + process.version + 
+							", running on Ubuntu 19.10 GNU/" + process.platform + ' ' + process.arch + ", for commands list use 'kb commands'.";
 
 				} else if (commands.filter(i => i.name.substring(3).toLowerCase() === msg[0])) {
 					// filter for command names matching the given parameter
@@ -1965,7 +1965,7 @@ const commands = [
 									if (error) {
 										throw error
 									} else {
-										kb.say(channel, user['username'] + ', Your current reminder rank is ' + cookiesEaten.prestige + ' (' + cookiesEaten.rank + ') - time left until next cookie: ' + cookieStatus.time_left_unformatted + ' - cookies: ' + cookiesEaten.cookies);
+										kb.say(channel, user['username'] + ', Your current reminder rank is prestige ' + cookiesEaten.prestige + ' (' + cookiesEaten.rank + ') - time left until next cookie: ' + cookieStatus.time_left_unformatted + ' - cookies: ' + cookiesEaten.cookies);
 									}
 								})
 							}
@@ -2213,7 +2213,7 @@ const dankeval = [
 										} else {
 											if (cookieStatus.prestige === 1) {
 												if (cookieApi.seconds_left<3580) {
-													kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 1h intervals. To force your cookie reminder do "kb cookie force" in chat.').replace('undefined', '');
+													kb.whisper(user['username'] + ' your cookie is still on cooldown (' + cookieApi.time_left_formatted + '), wait 1h intervals. To force your cookie reminder do "kb cookie force" in chat.');
 												} else {
 													kb.say(channel, '$remind ' + results[0].username + ' eat cookie :) in 1h');
 													con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP WHERE username="' + user['username'] + '"', function (error, results, fields) {
