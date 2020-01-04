@@ -1982,6 +1982,66 @@ const commands = [
 	},
 
 	{
+		name: prefix + 'stats',
+		aliases: null,
+		invocation: async (channel, user, message, args) => {
+			try {
+				if (talkedRecently.has(user['user-id'])) { 
+					return '';  
+				} else {
+					talkedRecently.add(user['user-id']);
+					setTimeout(() => {
+						talkedRecently.delete(user['user-id']);
+					}, 8000);
+				}
+				const userMessages = new Promise((resolve, reject) => {
+					con.query('SELECT COUNT(username) as value FROM logs_' + channel.replace('#', '') + ' WHERE username="' + user['username'] + '"', function (error, results, fields) {
+						if (error) { 
+							reject(error)
+						} else {
+							resolve(results)
+						}
+					})
+				})
+				userMessages.then(function(values) {
+					const chatMessages = new Promise((resolve, reject) => { 
+						con.query('SELECT COUNT(username) as value FROM logs_' + channel.replace('#', ''), function (error, results, fields) {
+							if (error) {
+								reject(error)
+							} else {
+								resolve(results)
+							}
+						})
+					})
+					chatMessages.then(function(occurence) {
+						const occurenceVal = new Promise((resolve, reject) => { 
+							con.query('SELECT message, COUNT(message) AS value_occurance FROM logs_' + channel.replace('#', '') + ' WHERE username="' + user['username'] + 
+							'" GROUP BY message ORDER BY value_occurance DESC LIMIT 1;' , function (error, results, fields) {
+								if (error) {
+									reject(error)
+								} else {
+									resolve(results)
+								}
+							})
+						})
+						occurenceVal.then(function(val) {
+							const output =  user['username'] + ", you have total of " + values[0].value + " lines logged, that's " + (values[0].value/occurence[0].value).toFixed(3) + 
+							' % of all lines in this channel, your most frequently typed message is: "' + val[0].message + '" (' + val[0].value_occurance + ' times)'; 
+							if (output.toString().length>500) {
+								kb.say(channel, output.substr(0, 500) + '...');
+							} else {
+								kb.say(channel, output);
+							}
+						})
+					})
+				})
+			} catch (err) {
+				return user['username'] + ', ' + err + ' FeelsDankMan !!!';
+			}
+		}
+	},
+
+	{
 		name: prefix + "commands",
 		aliases: null,
 		invocation: async (channel, user, message, args) => {
