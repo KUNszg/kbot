@@ -1986,6 +1986,7 @@ const commands = [
 		aliases: null,
 		invocation: async (channel, user, message, args) => {
 			try {
+				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
 				if (talkedRecently.has(user['user-id'])) { 
 					return '';  
 				} else {
@@ -1994,29 +1995,19 @@ const commands = [
 						talkedRecently.delete(user['user-id']);
 					}, 8000);
 				}
-				const userMessages = new Promise((resolve, reject) => {
-					con.query('SELECT COUNT(username) as value FROM logs_' + channel.replace('#', '') + ' WHERE username="' + user['username'] + '"', function (error, results, fields) {
-						if (error) { 
-							kb.say(channel, user['username'] + ", I don't have any logs from this channel :/");
-						} else {
-							resolve(results)
-						}
-					})
-				})
-				userMessages.then(function(values) {
-					const chatMessages = new Promise((resolve, reject) => { 
-						con.query('SELECT COUNT(username) as value FROM logs_' + channel.replace('#', ''), function (error, results, fields) {
-							if (error) {
-								reject(error)
+				if (msg[0] === "channel") {
+					const rows = new Promise((resolve, reject) => {
+						con.query('SELECT COUNT(ID) as value FROM logs_' + channel.replace('#', ''), function (error, results, fields) {
+							if (error) { 
+								kb.say(channel, user['username'] + ", I don't have any logs from this channel :/");
 							} else {
 								resolve(results)
 							}
 						})
 					})
-					chatMessages.then(function(occurence) {
-						const occurenceVal = new Promise((resolve, reject) => { 
-							con.query('SELECT message, COUNT(message) AS value_occurance FROM logs_' + channel.replace('#', '') + ' WHERE username="' + user['username'] + 
-							'" GROUP BY message ORDER BY value_occurance DESC LIMIT 1;' , function (error, results, fields) {
+					rows.then(function(values) {
+						const tableSize = new Promise((resolve, reject) => { 
+							con.query('SELECT TABLE_NAME AS `Table`, (DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024 AS `size` FROM information_schema.TABLES WHERE TABLE_NAME = "logs_' + channel.replace('#', '') + '" ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;', function (error, results, fields) {
 								if (error) {
 									reject(error)
 								} else {
@@ -2024,17 +2015,53 @@ const commands = [
 								}
 							})
 						})
-						occurenceVal.then(function(val) {
-							const output =  user['username'] + ", you have total of " + values[0].value + " lines logged, that's " + (values[0].value/occurence[0].value).toFixed(3) + 
-							'% of all lines in this channel, your most frequently typed message is: " ' + val[0].message + ' " (' + val[0].value_occurance + ' times)'; 
-							if (output.toString().length>500) {
-								kb.say(channel, output.substr(0, 500) + '...');
+						tableSize.then(function(size) {
+							kb.say(channel, user['username'] + ', this channel has ' + values[0].value + ' lines logged, which is ' + size[0].size.toFixed(2) + 'MB total.')
+						})
+					})
+				} else {
+					const userMessages = new Promise((resolve, reject) => {
+						con.query('SELECT COUNT(username) as value FROM logs_' + channel.replace('#', '') + ' WHERE username="' + user['username'] + '"', function (error, results, fields) {
+							if (error) { 
+								kb.say(channel, user['username'] + ", I don't have any logs from this channel :/");
 							} else {
-								kb.say(channel, output);
+								resolve(results)
 							}
 						})
 					})
-				})
+					userMessages.then(function(values) {
+						const chatMessages = new Promise((resolve, reject) => { 
+							con.query('SELECT COUNT(username) as value FROM logs_' + channel.replace('#', ''), function (error, results, fields) {
+								if (error) {
+									reject(error)
+								} else {
+									resolve(results)
+								}
+							})
+						})
+						chatMessages.then(function(occurence) {
+							const occurenceVal = new Promise((resolve, reject) => { 
+								con.query('SELECT message, COUNT(message) AS value_occurance FROM logs_' + channel.replace('#', '') + ' WHERE username="' + user['username'] + 
+								'" GROUP BY message ORDER BY value_occurance DESC LIMIT 1;' , function (error, results, fields) {
+									if (error) {
+										reject(error)
+									} else {
+										resolve(results)
+									}
+								})
+							})
+							occurenceVal.then(function(val) {
+								const output =  user['username'] + ", you have total of " + values[0].value + " lines logged, that's " + (values[0].value/occurence[0].value).toFixed(3) + 
+								'% of all lines in this channel, your most frequently typed message is: " ' + val[0].message + ' " (' + val[0].value_occurance + ' times)'; 
+								if (output.toString().length>500) {
+									kb.say(channel, output.substr(0, 500) + '...');
+								} else {
+									kb.say(channel, output);
+								}
+							})
+						})
+					})
+				}
 			} catch (err) {
 				return user['username'] + ', ' + err + ' FeelsDankMan !!!';
 			}
