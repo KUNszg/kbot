@@ -55,13 +55,13 @@ kb.on('connected', (adress, port) => {
 	});
 	kb.on('message', function (channel, user, message) {
 		const filterBots = ignoreList.filter(i => i === user['user-id'])
-		const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '')
+		const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').replace(/"/g, '').replace(/'/g, '')
 		if (channel === '#nymn') {
 			if (filterBots.length != 0 || msg === '') {
 				return;
 			} else { 
 				con.query('INSERT INTO logs_nymn (username, message, date) ' +  
-					'VALUES ("' + user['username'] + '", "' + msg + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+					'VALUES ("' + user['username'] + '", "' + msg + '")', function (error, results, fields) {
 					if (error) {
 						console.log(error);
 						con.query('INSERT INTO error_logs (error_message, date) ' + 
@@ -79,7 +79,7 @@ kb.on('connected', (adress, port) => {
 				return;
 			} else {
 				con.query('INSERT INTO logs_haxk (username, message, date) ' + 
-					'VALUES ("' + user['username'] + '", "' + msg + '", CURRENT_TIMESTAMP)', function (error, results, fields) {
+					'VALUES ("' + user['username'] + '", "' + msg + '")', function (error, results, fields) {
 					if (error) {
 						console.log(error);
 						con.query('INSERT INTO error_logs (error_message, date) ' + 
