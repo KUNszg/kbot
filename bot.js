@@ -1997,7 +1997,7 @@ const commands = [
 				const userMessages = new Promise((resolve, reject) => {
 					con.query('SELECT COUNT(username) as value FROM logs_' + channel.replace('#', '') + ' WHERE username="' + user['username'] + '"', function (error, results, fields) {
 						if (error) { 
-							reject(error)
+							kb.say(channel, user['username'] + ", I don't have any logs from this channel :/");
 						} else {
 							resolve(results)
 						}
