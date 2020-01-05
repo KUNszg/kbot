@@ -1668,9 +1668,9 @@ kb.on('connected', (adress, port) => {
 									return 'just now';
 								} else if (hours<168) {
 									return hours + 'h ago';
-								} else if (720<hours<1440) {
+								} else if (count.evaluate('720<' + hours + '<1440')) {
 									return (hours/720).toFixed(0) + 'month ago';
-								} else if (720<hours>1440) {
+								} else if (count.evaluate('720<' + hours + '>1440')) {
 									return (hours/720).toFixed(0) + 'months ago';
 								} else {
 									return (hours/24).toFixed(0) + 'd ago';
