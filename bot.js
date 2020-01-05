@@ -47,7 +47,7 @@ kb.on('connected', (adress, port) => {
 	const SpacexApiWrapper = require("spacex-api-wrapper");
 	const fetch = require("node-fetch");
 	const perf = require('execution-time')();
-	const mysql = require('mysql');
+	const mysql = require('mysql2');
 	const con = mysql.createConnection({
 		host: "localhost",
 		user: "root",
@@ -2209,6 +2209,9 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'stats',
 			aliases: null,
+			description: 'syntax: kb stats [channel] | no parameter - returns information about your logs in my  '  + 
+			'database | channel - returns information about channel logs you are currently in (amount of rows, size of' + 
+			' the table in MB)',
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
@@ -2256,7 +2259,8 @@ kb.on('connected', (adress, port) => {
 								' WHERE username="' + user['username'] + '"',
 								function(error, results, fields) {
 									if (error) {
-										kb.say(channel, user['username'] + ", I don't have any logs from this channel :/");
+										kb.say(channel, user['username'] + 
+											", I don't have any logs from this channel :/");
 									} else {
 										resolve(results)
 									}
@@ -2289,7 +2293,8 @@ kb.on('connected', (adress, port) => {
 								occurenceVal.then(function(val) {
 									const fetch = require('node-fetch');
 									const output = user['username'] + ", you have total of " + values[0].value +
-										" lines logged, that's " + ((values[0].value / occurence[0].value) * 100).toFixed(2) +
+										" lines logged, that's " + ((values[0].value / occurence[0].value) * 
+											100).toFixed(2) +
 										'% of all lines in this channel, your most frequently typed message is: " ' +
 										val[0].message + ' " (' + val[0].value_occurance + ' times)';
 									if (output.toString().length > 500) {
