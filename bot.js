@@ -2271,9 +2271,37 @@ kb.on('connected', (adress, port) => {
 										'% of all lines in this channel, your most frequently typed message is: " ' +
 										val[0].message + ' " (' + val[0].value_occurance + ' times)';
 									if (output.toString().length > 500) {
-										kb.say(channel, output.substr(0, 500) + '...');
+										const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
+											method: "POST",
+											url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+											body: "message=" + output.substr(0, 500) + '...',
+											headers: {
+												"Content-Type": "application/x-www-form-urlencoded"
+											},
+										}).then(response => response.json()))
+										if (banphrasePass.banned === true) {
+											kb.say(channel, user['username'] +
+												', the result is banphrased, I whispered it to you tho cmonBruh')
+											kb.whisper(user['username'], output);
+										} else {
+											kb.say(channel, output.substr(0, 500) + '...');
+										}
 									} else {
-										kb.say(channel, output);
+										const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
+											method: "POST",
+											url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+											body: "message=" + output,
+											headers: {
+												"Content-Type": "application/x-www-form-urlencoded"
+											},
+										}).then(response => response.json()))
+										if (banphrasePass.banned === true) {
+											kb.say(channel, user['username'] +
+												', the result is banphrased, I whispered it to you tho cmonBruh')
+											kb.whisper(user['username'], output);
+										} else {
+											kb.say(channel, output);
+										}
 									}
 								})
 							})
