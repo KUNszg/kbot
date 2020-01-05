@@ -1860,26 +1860,47 @@ kb.on('connected', (adress, port) => {
 					const perms = allowEval.filter(
 						i => i.ID === user['user-id']
 					);
+					msg.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2)
 
 					if (!perms[0]) {
 						return "";
 					} else {
-						const shell = require('child_process');
-						//pull from github
-						kb.say(channel, 'pulling from @master PogChamp 👉 ' +
-							await shell.execSync('sudo git pull').toString().replace(/-{2,}/g, "").replace(/\+{2,}/g, ""))
+						if (!msg[0]) {
+							const shell = require('child_process');
+							//pull from github
+							kb.say(channel, 'pulling from @master PogChamp 👉 ' +
+								await shell.execSync('sudo git pull').toString().replace(/-{2,}/g, "").replace(/\+{2,}/g, ""))
 
-						setTimeout(() => {
-							if (channel === '#nymn') {
-								kb.say('nymn', 'restarting pajaWalk1 pajaWalk2 pajaWalk3 🚪')
-							} else {
-								kb.say(channel, 'restarting KKona ')
-							}
-						}, 4000);
-						setTimeout(() => {
-							process.kill(process.pid)
-						}, 6000);
-						return '';
+							setTimeout(() => {
+								if (channel === '#nymn') {
+									kb.say('nymn', 'restarting pajaWalk1 pajaWalk2 pajaWalk3 🚪')
+								} else {
+									kb.say(channel, 'restarting KKona ')
+								}
+							}, 4000);
+							setTimeout(() => {
+								process.kill(process.pid)
+							}, 6000);
+							return '';
+						} else if (msg[0] === 'logger') {
+							const shell = require('child_process');
+							kb.say(channel, 'pulling from @master PogChamp 👉 ' +
+								await shell.execSync('sudo git pull').toString().replace(/-{2,}/g, "").replace(/\+{2,}/g, ""))
+
+							setTimeout(() => {
+								if (channel === '#nymn') {
+									kb.say('nymn', 'restarting logger pajaWalk1 pajaWalk2 pajaWalk3 🚪')
+								} else {
+									kb.say(channel, 'restarting logger KKona ')
+								}
+							}, 4000);
+							setTimeout(() => {
+								shell.execSync('pm2 restart logger')
+							}, 4000);
+							return '';
+						} else {
+							return 'imagine forgetting your own syntax OMEGALUL'
+						}
 					}
 				} catch (err) {
 					console.log(err);
