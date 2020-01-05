@@ -2266,42 +2266,49 @@ kb.on('connected', (adress, port) => {
 										})
 								})
 								occurenceVal.then(function(val) {
+									const fetch = require('node-fetch');
 									const output = user['username'] + ", you have total of " + values[0].value +
 										" lines logged, that's " + ((values[0].value / occurence[0].value) * 100).toFixed(2) +
 										'% of all lines in this channel, your most frequently typed message is: " ' +
 										val[0].message + ' " (' + val[0].value_occurance + ' times)';
 									if (output.toString().length > 500) {
-										const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
-											method: "POST",
-											url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-											body: "message=" + output.substr(0, 500) + '...',
-											headers: {
-												"Content-Type": "application/x-www-form-urlencoded"
-											},
-										}).then(response => response.json()))
-										if (banphrasePass.banned === true) {
-											kb.say(channel, user['username'] +
-												', the result is banphrased, I whispered it to you tho cmonBruh')
-											kb.whisper(user['username'], output);
-										} else {
-											kb.say(channel, output.substr(0, 500) + '...');
+										async function check1() {
+											const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
+												method: "POST",
+												url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+												body: "message=" + output.substr(0, 500) + '...',
+												headers: {
+													"Content-Type": "application/x-www-form-urlencoded"
+												},
+											}).then(response => response.json()))
+											if (banphrasePass.banned === true) {
+												kb.say(channel, user['username'] +
+													', the result is banphrased, I whispered it to you tho cmonBruh')
+												kb.whisper(user['username'], output);
+											} else {
+												kb.say(channel, output.substr(0, 500) + '...');
+											}
 										}
+										check1()
 									} else {
-										const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
-											method: "POST",
-											url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-											body: "message=" + output,
-											headers: {
-												"Content-Type": "application/x-www-form-urlencoded"
-											},
-										}).then(response => response.json()))
-										if (banphrasePass.banned === true) {
-											kb.say(channel, user['username'] +
-												', the result is banphrased, I whispered it to you tho cmonBruh')
-											kb.whisper(user['username'], output);
-										} else {
-											kb.say(channel, output);
+										async function check2() {
+											const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
+												method: "POST",
+												url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+												body: "message=" + output,
+												headers: {
+													"Content-Type": "application/x-www-form-urlencoded"
+												},
+											}).then(response => response.json()))
+											if (banphrasePass.banned === true) {
+												kb.say(channel, user['username'] +
+													', the result is banphrased, I whispered it to you tho cmonBruh')
+												kb.whisper(user['username'], output);
+											} else {
+												kb.say(channel, output);
+											}
 										}
+										check2()
 									}
 								})
 							})
