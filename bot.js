@@ -1666,14 +1666,18 @@ kb.on('connected', (adress, port) => {
 									return seconds + "s ago"
 								} else if (seconds === 0 || hours === 0 && minutes === 0) {
 									return 'just now'
-								} else {
+								} else if (hours<168) {
 									return hours + 'h ago'
+								} else if (hours>720) {
+									return (hours/720).toFixed(0) + 'm ago'
+								} else {
+									return (hours/24).toFixed(0) + 'd ago'
 								}
 							}
 						}
 						const bots = time.data.filter(i => i.lastSeenTimestamp != null).map(
 							i => ' ' + i.name + ' ' + format(
-								(Math.abs(new Date() - new Date(i.lastSeenTimestamp))) / 1000)
+								((Math.abs(new Date() - new Date(i.lastSeenTimestamp))) / 1000))
 						);
 						return user['username'] + ', active known bots MrDestructoid 👉' + bots;
 					}
