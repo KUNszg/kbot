@@ -1663,15 +1663,17 @@ kb.on('connected', (adress, port) => {
 								return minutes + 'm ago';
 							} else {
 								if (minutes === 0 && hours === 0) {
-									return seconds + "s ago"
+									return seconds + "s ago";
 								} else if (seconds === 0 || hours === 0 && minutes === 0) {
-									return 'just now'
+									return 'just now';
 								} else if (hours<168) {
-									return hours + 'h ago'
-								} else if (hours>720) {
-									return (hours/720).toFixed(0) + 'm ago'
+									return hours + 'h ago';
+								} else if (720<hours<1440) {
+									return (hours/720).toFixed(0) + 'month ago';
+								} else if (720<hours>1440) {
+									return (hours/720).toFixed(0) + 'months ago';
 								} else {
-									return (hours/24).toFixed(0) + 'd ago'
+									return (hours/24).toFixed(0) + 'd ago';
 								}
 							}
 						}
