@@ -2267,7 +2267,7 @@ kb.on('connected', (adress, port) => {
 								})
 								occurenceVal.then(function(val) {
 									const output = user['username'] + ", you have total of " + values[0].value +
-										" lines logged, that's " + (values[0].value / occurence[0].value).toFixed(3) +
+										" lines logged, that's " + ((values[0].value / occurence[0].value) * 100).toFixed(2) +
 										'% of all lines in this channel, your most frequently typed message is: " ' +
 										val[0].message + ' " (' + val[0].value_occurance + ' times)';
 									if (output.toString().length > 500) {
