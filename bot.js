@@ -1860,7 +1860,7 @@ kb.on('connected', (adress, port) => {
 					const perms = allowEval.filter(
 						i => i.ID === user['user-id']
 					);
-					msg.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2)
+					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
 
 					if (!perms[0]) {
 						return "";
@@ -1904,7 +1904,7 @@ kb.on('connected', (adress, port) => {
 					}
 				} catch (err) {
 					console.log(err);
-					return user['username'] + err + ' FeelsDankMan !!!';
+					return user['username'] + ' ' + err + ' FeelsDankMan !!!';
 				}
 			}
 		},
