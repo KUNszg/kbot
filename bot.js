@@ -2249,8 +2249,39 @@ kb.on('connected', (adress, port) => {
 									})
 							})
 							tableSize.then(function(size) {
-								kb.say(channel, user['username'] + ', this channel has ' + values[0].value +
-									' lines logged, which is ' + size[0].size.toFixed(2) + 'MB total.')
+								const logs = new Promise((resolve, reject) => {
+								con.query('SELECT TABLE_NAME AS `Table`, (DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024 ' +
+									'AS `size` FROM information_schema.TABLES WHERE TABLE_NAME = "logs_' +
+									channel.replace('#', '') + '" ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;',
+									function(error, results, fields) {
+										if (error) {
+											reject(error)
+										} else {
+											resolve(results)
+										}
+									})
+								})
+								logs.then(function(log) {
+									const loggers = new Promise((resolve, reject) => {
+									con.query("SELECT create_time FROM INFORMATION_SCHEMA.TABLES WHERE " + 
+										"table_name='logs_" + channel.replace('#', '') + "'",
+										function(error, results, fields) {
+											if (error) {
+												reject(error)
+											} else {
+												resolve(results)
+											}
+										})
+									})
+									loggers.then(function(logg) {
+										const logsDate = new Date(logg[0].create_time);
+										const serverDate = new Date();
+										const difference = Math.abs(serverDate - logsDate);
+										const differenceToSec = difference/1000
+										kb.say(channel, user['username'] + ', this channel has ' + values[0].value +
+											' lines logged, starting ' + (differenceToSec/86400).toFixed(0) + ' days ago, which is ' + size[0].size.substring(0, 4) + 'MB total.')
+									})
+								})
 							})
 						})
 					} else {
@@ -2297,7 +2328,7 @@ kb.on('connected', (adress, port) => {
 											100).toFixed(2) +
 										'% of all lines in this channel, your most frequently typed message is: " ' +
 										val[0].message + ' " (' + val[0].value_occurance + ' times)';
-									if (output.toString().length > 500) {
+									if (output.toString().length>500) {
 										async function check1() {
 											const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
 												method: "POST",
