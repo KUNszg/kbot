@@ -93,7 +93,7 @@ kb.on('connected', (adress, port) => {
 	const commands = [{
 			name: prefix + "uptime",
 			aliases: null,
-			description: 'displays informations about current runtime of the bot, lines, memory usage,' + 
+			description: 'displays informations about current runtime of the bot, lines, memory usage,' +
 				' host uptime and commands used in the current session - cooldown 8s',
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -144,24 +144,24 @@ kb.on('connected', (adress, port) => {
 						}, 8000);
 					}
 					if (up > 72 && uptime < 172800) {
-						return user['username'] + ", code is running for " + format(uptime) + ", has " + lines + 
-							" lines,  memory usage: " + used.toFixed(2) + " MB, host is up for " + up2.toFixed(2) + 
+						return user['username'] + ", code is running for " + format(uptime) + ", has " + lines +
+							" lines,  memory usage: " + used.toFixed(2) + " MB, host is up for " + up2.toFixed(2) +
 							" days, commands used in this session " + commandsExecuted.length + " FeelsDankMan";
 					} else {
 						if (uptime > 172800 && up > 72) {
-							return user['username'] + ", code is running for " + uptime / 86400 + ", has " + lines + 
-							" lines,  memory usage: " + used.toFixed(2) + " MB, host is up for " + up.toFixed(1) + 
-							"h (" + up2.toFixed(2) + " days), commands used in this session " + 
-							commandsExecuted.length + " FeelsDankMan";
+							return user['username'] + ", code is running for " + uptime / 86400 + ", has " + lines +
+								" lines,  memory usage: " + used.toFixed(2) + " MB, host is up for " + up.toFixed(1) +
+								"h (" + up2.toFixed(2) + " days), commands used in this session " +
+								commandsExecuted.length + " FeelsDankMan";
 						} else if (uptime > 172800 && up < 72) {
 							return user['username'] + ", code is running for " + uptime / 86400 + ", has " + lines +
-							" lines,  memory usage: " + used.toFixed(2) + " MB, host is up for " + up.toFixed(1) + 
-							"h, commands used in this session " + commandsExecuted.length + " FeelsDankMan";
+								" lines,  memory usage: " + used.toFixed(2) + " MB, host is up for " + up.toFixed(1) +
+								"h, commands used in this session " + commandsExecuted.length + " FeelsDankMan";
 						} else {
-							return user['username'] + ", code is running for " + format(uptime) + ", has " + lines + 
-							" lines,  memory usage: " + (used).toFixed(2) + " MB, host is up for " + up.toFixed(1) + 
-							"h (" + up2.toFixed(2) + " days), commands used in this session " + 
-							commandsExecuted.length + " FeelsDankMan";
+							return user['username'] + ", code is running for " + format(uptime) + ", has " + lines +
+								" lines,  memory usage: " + (used).toFixed(2) + " MB, host is up for " + up.toFixed(1) +
+								"h (" + up2.toFixed(2) + " days), commands used in this session " +
+								commandsExecuted.length + " FeelsDankMan";
 						}
 					}
 				} catch (err) {
@@ -173,8 +173,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "ping",
 			aliases: null,
-			description: "syntax: kb ping [service] | no parameter - data about latest github activity |" + 
-			" service - checks if server/domain is alive - cooldown 5s",
+			description: "syntax: kb ping [service] | no parameter - data about latest github activity |" +
+				" service - checks if server/domain is alive - cooldown 5s",
 			invocation: async (channel, user, message, args, err) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
@@ -221,21 +221,21 @@ kb.on('connected', (adress, port) => {
 						const latestCommit = (diff / 1000).toFixed(2);
 						const ping = await kb.ping();
 						if (latestCommit > 259200) {
-							return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: " + 
-							(latestCommit / 86400).toFixed(0) + " ago (master, " + commits[0].sha.slice(0, 7) + 
-							", commit " + commitsCount + ")";
+							return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: " +
+								(latestCommit / 86400).toFixed(0) + " ago (master, " + commits[0].sha.slice(0, 7) +
+								", commit " + commitsCount + ")";
 						} else {
-							return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: " + 
-							format(latestCommit) +  " ago (master, " + commits[0].sha.slice(0, 7) + ", commit " 
-							+ commitsCount + ")";
+							return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: " +
+								format(latestCommit) + " ago (master, " + commits[0].sha.slice(0, 7) + ", commit " +
+								commitsCount + ")";
 						}
 					} else {
 						const ping = require('ping');
 						const hosts = [msg[0]];
 						hosts.forEach(function(host) {
 							ping.sys.probe(host, function(isAlive) {
-								const mesg = isAlive ? 'host ' + host + ' is alive FeelsGoodMan' : 'host ' + host + 
-								' is dead FeelsBadMan';
+								const mesg = isAlive ? 'host ' + host + ' is alive FeelsGoodMan' : 'host ' + host +
+									' is dead FeelsBadMan';
 								kb.say(channel, user['username'] + ', ' + mesg)
 							});
 						});
@@ -254,8 +254,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "spacex",
 			aliases: null,
-			description: "data from SpaceX about next launch rocket launch date, " + 
-			" mission and launch site - cooldown 15s",
+			description: "data from SpaceX about next launch rocket launch date, " +
+				" mission and launch site - cooldown 15s",
 			invocation: async (channel, user, message, args) => {
 				try {
 					const space = await SpacexApiWrapper.getNextLaunch();
@@ -294,13 +294,13 @@ kb.on('connected', (adress, port) => {
 						}, 15000);
 					}
 					if (toHours > 72) {
-						return "Next rocket launch by SpaceX in " + (toHours / 24).toFixed(0) + " days, rocket " + 
-						space.rocket.rocket_name + ", mission " + space.mission_name + ", " + 
-						space.launch_site.site_name_long;
+						return "Next rocket launch by SpaceX in " + (toHours / 24).toFixed(0) + " days, rocket " +
+							space.rocket.rocket_name + ", mission " + space.mission_name + ", " +
+							space.launch_site.site_name_long;
 					} else {
-						return "Next rocket launch by SpaceX in " + format(DifftoSeconds) + ", rocket " + 
-						space.rocket.rocket_name + ", mission " + space.mission_name + ", " + 
-						space.launch_site.site_name_long;
+						return "Next rocket launch by SpaceX in " + format(DifftoSeconds) + ", rocket " +
+							space.rocket.rocket_name + ", mission " + space.mission_name + ", " +
+							space.launch_site.site_name_long;
 					}
 				} catch (err) {
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
@@ -311,8 +311,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "apod",
 			aliases: null,
-			description: "syntax: kb apod [random] | no parameter - astronomical picture for today | " + 
-			"random - APOD from a random day, data gathered from NASA's API reaching year 1997 - cooldown 6s",
+			description: "syntax: kb apod [random] | no parameter - astronomical picture for today | " +
+				"random - APOD from a random day, data gathered from NASA's API reaching year 1997 - cooldown 6s",
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.split(' ').splice(2);
@@ -330,11 +330,11 @@ kb.on('connected', (adress, port) => {
 						return user['username'] + ", here is your random 🌌 picture of the day | " +
 							apodRandom.title + ": " + apodRandom.image;
 					} else {
-						const apodToday = await fetch('https://api.nasa.gov/planetary/apod' + 
-						api.nasa2.replace('&', '?'))
+						const apodToday = await fetch('https://api.nasa.gov/planetary/apod' +
+								api.nasa2.replace('&', '?'))
 							.then(response => response.json());
-						return user['username'] + ', APOD for today SeemsGood ' + apodToday.title + ' | ' + 
-						apodToday.hdurl + ' | by ' + apodToday.copyright
+						return user['username'] + ', APOD for today SeemsGood ' + apodToday.title + ' | ' +
+							apodToday.hdurl + ' | by ' + apodToday.copyright
 					}
 				} catch (err) {
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
@@ -346,7 +346,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "yt",
 			aliases: null,
 			description: "syntax: kb yt [query] |" +
-			" query - search for a YouTube video with provided query - cooldown 7s",
+				" query - search for a YouTube video with provided query - cooldown 7s",
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.split(" ").splice(2);
@@ -367,8 +367,8 @@ kb.on('connected', (adress, port) => {
 						}, 7000);
 					}
 					if (msg[0].length > 0) {
-						return user['username'] + ", results with searched phrase '" + msg.join(" ") + 
-						"' => " + random1.results[0].link
+						return user['username'] + ", results with searched phrase '" + msg.join(" ") +
+							"' => " + random1.results[0].link
 					} else if (!msg[0]) {
 						return user['username'] + ", please provide a phrase to search with :)";
 					}
@@ -378,7 +378,7 @@ kb.on('connected', (adress, port) => {
 					}
 					if (err.message.includes("status code 403")) {
 						return user['username'] + ", " + "[error 403] seems like we ran out of daily requests" +
-						" (that means the loop bug is still not fixed PepeLaugh )";
+							" (that means the loop bug is still not fixed PepeLaugh )";
 					} else {
 						return user['username'] + ", " + err + " FeelsDankMan ❗";
 					}
@@ -389,8 +389,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "rt",
 			aliases: null,
-			description: "syntax: kb rt [ID] | no parameter - returns a link to the list of genres |" + 
-			" ID - search for the song in the specified genre (numeric ID) - cooldown 5s",
+			description: "syntax: kb rt [ID] | no parameter - returns a link to the list of genres |" +
+				" ID - search for the song in the specified genre (numeric ID) - cooldown 5s",
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);
@@ -422,18 +422,18 @@ kb.on('connected', (adress, port) => {
 						}, 5000);
 					}
 					if (msg.join(" ") === "") {
-						return user['username'] + ", list of genres " + 
-						"(type in the genre identifier like eg.: kbot rt 15) https://pastebin.com/p5XvHkzn";
+						return user['username'] + ", list of genres " +
+							"(type in the genre identifier like eg.: kbot rt 15) https://pastebin.com/p5XvHkzn";
 					} else {
 						if (channel != '#supinic') {
 							console.log(random.results[0])
-							return user['username'] + ', ' + songData.track.track_name + " by " + 
-							songData.track.artist_name + ', ' + random.results[0].link;
+							return user['username'] + ', ' + songData.track.track_name + " by " +
+								songData.track.artist_name + ', ' + random.results[0].link;
 						} else if (channel === '#supinic') {
 							return '$sr ' + random.results[0].link;
 						} else {
-							return user['username'] + ", something fucked up 4HEad , " + 
-							"list of genres: https://pastebin.com/p5XvHkzn";
+							return user['username'] + ", something fucked up 4HEad , " +
+								"list of genres: https://pastebin.com/p5XvHkzn";
 						}
 					}
 				} catch (err) {
@@ -469,8 +469,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "channels",
 			aliases: prefix + "chn",
-			description: "displays all the channels the bot is currently in. | " + 
-			"Permitted users syntax: kb chn [join-save/part-session/join-session] [channel] - cooldown 5s",
+			description: "displays all the channels the bot is currently in. | " +
+				"Permitted users syntax: kb chn [join-save/part-session/join-session] [channel] - cooldown 5s",
 			invocation: async (channel, user, message, args) => {
 				try {
 					const length = kb.getChannels().length;
@@ -520,7 +520,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "decode",
 			aliases: null,
 			description: "syntax: kb decode [binary] | " +
-			"binary - decode given full octet binary code into unicode characters - cooldown 5s",
+				"binary - decode given full octet binary code into unicode characters - cooldown 5s",
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.split(" ").splice(2);
@@ -536,15 +536,15 @@ kb.on('connected', (adress, port) => {
 						return user['username'] + ", please provide binary code to convert :)"
 					} else {
 						if (msg.join(' ').split(" ").map(i => String.fromCharCode(parseInt(i, 2))).join("") === "") {
-							return user['username'] + 
-							', an error occured monkaS check if you are using correct octets (eg.:01010001)'
+							return user['username'] +
+								', an error occured monkaS check if you are using correct octets (eg.:01010001)'
 						}
 						if (!msg.join(' ').includes(/\d/)) {
-							return user['username'] + 
-							', you can decode only full octet binary code';
+							return user['username'] +
+								', you can decode only full octet binary code';
 						} else {
-							return user['username'] + ", " + 
-							msg.join(' ').split(" ").map(i => String.fromCharCode(parseInt(i, 2))).join("");
+							return user['username'] + ", " +
+								msg.join(' ').split(" ").map(i => String.fromCharCode(parseInt(i, 2))).join("");
 						}
 					}
 				} catch (err) {
@@ -557,7 +557,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "encode",
 			aliases: null,
 			description: "syntax: kb encode [character] | " +
-			"character - encode any character into binary code - cooldown 5s",
+				"character - encode any character into binary code - cooldown 5s",
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.split(" ").splice(2);
@@ -574,8 +574,8 @@ kb.on('connected', (adress, port) => {
 						return user['username'] + ", please provide text to convert B)"
 					} else {
 						if (response.length > 500) {
-							return user['username'] + 
-							', returned message is too long to be displayed in chat (>500 characters)';
+							return user['username'] +
+								', returned message is too long to be displayed in chat (>500 characters)';
 						} else {
 							return user['username'] + ', ' + response;
 						}
@@ -590,13 +590,13 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "chat",
 			aliases: prefix + "ct",
 			description: "syntax: kb chat [message] | " +
-			"message - provide a message to chat with the AI bot, no parameter will return error",
+				"message - provide a message to chat with the AI bot, no parameter will return error",
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);
-					const json = await fetch("https://some-random-api.ml/chatbot/beta?message=" + 
-						msg.join("+").normalize("NFD").replace(/[\u0300-\u036f]/g, ""))
-							.then(response => response.json());
+					const json = await fetch("https://some-random-api.ml/chatbot/beta?message=" +
+							msg.join("+").normalize("NFD").replace(/[\u0300-\u036f]/g, ""))
+						.then(response => response.json());
 
 					function capitalizeFirstLetter(string) {
 						return string.charAt(0).toUpperCase() + string.slice(1);
@@ -612,8 +612,8 @@ kb.on('connected', (adress, port) => {
 						} else if (((json.response.charAt(0).toLowerCase() + json.response.slice(1)).replace(".", " 4Head ").replace("?", "? :) ").replace("ń", "n").replace("!", "! :o ")) === '') {
 							return user['username'] + ', [err CT1] - bad response monkaS'
 						} else {
-							return user['username'] + ", " + (json.response.charAt(0).toLowerCase() + 
-							json.response.slice(1)).replace(".", " 4Head ").replace("?", "? :) ").replace("ń", "n").replace("!", "! :o ");
+							return user['username'] + ", " + (json.response.charAt(0).toLowerCase() +
+								json.response.slice(1)).replace(".", " 4Head ").replace("?", "? :) ").replace("ń", "n").replace("!", "! :o ");
 						}
 					}
 				} catch (err) {
@@ -621,8 +621,8 @@ kb.on('connected', (adress, port) => {
 						console.log(err.message);
 						return user['username'] + ", an error occured while fetching data monkaS";
 					} else {
-						return user['username'] + ", " + err.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '') + 
-						" FeelsDankMan !!!";
+						return user['username'] + ", " + err.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '') +
+							" FeelsDankMan !!!";
 					}
 				}
 			}
@@ -677,7 +677,7 @@ kb.on('connected', (adress, port) => {
 									return "\\u{" + ("000" + ch.charCodeAt().toString(16)).slice(-4) + '}';
 								});
 							}
-							const ev = await eval('(async () => {' + 
+							const ev = await eval('(async () => {' +
 								msg.join(" ").replace(/[\u{E0000}|\u{206d}]/gu, '') + '})()');
 							console.log(ev)
 							return String(ev);
@@ -695,7 +695,7 @@ kb.on('connected', (adress, port) => {
 			aliases: null,
 			permission: 'restricted',
 			description: "permitted users syntax: kb pattern [fast/slow] [pyramid/triangle] [height] [message] | " +
-			"Invalid or missing parameter will return an error - no cooldown",
+				"Invalid or missing parameter will return an error - no cooldown",
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, "").split(" ").splice(2);
@@ -752,8 +752,8 @@ kb.on('connected', (adress, port) => {
 						} else if (!caseChosen[0] || msg[0] != caseChosen[0].case) {
 							return user['username'] + ', invalid first parameter (fast, slow) [err#2]';
 						} else if (!patternChosen[0] || msg[1] != patternChosen[0].pattern) {
-							return user['username'] + ', invalid second parameter (' + 
-							patterns.map(i => i.pattern).join(', ') + ') [err#3]';
+							return user['username'] + ', invalid second parameter (' +
+								patterns.map(i => i.pattern).join(', ') + ') [err#3]';
 						} else if (!msg[2] || !hasNumber(msg[2])) {
 							return user['username'] + ', invalid third parameter (number) [err#4]';
 						} else if (!emote[0] || !emote.join(' ').match(/[a-z]/i)) {
@@ -868,8 +868,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "locate",
 			aliases: prefix + "location",
-			description: "syntax: kb locate [IP/message] | IP - provide an IP adress to search for its location | " + 
-			"message - provide a non-numeric message to search for its location - cooldown 6s",
+			description: "syntax: kb locate [IP/message] | IP - provide an IP adress to search for its location | " +
+				"message - provide a non-numeric message to search for its location - cooldown 6s",
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);
@@ -886,33 +886,33 @@ kb.on('connected', (adress, port) => {
 							talkedRecently.delete(user['user-id']);
 						}, 6000);
 					}
-					const locate = await fetch("http://api.ipstack.com/" + 
-						msg.join(' ').normalize("NFD").replace(/[\u0300-\u036f]/g, "") + '?access_key=' + api.locate)
-							.then(response => response.json());
+					const locate = await fetch("http://api.ipstack.com/" +
+							msg.join(' ').normalize("NFD").replace(/[\u0300-\u036f]/g, "") + '?access_key=' + api.locate)
+						.then(response => response.json());
 
 					if (locate.type != null && hasNumber(msg[0])) {
 						return user['username'] + ", location for " + msg + " => type: " + locate.type + ", country: " +
-							locate.country_name + ", region: " + locate.region_name + ", city: " + 
+							locate.country_name + ", region: " + locate.region_name + ", city: " +
 							locate.city + " monkaS";
 					} else {
 						if (!msg[0]) {
 							return user['username'] + ", please provide an IP or location to search :)";
 						} else if (!hasNumber(msg[0]) && msg[0].match(/^\w+$/)) {
-							const location = await fetch(api.geonames + msg.join(' ').normalize("NFD").replace(/[\u0300-\u036f]/g, "") + 
-								'&maxRows=1&username=kunszg')
-									.then(response => response.json());
+							const location = await fetch(api.geonames + msg.join(' ').normalize("NFD").replace(/[\u0300-\u036f]/g, "") +
+									'&maxRows=1&username=kunszg')
+								.then(response => response.json());
 							return user['username'] + ', results: ' + location.totalResultsCount + " | location: " +
-								location.geonames[0].countryName.replace("ń", "n") + ", " + 
-								location.geonames[0].adminName1.replace("ń", "n") + ", " + 
-								location.geonames[0].name.replace("ń", "n") + " | population: " + 
-								location.geonames[0].population + ", info: " + 
+								location.geonames[0].countryName.replace("ń", "n") + ", " +
+								location.geonames[0].adminName1.replace("ń", "n") + ", " +
+								location.geonames[0].name.replace("ń", "n") + " | population: " +
+								location.geonames[0].population + ", info: " +
 								location.geonames[0].fcodeName;
 						} else if (!msg[0].match(/^\w+$/) && !msg[0].includes('.')) {
-							return user['username'] + 
-							', special character detected HONEYDETECTED'
+							return user['username'] +
+								', special character detected HONEYDETECTED'
 						} else {
-							return user['username'] + 
-							", could not find given location or location does not exist KKona";
+							return user['username'] +
+								", could not find given location or location does not exist KKona";
 						}
 					}
 				} catch (err) {
@@ -920,8 +920,8 @@ kb.on('connected', (adress, port) => {
 					if (err.message.includes("read property")) {
 						return user['username'] + ", location not found.";
 					} else {
-						return user['username'] + ", " + err.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '') + 
-						" FeelsDankMan !!!";
+						return user['username'] + ", " + err.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '') +
+							" FeelsDankMan !!!";
 					}
 				}
 			}
@@ -930,8 +930,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "neo",
 			aliases: prefix + "asteroid",
-			description: "shows information about a random Near Earth Object, " + 
-			"that is close to Earth in current day. Data refreshes every 24h - cooldown 5s",
+			description: "shows information about a random Near Earth Object, " +
+				"that is close to Earth in current day. Data refreshes every 24h - cooldown 5s",
 			invocation: async (channel, user, message, args) => {
 				try {
 					const today = new Date().toLocaleDateString().split('/');
@@ -939,7 +939,7 @@ kb.on('connected', (adress, port) => {
 					const neo = await fetch(api.nasa1 + today2 + api.nasa2)
 						.then(response => response.json());
 
-					const near_earth = Object.entries(neo.near_earth_objects).sort(([a], [b]) => 
+					const near_earth = Object.entries(neo.near_earth_objects).sort(([a], [b]) =>
 						new Date(a) - new Date(b))[0][1];
 					const random_near_earth = near_earth[Math.floor(Math.random() * near_earth.length)];
 					const miss = random_near_earth.close_approach_data[0].miss_distance.kilometers;
@@ -952,12 +952,12 @@ kb.on('connected', (adress, port) => {
 							talkedRecently.delete(user['user-id']);
 						}, 5000);
 					}
-					return user['username'] + ", near earth objects: " + neo.element_count + " | name: " + 
-					random_near_earth.name + " | diameter: " + 
-					random_near_earth.estimated_diameter.kilometers.estimated_diameter_max.toFixed(3) + 
-					"km | miss distance: " + Math.trunc(miss + " ") + "km | is hazardous?: " + 
-					random_near_earth.is_potentially_hazardous_asteroid + " | orbiting body: " +
-					random_near_earth.close_approach_data[0].orbiting_body;
+					return user['username'] + ", near earth objects: " + neo.element_count + " | name: " +
+						random_near_earth.name + " | diameter: " +
+						random_near_earth.estimated_diameter.kilometers.estimated_diameter_max.toFixed(3) +
+						"km | miss distance: " + Math.trunc(miss + " ") + "km | is hazardous?: " +
+						random_near_earth.is_potentially_hazardous_asteroid + " | orbiting body: " +
+						random_near_earth.close_approach_data[0].orbiting_body;
 				} catch (err) {
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
 				}
@@ -968,7 +968,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "twitter",
 			aliases: null,
 			description: "syntax: kb twitter [account] | no parameter - returns an error | " +
-			"account - returns latest tweet from specified user - cooldown 8s",
+				"account - returns latest tweet from specified user - cooldown 8s",
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.split(" ").splice(2);
@@ -996,8 +996,8 @@ kb.on('connected', (adress, port) => {
 						return user['username'] + ", " + tweet.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
 					}
 				} catch (err) {
-					return user['username'] + ", " + err.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '') + 
-					" FeelsDankMan !!!";
+					return user['username'] + ", " + err.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '') +
+						" FeelsDankMan !!!";
 				}
 			}
 		},
@@ -1025,13 +1025,13 @@ kb.on('connected', (adress, port) => {
 						return user['username'] + ", no channel provided.";
 					} else {
 						if (hosts.length < 25 && hosts.length != 0) {
-							return user['username'] + ", users hosting " + 
-							msg[0].replace(/^(.{2})/, "$1\u{E0000}").split("").reverse().join("").replace(/^(.{2})/, "$1\u{E0000}").split("").reverse().join("") + 
-							" PagChomp 👉  " + hostlist.join(", ");
+							return user['username'] + ", users hosting " +
+								msg[0].replace(/^(.{2})/, "$1\u{E0000}").split("").reverse().join("").replace(/^(.{2})/, "$1\u{E0000}").split("").reverse().join("") +
+								" PagChomp 👉  " + hostlist.join(", ");
 						} else if (hosts.length > 25) {
-							return user['username'] + ", channel " + 
-							msg[0].replace(/^(.{2})/, "$1\u{E0000}").split("").reverse().join("").replace(/^(.{2})/, "$1\u{E0000}").split("").reverse().join("") + 
-							" is being hosted by " + hosts.length + " users";
+							return user['username'] + ", channel " +
+								msg[0].replace(/^(.{2})/, "$1\u{E0000}").split("").reverse().join("").replace(/^(.{2})/, "$1\u{E0000}").split("").reverse().join("") +
+								" is being hosted by " + hosts.length + " users";
 						} else if (hosts.length === 0) {
 							return user['username'] + ", channel is not being hosted by any user :("
 						} else {
@@ -1097,7 +1097,7 @@ kb.on('connected', (adress, port) => {
 				try {
 					const playsound = await fetch("https://supinic.com/api/bot/playsound/list")
 						.then(response => response.json());
-					const randomPs = playsound.data.playsounds[Math.floor(Math.random() * 
+					const randomPs = playsound.data.playsounds[Math.floor(Math.random() *
 						playsound.data.playsounds.length)]
 					if (channel === "#supinic") {
 						if (talkedRecently.has(user['user-id'])) {
@@ -1206,244 +1206,244 @@ kb.on('connected', (adress, port) => {
 						}
 					}
 					if (channel === '#nymn' && !msg[0]) {
-						con.query('SELECT ID, username, message, date FROM logs_nymn ORDER BY RAND() LIMIT 1', 
-						function(error, results, fields) {
-							if (error) {
-								con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + 
-								error + '", CURRENT_TIMESTAMP)', 
-								function(error, results, fields) {
-									if (error) {
-										console.log(error);
-										throw error;
-									}
-								})
-							} else {
-								const messageDate = results[0].date;
-								const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
-								if (timeDifference / 1000 / 3600 > 48) {
-									kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' + 
-										results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-										results[0].message)
+						con.query('SELECT ID, username, message, date FROM logs_nymn ORDER BY RAND() LIMIT 1',
+							function(error, results, fields) {
+								if (error) {
+									con.query('INSERT INTO error_logs (error_message, date) VALUES ("' +
+										error + '", CURRENT_TIMESTAMP)',
+										function(error, results, fields) {
+											if (error) {
+												console.log(error);
+												throw error;
+											}
+										})
 								} else {
-									kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' + 
-										results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
-										results[0].message)
+									const messageDate = results[0].date;
+									const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+									if (timeDifference / 1000 / 3600 > 48) {
+										kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' +
+											results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+											results[0].message)
+									} else {
+										kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' +
+											results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+											results[0].message)
+									}
 								}
-							}
-						})
+							})
 					} else if (channel === '#haxk' && !msg[0]) {
-						con.query('SELECT ID, username, message, date FROM logs_haxk ORDER BY RAND() LIMIT 1', 
-						function(error, results, fields) {
-							if (error) {
-								con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + 
-								error + '", CURRENT_TIMESTAMP)', 
-								function(error, results, fields) {
-									if (error) {
-										console.log(error);
-										throw error;
-									}
-								})
-							} else {
-								const messageDate = results[0].date;
-								const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
-								if (timeDifference / 1000 / 3600 > 48) {
-									kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' + 
-										results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-										results[0].message)
+						con.query('SELECT ID, username, message, date FROM logs_haxk ORDER BY RAND() LIMIT 1',
+							function(error, results, fields) {
+								if (error) {
+									con.query('INSERT INTO error_logs (error_message, date) VALUES ("' +
+										error + '", CURRENT_TIMESTAMP)',
+										function(error, results, fields) {
+											if (error) {
+												console.log(error);
+												throw error;
+											}
+										})
 								} else {
-									kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' + 
-										results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-										results[0].message)
+									const messageDate = results[0].date;
+									const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+									if (timeDifference / 1000 / 3600 > 48) {
+										kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' +
+											results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+											results[0].message)
+									} else {
+										kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' +
+											results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+											results[0].message)
+									}
 								}
-							}
-						})
+							})
 					} else if (channel === '#pajlada' && !msg[0]) {
-						con.query('SELECT ID, username, message, date FROM logs_pajlada ORDER BY RAND() LIMIT 1', 
-						function(error, results, fields) {
-							if (error) {
-								con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + 
-								error + '", CURRENT_TIMESTAMP)', 
-								function(error, results, fields) {
-									if (error) {
-										console.log(error);
-										throw error;
-									}
-								})
-							} else {
-								const messageDate = results[0].date;
-								const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
-								if (timeDifference / 1000 / 3600 > 48) {
-									kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' + 
-										results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-										results[0].message)
+						con.query('SELECT ID, username, message, date FROM logs_pajlada ORDER BY RAND() LIMIT 1',
+							function(error, results, fields) {
+								if (error) {
+									con.query('INSERT INTO error_logs (error_message, date) VALUES ("' +
+										error + '", CURRENT_TIMESTAMP)',
+										function(error, results, fields) {
+											if (error) {
+												console.log(error);
+												throw error;
+											}
+										})
 								} else {
-									kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' + 
-										results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-										results[0].message)
+									const messageDate = results[0].date;
+									const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+									if (timeDifference / 1000 / 3600 > 48) {
+										kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' +
+											results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+											results[0].message)
+									} else {
+										kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' +
+											results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+											results[0].message)
+									}
 								}
-							}
-						})
+							})
 					} else if (channel === '#supinic' && !msg[0]) {
-						con.query('SELECT ID, username, message, date FROM logs_supinic ORDER BY RAND() LIMIT 1', 
-						function(error, results, fields) {
-							if (error) {
-								con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + 
-								error + '", CURRENT_TIMESTAMP)', 
-								function(error, results, fields) {
-									if (error) {
-										console.log(error);
-										throw error;
-									}
-								})
-							} else {
-								const messageDate = results[0].date;
-								const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
-								if (timeDifference / 1000 / 3600 > 48) {
-									kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' + 
-										results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-										results[0].message)
+						con.query('SELECT ID, username, message, date FROM logs_supinic ORDER BY RAND() LIMIT 1',
+							function(error, results, fields) {
+								if (error) {
+									con.query('INSERT INTO error_logs (error_message, date) VALUES ("' +
+										error + '", CURRENT_TIMESTAMP)',
+										function(error, results, fields) {
+											if (error) {
+												console.log(error);
+												throw error;
+											}
+										})
 								} else {
-									kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' + 
-										results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-										results[0].message)
+									const messageDate = results[0].date;
+									const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+									if (timeDifference / 1000 / 3600 > 48) {
+										kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' +
+											results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+											results[0].message)
+									} else {
+										kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' +
+											results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+											results[0].message)
+									}
 								}
-							}
-						})
+							})
 					} else if (typeof msg[0] !== 'undefined' && msg[0] != '') {
 						if (channel === '#nymn') {
-							con.query('SELECT ID, username, message, date FROM logs_nymn WHERE username="' + msg[0] + 
-							'" ORDER BY RAND() LIMIT 1', 
-							function(error, results, fields) {
-								if (error) {
-									con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + 
-									'", CURRENT_TIMESTAMP)', 
-									function(error, results, fields) {
-										if (error) {
-											console.log(error);
-											throw error;
-										}
-									})
-								} else {
-									if (!results[0]) {
-										kb.say(channel, user['username'] + 
-											', there is no user in my database with that name :/');
-										return;
+							con.query('SELECT ID, username, message, date FROM logs_nymn WHERE username="' + msg[0] +
+								'" ORDER BY RAND() LIMIT 1',
+								function(error, results, fields) {
+									if (error) {
+										con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error +
+											'", CURRENT_TIMESTAMP)',
+											function(error, results, fields) {
+												if (error) {
+													console.log(error);
+													throw error;
+												}
+											})
 									} else {
-										const messageDate = results[0].date;
-										const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
-										if (timeDifference / 1000 / 3600 > 48) {
-											kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' + 
-												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-												results[0].message)
+										if (!results[0]) {
+											kb.say(channel, user['username'] +
+												', there is no user in my database with that name :/');
+											return;
 										} else {
-											kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' + 
-												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-												results[0].message)
+											const messageDate = results[0].date;
+											const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+											if (timeDifference / 1000 / 3600 > 48) {
+												kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' +
+													results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+													results[0].message)
+											} else {
+												kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' +
+													results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+													results[0].message)
+											}
 										}
 									}
-								}
-							})
+								})
 						} else if (channel === '#haxk') {
-							con.query('SELECT ID, username, message, date FROM logs_haxk WHERE username="' + msg[0] + 
-							'" ORDER BY RAND() LIMIT 1', 
-							function(error, results, fields) {
-								if (error) {
-									con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + 
-									'", CURRENT_TIMESTAMP)',
-									function(error, results, fields) {
-										console.log(results)
-										if (error) {
-											console.log(error);
-											throw error;
-										}
-									})
-								} else {
-									if (!results[0]) {
-										kb.say(channel, user['username'] + 
-											', there is no user in my database with that name :/');
-										return;
+							con.query('SELECT ID, username, message, date FROM logs_haxk WHERE username="' + msg[0] +
+								'" ORDER BY RAND() LIMIT 1',
+								function(error, results, fields) {
+									if (error) {
+										con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error +
+											'", CURRENT_TIMESTAMP)',
+											function(error, results, fields) {
+												console.log(results)
+												if (error) {
+													console.log(error);
+													throw error;
+												}
+											})
 									} else {
-										const messageDate = results[0].date;
-										const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
-										if (timeDifference / 1000 / 3600 > 48) {
-											kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' + 
-												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-												results[0].message)
+										if (!results[0]) {
+											kb.say(channel, user['username'] +
+												', there is no user in my database with that name :/');
+											return;
 										} else {
-											kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' + 
-												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-												results[0].message)
+											const messageDate = results[0].date;
+											const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+											if (timeDifference / 1000 / 3600 > 48) {
+												kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' +
+													results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+													results[0].message)
+											} else {
+												kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' +
+													results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+													results[0].message)
+											}
 										}
 									}
-								}
-							})
+								})
 						} else if (channel === '#pajlada') {
-							con.query('SELECT ID, username, message, date FROM logs_pajlada WHERE username="' + msg[0] + 
-							'" ORDER BY RAND() LIMIT 1', 
-							function(error, results, fields) {
-								if (error) {
-									con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + 
-									'", CURRENT_TIMESTAMP)', 
-									function(error, results, fields) {
-										console.log(results)
-										if (error) {
-											console.log(error);
-											throw error;
-										}
-									})
-								} else {
-									if (!results[0]) {
-										kb.say(channel, user['username'] + 
-											', there is no user in my database with that name :/');
-										return;
+							con.query('SELECT ID, username, message, date FROM logs_pajlada WHERE username="' + msg[0] +
+								'" ORDER BY RAND() LIMIT 1',
+								function(error, results, fields) {
+									if (error) {
+										con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error +
+											'", CURRENT_TIMESTAMP)',
+											function(error, results, fields) {
+												console.log(results)
+												if (error) {
+													console.log(error);
+													throw error;
+												}
+											})
 									} else {
-										const messageDate = results[0].date;
-										const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
-										if (timeDifference / 1000 / 3600 > 48) {
-											kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' + 
-												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-												results[0].message)
+										if (!results[0]) {
+											kb.say(channel, user['username'] +
+												', there is no user in my database with that name :/');
+											return;
 										} else {
-											kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' + 
-												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
-												results[0].message)
+											const messageDate = results[0].date;
+											const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+											if (timeDifference / 1000 / 3600 > 48) {
+												kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' +
+													results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+													results[0].message)
+											} else {
+												kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' +
+													results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+													results[0].message)
+											}
 										}
 									}
-								}
-							})
+								})
 						} else if (channel === '#supinic') {
-							con.query('SELECT ID, username, message, date FROM logs_supinic WHERE username="' + msg[0] + 
-							'" ORDER BY RAND() LIMIT 1', 
-							function(error, results, fields) {
-								if (error) {
-									con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + 
-									'", CURRENT_TIMESTAMP)', 
-									function(error, results, fields) {
-										if (error) {
-											console.log(error);
-											throw error;
-										}
-									})
-								} else {
-									if (!results[0]) {
-										kb.say(channel, user['username'] + 
-											', there is no user in my database with that name :/');
-										return;
+							con.query('SELECT ID, username, message, date FROM logs_supinic WHERE username="' + msg[0] +
+								'" ORDER BY RAND() LIMIT 1',
+								function(error, results, fields) {
+									if (error) {
+										con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error +
+											'", CURRENT_TIMESTAMP)',
+											function(error, results, fields) {
+												if (error) {
+													console.log(error);
+													throw error;
+												}
+											})
 									} else {
-										const messageDate = results[0].date;
-										const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
-										if (timeDifference / 1000 / 3600 > 48) {
-											kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' + 
-												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-												results[0].message)
+										if (!results[0]) {
+											kb.say(channel, user['username'] +
+												', there is no user in my database with that name :/');
+											return;
 										} else {
-											kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' + 
-												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-												results[0].message)
+											const messageDate = results[0].date;
+											const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+											if (timeDifference / 1000 / 3600 > 48) {
+												kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' +
+													results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+													results[0].message)
+											} else {
+												kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' +
+													results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+													results[0].message)
+											}
 										}
 									}
-								}
-							})
+								})
 						} else {
 							return '';
 						}
@@ -1491,138 +1491,138 @@ kb.on('connected', (adress, port) => {
 						}
 					}
 					if (channel === '#nymn') {
-						con.query('SELECT ID, username, message, date FROM logs_nymn WHERE username="' + 
-						user['username'] + '" ORDER BY RAND() LIMIT 1', 
-						function(error, results, fields) {
-							if (error) {
-								con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + 
-								'", CURRENT_TIMESTAMP)', 
-								function(error, results, fields) {
-									if (error) {
-										console.log(error);
-										throw error;
-									}
-								})
-							} else {
-								if (!results[0]) {
-									kb.say(channel, user['username'] + 
-										', there is no user in my database with that name :/');
-									return;
+						con.query('SELECT ID, username, message, date FROM logs_nymn WHERE username="' +
+							user['username'] + '" ORDER BY RAND() LIMIT 1',
+							function(error, results, fields) {
+								if (error) {
+									con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error +
+										'", CURRENT_TIMESTAMP)',
+										function(error, results, fields) {
+											if (error) {
+												console.log(error);
+												throw error;
+											}
+										})
 								} else {
-									const messageDate = results[0].date;
-									const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
-									if (timeDifference / 1000 / 3600 > 48) {
-										kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' + 
-											results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-											results[0].message)
+									if (!results[0]) {
+										kb.say(channel, user['username'] +
+											', there is no user in my database with that name :/');
+										return;
 									} else {
-										kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' + 
-											results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-											results[0].message)
+										const messageDate = results[0].date;
+										const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+										if (timeDifference / 1000 / 3600 > 48) {
+											kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' +
+												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+												results[0].message)
+										} else {
+											kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' +
+												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+												results[0].message)
+										}
 									}
 								}
-							}
-						})
+							})
 					} else if (channel === '#haxk') {
-						con.query('SELECT ID, username, message, date FROM logs_haxk WHERE username="' + 
-						user['username'] + '" ORDER BY RAND() LIMIT 1', 
-						function(error, results, fields) {
-							if (error) {
-								con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + 
-								'", CURRENT_TIMESTAMP)', 
-								function(error, results, fields) {
-									console.log(results)
-									if (error) {
-										console.log(error);
-										throw error;
-									}
-								})
-							} else {
-								if (!results[0]) {
-									kb.say(channel, user['username'] + 
-										', there is no user in my database with that name :/');
-									return;
+						con.query('SELECT ID, username, message, date FROM logs_haxk WHERE username="' +
+							user['username'] + '" ORDER BY RAND() LIMIT 1',
+							function(error, results, fields) {
+								if (error) {
+									con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error +
+										'", CURRENT_TIMESTAMP)',
+										function(error, results, fields) {
+											console.log(results)
+											if (error) {
+												console.log(error);
+												throw error;
+											}
+										})
 								} else {
-									const messageDate = results[0].date;
-									const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
-									if (timeDifference / 1000 / 3600 > 48) {
-										kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' + 
-											results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-											results[0].message)
+									if (!results[0]) {
+										kb.say(channel, user['username'] +
+											', there is no user in my database with that name :/');
+										return;
 									} else {
-										kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' + 
-											results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-											results[0].message)
+										const messageDate = results[0].date;
+										const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+										if (timeDifference / 1000 / 3600 > 48) {
+											kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' +
+												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+												results[0].message)
+										} else {
+											kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' +
+												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+												results[0].message)
+										}
 									}
 								}
-							}
-						})
+							})
 					} else if (channel === '#supinic') {
-						con.query('SELECT ID, username, message, date FROM logs_supinic WHERE username="' + 
-						user['username'] + '" ORDER BY RAND() LIMIT 1', 
-						function(error, results, fields) {
-							if (error) {
-								con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + 
-								'", CURRENT_TIMESTAMP)', 
-								function(error, results, fields) {
-									if (error) {
-										console.log(error);
-										throw error;
-									}
-								})
-							} else {
-								if (!results[0]) {
-									kb.say(channel, user['username'] + 
-										', there is no user in my database with that name :/');
-									return;
+						con.query('SELECT ID, username, message, date FROM logs_supinic WHERE username="' +
+							user['username'] + '" ORDER BY RAND() LIMIT 1',
+							function(error, results, fields) {
+								if (error) {
+									con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error +
+										'", CURRENT_TIMESTAMP)',
+										function(error, results, fields) {
+											if (error) {
+												console.log(error);
+												throw error;
+											}
+										})
 								} else {
-									const messageDate = results[0].date;
-									const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
-									if (timeDifference / 1000 / 3600 > 48) {
-										kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' + 
-											results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-											results[0].message)
+									if (!results[0]) {
+										kb.say(channel, user['username'] +
+											', there is no user in my database with that name :/');
+										return;
 									} else {
-										kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' + 
-											results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-											results[0].message)
+										const messageDate = results[0].date;
+										const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+										if (timeDifference / 1000 / 3600 > 48) {
+											kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' +
+												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+												results[0].message)
+										} else {
+											kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' +
+												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+												results[0].message)
+										}
 									}
 								}
-							}
-						})
+							})
 					} else if (channel === '#pajlada') {
-						con.query('SELECT ID, username, message, date FROM logs_pajlada WHERE username="' + 
-						user['username'] + '" ORDER BY RAND() LIMIT 1', 
-						function(error, results, fields) {
-							if (error) {
-								con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error + 
-								'", CURRENT_TIMESTAMP)', 
-								function(error, results, fields) {
-									if (error) {
-										console.log(error);
-										throw error;
-									}
-								})
-							} else {
-								if (!results[0]) {
-									kb.say(channel, user['username'] + 
-										', there is no user in my database with that name :/');
-									return;
+						con.query('SELECT ID, username, message, date FROM logs_pajlada WHERE username="' +
+							user['username'] + '" ORDER BY RAND() LIMIT 1',
+							function(error, results, fields) {
+								if (error) {
+									con.query('INSERT INTO error_logs (error_message, date) VALUES ("' + error +
+										'", CURRENT_TIMESTAMP)',
+										function(error, results, fields) {
+											if (error) {
+												console.log(error);
+												throw error;
+											}
+										})
 								} else {
-									const messageDate = results[0].date;
-									const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
-									if (timeDifference / 1000 / 3600 > 48) {
-										kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' + 
-											results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-											results[0].message)
+									if (!results[0]) {
+										kb.say(channel, user['username'] +
+											', there is no user in my database with that name :/');
+										return;
 									} else {
-										kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' + 
-											results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
-											results[0].message)
+										const messageDate = results[0].date;
+										const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
+										if (timeDifference / 1000 / 3600 > 48) {
+											kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' +
+												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+												results[0].message)
+										} else {
+											kb.say(channel, '(' + format(timeDifference / 1000) + ' ago) ' +
+												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
+												results[0].message)
+										}
 									}
 								}
-							}
-						})
+							})
 					} else {
 						return '';
 					}
@@ -1698,8 +1698,8 @@ kb.on('connected', (adress, port) => {
 						})
 						.filter(dirent => dirent.isDirectory())
 						.map(dirent => dirent.name)
-					return user['username'] + ', my node_modules directory has ' + 
-					getDirectories().length + ' modules PepeLaugh';
+					return user['username'] + ', my node_modules directory has ' +
+						getDirectories().length + ' modules PepeLaugh';
 				} catch (err) {
 					console.log(err);
 					return user['username'] + err + ' FeelsDankMan !!!';
@@ -1724,8 +1724,8 @@ kb.on('connected', (adress, port) => {
 					}
 
 					if (!msg.join(' ').replace(/[\u{E0000}|\u{206d}]/gu, '')) {
-						return user['username'] + ", FeelsDankMan oh zoinks, you just got flippin' danked " + 
-						"by yourself FeelsDankMan FeelsDankMan FeelsDankMan";
+						return user['username'] + ", FeelsDankMan oh zoinks, you just got flippin' danked " +
+							"by yourself FeelsDankMan FeelsDankMan FeelsDankMan";
 					} else {
 						return user['username'] + ", you just danked " + msg.join(' ') + " FeelsDankMan 👍";
 					}
@@ -1739,8 +1739,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "help",
 			aliases: null,
-			description: "syntax: kb help [command] | no parameter - shows basic information about bot, " + 
-			"it's owner and host | command - shows description of a specified command - cooldown 5s",
+			description: "syntax: kb help [command] | no parameter - shows basic information about bot, " +
+				"it's owner and host | command - shows description of a specified command - cooldown 5s",
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.toLowerCase().split(' ').splice(2);
@@ -1755,25 +1755,25 @@ kb.on('connected', (adress, port) => {
 
 					// if there is no parameter given, return basic command message
 					if (!msg[0]) {
-						return user['username'] + ", kunszgbot is owned by KUNszg, sponsored by " + 
-						"Sinris".replace(/^(.{2})/, "$1\u{E0000}") + ' and ' + 
-						'Leppunen'.replace(/^(.{2})/, "$1\u{E0000}") + " , Node JS " + process.version +
-						", running on Ubuntu 19.10 GNU/" + process.platform + ' ' + process.arch + 
-						", for commands list use 'kb commands'.";
+						return user['username'] + ", kunszgbot is owned by KUNszg, sponsored by " +
+							"Sinris".replace(/^(.{2})/, "$1\u{E0000}") + ' and ' +
+							'Leppunen'.replace(/^(.{2})/, "$1\u{E0000}") + " , Node JS " + process.version +
+							", running on Ubuntu 19.10 GNU/" + process.platform + ' ' + process.arch +
+							", for commands list use 'kb commands'.";
 
 					} else if (commands.filter(i => i.name.substring(3).toLowerCase() === msg[0])) {
 						// filter for command names matching the given parameter
-						if (commands.filter(i => i.name.substring(3).toLowerCase() === msg[0]) && 
+						if (commands.filter(i => i.name.substring(3).toLowerCase() === msg[0]) &&
 							commands.filter(i => i.name.substring(3).toLowerCase() === msg[0]).length != 0) {
 							// if there is a specified command and the description exists - respond
-							return user['username'] + ', ' + commands.filter((i => 
+							return user['username'] + ', ' + commands.filter((i =>
 								i.name.substring(3).toLowerCase() === msg[0])).map(i => i.description)[0];
-						} else if (commands.filter(i => i.name.substring(3).toLowerCase() === msg[0]) && 
+						} else if (commands.filter(i => i.name.substring(3).toLowerCase() === msg[0]) &&
 							commands.filter(i => i.name.substring(3).toLowerCase() === msg[0]).length === 0) {
 							// if specified command does not exist, throw an error
 							throw 'command does not exist.';
-						} else if (!(commands.filter((i => i.name.substring(3).toLowerCase() === msg[0])).map(i => 
-							i.description))) {
+						} else if (!(commands.filter((i => i.name.substring(3).toLowerCase() === msg[0])).map(i =>
+								i.description))) {
 							// if specified command exists but there is no description for it, throw an error
 							throw 'description for that command does not exist.'
 						}
@@ -1860,8 +1860,8 @@ kb.on('connected', (adress, port) => {
 					} else {
 						const shell = require('child_process');
 						//pull from github
-						kb.say(channel, 'pulling from @master PogChamp 👉 ' + 
-						await shell.execSync('sudo git pull').toString().replace(/-{2,}/g, "").replace(/\+{2,}/g, "")) 
+						kb.say(channel, 'pulling from @master PogChamp 👉 ' +
+							await shell.execSync('sudo git pull').toString().replace(/-{2,}/g, "").replace(/\+{2,}/g, ""))
 
 						setTimeout(() => {
 							if (channel === '#nymn') {
@@ -1922,7 +1922,7 @@ kb.on('connected', (adress, port) => {
 						}
 					}
 					return user['username'] + ', my public repo Okayga 👉' +
-					' https://github.com/KUNszg/kbot last commit: ' + format(DifftoSeconds) + ' ago';
+						' https://github.com/KUNszg/kbot last commit: ' + format(DifftoSeconds) + ' ago';
 				} catch (err) {
 					console.log(err);
 					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
@@ -1950,34 +1950,34 @@ kb.on('connected', (adress, port) => {
 						return user['username'] + ', special character detected HONEYDETECTED';
 					} else {
 						const query = await new Promise((reject, resolve) => {
-							con.query('SELECT message FROM suggestions WHERE message="' + msg.join(' ') + '"', 
-							function(error, results, fields) {
-								if (error) {
-									kb.say(channel, user['username'] + ', error occured xD');
-									return;
-								}
-								if (results.length === 0) {
-									con.query('INSERT INTO suggestions (username, message, created) VALUES ("' + 
-									user['username'] + '", "' + msg.join(' ') + '", CURRENT_TIMESTAMP)', 
-									function(error, results, fields) {
-										if (error) {
-											kb.say(channel, user['username'] + ', error occured xD');
-											return;
-										}
-										con.query('SELECT ID FROM suggestions WHERE message="' + msg.join(' ') + '"', 
-										function(error, results, fields) {
-											if (error) {
-												kb.say(channel, user['username'] + ', error occured xD');
-												return;
-											}
-											resolve(user['username'] + ', suggestion saved with ID ' + 
-												results[0].ID + ' PogChamp');
-										})
-									})
-								} else {
-									resolve(user['username'] + ", duplicate suggestion.");
-								}
-							})
+							con.query('SELECT message FROM suggestions WHERE message="' + msg.join(' ') + '"',
+								function(error, results, fields) {
+									if (error) {
+										kb.say(channel, user['username'] + ', error occured xD');
+										return;
+									}
+									if (results.length === 0) {
+										con.query('INSERT INTO suggestions (username, message, created) VALUES ("' +
+											user['username'] + '", "' + msg.join(' ') + '", CURRENT_TIMESTAMP)',
+											function(error, results, fields) {
+												if (error) {
+													kb.say(channel, user['username'] + ', error occured xD');
+													return;
+												}
+												con.query('SELECT ID FROM suggestions WHERE message="' + msg.join(' ') + '"',
+													function(error, results, fields) {
+														if (error) {
+															kb.say(channel, user['username'] + ', error occured xD');
+															return;
+														}
+														resolve(user['username'] + ', suggestion saved with ID ' +
+															results[0].ID + ' PogChamp');
+													})
+											})
+									} else {
+										resolve(user['username'] + ", duplicate suggestion.");
+									}
+								})
 						})
 						return query;
 					}
@@ -2001,22 +2001,22 @@ kb.on('connected', (adress, port) => {
 						return "";
 					} else {
 						const query = await new Promise((reject, resolve) => {
-							con.query('SELECT ID, message, username, status FROM suggestions WHERE ID="' + msg + '"', 
-							function(error, results, fields) {
-								if (error) {
-									reject(user['username'] + ', error xD 👉 ' + error);
-								} else {
-									if (!results[0].ID) {
-										resolve(user['username'] + ', such ID does not exist FeelsDankMan');
-									} else if (results[0].ID === msg) {
-										resolve('from' + results[0].username + ': ' + results[0].message + 
-											' | status: ' + results[0].status);
+							con.query('SELECT ID, message, username, status FROM suggestions WHERE ID="' + msg + '"',
+								function(error, results, fields) {
+									if (error) {
+										reject(user['username'] + ', error xD 👉 ' + error);
 									} else {
-										resolve('from ' + results[0].username + ': ' + results[0].message + 
-											' | status: ' + results[0].status);
+										if (!results[0].ID) {
+											resolve(user['username'] + ', such ID does not exist FeelsDankMan');
+										} else if (results[0].ID === msg) {
+											resolve('from' + results[0].username + ': ' + results[0].message +
+												' | status: ' + results[0].status);
+										} else {
+											resolve('from ' + results[0].username + ': ' + results[0].message +
+												' | status: ' + results[0].status);
+										}
 									}
-								}
-							})
+								})
 						})
 						return query;
 					}
@@ -2045,8 +2045,8 @@ kb.on('connected', (adress, port) => {
 					} else {
 						let amount = 0;
 						fs.appendFileSync('./db/supee.js', ' "' + amount++ + '", ')
-						return user['username'] + ', supi went to toilet ' + 
-						fs.readFileSync('./db/supee.js').toString().split('",').length - 1 + ' times peepoSadDank 💦'
+						return user['username'] + ', supi went to toilet ' +
+							fs.readFileSync('./db/supee.js').toString().split('",').length - 1 + ' times peepoSadDank 💦'
 					}
 				} catch (err) {
 					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
@@ -2057,8 +2057,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'cookie',
 			aliases: null,
-			description: 'after "kb cookie" type register/unregister to register or unregister from the database, ' + 
-			'type status for your rank info. Your prestige rank is set automatically - cooldown 10s',
+			description: 'after "kb cookie" type register/unregister to register or unregister from the database, ' +
+				'type status for your rank info. Your prestige rank is set automatically - cooldown 10s',
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
@@ -2075,14 +2075,14 @@ kb.on('connected', (adress, port) => {
 							if (user['user-id'] != '178087241') {
 								return '';
 							} else {
-								con.query('UPDATE cookieModule SET reminders="' + msg[1] + '"', 
-								function(error, results, fields) {
-									if (error) {
-										kb.say(channel, ' error eShrug')
-									} else {
-										kb.say(channel, 'updated to ' + msg[1])
-									}
-								})
+								con.query('UPDATE cookieModule SET reminders="' + msg[1] + '"',
+									function(error, results, fields) {
+										if (error) {
+											kb.say(channel, ' error eShrug')
+										} else {
+											kb.say(channel, 'updated to ' + msg[1])
+										}
+									})
 							}
 							break;
 						case 'force':
@@ -2101,71 +2101,73 @@ kb.on('connected', (adress, port) => {
 							}
 							break;
 						case 'register':
-							con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', 
-							function(error, results, fields) {
-								if (error) throw error;
-								if (results.length === 0 || results[0].username === 0) {
-									kb.say(channel, user['username'] + ', you have been successfully registered for ' + 
-										'a default reminder.');
-									con.query('INSERT INTO cookies (username, created) VALUES ("' + user['username'] + 
-									'", CURRENT_TIMESTAMP)', 
-									function(error, results, fields) {
-										if (error) throw error;
-									})
-								} else if (results[0].username === user['username']) {
-									kb.say(channel, user['username'] + ', you are already registered for cookie ' + 
-										'reminders, type "kb help cookie" for command syntax.');
-								} else {
-									return '';
-								}
-							})
+							con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"',
+								function(error, results, fields) {
+									if (error) throw error;
+									if (results.length === 0 || results[0].username === 0) {
+										kb.say(channel, user['username'] + ', you have been successfully registered for ' +
+											'a default reminder.');
+										con.query('INSERT INTO cookies (username, created) VALUES ("' + user['username'] +
+											'", CURRENT_TIMESTAMP)',
+											function(error, results, fields) {
+												if (error) throw error;
+											})
+									} else if (results[0].username === user['username']) {
+										kb.say(channel, user['username'] + ', you are already registered for cookie ' +
+											'reminders, type "kb help cookie" for command syntax.');
+									} else {
+										return '';
+									}
+								})
 							break;
 						case 'unregister':
-							con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', 
-							function(error, results, fields) {
-								if (error) throw error;
-								if (results != 0) {
-									con.query('DELETE FROM cookies WHERE username="' + user['username'] + '"', 
-									function(error, results, fields) {
-										if (error) throw error;
-										kb.say(channel, user['username'] + 
-											', you are no longer registered for a cookie reminder.');
-									})
-								} else {
-									kb.say(channel, user['username'] + 
-										", you are not registered for a cookie reminder, therefore you can't be" + 
-										" unregistered FeelsDankMan");
-								}
-							})
+							con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"',
+								function(error, results, fields) {
+									if (error) throw error;
+									if (results != 0) {
+										con.query('DELETE FROM cookies WHERE username="' + user['username'] + '"',
+											function(error, results, fields) {
+												if (error) throw error;
+												kb.say(channel, user['username'] +
+													', you are no longer registered for a cookie reminder.');
+											})
+									} else {
+										kb.say(channel, user['username'] +
+											", you are not registered for a cookie reminder, therefore you can't be" +
+											" unregistered FeelsDankMan");
+									}
+								})
 							break;
 						case 'status':
-							const cookieStatus = await fetch('https://api.roaringiron.com/cooldown/' + 
-								user['user-id'] + '?id=true')
-									.then(response => response.json());
-							const cookiesEaten = await fetch('https://api.roaringiron.com/user/' + 
-								user['user-id'] + '?id=true')
-									.then(response => response.json());
-							con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', 
-							function(error, results, fields) {
-								if (error) throw error;
-								if (results.length === 0) {
-									kb.say(channel, user['username'] + ', you are not registered in the database,' + 
-										' type "kb help cookie" for command syntax.');
-								} else {
-									con.query('SELECT username, created FROM cookies WHERE username="' + 
-									user['username'] + '"', function(error, results, fields) {
-										if (error) {
-											throw error
-										} else {
-											kb.say(channel, user['username'] + 
-												', Your current reminder rank is prestige ' + cookiesEaten.prestige + 
-												' (' + cookiesEaten.rank + ') - time left until next cookie: ' + 
-												cookieStatus.time_left_unformatted + ' - cookies: ' + 
-												cookiesEaten.cookies);
-										}
-									})
-								}
-							})
+							const cookieStatus = await fetch('https://api.roaringiron.com/cooldown/' +
+									user['user-id'] + '?id=true')
+								.then(response => response.json());
+							const cookiesEaten = await fetch('https://api.roaringiron.com/user/' +
+									user['user-id'] + '?id=true')
+								.then(response => response.json());
+							con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"',
+								function(error, results, fields) {
+									if (error) throw error;
+									if (results.length === 0) {
+										kb.say(channel, user['username'] + ', you are not registered in the database,' +
+											' type "kb help cookie" for command syntax.');
+									} else {
+										con.query('SELECT username, created FROM cookies WHERE username="' +
+											user['username'] + '"',
+											function(error, results, fields) {
+												if (error) {
+													throw error
+												} else {
+													kb.say(channel, user['username'] +
+														', Your current reminder rank is prestige ' + 
+														cookiesEaten.prestige + ' (' + cookiesEaten.rank + 
+														') - time left until next cookie: ' + 
+														cookieStatus.time_left_unformatted + ' - cookies: ' +
+														cookiesEaten.cookies);
+												}
+											})
+									}
+								})
 							break;
 						default:
 							return user['username'] + ', invalid syntax. See "kb help cookie" for command help.';
@@ -2193,61 +2195,21 @@ kb.on('connected', (adress, port) => {
 					}
 					if (msg[0] === "channel") {
 						const rows = new Promise((resolve, reject) => {
-							con.query('SELECT COUNT(ID) as value FROM logs_' + channel.replace('#', ''), 
-							function(error, results, fields) {
-								if (error) {
-									kb.say(channel, user['username'] + ", I don't have any logs from this channel :/");
-								} else {
-									resolve(results)
-								}
-							})
+							con.query('SELECT COUNT(ID) as value FROM logs_' + channel.replace('#', ''),
+								function(error, results, fields) {
+									if (error) {
+										kb.say(channel, user['username'] + 
+											", I don't have any logs from this channel :/");
+									} else {
+										resolve(results)
+									}
+								})
 						})
 						rows.then(function(values) {
 							const tableSize = new Promise((resolve, reject) => {
-								con.query('SELECT TABLE_NAME AS `Table`, (DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024 ' + 
-								'AS `size` FROM information_schema.TABLES WHERE TABLE_NAME = "logs_' + 
-								channel.replace('#', '') + '" ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;', 
-								function(error, results, fields) {
-									if (error) {
-										reject(error)
-									} else {
-										resolve(results)
-									}
-								})
-							})
-							tableSize.then(function(size) {
-								kb.say(channel, user['username'] + ', this channel has ' + values[0].value + 
-									' lines logged, which is ' + size[0].size.toFixed(2) + 'MB total.')
-							})
-						})
-					} else {
-						const userMessages = new Promise((resolve, reject) => {
-							con.query('SELECT COUNT(username) as value FROM logs_' + channel.replace('#', '') + 
-							' WHERE username="' + user['username'] + '"', 
-							function(error, results, fields) {
-								if (error) {
-									kb.say(channel, user['username'] + ", I don't have any logs from this channel :/");
-								} else {
-									resolve(results)
-								}
-							})
-						})
-						userMessages.then(function(values) {
-							const chatMessages = new Promise((resolve, reject) => {
-								con.query('SELECT COUNT(username) as value FROM logs_' + channel.replace('#', ''), 
-								function(error, results, fields) {
-									if (error) {
-										reject(error)
-									} else {
-										resolve(results)
-									}
-								})
-							})
-							chatMessages.then(function(occurence) {
-								const occurenceVal = new Promise((resolve, reject) => {
-									con.query('SELECT message, COUNT(message) AS value_occurance FROM logs_' + 
-									channel.replace('#', '') + ' WHERE username="' + user['username'] +
-									'" GROUP BY message ORDER BY value_occurance DESC LIMIT 1;',
+								con.query('SELECT TABLE_NAME AS `Table`, (DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024 ' +
+									'AS `size` FROM information_schema.TABLES WHERE TABLE_NAME = "logs_' +
+									channel.replace('#', '') + '" ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;',
 									function(error, results, fields) {
 										if (error) {
 											reject(error)
@@ -2255,12 +2217,53 @@ kb.on('connected', (adress, port) => {
 											resolve(results)
 										}
 									})
+							})
+							tableSize.then(function(size) {
+								kb.say(channel, user['username'] + ', this channel has ' + values[0].value +
+									' lines logged, which is ' + size[0].size.toFixed(2) + 'MB total.')
+							})
+						})
+					} else {
+						const userMessages = new Promise((resolve, reject) => {
+							con.query('SELECT COUNT(username) as value FROM logs_' + channel.replace('#', '') +
+								' WHERE username="' + user['username'] + '"',
+								function(error, results, fields) {
+									if (error) {
+										kb.say(channel, user['username'] + ", I don't have any logs from this channel :/");
+									} else {
+										resolve(results)
+									}
+								})
+						})
+						userMessages.then(function(values) {
+							const chatMessages = new Promise((resolve, reject) => {
+								con.query('SELECT COUNT(username) as value FROM logs_' + channel.replace('#', ''),
+									function(error, results, fields) {
+										if (error) {
+											reject(error)
+										} else {
+											resolve(results)
+										}
+									})
+							})
+							chatMessages.then(function(occurence) {
+								const occurenceVal = new Promise((resolve, reject) => {
+									con.query('SELECT message, COUNT(message) AS value_occurance FROM logs_' +
+										channel.replace('#', '') + ' WHERE username="' + user['username'] +
+										'" GROUP BY message ORDER BY value_occurance DESC LIMIT 1;',
+										function(error, results, fields) {
+											if (error) {
+												reject(error)
+											} else {
+												resolve(results)
+											}
+										})
 								})
 								occurenceVal.then(function(val) {
-									const output = user['username'] + ", you have total of " + values[0].value + 
-									" lines logged, that's " + (values[0].value / occurence[0].value).toFixed(3) +
-									'% of all lines in this channel, your most frequently typed message is: " ' + 
-									val[0].message + ' " (' + val[0].value_occurance + ' times)';
+									const output = user['username'] + ", you have total of " + values[0].value +
+										" lines logged, that's " + (values[0].value / occurence[0].value).toFixed(3) +
+										'% of all lines in this channel, your most frequently typed message is: " ' +
+										val[0].message + ' " (' + val[0].value_occurance + ' times)';
 									if (output.toString().length > 500) {
 										kb.say(channel, output.substr(0, 500) + '...');
 									} else {
@@ -2293,9 +2296,9 @@ kb.on('connected', (adress, port) => {
 
 		commands.forEach(async command => {
 			if (
-				((input[0].replace('kbot', 'kb') + ' ' + 
+				((input[0].replace('kbot', 'kb') + ' ' +
 					input[1]).replace(/,/, '').replace('@', '').toLowerCase() === command.name) ||
-				(command.aliases && (input[0].replace('kbot', 'kb') + ' ' + 
+				(command.aliases && (input[0].replace('kbot', 'kb') + ' ' +
 					input[1]).replace(/,/, '').replace('@', '').toLowerCase() === command.aliases)
 			) {
 				let result = await command.invocation(channel, user, message);
@@ -2329,7 +2332,7 @@ kb.on('connected', (adress, port) => {
 					}).then(response => response.json()))
 					if (channel === '#nymn') {
 						if (test.banned === true) {
-							kb.say(channel, user['username'] + 
+							kb.say(channel, user['username'] +
 								', the result is banphrased, I whispered it to you tho cmonBruh')
 							kb.whisper(user['username'], result);
 							return;
@@ -2427,9 +2430,9 @@ kb.on('connected', (adress, port) => {
 		if (self) return;
 		commandlist.forEach(async command => {
 			if (
-				((input[0].replace('kbot', 'kb') + ' ' + 
+				((input[0].replace('kbot', 'kb') + ' ' +
 					input[1]).replace(/,/, '').replace('@', '').toLowerCase() === command.name) ||
-				(command.aliases && (input[0].replace('kbot', 'kb') + ' ' + 
+				(command.aliases && (input[0].replace('kbot', 'kb') + ' ' +
 					input[1]).replace(/,/, '').replace('@', '').toLowerCase() === command.aliases)
 			) {
 				let result = await command.invocation(channel, user, message);
@@ -2493,141 +2496,142 @@ kb.on('connected', (adress, port) => {
 							return;
 						} else {
 							async function respo() {
-								const cookieApi = await fetch('https://api.roaringiron.com/cooldown/' + 
-									user['user-id'] + '?id=true')
-										.then(response => response.json());
-								const cookieStatus = await fetch('https://api.roaringiron.com/user/' + 
-									user['user-id'] + '?id=true')
-										.then(response => response.json());
+								const cookieApi = await fetch('https://api.roaringiron.com/cooldown/' +
+										user['user-id'] + '?id=true')
+									.then(response => response.json());
+								const cookieStatus = await fetch('https://api.roaringiron.com/user/' +
+										user['user-id'] + '?id=true')
+									.then(response => response.json());
 								const query = await new Promise((reject, resolve) => {
-									con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"', 
-									function(error, results, fields) {
-										if (error) {
-											reject('kunszg', '@kunszg cookie error: ' + error)
-										} else {
-											if (results.length === 0) {
-												kb.say(channel, '');
+									con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"',
+										function(error, results, fields) {
+											if (error) {
+												reject('kunszg', '@kunszg cookie error: ' + error)
 											} else {
-												if (cookieStatus.prestige === 1) {
-													if (cookieApi.seconds_left < 3580) {
-														kb.whisper(user['username'] + 
-															' your cookie is still on cooldown (' + 
-															cookieApi.time_left_formatted + '), wait 1h intervals. ' + 
-															'To force your cookie reminder do ' + 
-															'"kb cookie force" in chat.');
-													} else {
-														kb.say(channel, '$remind ' + results[0].username + 
-															' eat cookie :) in 1h');
-														con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' + 
-														'WHERE username="' + user['username'] + '"', 
-														function(error, results, fields) {
-															if (error) {
-																kb.say(channel, user['username'] + ", database error LUL")
-															}
-														})
-													}
-												} else if (cookieStatus.prestige === 2) {
-													if (cookieApi.seconds_left < 1780) {
-														kb.whisper(user['username'] + 
-															' your cookie is still on cooldown (' + 
-															cookieApi.time_left_formatted + 
-															'), wait 30m intervals. To force your cookie reminder do ' + 
-															' "kb cookie force" in chat.');
-													} else {
-														kb.say(channel, '$remind ' + results[0].username + 
-															' eat cookie :) in 30m');
-														con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' + 
-														'WHERE username="' + user['username'] + '"', 
-														function(error, results, fields) {
-															if (error) {
-																kb.say(channel, user['username'] + 
-																	", database error LUL")
-															}
-														})
-													}
-												} else if (cookieStatus.prestige === 4) {
-													if (cookieApi.seconds_left < 1180) {
-														kb.whisper(user['username'] + 
-															' your cookie is still on cooldown (' + 
-															cookieApi.time_left_formatted + 
-															'), wait 20m intervals. To force your cookie reminder do ' + 
-															'"kb cookie force" in chat.');
-													} else {
-														kb.say(channel, '$remind ' + results[0].username + 
-															' eat cookie :) in 20m');
-														con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' + 
-														'WHERE username="' + user['username'] + '"', 
-														function(error, results, fields) {
-															if (error) {
-																kb.say(channel, user['username'] + 
-																	", database error LUL")
-															}
-														})
-													}
-												} else if (cookieStatus.prestige === 4) {
-													if (cookieApi.can_claim === false) {
-														kb.whisper(user['username'] + 
-															' your cookie is still on cooldown (' + 
-															cookieApi.time_left_formatted + '), wait intervals. ' + 
-															'To force your cookie reminder do ' + 
-															'"kb cookie force" in chat.');
-													} else {
-														kb.say(channel, user['username'] + ', this rank is currently ' + 
-															'not supported, see "kb help cookie" for command syntax.');
-														con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' + 
-														'WHERE username="' + user['username'] + '"', 
-														function(error, results, fields) {
-															if (error) {
-																kb.say(channel, user['username'] + 
-																	", database error LUL")
-															}
-														})
-													}
-												} else if (cookieStatus.prestige === 5) {
-													if (cookieApi.can_claim === false) {
-														kb.whisper(user['username'] + 
-															' your cookie is still on cooldown (' + 
-															cookieApi.time_left_formatted + 
-															'), wait intervals. To force your cookie reminder do ' + 
-															'"kb cookie force" in chat.');
-													} else {
-														kb.say(channel, user['username'] + 
-															', this rank is currently not supported, see ' + 
-															'"kb help cookie" for command syntax.');
-														con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' + 
-														'WHERE username="' + user['username'] + '"', 
-														function(error, results, fields) {
-															if (error) {
-																kb.say(channel, user['username'] + 
-																	", database error LUL")
-															}
-														})
-													}
-												} else if (cookieStatus.prestige === 0) {
-													if (cookieApi.cookieApi < 7180) {
-														kb.whisper(user['username'] + 
-															' your cookie is still on cooldown (' + 
-															cookieApi.time_left_formatted + 
-															'), wait 2h intervals. To force your cookie reminder do ' + 
-															'"kb cookie force" in chat.');
-													} else {
-														kb.say(channel, '$remind ' + results[0].username + 
-															' eat cookie :) in 2h');
-														con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' + 
-														'WHERE username="' + user['username'] + '"', 
-														function(error, results, fields) {
-															if (error) {
-																kb.say(channel, user['username'] + 
-																	", database error LUL")
-															}
-														})
-													}
+												if (results.length === 0) {
+													kb.say(channel, '');
 												} else {
-													kb.say(channel, '')
+													if (cookieStatus.prestige === 1) {
+														if (cookieApi.seconds_left < 3580) {
+															kb.whisper(user['username'] +
+																' your cookie is still on cooldown (' +
+																cookieApi.time_left_formatted + '), wait 1h intervals. ' +
+																'To force your cookie reminder do ' +
+																'"kb cookie force" in chat.');
+														} else {
+															kb.say(channel, '$remind ' + results[0].username +
+																' eat cookie :) in 1h');
+															con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' +
+																'WHERE username="' + user['username'] + '"',
+																function(error, results, fields) {
+																	if (error) {
+																		kb.say(channel, user['username'] + 
+																			", database error LUL")
+																	}
+																})
+														}
+													} else if (cookieStatus.prestige === 2) {
+														if (cookieApi.seconds_left < 1780) {
+															kb.whisper(user['username'] +
+																' your cookie is still on cooldown (' +
+																cookieApi.time_left_formatted +
+																'), wait 30m intervals. To force your cookie reminder do ' +
+																' "kb cookie force" in chat.');
+														} else {
+															kb.say(channel, '$remind ' + results[0].username +
+																' eat cookie :) in 30m');
+															con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' +
+																'WHERE username="' + user['username'] + '"',
+																function(error, results, fields) {
+																	if (error) {
+																		kb.say(channel, user['username'] +
+																			", database error LUL")
+																	}
+																})
+														}
+													} else if (cookieStatus.prestige === 4) {
+														if (cookieApi.seconds_left < 1180) {
+															kb.whisper(user['username'] +
+																' your cookie is still on cooldown (' +
+																cookieApi.time_left_formatted +
+																'), wait 20m intervals. To force your cookie reminder do ' +
+																'"kb cookie force" in chat.');
+														} else {
+															kb.say(channel, '$remind ' + results[0].username +
+																' eat cookie :) in 20m');
+															con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' +
+																'WHERE username="' + user['username'] + '"',
+																function(error, results, fields) {
+																	if (error) {
+																		kb.say(channel, user['username'] +
+																			", database error LUL")
+																	}
+																})
+														}
+													} else if (cookieStatus.prestige === 4) {
+														if (cookieApi.can_claim === false) {
+															kb.whisper(user['username'] +
+																' your cookie is still on cooldown (' +
+																cookieApi.time_left_formatted + '), wait intervals. ' +
+																'To force your cookie reminder do ' +
+																'"kb cookie force" in chat.');
+														} else {
+															kb.say(channel, user['username'] + ', this rank is currently ' +
+																'not supported, see "kb help cookie" for command syntax.');
+															con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' +
+																'WHERE username="' + user['username'] + '"',
+																function(error, results, fields) {
+																	if (error) {
+																		kb.say(channel, user['username'] +
+																			", database error LUL")
+																	}
+																})
+														}
+													} else if (cookieStatus.prestige === 5) {
+														if (cookieApi.can_claim === false) {
+															kb.whisper(user['username'] +
+																' your cookie is still on cooldown (' +
+																cookieApi.time_left_formatted +
+																'), wait intervals. To force your cookie reminder do ' +
+																'"kb cookie force" in chat.');
+														} else {
+															kb.say(channel, user['username'] +
+																', this rank is currently not supported, see ' +
+																'"kb help cookie" for command syntax.');
+															con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' +
+																'WHERE username="' + user['username'] + '"',
+																function(error, results, fields) {
+																	if (error) {
+																		kb.say(channel, user['username'] +
+																			", database error LUL")
+																	}
+																})
+														}
+													} else if (cookieStatus.prestige === 0) {
+														if (cookieApi.cookieApi < 7180) {
+															kb.whisper(user['username'] +
+																' your cookie is still on cooldown (' +
+																cookieApi.time_left_formatted +
+																'), wait 2h intervals. To force your cookie reminder do ' +
+																'"kb cookie force" in chat.');
+														} else {
+															kb.say(channel, '$remind ' + results[0].username +
+																' eat cookie :) in 2h');
+															con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' +
+																'WHERE username="' + user['username'] + '"',
+																function(error, results, fields) {
+																	if (error) {
+																		kb.say(channel, user['username'] +
+																			", database error LUL")
+																	}
+																})
+														}
+													} else {
+														kb.say(channel, '')
+													}
 												}
 											}
-										}
-									})
+										})
 								})
 								return query;
 							}
@@ -2741,7 +2745,7 @@ kb.on('connected', (adress, port) => {
 						}
 						const msg = message.split(" ");
 						const msg2 = msg.shift();
-						const ev = await eval('(async () => {' + 
+						const ev = await eval('(async () => {' +
 							msg.join(" ").replace(/[\u{E0000}|\u{206d}]/gu, '') + '})()');
 						console.log(ev);
 						return String(ev);
@@ -2853,14 +2857,14 @@ kb.on('connected', (adress, port) => {
 		kb.on("subgift", (channel, username, streakMonths, recipient, userstate) => {
 			if (channel != "#supinic") return;
 			else
-				kb.say("Supinic", username + " has gifted a sub to " + recipient + " and it's their " + 
+				kb.say("Supinic", username + " has gifted a sub to " + recipient + " and it's their " +
 					streakMonths + " month/s resub! ppBounce ")
 		});
 
 		kb.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
 			if (channel != "#supinic") return;
 			else
-				kb.say("Supinic", username + " is giving away " + numbOfSubs + " and they have already gifted " + 
+				kb.say("Supinic", username + " is giving away " + numbOfSubs + " and they have already gifted " +
 					userstate + " subs to Supinic peepoPooPoo ")
 			let senderCount = ~~userstate["msg-param-sender-count"];
 		});
