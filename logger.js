@@ -193,7 +193,7 @@ kb.on('connected', (adress, port) => {
 						console.log(error);
 						const errorLog = "INSERT INTO ?? (??, ??) VALUES (??, ??)";
 						const insertsLog = ['error_logs', 'error_message', 'date', error, 'CURRENT_TIMESTAMP'];
-						sqlError = mysql.format(errorLog, insertsLog);
+						errorLog = mysql.format(errorLog, insertsLog);
 						con.query(sqlError, function(error, results, fields) {
 							if (error) {
 								console.log(error);
