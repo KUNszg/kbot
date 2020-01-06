@@ -187,8 +187,7 @@ kb.on('connected', (adress, port) => {
 			} else {
 				const sql = "INSERT INTO ?? (??, ??, ??) VALUES (??, ??, ??)";
 				const inserts = ['logs_kunszg', 'username', 'message', 'date', user['username'], msg, 'CURRENT_TIMESTAMP'];
-				sql = mysql.format(sql, inserts);
-				con.query(sql, function(error, results, fields) {
+				con.query(mysql.format(sql, inserts), function(error, results, fields) {
 					if (error) {
 						console.log(error);
 						const errorLog = "INSERT INTO ?? (??, ??) VALUES (??, ??)";
