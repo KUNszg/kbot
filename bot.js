@@ -214,7 +214,9 @@ kb.on('connected', (adress, port) => {
 							.then(response => response.json());
 						const commits3 = await fetch(apiCommits + '&page=3')
 							.then(response => response.json());
-						const commitsCount = commits.length + commits2.length + commits3.length;
+						const commits4 = await fetch(apiCommits + '&page=4')
+							.then(response => response.json());
+						const commitsCount = commits.length + commits2.length + commits3.length + commits4.length;
 						const commitDate = new Date(commits[0].commit.committer.date);
 						const serverDate = new Date();
 						const diff = Math.abs(commitDate - serverDate)
