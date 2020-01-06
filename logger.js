@@ -15,7 +15,7 @@ const options = {
 		username: 'kunszgbot',
 		password: api.oauth,
 	},
-	channels: channelOptions,
+	channels: ['nymn', 'haxk', 'supinic', 'pajlada', 'forsen', 'xqcow'],
 };
 
 const tmi = require('tmi.js');
@@ -124,6 +124,46 @@ kb.on('connected', (adress, port) => {
 				return;
 			} else {
 				con.query('INSERT INTO logs_pajlada (username, message, date) ' +
+					'VALUES ("' + user['username'] + '", "' + msg + '", CURRENT_TIMESTAMP)',
+					function(error, results, fields) {
+						if (error) {
+							console.log(error);
+							con.query('INSERT INTO error_logs (error_message, date) ' +
+								'VALUES ("' + error + '", CURRENT_TIMESTAMP)',
+								function(error, results, fields) {
+									if (error) {
+										console.log(error);
+										throw error;
+									}
+								})
+						}
+					})
+			}
+		} else if (channel === '#forsen') {
+			if (filterBots.length != 0 || msg === '') {
+				return;
+			} else {
+				con.query('INSERT INTO logs_forsen (username, message, date) ' +
+					'VALUES ("' + user['username'] + '", "' + msg + '", CURRENT_TIMESTAMP)',
+					function(error, results, fields) {
+						if (error) {
+							console.log(error);
+							con.query('INSERT INTO error_logs (error_message, date) ' +
+								'VALUES ("' + error + '", CURRENT_TIMESTAMP)',
+								function(error, results, fields) {
+									if (error) {
+										console.log(error);
+										throw error;
+									}
+								})
+						}
+					})
+			}
+		} else if (channel === '#xqcow') {
+			if (filterBots.length != 0 || msg === '') {
+				return;
+			} else {
+				con.query('INSERT INTO logs_xqcow (username, message, date) ' +
 					'VALUES ("' + user['username'] + '", "' + msg + '", CURRENT_TIMESTAMP)',
 					function(error, results, fields) {
 						if (error) {
