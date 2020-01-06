@@ -35,7 +35,8 @@ const ignoreList = [
 	'413480192', // futuregadget8 
 	'132134724', // gazatu2
 	'62541963', //snusbot
-	'82008718' //pajbot
+	'82008718', //pajbot
+	'27574018' //magicbot321
 ];
 
 kb.connect();
