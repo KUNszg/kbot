@@ -2793,33 +2793,6 @@ kb.on('connected', (adress, port) => {
 		},
 
 		{
-			name: 'ppBounce',
-			aliases: null,
-			permission: 'restricted',
-			invocation: async (channel, user, message, args) => {
-
-				const allowedChannels = [{
-						ID: '#supinic'
-					},
-					{
-						ID: '#pajlada'
-					}
-				];
-				const checkChannels = allowedChannels.filter(
-					i => i.ID === channel
-				);
-				const perms = allowFastramid.filter(
-					i => i.ID === user['user-id']
-				);
-				if (channel === checkChannels[0].ID && user['user-id'] === "268612479") {
-					return "ppBounce ❗ ";
-				} else {
-					return '';
-				}
-			}
-		},
-
-		{
 			name: dankPrefix + "deval",
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
