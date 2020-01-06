@@ -181,6 +181,28 @@ kb.on('connected', (adress, port) => {
 						}
 					})
 			}
+		} else if (channel === '#kunszg') {
+			if (filterBots.length != 0 || msg === '') {
+				return;
+			} else {
+				const sql = "INSERT INTO ?? (??, ??, ??) VALUES (??, ??, ??)";
+				const inserts = ['logs_kunszg', 'username', 'message', 'date', user['username'], msg, 'CURRENT_TIMESTAMP'];
+				sql = mysql.format(sql, inserts);
+				con.query(sql, function(error, results, fields) {
+					if (error) {
+						console.log(error);
+						const errorLog = "INSERT INTO ?? (??, ??) VALUES (??, ??)";
+						const insertsLog = ['error_logs', 'error_message', 'date', error, 'CURRENT_TIMESTAMP'];
+						sqlError = mysql.format(errorLog, insertsLog);
+						con.query(sqlError, function(error, results, fields) {
+							if (error) {
+								console.log(error);
+								throw error;
+							}
+						})
+					}
+				})
+			}
 		} else {
 			return;
 		}
