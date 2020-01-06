@@ -185,9 +185,9 @@ kb.on('connected', (adress, port) => {
 			if (filterBots.length != 0 || msg === '') {
 				return;
 			} else {
-				const sql = "INSERT INTO ?? (??) VALUES (?, ?)";
-				const collumns = ['username', 'message'];
-				const inserts = ['logs_kunszg', collumns, user['username'], msg];
+				const sql = "INSERT INTO ?? (??) VALUES (?, ?, ?)";
+				const collumns = ['username', 'message', 'date'];
+				const inserts = ['logs_kunszg', collumns, user['username'], msg, new Date()];
 				con.query(mysql.format(sql, inserts), function(error, results, fields) {
 					if (error) {
 						console.log(error);
