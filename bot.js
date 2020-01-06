@@ -2279,7 +2279,9 @@ kb.on('connected', (adress, port) => {
 										const difference = Math.abs(serverDate - logsDate);
 										const differenceToSec = difference/1000
 										kb.say(channel, user['username'] + ', this channel has ' + values[0].value +
-											' lines logged, starting ' + (differenceToSec/86400).toFixed(0) + ' days ago, which is ' + size[0].size.substring(0, 4) + 'MB total.')
+											' lines logged, which is ' + size[0].size.substring(0, 4) + 
+											'MB total, logs in this channel started ' + 
+											(differenceToSec/86400).toFixed(0) + ' days ago')
 									})
 								})
 							})
