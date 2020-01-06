@@ -60,150 +60,27 @@ kb.on('connected', (adress, port) => {
 	});
 	kb.on('message', function(channel, user, message) {
 		const filterBots = ignoreList.filter(i => i === user['user-id'])
-		const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').replace(/"/g, '').replace(/'/g, '')
-		if (channel === '#nymn') {
-			if (filterBots.length != 0 || msg === '') {
-				return;
-			} else {
-				con.query('INSERT INTO logs_nymn (username, message, date) ' +
-					'VALUES ("' + user['username'] + '", "' + msg + '", CURRENT_TIMESTAMP)',
-					function(error, results, fields) {
-						if (error) {
-							console.log(error);
-							con.query('INSERT INTO error_logs (error_message, date) ' +
-								'VALUES ("' + error + '", CURRENT_TIMESTAMP)',
-								function(error, results, fields) {
-									if (error) {
-										console.log(error);
-										throw error;
-									}
-								})
-						}
-					})
-			}
-		} else if (channel === '#haxk') {
-			if (filterBots.length != 0 || msg === '') {
-				return;
-			} else {
-				con.query('INSERT INTO logs_haxk (username, message, date) ' +
-					'VALUES ("' + user['username'] + '", "' + msg + '", CURRENT_TIMESTAMP)',
-					function(error, results, fields) {
-						if (error) {
-							console.log(error);
-							con.query('INSERT INTO error_logs (error_message, date) ' +
-								'VALUES ("' + error + '", CURRENT_TIMESTAMP)',
-								function(error, results, fields) {
-									if (error) {
-										console.log(error);
-										throw error;
-									}
-								})
-						}
-					})
-			}
-		} else if (channel === '#supinic') {
-			if (filterBots.length != 0 || msg === '') {
-				return;
-			} else {
-				con.query('INSERT INTO logs_supinic (username, message, date) ' +
-					'VALUES ("' + user['username'] + '", "' + msg + '", CURRENT_TIMESTAMP)',
-					function(error, results, fields) {
-						if (error) {
-							console.log(error);
-							con.query('INSERT INTO error_logs (error_message, date) ' +
-								'VALUES ("' + error + '", CURRENT_TIMESTAMP)',
-								function(error, results, fields) {
-									if (error) {
-										console.log(error);
-										throw error;
-									}
-								})
-						}
-					})
-			}
-		} else if (channel === '#pajlada') {
-			if (filterBots.length != 0 || msg === '') {
-				return;
-			} else {
-				con.query('INSERT INTO logs_pajlada (username, message, date) ' +
-					'VALUES ("' + user['username'] + '", "' + msg + '", CURRENT_TIMESTAMP)',
-					function(error, results, fields) {
-						if (error) {
-							console.log(error);
-							con.query('INSERT INTO error_logs (error_message, date) ' +
-								'VALUES ("' + error + '", CURRENT_TIMESTAMP)',
-								function(error, results, fields) {
-									if (error) {
-										console.log(error);
-										throw error;
-									}
-								})
-						}
-					})
-			}
-		} else if (channel === '#forsen') {
-			if (filterBots.length != 0 || msg === '') {
-				return;
-			} else {
-				con.query('INSERT INTO logs_forsen (username, message, date) ' +
-					'VALUES ("' + user['username'] + '", "' + msg + '", CURRENT_TIMESTAMP)',
-					function(error, results, fields) {
-						if (error) {
-							console.log(error);
-							con.query('INSERT INTO error_logs (error_message, date) ' +
-								'VALUES ("' + error + '", CURRENT_TIMESTAMP)',
-								function(error, results, fields) {
-									if (error) {
-										console.log(error);
-										throw error;
-									}
-								})
-						}
-					})
-			}
-		} else if (channel === '#xqcow') {
-			if (filterBots.length != 0 || msg === '') {
-				return;
-			} else {
-				con.query('INSERT INTO logs_xqcow (username, message, date) ' +
-					'VALUES ("' + user['username'] + '", "' + msg + '", CURRENT_TIMESTAMP)',
-					function(error, results, fields) {
-						if (error) {
-							console.log(error);
-							con.query('INSERT INTO error_logs (error_message, date) ' +
-								'VALUES ("' + error + '", CURRENT_TIMESTAMP)',
-								function(error, results, fields) {
-									if (error) {
-										console.log(error);
-										throw error;
-									}
-								})
-						}
-					})
-			}
-		} else if (channel === '#kunszg') {
-			if (filterBots.length != 0 || msg === '') {
-				return;
-			} else {
-				const sql = "INSERT INTO ?? (??) VALUES (?, ?, ?)";
-				const collumns = ['username', 'message', 'date'];
-				const inserts = ['logs_kunszg', collumns, user['username'], msg, new Date()];
-				con.query(mysql.format(sql, inserts), function(error, results, fields) {
-					if (error) {
-						console.log(error);
-						const errorLog = "INSERT INTO ?? (??, ??) VALUES (?, ??)";
-						const insertsLog = ['error_logs', 'error_message', 'date', error, 'CURRENT_TIMESTAMP'];
-						con.query(mysql.format(errorLog, insertsLog), function(error, results, fields) {
-							if (error) {
-								console.log(error);
-								throw error;
-							}
-						})
-					}
-				})
-			}
-		} else {
+		const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '')
+		if (filterBots.length != 0 || msg === '') {
 			return;
-		}
+		} else {
+			const sql = "INSERT INTO ?? (??) VALUES (?, ?, ?)";
+			const collumns = ['username', 'message', 'date'];
+			const inserts = ['logs_' + channel.replace('#', ''), collumns, user['username'], msg, new Date()];
+			con.query(mysql.format(sql, inserts), function(error, results, fields) {
+				if (error) {
+					console.log(error);
+					const errorLog = "INSERT INTO ?? (??, ??) VALUES (?, ?)";
+					const errorLogCollumns = ['error_message', 'date'];
+					const insertsLog = ['error_logs', errorLogCollumns, error, new Date()];
+					con.query(mysql.format(errorLog, insertsLog), function(error, results, fields) {
+						if (error) {
+							console.log(error);
+							throw error;
+						}
+					})
+				}
+			})
+		}		
 	})
 })
