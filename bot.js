@@ -1964,7 +1964,7 @@ kb.on('connected', (adress, port) => {
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2)
+					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2).replace(/"/g, '').replace(/'/g, '').replace(/\\/g, '')
 					if (talkedRecently.has(user['user-id'])) {
 						return '';
 					} else {
@@ -1975,8 +1975,6 @@ kb.on('connected', (adress, port) => {
 					}
 					if (!msg[0]) {
 						return user['username'] + ', no message provided FeelsDankMan';
-					} else if ((/^[\x00-\x7F]+$/.test(msg.join(' '))) === false) {
-						return user['username'] + ', special character detected HONEYDETECTED';
 					} else {
 						const query = await new Promise((reject, resolve) => {
 							con.query('SELECT message FROM suggestions WHERE message="' + msg.join(' ') + '"',
