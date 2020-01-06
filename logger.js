@@ -34,7 +34,7 @@ const ignoreList = [
 	'97661864', // botnextdoor
 	'413480192', // futuregadget8 
 	'132134724', // gazatu2
-	'62541963' //snusbot
+	'62541963', //snusbot
 	'82008718' //pajbot
 ];
 
