@@ -1548,7 +1548,7 @@ kb.on('connected', (adress, port) => {
 										const messageDate = results[0].date;
 										const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
 										if (timeDifference / 1000 / 3600 > 48) {
-											kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' +
+											kb.say(channel, '(' + (timeDifference / 1000 / 3600 / 24).toFixed(0) + 'd ago) ' +
 												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
 												results[0].message)
 										} else {
@@ -1581,7 +1581,7 @@ kb.on('connected', (adress, port) => {
 										const messageDate = results[0].date;
 										const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
 										if (timeDifference / 1000 / 3600 > 48) {
-											kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' +
+											kb.say(channel, '(' + (timeDifference / 1000 / 3600 / 24).toFixed(0) + 'd ago) ' +
 												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
 												results[0].message)
 										} else {
@@ -1614,7 +1614,7 @@ kb.on('connected', (adress, port) => {
 										const messageDate = results[0].date;
 										const timeDifference = Math.abs(serverDate - (new Date(messageDate).getTime()))
 										if (timeDifference / 1000 / 3600 > 48) {
-											kb.say(channel, '(' + timeDifference / 1000 / 3600 / 24 + 'd ago) ' +
+											kb.say(channel, '(' + (timeDifference / 1000 / 3600 / 24).toFixed(0) + 'd ago) ' +
 												results[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' +
 												results[0].message)
 										} else {
