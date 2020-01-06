@@ -1964,7 +1964,7 @@ kb.on('connected', (adress, port) => {
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2).replace(/"/g, '').replace(/'/g, '').replace(/\\/g, '')
+					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').replace(/"/g, '').replace(/'/g, '').replace(/\\/g, '').split(' ').splice(2)
 					if (talkedRecently.has(user['user-id'])) {
 						return '';
 					} else {
