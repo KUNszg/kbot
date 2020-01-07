@@ -2322,7 +2322,7 @@ kb.on('connected', (adress, port) => {
 									kb.say(channel, user['username'] + ', total of ' + channelValue[0].valueCount + ' racists in this channel cmonBruh')
 								}
 							})
-						}
+						})
 					} else {
 						const userMessages = new Promise((resolve, reject) => {
 							con.query('SELECT COUNT(username) as value FROM logs_' + channel.replace('#', '') +
