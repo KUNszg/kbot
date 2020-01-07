@@ -2311,15 +2311,19 @@ kb.on('connected', (adress, port) => {
 							})
 							trichompCount.then(function(userValue) {
 								if (channel === '#haxk') {
-									if (userValue[0].value<=1) {
+									if (userValue[0].value<2) {
 										kb.say(channel, user['username'] + ', you spelled it ' + userValue[0].value + ' times, we coo TriHard - total of ' + channelValue[0].valueCount + ' N bombs in this channel TriChomp TeaTime')
-									} else if (userValue[0].value>=2) {
+									} else if (userValue[0].value>2) {
 										kb.say(channel, user['username'] + ', you spelled it ' + userValue[0].value + ' times TriChomp Clap - total of ' + channelValue[0].valueCount + ' N bombs in this channel TriChomp TeaTime')
 									} else {
 										kb.say(channel, '');
 									}
 								} else {
-									kb.say(channel, user['username'] + ', total of ' + channelValue[0].valueCount + ' racists in this channel cmonBruh')
+									if (channelValue[0].valueCount === 0) {
+										kb.say(channel, user['username'] + ', total of ' + channelValue[0].valueCount + ' racists in this channel, we coo TriHard Clap')
+									} else {
+										kb.say(channel, user['username'] + ', total of ' + channelValue[0].valueCount + ' racists in this channel cmonBruh')
+									}
 								}
 							})
 						})
