@@ -2300,7 +2300,7 @@ kb.on('connected', (adress, port) => {
 						})
 						trichomp.then(function(channelValue) {
 							const trichompCount = new Promise((resolve, reject) => {
-								con.query('SELECT COUNT(ID), username AS value FROM logs_' + channel.replace('#', '') + ' WHERE message LIKE "%nigg%" AND username="' + user['username'] + '"',
+								con.query('SELECT COUNT(ID) AS value FROM logs_' + channel.replace('#', '') + ' WHERE message LIKE "%nigg%" AND username="' + user['username'] + '"',
 									function(error, results, fields) {
 										if (error) {
 											reject(error)
