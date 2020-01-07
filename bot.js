@@ -2286,6 +2286,43 @@ kb.on('connected', (adress, port) => {
 								})
 							})
 						})
+					} else if (msg[0] === "TriChomp") {
+						const trichomp = new Promise((resolve, reject) => {
+							con.query('SELECT COUNT(ID) AS valueCount FROM logs_' + channel.replace('#', '') + ' WHERE message LIKE "%nigg%"',
+								function(error, results, fields) {
+									if (error) {
+										kb.say(channel, user['username'] + 
+											", I don't have any logs from this channel :/");
+									} else {
+										resolve(results)
+									}
+								})
+						})
+						trichomp.then(function(channelValue) {
+							const trichompCount = new Promise((resolve, reject) => {
+								con.query('SELECT COUNT(ID), username AS value FROM logs_' + channel.replace('#', '') + ' WHERE message LIKE "%nigg%" AND username="' + user['username'] + '"',
+									function(error, results, fields) {
+										if (error) {
+											reject(error)
+										} else {
+											resolve(results)
+										}
+									})
+							})
+							trichompCount.then(function(userValue) {
+								if (channel === '#haxk') {
+									if (userValue[0].value<=1) {
+										kb.say(channel, user['username'] + ', you spelled it ' + userValue[0].value + ' times, we coo TriHard - total of ' + channelValue[0].valueCount + ' N bombs in this channel TriChomp TeaTime')
+									} else if (userValue[0].value>=2) {
+										kb.say(channel, user['username'] + ', you spelled it ' + userValue[0].value + ' times TriChomp Clap - total of ' + channelValue[0].valueCount + ' N bombs in this channel TriChomp TeaTime')
+									} else {
+										kb.say(channel, '');
+									}
+								} else {
+									kb.say(channel, user['username'] + ', total of ' + channelValue[0].valueCount + ' racists in this channel cmonBruh')
+								}
+							})
+						}
 					} else {
 						const userMessages = new Promise((resolve, reject) => {
 							con.query('SELECT COUNT(username) as value FROM logs_' + channel.replace('#', '') +
