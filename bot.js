@@ -2313,10 +2313,8 @@ kb.on('connected', (adress, port) => {
 								if (channel === '#haxk') {
 									if (userValue[0].value<2) {
 										kb.say(channel, user['username'] + ', you spelled it ' + userValue[0].value + ' times, we coo TriHard - total of ' + channelValue[0].valueCount + ' N bombs in this channel TriChomp TeaTime')
-									} else if (userValue[0].value>2) {
-										kb.say(channel, user['username'] + ', you spelled it ' + userValue[0].value + ' times TriChomp Clap - total of ' + channelValue[0].valueCount + ' N bombs in this channel TriChomp TeaTime')
 									} else {
-										kb.say(channel, '');
+										kb.say(channel, user['username'] + ', you spelled it ' + userValue[0].value + ' times TriChomp Clap - total of ' + channelValue[0].valueCount + ' N bombs in this channel TriChomp TeaTime')
 									}
 								} else {
 									if (channelValue[0].valueCount === 0) {
