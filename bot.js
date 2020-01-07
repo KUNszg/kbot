@@ -2288,7 +2288,7 @@ kb.on('connected', (adress, port) => {
 						})
 					} else if (msg[0] === "TriChomp") {
 						const trichomp = new Promise((resolve, reject) => {
-							con.query('SELECT COUNT(ID) AS valueCount FROM logs_' + channel.replace('#', '') + ' WHERE message LIKE "%nigg%"',
+							con.query('SELECT COUNT(ID) AS valueCount FROM logs_' + channel.replace('#', '') + ' WHERE message LIKE "%nigg%" or message LIKE "%nibb%"',
 								function(error, results, fields) {
 									if (error) {
 										kb.say(channel, user['username'] + 
@@ -2300,7 +2300,7 @@ kb.on('connected', (adress, port) => {
 						})
 						trichomp.then(function(channelValue) {
 							const trichompCount = new Promise((resolve, reject) => {
-								con.query('SELECT COUNT(ID) AS value FROM logs_' + channel.replace('#', '') + ' WHERE message LIKE "%nigg%" AND username="' + user['username'] + '"',
+								con.query('SELECT COUNT(ID) AS value FROM logs_' + channel.replace('#', '') + ' WHERE message LIKE "%nigg%" OR message LIKE "%nibb%" AND username="' + user['username'] + '"',
 									function(error, results, fields) {
 										if (error) {
 											reject(error)
@@ -2312,9 +2312,11 @@ kb.on('connected', (adress, port) => {
 							trichompCount.then(function(userValue) {
 								if (channel === '#haxk') {
 									if (userValue[0].value<2) {
-										kb.say(channel, user['username'] + ', you spelled it ' + userValue[0].value + ' times, we coo TriHard - total of ' + channelValue[0].valueCount + ' N bombs in this channel TriChomp TeaTime')
+										kb.say(channel, user['username'] + ', you have spelled it ' + userValue[0].value + ' times, we coo TriHard - total of ' + channelValue[0].valueCount + ' n bombs in this channel TriChomp TeaTime')
+									} else if (userValue[0].value===1){
+										kb.say(channel, user['username'] + ', you have spelled it ' + userValue[0].value + ' time WideHard - total of ' + channelValue[0].valueCount + ' n bombs in this channel TriChomp TeaTime')
 									} else {
-										kb.say(channel, user['username'] + ', you spelled it ' + userValue[0].value + ' times TriChomp Clap - total of ' + channelValue[0].valueCount + ' N bombs in this channel TriChomp TeaTime')
+										kb.say(channel, user['username'] + ', you have spelled it ' + userValue[0].value + ' times TriChomp Clap - total of ' + channelValue[0].valueCount + ' n bombs in this channel TriChomp TeaTime')
 									}
 								} else {
 									if (channelValue[0].valueCount === 0) {
