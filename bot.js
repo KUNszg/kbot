@@ -2311,7 +2311,7 @@ kb.on('connected', (adress, port) => {
 							})
 							trichompCount.then(function(userValue) {
 								if (channel === '#haxk') {
-									if (userValue[0].value<2) {
+									if (userValue[0].value<2 && userValue[0].value != 1) {
 										kb.say(channel, user['username'] + ', you have spelled it ' + userValue[0].value + ' times, we coo TriHard - total of ' + channelValue[0].valueCount + ' n bombs in this channel TriChomp TeaTime')
 									} else if (userValue[0].value===1){
 										kb.say(channel, user['username'] + ', you have spelled it ' + userValue[0].value + ' time WideHard - total of ' + channelValue[0].valueCount + ' n bombs in this channel TriChomp TeaTime')
