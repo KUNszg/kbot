@@ -1874,7 +1874,7 @@ kb.on('connected', (adress, port) => {
 								await shell.execSync('sudo git pull').toString().replace(/-{2,}/g, "").replace(/\+{2,}/g, ""))
 
 							setTimeout(() => {
-								if (channel === '#nymn' || channel === 'pajlada') {
+								if (channel === '#nymn' || channel === '#pajlada') {
 									kb.say('nymn', 'restarting pajaWalk1 pajaWalk2 pajaWalk3 🚪')
 								} else {
 									kb.say(channel, 'restarting KKona ')
@@ -2274,7 +2274,7 @@ kb.on('connected', (adress, port) => {
 										})
 									})
 									loggers.then(function(logg) {
-										const logsDate = new Date(logg[0].create_time[0].split('.')[0]);
+										const logsDate = new Date(logg[0].create_time.split);
 										const serverDate = new Date();
 										const difference = Math.abs(serverDate - logsDate);
 										const differenceToSec = difference/1000
