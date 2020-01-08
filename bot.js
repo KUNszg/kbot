@@ -2263,8 +2263,7 @@ kb.on('connected', (adress, port) => {
 								})
 								logs.then(function(log) {
 									const loggers = new Promise((resolve, reject) => {
-									con.query("SELECT create_time FROM INFORMATION_SCHEMA.TABLES WHERE " + 
-										"table_name='logs_" + channel.replace('#', '') + "'",
+									con.query("SELECT  date AS create_time FROM `logs_" + channel.replace("#", "") + "` ORDER BY `date` ASC LIMIT 1",
 										function(error, results, fields) {
 											if (error) {
 												reject(error)
