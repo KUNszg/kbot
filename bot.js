@@ -1874,7 +1874,7 @@ kb.on('connected', (adress, port) => {
 								await shell.execSync('sudo git pull').toString().replace(/-{2,}/g, "").replace(/\+{2,}/g, ""))
 
 							setTimeout(() => {
-								if (channel === '#nymn') {
+								if (channel === '#nymn' || channel === 'pajlada') {
 									kb.say('nymn', 'restarting pajaWalk1 pajaWalk2 pajaWalk3 🚪')
 								} else {
 									kb.say(channel, 'restarting KKona ')
