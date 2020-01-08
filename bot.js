@@ -2274,7 +2274,7 @@ kb.on('connected', (adress, port) => {
 										})
 									})
 									loggers.then(function(logg) {
-										const logsDate = new Date(logg[0].create_time);
+										const logsDate = new Date(logg[0].create_time.split('.')[0]);
 										const serverDate = new Date();
 										const difference = Math.abs(serverDate - logsDate);
 										const differenceToSec = difference/1000
