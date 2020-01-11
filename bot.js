@@ -36,7 +36,6 @@ kb.on('connected', (adress, port) => {
 
 	kb.say('kunszg', 'reconnected KKona')
 	const randomApod = require('random-apod'); //apod command - for random astro pic of the day
-	const randomWords = require("random-words"); //yt command - for random words to use in youtube search
 	const search = require("youtube-search"); // rt and yt commands - random video using random words api
 	const si = require('systeminformation'); //ping command - ram usage
 	const os = require('os'); //uptime command - system uptime
@@ -46,7 +45,6 @@ kb.on('connected', (adress, port) => {
 	const rUni = require('random-unicodes');
 	const SpacexApiWrapper = require("spacex-api-wrapper");
 	const fetch = require("node-fetch");
-	const perf = require('execution-time')();
 	const mysql = require('mysql2');
 	const con = mysql.createConnection({
 		host: "localhost",
@@ -149,12 +147,12 @@ kb.on('connected', (adress, port) => {
 							" days, commands used in this session " + commandsExecuted.length + " FeelsDankMan";
 					} else {
 						if (uptime > 172800 && up > 72) {
-							return user['username'] + ", code is running for " + uptime / 86400 + ", has " + lines +
+							return user['username'] + ", code is running for " + (uptime / 86400).toFixed(1) + " days, has " + lines +
 								" lines,  memory usage: " + used.toFixed(2) + " MB, host is up for " + up.toFixed(1) +
 								"h (" + up2.toFixed(2) + " days), commands used in this session " +
 								commandsExecuted.length + " FeelsDankMan";
 						} else if (uptime > 172800 && up < 72) {
-							return user['username'] + ", code is running for " + uptime / 86400 + ", has " + lines +
+							return user['username'] + ", code is running for " + (uptime / 86400).toFixed(1) + " days, has " + lines +
 								" lines,  memory usage: " + used.toFixed(2) + " MB, host is up for " + up.toFixed(1) +
 								"h, commands used in this session " + commandsExecuted.length + " FeelsDankMan";
 						} else {
@@ -2223,7 +2221,64 @@ kb.on('connected', (adress, port) => {
 							talkedRecently.delete(user['user-id']);
 						}, 8000);
 					}
-					if (msg[0] === "channel") {
+					
+					if (msg[0] != "-channel" && msg[0] != "-bruh") { 
+						const occurence = new Promise((resolve, reject) => {
+							const sql = 'SELECT message, COUNT(message) AS value_occurance FROM ?? WHERE message=? GROUP BY message ORDER BY value_occurance DESC LIMIT 1;'
+							const inserts = ['logs_' + channel.replace('#', ''), msg.join(' ')]
+							con.query(mysql.format(sql, inserts), function(error, results, fields) {
+								if (error) {
+									reject(error)
+								} else {
+									resolve(results)
+								}
+							})
+						})
+						occurence.then(function(valules) {
+							const fetch = require('node-fetch');
+							const output = user['username'] + ', message " ' + valules[0].message + 
+								' " has been typed ' + valules[0].value_occurance + ' times in this channel.';
+							if (output.toString().length>500) {
+								async function check1() {
+									const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
+										method: "POST",
+										url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+										body: "message=" + output.substr(0, 500) + '...',
+										headers: {
+											"Content-Type": "application/x-www-form-urlencoded"
+										},
+									}).then(response => response.json()))
+									if (banphrasePass.banned === true) {
+										kb.say(channel, user['username'] +
+											', the result is banphrased, I whispered it to you tho cmonBruh')
+										kb.whisper(user['username'], output);
+									} else {
+										kb.say(channel, output.substr(0, 500) + '...');
+									}
+								}
+								check1()
+							} else {
+								async function check2() {
+									const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
+										method: "POST",
+										url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+										body: "message=" + output,
+										headers: {
+											"Content-Type": "application/x-www-form-urlencoded"
+										},
+									}).then(response => response.json()))
+									if (banphrasePass.banned === true) {
+										kb.say(channel, user['username'] +
+											', the result is banphrased, I whispered it to you tho cmonBruh')
+										kb.whisper(user['username'], output);
+									} else {
+										kb.say(channel, output);
+									}
+								}
+								check2()
+							}
+						})
+					} else if (msg[0] === "-channel") {
 						const rows = new Promise((resolve, reject) => {
 							con.query('SELECT COUNT(ID) as value FROM logs_' + channel.replace('#', ''),
 								function(error, results, fields) {
@@ -2263,7 +2318,8 @@ kb.on('connected', (adress, port) => {
 								})
 								logs.then(function(log) {
 									const loggers = new Promise((resolve, reject) => {
-									con.query("SELECT  date AS create_time FROM `logs_" + channel.replace("#", "") + "` ORDER BY `date` ASC LIMIT 1",
+									con.query("SELECT date AS create_time FROM `logs_" + channel.replace("#", "") + 
+										"` ORDER BY `date` ASC LIMIT 1",
 										function(error, results, fields) {
 											if (error) {
 												reject(error)
@@ -2285,7 +2341,7 @@ kb.on('connected', (adress, port) => {
 								})
 							})
 						})
-					} else if (msg[0] === "TriChomp") {
+					} else if (msg[0] === "-bruh") {
 						const trichomp = new Promise((resolve, reject) => {
 							con.query('SELECT COUNT(message) AS valueCount FROM logs_' + channel.replace('#', '') + ' WHERE message LIKE "%nigg%" or message LIKE "%nibb%"',
 								function(error, results, fields) {
