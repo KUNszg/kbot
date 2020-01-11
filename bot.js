@@ -2222,7 +2222,7 @@ kb.on('connected', (adress, port) => {
 						}, 8000);
 					}
 					
-					if (msg[0] != "-channel" && msg[0] != "-bruh") { 
+					if ((msg[0] != "-channel" && msg[0] != "-bruh") && msg.length != 0) { 
 						const occurence = new Promise((resolve, reject) => {
 							const sql = 'SELECT message, COUNT(message) AS value_occurance FROM ?? WHERE message=? GROUP BY message ORDER BY value_occurance DESC LIMIT 1;'
 							const inserts = ['logs_' + channel.replace('#', ''), msg.join(' ')]
