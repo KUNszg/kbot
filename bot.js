@@ -2236,6 +2236,10 @@ kb.on('connected', (adress, port) => {
 						})
 						occurence.then(function(valules) {
 							const fetch = require('node-fetch');
+							if (valules.length === 0) {
+								kb.say(channel, user['username'] + ', no message logs found for that query')
+								return;
+							}
 							const output = user['username'] + ', message " ' + valules[0].message + 
 								' " has been typed ' + valules[0].value_occurance + ' times in this channel.';
 							if (output.toString().length>500) {
