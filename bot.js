@@ -788,7 +788,7 @@ kb.on('connected', (adress, port) => {
 										for (var j = 1; j <= i; j++)
 											row += " " + emoteP[Math.floor(Math.random() * emoteP.length)];
 										kb.say(channel, row);
-										sleep(1300);
+										sleep(1500);
 									}
 									for (var i = height - 1; i > 0; i--) {
 										var row = '';
@@ -796,7 +796,7 @@ kb.on('connected', (adress, port) => {
 										for (var j = i; j > 0; j--)
 											row += " " + emoteP[Math.floor(Math.random() * emoteP.length)];
 										kb.say(channel, row);
-										sleep(1300);
+										sleep(1500);
 									}
 								}
 								createPyramid(msgP[0]);
@@ -2066,12 +2066,31 @@ kb.on('connected', (adress, port) => {
 						}, 30000);
 					}
 					if (channel != '#supinic') {
-						return ''
+						kb.say(channel, '');
 					} else {
-						let amount = 0;
-						fs.appendFileSync('./db/supee.js', ' "' + amount++ + '", ')
-						return user['username'] + ', supi went to toilet ' +
-							fs.readFileSync('./db/supee.js').toString().split('",').length - 1 + ' times peepoSadDank 💦'
+						const trichomp = new Promise((resolve, reject) => {
+							const sql = 'INSERT INTO supee_count (username, timestamp) VALUES (?, ?)';
+							const insert = [user['username'], new Date()]
+							con.query(mysql.format(sql, insert),
+								function(error, results, fields) {
+									if (error) {
+										kb.say(channel, user['username'] + 
+											", I don't have any logs from this channel :/");
+									} else {
+										resolve(results)
+									}
+								})
+						})
+						trichomp.then(function(value) {
+							con.query('SELECT COUNT(username) AS value FROM supee_count',
+								function(error, results, fields) {
+									if (error) {
+										kb.say(channel, user['username'] + ', ' + error + ' 4Head');
+									} else {
+										kb.say(channel, user['username'] + ', supi ditched us ' + results[0].value + ' times peepoSadLaptop');
+									}
+								})
+						})
 					}
 				} catch (err) {
 					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
