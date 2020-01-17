@@ -43,6 +43,7 @@ const ignoreList = [
 
 kb.connect();
 kb.on('connected', (adress, port) => {
+	kb.say('kunszg', 'logger reconnected KKona')
 	const mysql = require('mysql2');
 	const con = mysql.createConnection({
 		host: "localhost",
