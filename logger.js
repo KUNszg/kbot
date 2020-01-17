@@ -6,7 +6,7 @@ const channelOptions = fs.readFileSync('./db/channels.js').toString().split('"')
 	}).join('').split(' ')
 const options = {
 	options: {
-		debug: true,
+		debug: false,
 	},
 	connection: {
 		cluster: 'aws',
