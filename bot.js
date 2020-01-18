@@ -3010,7 +3010,7 @@ kb.on('connected', (adress, port) => {
 		});
 	});
 
-	//load all active reminders from database and check id's
+	// check and send reminders 
 	async function reminder() {
 		const select = new Promise((resolve, reject) => {
 			con.query('SELECT username, channel, fires, status FROM cookie_reminders WHERE status!="fired"',
@@ -3023,25 +3023,37 @@ kb.on('connected', (adress, port) => {
 				})
 		})
 		select.then(function(value) {
+			
+			// if there is no "fired" argument, ignore
 			if (!value[0]) {
 				return;
 			} else {
+
+				// some KKona shit going out there
 				const serverDate = new Date();
 				const fires = new Date(value[0].fires);
 				const diff = serverDate - fires
 				const differenceToSec = diff/1000;
+
+				// consider only cases where reminder is apart from current date by 5 seconds
 				if ((differenceToSec<=5) && !(differenceToSec<0)) {
 					const limit = new Set();
+
+					// make sure not to repeat the same reminder by adding a unique username
+					// to the Set Object and delete it after 10s 
 					if (limit.has(value[0].username)) {
 						return;
 					} else {
 						limit.add(value[0].username)
-						kb.say(value[0].channel, 'test')
+						kb.say(value[0].channel, value[0].username + ', eat cookie please :)')
 						setTimeout(() => {limit.delete(value[0].username)}, 10000)		
 					}
+
+					// update the database with fired reminder with a timeout, so the TMI message can keep up
 					setTimeout(() => {
 						const status = new Promise((resolve, reject) => {
-							con.query('UPDATE cookie_reminders SET status="fired" WHERE username="' + value[0].username + '" AND status="scheduled"',
+							con.query('UPDATE cookie_reminders SET status="fired" WHERE username="' + 
+								value[0].username + '" AND status="scheduled"',
 								function(error, results, fields) {
 									if (error) {
 										reject(error)
