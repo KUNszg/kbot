@@ -3028,7 +3028,6 @@ kb.on('connected', (adress, port) => {
 			if (!value[0]) {
 				return;
 			} else {
-				console.log(value)
 
 				// some KKona shit going out there
 				const serverDate = new Date();
@@ -3037,7 +3036,7 @@ kb.on('connected', (adress, port) => {
 				const differenceToSec = diff/1000;
 
 				// consider only cases where reminder is apart from current date by 5 seconds
-				if ((differenceToSec<=5) && !(differenceToSec<0)) {
+				if ((differenceToSec<=7) && !(differenceToSec<0)) {
 					const limit = new Set();
 
 					// make sure not to repeat the same reminder by adding a unique username
