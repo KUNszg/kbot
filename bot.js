@@ -2731,16 +2731,20 @@ kb.on('connected', (adress, port) => {
 													kb.say(channel, '');
 												} else {
 													if (cookieStatus.prestige === 1) {
-														if (cookieApi.seconds_left < 3580) {
-															kb.whisper(user['username'] +
+														if (cookieApi.seconds_left < 3580 && cookieApi.seconds_left != 0) {
+															kb.whisper(user['username'],
 																' your cookie is still on cooldown (' +
 																cookieApi.time_left_formatted + '), wait 1h intervals. ' +
 																'To force your cookie reminder do ' +
 																'"kb cookie force" in chat.');
 														} else {
-															kb.say(channel, '$remind ' + results[0].username +
-																' eat cookie :) in 1h');
-															con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' +
+															Date.prototype.addMinutes = function(minutes) {
+															    var copiedDate = new Date(this.getTime());
+															    return new Date(copiedDate.getTime() + minutes * 60000);
+															}
+															const now = new Date();
+															kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 1h :)');
+															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 																'WHERE username="' + user['username'] + '"',
 																function(error, results, fields) {
 																	if (error) {
@@ -2751,38 +2755,46 @@ kb.on('connected', (adress, port) => {
 														}
 													} else if (cookieStatus.prestige === 2) {
 														if (cookieApi.seconds_left < 1780) {
-															kb.whisper(user['username'] +
+															kb.whisper(user['username'],
 																' your cookie is still on cooldown (' +
 																cookieApi.time_left_formatted +
 																'), wait 30m intervals. To force your cookie reminder do ' +
 																' "kb cookie force" in chat.');
 														} else {
-															kb.say(channel, '$remind ' + results[0].username +
-																' eat cookie :) in 30m');
-															con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' +
+															Date.prototype.addMinutes = function(minutes) {
+															    var copiedDate = new Date(this.getTime());
+															    return new Date(copiedDate.getTime() + minutes * 60000);
+															}
+															const now = new Date();
+															kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 30m :)');
+															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + now.addMinutes(30).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 																'WHERE username="' + user['username'] + '"',
 																function(error, results, fields) {
 																	if (error) {
-																		kb.say(channel, user['username'] +
+																		kb.say(channel, user['username'] + 
 																			", database error LUL")
 																	}
 																})
 														}
-													} else if (cookieStatus.prestige === 4) {
+													} else if (cookieStatus.prestige === 3) {
 														if (cookieApi.seconds_left < 1180) {
-															kb.whisper(user['username'] +
+															kb.whisper(user['username'],
 																' your cookie is still on cooldown (' +
 																cookieApi.time_left_formatted +
 																'), wait 20m intervals. To force your cookie reminder do ' +
 																'"kb cookie force" in chat.');
 														} else {
-															kb.say(channel, '$remind ' + results[0].username +
-																' eat cookie :) in 20m');
-															con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' +
+															Date.prototype.addMinutes = function(minutes) {
+															    var copiedDate = new Date(this.getTime());
+															    return new Date(copiedDate.getTime() + minutes * 60000);
+															}
+															const now = new Date();
+															kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 20m :)');
+															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + now.addMinutes(20).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 																'WHERE username="' + user['username'] + '"',
 																function(error, results, fields) {
 																	if (error) {
-																		kb.say(channel, user['username'] +
+																		kb.say(channel, user['username'] + 
 																			", database error LUL")
 																	}
 																})
@@ -2828,19 +2840,23 @@ kb.on('connected', (adress, port) => {
 														}
 													} else if (cookieStatus.prestige === 0) {
 														if (cookieApi.cookieApi < 7180) {
-															kb.whisper(user['username'] +
+															kb.whisper(user['username'],
 																' your cookie is still on cooldown (' +
 																cookieApi.time_left_formatted +
 																'), wait 2h intervals. To force your cookie reminder do ' +
 																'"kb cookie force" in chat.');
 														} else {
-															kb.say(channel, '$remind ' + results[0].username +
-																' eat cookie :) in 2h');
-															con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' +
+															Date.prototype.addMinutes = function(minutes) {
+															    var copiedDate = new Date(this.getTime());
+															    return new Date(copiedDate.getTime() + minutes * 60000);
+															}
+															const now = new Date();
+															kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 2h :)');
+															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + now.addMinutes(120).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 																'WHERE username="' + user['username'] + '"',
 																function(error, results, fields) {
 																	if (error) {
-																		kb.say(channel, user['username'] +
+																		kb.say(channel, user['username'] + 
 																			", database error LUL")
 																	}
 																})
@@ -2993,21 +3009,56 @@ kb.on('connected', (adress, port) => {
 			}
 		});
 	});
-	/*	
-	
-	kb.on('notice', (channel, message, msgid) => {
-		console.log(message)
-		console.log(msgid)
-		if (message != 'color_changed' && message != 'msg_channel_suspended') {
-			if (channel != '#supinic') {
-				kb.say('kunszg', msgid);
-			} else {
-				return;
-			}
-		}
-	})
 
-	*/
+	//load all active reminders from database and check id's
+	async function reminder() {
+		const select = new Promise((resolve, reject) => {
+			con.query('SELECT username, channel, fires, status FROM cookie_reminders WHERE status!="fired"',
+				function(error, results, fields) {
+					if (error) {
+						reject(error)
+					} else {
+						resolve(results)
+					}
+				})
+		})
+		select.then(function(value) {
+			if (!value[0]) {
+				return;
+			} else {
+				const serverDate = new Date();
+				const fires = new Date(value[0].fires);
+				const diff = serverDate - fires
+				const differenceToSec = diff/1000;
+				if ((differenceToSec<=5) && !(differenceToSec<0)) {
+					const limit = new Set();
+					if (limit.has(value[0].username)) {
+						return;
+					} else {
+						limit.add(value[0].username)
+						kb.say(value[0].channel, 'test')
+						setTimeout(() => {limit.delete(value[0].username)}, 10000)		
+					}
+					setTimeout(() => {
+						const status = new Promise((resolve, reject) => {
+							con.query('UPDATE cookie_reminders SET status="fired" WHERE username="' + value[0].username + '" AND status="scheduled"',
+								function(error, results, fields) {
+									if (error) {
+										reject(error)
+									} else {
+										resolve(results)
+									}
+								})
+						})
+					}, 500)
+				}
+			}
+		})
+	}
+	setInterval(() => {
+		reminder()
+	}, 1000)
+
 
 	{
 		//active commands
