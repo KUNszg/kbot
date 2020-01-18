@@ -2744,7 +2744,7 @@ kb.on('connected', (adress, port) => {
 															}
 															const now = new Date();
 															kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 1h :)');
-															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + now.addMinutes(120).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 																'WHERE username="' + user['username'] + '"',
 																function(error, results, fields) {
 																	if (error) {
@@ -2767,7 +2767,7 @@ kb.on('connected', (adress, port) => {
 															}
 															const now = new Date();
 															kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 30m :)');
-															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + now.addMinutes(90).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + now.addMinutes(30).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 																'WHERE username="' + user['username'] + '"',
 																function(error, results, fields) {
 																	if (error) {
@@ -2790,7 +2790,7 @@ kb.on('connected', (adress, port) => {
 															}
 															const now = new Date();
 															kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 20m :)');
-															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + now.addMinutes(80).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + now.addMinutes(20).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 																'WHERE username="' + user['username'] + '"',
 																function(error, results, fields) {
 																	if (error) {
@@ -2852,7 +2852,7 @@ kb.on('connected', (adress, port) => {
 															}
 															const now = new Date();
 															kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 2h :)');
-															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + now.addMinutes(180).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + now.addMinutes(120).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 																'WHERE username="' + user['username'] + '"',
 																function(error, results, fields) {
 																	if (error) {
