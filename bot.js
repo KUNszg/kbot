@@ -3028,6 +3028,7 @@ kb.on('connected', (adress, port) => {
 			if (!value[0]) {
 				return;
 			} else {
+				console.log(value)
 
 				// some KKona shit going out there
 				const serverDate = new Date();
