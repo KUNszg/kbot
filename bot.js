@@ -2278,7 +2278,7 @@ kb.on('connected', (adress, port) => {
 								kb.say(channel, user['username'] + ', no message logs found for that query')
 								return;
 							}
-							const output = user['username'] + ', message " ' + valules[0].message + 
+							const output = user['username'] + ', message " ' + valules[0].message.substr(0, 255) + 
 								' " has been typed ' + valules[0].value_occurance + ' times in this channel.';
 							if (output.toString().length>500) {
 								async function check1() {
