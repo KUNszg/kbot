@@ -2491,7 +2491,7 @@ kb.on('connected', (adress, port) => {
 											const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
 												method: "POST",
 												url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-												body: "message=" + output.substr(0, 500) + '...',
+												body: "message=" + val[0].message.substr(0, 255),
 												headers: {
 													"Content-Type": "application/x-www-form-urlencoded"
 												},
@@ -2501,7 +2501,11 @@ kb.on('connected', (adress, port) => {
 													', the result is banphrased, I whispered it to you tho cmonBruh')
 												kb.whisper(user['username'], output);
 											} else {
-												kb.say(channel, output.substr(0, 500) + '...');
+												kb.say(channel, user['username'] + ", you have total of " + values[0].value +
+													" lines logged, that's " + ((values[0].value / occurence[0].value) * 
+														100).toFixed(2) +
+													'% of all lines in this channel, your most frequently typed message is: " ' +
+													val[0].message.substr(0, 255) + '...' + ' " (' + val[0].value_occurance + ' times)');
 											}
 										}
 										check1()
@@ -2520,7 +2524,11 @@ kb.on('connected', (adress, port) => {
 													', the result is banphrased, I whispered it to you tho cmonBruh')
 												kb.whisper(user['username'], output);
 											} else {
-												kb.say(channel, output);
+												kb.say(channel, user['username'] + ", you have total of " + values[0].value +
+													" lines logged, that's " + ((values[0].value / occurence[0].value) * 
+														100).toFixed(2) +
+													'% of all lines in this channel, your most frequently typed message is: " ' +
+													val[0].message.substr(0, 255) + ' " (' + val[0].value_occurance + ' times)');
 											}
 										}
 										check2()
