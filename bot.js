@@ -2150,9 +2150,14 @@ kb.on('connected', (adress, port) => {
 									if (error) throw error;
 									if (results.length === 0 || results[0].username === 0) {
 										kb.say(channel, user['username'] + ', you have been successfully registered for ' +
-											'a default reminder.');
+											'a cookie reminder.');
 										con.query('INSERT INTO cookies (username, created) VALUES ("' + user['username'] +
 											'", CURRENT_TIMESTAMP)',
+											function(error, results, fields) {
+												if (error) throw error;
+											})
+										con.query('INSERT INTO cookie_reminders (username) VALUES ("' + user['username'] +
+											'")',
 											function(error, results, fields) {
 												if (error) throw error;
 											})
@@ -2170,6 +2175,10 @@ kb.on('connected', (adress, port) => {
 									if (error) throw error;
 									if (results != 0) {
 										con.query('DELETE FROM cookies WHERE username="' + user['username'] + '"',
+											function(error, results, fields) {
+												if (error) throw error;
+											})
+										con.query('DELETE FROM cookie_reminders WHERE username="' + user['username'] + '"',
 											function(error, results, fields) {
 												if (error) throw error;
 												kb.say(channel, user['username'] +
@@ -2241,6 +2250,7 @@ kb.on('connected', (adress, port) => {
 						}, 8000);
 					}
 					
+					commandsExecuted.push('1');
 					if ((msg[0] != "-channel" && msg[0] != "-bruh") && msg.length != 0) { 
 						const occurence = new Promise((resolve, reject) => {
 							const sql = 'SELECT message, COUNT(message) AS value_occurance FROM ?? WHERE message=? GROUP BY message ORDER BY value_occurance DESC LIMIT 1;'
@@ -2366,7 +2376,9 @@ kb.on('connected', (adress, port) => {
 						})
 					} else if (msg[0] === "-bruh") {
 						const trichomp = new Promise((resolve, reject) => {
-							con.query('SELECT COUNT(message) AS valueCount FROM logs_' + channel.replace('#', '') + ' WHERE message LIKE "%nigg%" or message LIKE "%nibb%"',
+							con.query('SELECT COUNT(message) AS valueCount FROM logs_' + 
+								channel.replace('#', '') + 
+								' WHERE message LIKE "%nigg%" or message LIKE "%nibb%"',
 								function(error, results, fields) {
 									if (error) {
 										kb.say(channel, user['username'] + 
@@ -2378,7 +2390,10 @@ kb.on('connected', (adress, port) => {
 						})
 						trichomp.then(function(channelValue) {
 							const trichompCount = new Promise((resolve, reject) => {
-								con.query('SELECT COUNT(username) AS value FROM logs_' + channel.replace('#', '') + ' WHERE (message LIKE "%nigg%" OR message LIKE "%nibb%") AND username="' + user['username'] + '"',
+								con.query('SELECT COUNT(username) AS value FROM logs_' + 
+									channel.replace('#', '') + 
+									' WHERE (message LIKE "%nigg%" OR message LIKE "%nibb%") AND username="' +
+									 user['username'] + '"',
 									function(error, results, fields) {
 										if (error) {
 											reject(error)
@@ -2390,17 +2405,30 @@ kb.on('connected', (adress, port) => {
 							trichompCount.then(function(userValue) {
 								if (channel === '#haxk') {
 									if (userValue[0].value<2 && userValue[0].value != 1) {
-										kb.say(channel, user['username'] + ', you have spelled it ' + userValue[0].value + ' times, we coo TriHard - total of ' + channelValue[0].valueCount + ' n bombs in this channel TriChomp TeaTime')
+										kb.say(channel, user['username'] + ', you have spelled it ' + 
+											userValue[0].value + ' times, we coo TriHard - total of ' + 
+											channelValue[0].valueCount + 
+											' n bombs in this channel TriChomp TeaTime')
 									} else if (userValue[0].value===1){
-										kb.say(channel, user['username'] + ', you have spelled it ' + userValue[0].value + ' time WideHard - total of ' + channelValue[0].valueCount + ' n bombs in this channel TriChomp TeaTime')
+										kb.say(channel, user['username'] + ', you have spelled it ' +
+											userValue[0].value + ' time WideHard - total of ' +
+											channelValue[0].valueCount + 
+											' n bombs in this channel TriChomp TeaTime')
 									} else {
-										kb.say(channel, user['username'] + ', you have spelled it ' + userValue[0].value + ' times TriChomp Clap - total of ' + channelValue[0].valueCount + ' n bombs in this channel TriChomp TeaTime')
+										kb.say(channel, user['username'] + ', you have spelled it ' + 
+											userValue[0].value + ' times TriChomp Clap - total of ' + 
+											channelValue[0].valueCount + 
+											' n bombs in this channel TriChomp TeaTime')
 									}
 								} else {
 									if (channelValue[0].valueCount === 0) {
-										kb.say(channel, user['username'] + ', total of ' + channelValue[0].valueCount + ' racists in this channel, we coo TriHard Clap')
+										kb.say(channel, user['username'] + ', total of ' + 
+											channelValue[0].valueCount + 
+											' racists in this channel, we coo TriHard Clap')
 									} else {
-										kb.say(channel, user['username'] + ', total of ' + channelValue[0].valueCount + ' racists in this channel cmonBruh')
+										kb.say(channel, user['username'] + ', total of ' + 
+											channelValue[0].valueCount + 
+											' racists in this channel cmonBruh')
 									}
 								}
 							})
@@ -2714,6 +2742,7 @@ kb.on('connected', (adress, port) => {
 							kb.say(channel, '');
 							return;
 						} else {
+							commandsExecuted.push('1');
 							async function respo() {
 								const cookieApi = await fetch('https://api.roaringiron.com/cooldown/' +
 										user['user-id'] + '?id=true')
@@ -2744,7 +2773,8 @@ kb.on('connected', (adress, port) => {
 															}
 															const now = new Date();
 															kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 1h :)');
-															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+																now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 																'WHERE username="' + user['username'] + '"',
 																function(error, results, fields) {
 																	if (error) {
@@ -2767,7 +2797,8 @@ kb.on('connected', (adress, port) => {
 															}
 															const now = new Date();
 															kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 30m :)');
-															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + now.addMinutes(30).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+																now.addMinutes(30).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 																'WHERE username="' + user['username'] + '"',
 																function(error, results, fields) {
 																	if (error) {
@@ -2790,7 +2821,8 @@ kb.on('connected', (adress, port) => {
 															}
 															const now = new Date();
 															kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 20m :)');
-															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + now.addMinutes(20).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+																now.addMinutes(20).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 																'WHERE username="' + user['username'] + '"',
 																function(error, results, fields) {
 																	if (error) {
@@ -2852,7 +2884,8 @@ kb.on('connected', (adress, port) => {
 															}
 															const now = new Date();
 															kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 2h :)');
-															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + now.addMinutes(120).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+																now.addMinutes(120).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 																'WHERE username="' + user['username'] + '"',
 																function(error, results, fields) {
 																	if (error) {
