@@ -3053,7 +3053,7 @@ kb.on('connected', (adress, port) => {
 	});
 
 	// check and send reminders 
-	async function reminder() {
+	function reminder() {
 		const select = new Promise((resolve, reject) => {
 			con.query('SELECT username, channel, fires, status FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC',
 				function(error, results, fields) {
