@@ -1005,6 +1005,7 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "hosts",
 			aliases: null,
+			description: 'kb hosts [input] - get users that are hosting a specified channel (in input), no input will return an error.',
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.split(" ").splice(2);
@@ -1175,7 +1176,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "rl",
 			aliases: prefix + "randomline",
-			invocation: async (channel, user, message, args) => {
+			description: 'kb rl [input] - random line from current chat, use input to get random line from a specified user, no input will return a random quote.',
+,			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
 					const serverDate = new Date().getTime();
@@ -1461,6 +1463,7 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'rq',
 			aliases: prefix + 'randomquote',
+			description: "Your random quote from the current chat",
 			invocation: async (channel, user, message, args) => {
 				try {
 					const serverDate = new Date().getTime();
@@ -1637,6 +1640,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'bots',
 			aliases: prefix + 'bot',
+			description: 'list of known bots and when they were last seen, registered in Supibot database. This list supports only bots active in ' + 
+			"Supinic's".replace(/^(.{2})/, "$1\u{E0000}") + ' channel.',
 			invocation: async (channel, user, message, args) => {
 				try {
 					const dateMinute = new Date().getMinutes()
@@ -1693,6 +1698,7 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'PepeLaugh',
 			aliases: prefix + 'pepelaugh',
+			description: 'information about how many NPM modules my bot has installed in node_modules directory.',
 			invocation: async (channel, user, message, args) => {
 				try {
 					const {
@@ -1716,6 +1722,7 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "dank",
 			aliases: null,
+			description: 'kb dank [input] - dank a random person (use input) or yourself (without input) FeelsDankMan',
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.split(" ").splice(2);
@@ -1798,6 +1805,7 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "joemama",
 			aliases: prefix + "mama",
+			description: 'random "your mom" joke.',
 			invocation: async (channel, user, message, args) => {
 				try {
 					if (talkedRecently2.has(user['user-id'])) {
@@ -1912,6 +1920,7 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'github',
 			aliases: prefix + 'git',
+			description: 'link to my github repo and last commit timer.',
 			invocation: async (channel, user, message, args) => {
 				try {
 					const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
@@ -1960,6 +1969,7 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'suggest',
 			aliases: null,
+			description: 'kb suggest [input] - suggest something for me to improve/change in my bot.',
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').replace(/"/g, '').replace(/'/g, '').replace(/\\/g, '').split(' ').splice(2)
@@ -2235,9 +2245,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'stats',
 			aliases: null,
-			description: 'syntax: kb stats [channel] | no parameter - returns information about your logs in my  '  + 
-			'database | channel - returns information about channel logs you are currently in (amount of rows, size of' + 
-			' the table in MB)',
+			description: 'syntax: kb stats [-channel / -bruh / [input]] | no parameter - returns information about your logs in my  '  + 
+			'database | -channel - returns information about the current channel | -bruh - returns amount of racists in the chat | [input] - provide a custom message - cooldown 8s',
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
@@ -2760,7 +2769,7 @@ kb.on('connected', (adress, port) => {
 													kb.say(channel, '');
 												} else {
 													if (cookieStatus.prestige === 1) {
-														if (cookieApi.seconds_left < 3580 && cookieApi.seconds_left != 0) {
+														if (cookieApi.seconds_left < 3580) {
 															kb.whisper(user['username'],
 																' your cookie is still on cooldown (' +
 																cookieApi.time_left_formatted + '), wait 1h intervals. ' +
