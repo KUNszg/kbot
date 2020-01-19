@@ -1177,7 +1177,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "rl",
 			aliases: prefix + "randomline",
 			description: 'kb rl [input] - random line from current chat, use input to get random line from a specified user, no input will return a random quote.',
-,			invocation: async (channel, user, message, args) => {
+			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
 					const serverDate = new Date().getTime();
