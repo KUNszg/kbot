@@ -3087,7 +3087,7 @@ kb.on('connected', (adress, port) => {
 						return;
 					} else {
 						limit.add(value[0].username)
-						kb.say(value[0].channel, value[0].username + ', eat cookie please :)')
+						kb.say(value[0].channel, '(cookie reminder) ' + value[0].username + ', eat cookie please :)')
 						setTimeout(() => {limit.delete(value[0].username)}, 10000)		
 					}
 
