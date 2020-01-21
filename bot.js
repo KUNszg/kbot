@@ -2545,7 +2545,7 @@ kb.on('connected', (adress, port) => {
 
 		{
 			name: prefix + "surah",
-			aliases: "dailysurah",
+			aliases: prefix + "dailysurah",
 			invocation: async (channel, user, message, args) => {
 				if (talkedRecently.has(user['user-id'])) {
 					return '';
