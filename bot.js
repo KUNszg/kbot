@@ -2571,9 +2571,9 @@ kb.on('connected', (adress, port) => {
 				}).then(response => response.json()))
 				if (channel === "#nymn") {
 					if (banphrasePass.banned === true) {
-						return user['username'] +
-							', the result is banphrased, I whispered it to you tho cmonBruh';
 						kb.whisper(user['username'], output);
+						return user['username'] +
+							', the result is banphrased, I whispered it to you tho cmonBruh';		
 					} else {
 						return user['username'] + ', ' + output;
 					}
