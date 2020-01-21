@@ -2544,6 +2544,46 @@ kb.on('connected', (adress, port) => {
 		},
 
 		{
+			name: prefix + "surah",
+			aliases: null,
+			invocation: async (channel, user, message, args) => {
+				if (talkedRecently.has(user['user-id'])) {
+					return '';
+				} else {
+					talkedRecently.add(user['user-id']);
+					setTimeout(() => {
+						talkedRecently.delete(user['user-id']);
+					}, 8000);
+				}
+				const randomNumberFromRange = Math.floor(Math.random() * 6237) + 1;
+				const quranApi = await fetch("http://api.alquran.cloud/ayah/" + randomNumberFromRange + 
+					"/editions/quran-uthmani,en.pickthall").then(response => response.json());
+				const output = user['username'] + ', ' + quranApi.data[0].surah.englishName + ' - ' + 
+					quranApi.data[0].surah.englishNameTranslation + ': ' + quranApi.data[0].text + ' - ' + 
+					quranApi.data[1].text + ' ' + quranApi.data[0].page + ':' + quranApi.data[0].ruku;
+				const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
+					method: "POST",
+					url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+					body: "message=" + output,
+					headers: {
+						"Content-Type": "application/x-www-form-urlencoded"
+					},
+				}).then(response => response.json()))
+				if (channel === "#nymn") {
+					if (banphrasePass.banned === true) {
+						return user['username'] +
+							', the result is banphrased, I whispered it to you tho cmonBruh';
+						kb.whisper(user['username'], output);
+					} else {
+						return user['username'] + ', ' + output;
+					}
+				} else {
+					return user['username'] + ', ' + output;
+				}
+			}	
+		},
+
+		{
 			name: prefix + "commands",
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
