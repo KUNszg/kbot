@@ -2560,7 +2560,7 @@ kb.on('connected', (adress, port) => {
 					"/editions/quran-uthmani,en.pickthall").then(response => response.json());
 				const output = quranApi.data[0].surah.englishName + ' - ' + 
 					quranApi.data[0].surah.englishNameTranslation + ': ' + quranApi.data[0].text + ' - ' + 
-					quranApi.data[1].text + ' ' + quranApi.data[0].page + ':' + quranApi.data[0].ruku;
+					quranApi.data[1].text + ' ' + quranApi.data[0].page + ':' + quranApi.data[0].surah.numberOfAyahs;
 				const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
 					method: "POST",
 					url: "https://nymn.pajbot.com/api/v1/banphrases/test",
