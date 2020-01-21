@@ -2559,8 +2559,8 @@ kb.on('connected', (adress, port) => {
 				const quranApi = await fetch("http://api.alquran.cloud/ayah/" + randomNumberFromRange + 
 					"/editions/quran-uthmani,en.pickthall").then(response => response.json());
 				const output = quranApi.data[0].surah.englishName + ' - ' + 
-					quranApi.data[0].surah.englishNameTranslation + ': ' + quranApi.data[0].text + ' - ' + 
-					quranApi.data[1].text + ' ' + quranApi.data[0].page + ':' + quranApi.data[0].surah.numberOfAyahs;
+					quranApi.data[0].surah.englishNameTranslation + ': '  + quranApi.data[1].text + ' ' + 
+					quranApi.data[0].page + ':' + quranApi.data[0].surah.numberOfAyahs;
 				const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
 					method: "POST",
 					url: "https://nymn.pajbot.com/api/v1/banphrases/test",
