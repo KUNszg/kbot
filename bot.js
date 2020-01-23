@@ -2476,21 +2476,15 @@ kb.on('connected', (adress, port) => {
 										if (userValue[0].value<2 && userValue[0].value != 1) {
 											kb.say(channel, user['username'] + ', user ' + 
 												msg[1].replace(/^(.{2})/, "$1\u{E0000}") + ' has spelled it ' + 
-												userValue[0].value + ' times, we coo TriHard - total of ' + 
-												channelValue[0].valueCount + 
-												' n bombs in this channel TriChomp TeaTime')
+												userValue[0].value + ' times, we coo TriHard')
 										} else if (userValue[0].value===1){
 											kb.say(channel, user['username'] + ', user ' + 
 												msg[1].replace(/^(.{2})/, "$1\u{E0000}") + ' has spelled it ' +
-												userValue[0].value + ' time WideHard - total of ' +
-												channelValue[0].valueCount + 
-												' n bombs in this channel TriChomp TeaTime')
+												userValue[0].value + ' time WideHard')
 										} else {
 											kb.say(channel, user['username'] + ', user ' + 
 												msg[1].replace(/^(.{2})/, "$1\u{E0000}") + ' has spelled it ' + 
-												userValue[0].value + ' times TriChomp Clap - total of ' + 
-												channelValue[0].valueCount + 
-												' n bombs in this channel TriChomp TeaTime')
+												userValue[0].value + ' times TriChomp Clap')
 										}
 									} else {
 										if (channelValue[0].valueCount === 0) {
