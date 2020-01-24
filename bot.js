@@ -2840,7 +2840,7 @@ kb.on('connected', (adress, port) => {
 
 		{
 			name: dankPrefix + 'cookie',
-			aliases: null,
+			aliases: '!cookie',
 			permission: 'restricted',
 			invocation: async (channel, user, args) => {
 				try {
