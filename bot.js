@@ -366,11 +366,11 @@ kb.on('connected', (adress, port) => {
 					if (toHours > 72) {
 						return "Next rocket launch by SpaceX in " + (toHours / 24).toFixed(0) + " days, rocket " +
 							space.rocket.rocket_name + ", mission " + space.mission_name + ", " +
-							space.launch_site.site_name_long;
+							space.launch_site.site_name_long + ', reddit campaign: ' + space.links.reddit_campaign;
 					} else {
 						return "Next rocket launch by SpaceX in " + format(DifftoSeconds) + ", rocket " +
 							space.rocket.rocket_name + ", mission " + space.mission_name + ", " +
-							space.launch_site.site_name_long;
+							space.launch_site.site_name_long + ', reddit campaign: ' + space.links.reddit_campaign;
 					}
 				} catch (err) {
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
@@ -2306,7 +2306,7 @@ kb.on('connected', (adress, port) => {
 							const resultsRegister = await doQuery('SELECT username FROM ed WHERE username="' + user['username'] + '"');
 							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
 								kb.say(channel, user['username'] + ', you have been successfully registered for ' +
-									'a dungeon reminder.');
+									'a dungeon reminder, Your reminders will be whispered to you.');
 								await doQuery('INSERT INTO ed (username, created) VALUES ("' + user['username'] +
 									'", CURRENT_TIMESTAMP)');
 								await doQuery('INSERT INTO ed_reminders (username) VALUES ("' + user['username'] +
