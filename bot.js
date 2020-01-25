@@ -3047,7 +3047,7 @@ kb.on('connected', (adress, port) => {
 					}
 					return '';
 				} catch (returnValue) {
-					return returnValue.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').replace(/\d/g, '').replace(/\./g, '');
+					return returnValue.toString().replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').replace(/\d/g, '').replace(/\./g, '');
 				}
 			}
 		},
