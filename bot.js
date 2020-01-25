@@ -60,6 +60,66 @@ kb.on('connected', (adress, port) => {
 			console.log("Connected!");
 		}
 	});
+	// check and send reminders 
+		function reminder() {
+			const select = new Promise((resolve, reject) => {
+				con.query('SELECT username, channel, fires, status FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC',
+					function(error, results, fields) {
+						if (error) {
+							reject(error)
+						} else {
+							resolve(results)
+						}
+					})
+			})
+			select.then(function(value) {
+				
+				// if there is no "fired" argument, ignore
+				if (!value[0]) {
+					return;
+				} else {
+
+					// some KKona shit going out there
+					const serverDate = new Date();
+					const fires = new Date(value[0].fires);
+					const diff = serverDate - fires
+					const differenceToSec = diff/1000;
+
+					// consider only cases where reminder is apart from current date by 7 seconds
+					if ((differenceToSec<=7) && !(differenceToSec<0)) {
+						const limit = new Set();
+
+						// make sure not to repeat the same reminder by adding a unique username
+						// to the Set Object and delete it after 10s 
+						if (limit.has(value[0].username)) {
+							return;
+						} else {
+							limit.add(value[0].username)
+							kb.say(value[0].channel, '(cookie reminder) ' + value[0].username + ', eat cookie please :)')
+							setTimeout(() => {limit.delete(value[0].username)}, 10000)		
+						}
+
+						// update the database with fired reminder with a timeout, so the TMI message can keep up
+						setTimeout(() => {
+							const status = new Promise((resolve, reject) => {
+								con.query('UPDATE cookie_reminders SET status="fired" WHERE username="' + 
+									value[0].username + '" AND status="scheduled"',
+									function(error, results, fields) {
+										if (error) {
+											reject(error)
+										} else {
+											resolve(results)
+										}
+									})
+							})
+						}, 500)
+					}
+				}
+			})
+		}
+		setInterval(() => {
+			reminder()
+		}, 1000)
 
 	const allowFastramid = [{
 			ID: '178087241'
@@ -84,6 +144,16 @@ kb.on('connected', (adress, port) => {
 			ID: '31400525'
 		} //supinic
 	];
+	const doQuery = (query) => new Promise((resolve, reject) => {
+	    con.query(query, (err, results, fields) => {
+	        if (err) {
+	            reject(err);
+	        }
+	        else {
+	            resolve(results);
+	        }      
+	    });
+	});
 
 	const prefix = "kb ";
 	const commandsExecuted = [];
@@ -2129,14 +2199,8 @@ kb.on('connected', (adress, port) => {
 							if (user['user-id'] != '178087241') {
 								return '';
 							} else {
-								con.query('UPDATE cookieModule SET reminders="' + msg[1] + '"',
-									function(error, results, fields) {
-										if (error) {
-											kb.say(channel, ' error eShrug')
-										} else {
-											kb.say(channel, 'updated to ' + msg[1])
-										}
-									})
+								await doQuery('UPDATE cookieModule SET reminders="' + msg[1] + '" WHERE type="cookie"');
+								kb.say(channel, 'updated "cookie" module status to ' + msg[1])
 							}
 							break;
 						case 'force':
@@ -2155,51 +2219,33 @@ kb.on('connected', (adress, port) => {
 							}
 							break;
 						case 'register':
-							con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"',
-								function(error, results, fields) {
-									if (error) throw error;
-									if (results.length === 0 || results[0].username === 0) {
-										kb.say(channel, user['username'] + ', you have been successfully registered for ' +
-											'a cookie reminder.');
-										con.query('INSERT INTO cookies (username, created) VALUES ("' + user['username'] +
-											'", CURRENT_TIMESTAMP)',
-											function(error, results, fields) {
-												if (error) throw error;
-											})
-										con.query('INSERT INTO cookie_reminders (username) VALUES ("' + user['username'] +
-											'")',
-											function(error, results, fields) {
-												if (error) throw error;
-											})
-									} else if (results[0].username === user['username']) {
-										kb.say(channel, user['username'] + ', you are already registered for cookie ' +
-											'reminders, type "kb help cookie" for command syntax.');
-									} else {
-										return '';
-									}
-								})
+							const resultsRegister = await doQuery('SELECT username FROM cookies WHERE username="' + user['username'] + '"');
+							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
+								kb.say(channel, user['username'] + ', you have been successfully registered for ' +
+									'a cookie reminder.');
+								await doQuery('INSERT INTO cookies (username, created) VALUES ("' + user['username'] +
+									'", CURRENT_TIMESTAMP)');
+								await doQuery('INSERT INTO cookie_reminders (username) VALUES ("' + user['username'] +
+									'")');
+							} else if (resultsRegister[0].username === user['username']) {
+								kb.say(channel, user['username'] + ', you are already registered for cookie ' +
+									'reminders, type "kb help cookie" for command syntax.');
+							} else {
+								return '';
+							}
 							break;
 						case 'unregister':
-							con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"',
-								function(error, results, fields) {
-									if (error) throw error;
-									if (results != 0) {
-										con.query('DELETE FROM cookies WHERE username="' + user['username'] + '"',
-											function(error, results, fields) {
-												if (error) throw error;
-											})
-										con.query('DELETE FROM cookie_reminders WHERE username="' + user['username'] + '"',
-											function(error, results, fields) {
-												if (error) throw error;
-												kb.say(channel, user['username'] +
-													', you are no longer registered for a cookie reminder.');
-											})
-									} else {
-										kb.say(channel, user['username'] +
-											", you are not registered for a cookie reminder, therefore you can't be" +
-											" unregistered FeelsDankMan");
-									}
-								})
+							const resultsUnregister = await doQuery('SELECT username FROM cookies WHERE username="' + user['username'] + '"');
+							if (resultsUnregister != 0) {
+								await doQuery('DELETE FROM cookies WHERE username="' + user['username'] + '"');
+								await doQuery('DELETE FROM cookie_reminders WHERE username="' + user['username'] + '"');
+								kb.say(channel, user['username'] +
+									', you are no longer registered for a cookie reminder.');
+							} else {
+								kb.say(channel, user['username'] +
+									", you are not registered for a cookie reminder, therefore you can't be" +
+									" unregistered FeelsDankMan");
+							}
 							break;
 						case 'status':
 							const cookieStatus = await fetch('https://api.roaringiron.com/cooldown/' +
@@ -2208,29 +2254,19 @@ kb.on('connected', (adress, port) => {
 							const cookiesEaten = await fetch('https://api.roaringiron.com/user/' +
 									user['user-id'] + '?id=true')
 								.then(response => response.json());
-							con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"',
-								function(error, results, fields) {
-									if (error) throw error;
-									if (results.length === 0) {
-										kb.say(channel, user['username'] + ', you are not registered in the database,' +
-											' type "kb help cookie" for command syntax.');
-									} else {
-										con.query('SELECT username, created FROM cookies WHERE username="' +
-											user['username'] + '"',
-											function(error, results, fields) {
-												if (error) {
-													throw error
-												} else {
-													kb.say(channel, user['username'] +
-														', Your current reminder rank is prestige ' + 
-														cookiesEaten.prestige + ' (' + cookiesEaten.rank + 
-														') - time left until next cookie: ' + 
-														cookieStatus.time_left_unformatted + ' - cookies: ' +
-														cookiesEaten.cookies);
-												}
-											})
-									}
-								})
+							const checkUser = await doQuery('SELECT username FROM cookies WHERE username="' + user['username'] + '"');
+							if (checkUser.length === 0) {
+								kb.say(channel, user['username'] + ', you are not registered in the database,' +
+									' type "kb help cookie" for command syntax.');
+							} else {
+								await doQuery('SELECT username, created FROM cookies WHERE username="' + user['username'] + '"');
+								kb.say(channel, user['username'] +
+									', Your current reminder rank is prestige ' + 
+									cookiesEaten.prestige + ' (' + cookiesEaten.rank + 
+									') - time left until next cookie: ' + 
+									cookieStatus.time_left_unformatted + ' - cookies: ' +
+									cookiesEaten.cookies);
+							}
 							break;
 						default:
 							return user['username'] + ', invalid syntax. See "kb help cookie" for command help.';
@@ -2242,6 +2278,70 @@ kb.on('connected', (adress, port) => {
 			}
 		},
 
+		{
+			name: prefix + 'ed',
+			aliases: null,
+			description: 'after "kb ed" type register/unregister to register or unregister from the database - cooldown 10s',
+			invocation: async (channel, user, message, args) => {
+				try {
+					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
+					if (talkedRecently.has(user['user-id'])) {
+						return '';
+					} else {
+						talkedRecently.add(user['user-id']);
+						setTimeout(() => {
+							talkedRecently.delete(user['user-id']);
+						}, 10000);
+					}
+					switch (msg[0]) {
+						case 'module':
+							if (user['user-id'] != '178087241') {
+								return '';
+							} else {
+								await doQuery('UPDATE cookieModule SET reminders="' + msg[1] + '" WHERE type="ed"');
+								kb.say(channel, 'updated "ed" module status to ' + msg[1])
+							}
+							break;
+						case 'register':
+							const resultsRegister = await doQuery('SELECT username FROM ed WHERE username="' + user['username'] + '"');
+							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
+								kb.say(channel, user['username'] + ', you have been successfully registered for ' +
+									'a dungeon reminder.');
+								await doQuery('INSERT INTO ed (username, created) VALUES ("' + user['username'] +
+									'", CURRENT_TIMESTAMP)');
+								await doQuery('INSERT INTO ed_reminders (username) VALUES ("' + user['username'] +
+									'")');
+							} else if (resultsRegister[0].username === user['username']) {
+								kb.say(channel, user['username'] + ', you are already registered for dungeon ' +
+									'reminders, type "kb help ed" for command syntax.');
+							} else {
+								return '';
+							}
+							break;
+						case 'unregister':
+							const resultsUnregister = await doQuery('SELECT username FROM ed WHERE username="' + user['username'] + '"');
+							if (resultsUnregister != 0) {
+								await doQuery('DELETE FROM ed WHERE username="' + user['username'] + '"');
+								await doQuery('DELETE FROM ed_reminders WHERE username="' + user['username'] + '"');
+								kb.say(channel, user['username'] +
+									', you are no longer registered for a dungeon reminder.');
+							} else {
+								kb.say(channel, user['username'] +
+									", you are not registered for a dungeon reminder, therefore you can't be" +
+									" unregistered FeelsDankMan");
+							}
+							break;
+						default:
+							return user['username'] + ', invalid syntax. See "kb help ed" for command help.';
+					}
+					return '';
+				} catch (err) {
+					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
+				}
+			}
+		},
+
+		// todo - replace promises with await doQuery() 
 		{
 			name: prefix + 'stats',
 			aliases: null,
@@ -2261,65 +2361,55 @@ kb.on('connected', (adress, port) => {
 					
 					commandsExecuted.push('1');
 					if ((msg[0] != "-channel" && msg[0] != "-bruh") && msg.length != 0) { 
-						const occurence = new Promise((resolve, reject) => {
-							const sql = 'SELECT message, COUNT(message) AS value_occurance FROM ?? WHERE message=? GROUP BY message ORDER BY value_occurance DESC LIMIT 1;'
-							const inserts = ['logs_' + channel.replace('#', ''), msg.join(' ')]
-							con.query(mysql.format(sql, inserts), function(error, results, fields) {
-								if (error) {
-									reject(error)
+						const sql = 'SELECT message, COUNT(message) AS value_occurance FROM ?? WHERE message=? GROUP BY message ORDER BY value_occurance DESC LIMIT 1;'
+						const inserts = ['logs_' + channel.replace('#', ''), msg.join(' ')]
+						const occurence = await doQuery(mysql.format(sql, inserts));
+						const fetch = require('node-fetch');
+						if (occurence.length === 0) {
+							kb.say(channel, user['username'] + ', no message logs found for that query')
+							return;
+						}
+						const output = user['username'] + ', message " ' + occurence[0].message.substr(0, 255) + 
+							' " has been typed ' + occurence[0].value_occurance + ' times in this channel.';
+						if (output.toString().length>500) {
+							async function check1() {
+								const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
+									method: "POST",
+									url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+									body: "message=" + output.substr(0, 500) + '...',
+									headers: {
+										"Content-Type": "application/x-www-form-urlencoded"
+									},
+								}).then(response => response.json()))
+								if (banphrasePass.banned === true) {
+									kb.say(channel, user['username'] +
+										', the result is banphrased, I whispered it to you tho cmonBruh')
+									kb.whisper(user['username'], output);
 								} else {
-									resolve(results)
+									kb.say(channel, output.substr(0, 500) + '...');
 								}
-							})
-						})
-						occurence.then(function(valules) {
-							const fetch = require('node-fetch');
-							if (valules.length === 0) {
-								kb.say(channel, user['username'] + ', no message logs found for that query')
-								return;
 							}
-							const output = user['username'] + ', message " ' + valules[0].message.substr(0, 255) + 
-								' " has been typed ' + valules[0].value_occurance + ' times in this channel.';
-							if (output.toString().length>500) {
-								async function check1() {
-									const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
-										method: "POST",
-										url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-										body: "message=" + output.substr(0, 500) + '...',
-										headers: {
-											"Content-Type": "application/x-www-form-urlencoded"
-										},
-									}).then(response => response.json()))
-									if (banphrasePass.banned === true) {
-										kb.say(channel, user['username'] +
-											', the result is banphrased, I whispered it to you tho cmonBruh')
-										kb.whisper(user['username'], output);
-									} else {
-										kb.say(channel, output.substr(0, 500) + '...');
-									}
+							check1()
+						} else {
+							async function check2() {
+								const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
+									method: "POST",
+									url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+									body: "message=" + output,
+									headers: {
+										"Content-Type": "application/x-www-form-urlencoded"
+									},
+								}).then(response => response.json()))
+								if (banphrasePass.banned === true) {
+									kb.say(channel, user['username'] +
+										', the result is banphrased, I whispered it to you tho cmonBruh')
+									kb.whisper(user['username'], output);
+								} else {
+									kb.say(channel, output);
 								}
-								check1()
-							} else {
-								async function check2() {
-									const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
-										method: "POST",
-										url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-										body: "message=" + output,
-										headers: {
-											"Content-Type": "application/x-www-form-urlencoded"
-										},
-									}).then(response => response.json()))
-									if (banphrasePass.banned === true) {
-										kb.say(channel, user['username'] +
-											', the result is banphrased, I whispered it to you tho cmonBruh')
-										kb.whisper(user['username'], output);
-									} else {
-										kb.say(channel, output);
-									}
-								}
-								check2()
 							}
-						})
+							check2()
+						}
 					} else if (msg[0] === "-channel") {
 						const rows = new Promise((resolve, reject) => {
 							con.query('SELECT COUNT(ID) as value FROM logs_' + channel.replace('#', ''),
@@ -2850,182 +2940,156 @@ kb.on('connected', (adress, port) => {
 						talkedRecently.add(user['user-id']);
 						setTimeout(() => {
 							talkedRecently.delete(user['user-id']);
-						}, 18000);
+						}, 10000);
 					}
-					con.query('SELECT reminders FROM cookieModule', function(error, results, fields) {
-						console.log(results)
-						if (results[0].reminders === false) {
+					const cookieModule = await doQuery('SELECT reminders FROM cookieModule WHERE type="cookie');
+					if (cookieModule[0].reminders === false) {
+						return '';
+					} else {
+						const cookieApi = await fetch('https://api.roaringiron.com/cooldown/' +
+								user['user-id'] + '?id=true')
+							.then(response => response.json());
+						const cookieStatus = await fetch('https://api.roaringiron.com/user/' +
+								user['user-id'] + '?id=true')
+							.then(response => response.json());
+						const query = await doQuery('SELECT username FROM cookies WHERE username="' + user['username'] + '"');
+						if (query.length === 0) {
 							kb.say(channel, '');
-							return;
 						} else {
 							commandsExecuted.push('1');
-							async function respo() {
-								const cookieApi = await fetch('https://api.roaringiron.com/cooldown/' +
-										user['user-id'] + '?id=true')
-									.then(response => response.json());
-								const cookieStatus = await fetch('https://api.roaringiron.com/user/' +
-										user['user-id'] + '?id=true')
-									.then(response => response.json());
-								const query = await new Promise((reject, resolve) => {
-									con.query('SELECT username FROM cookies WHERE username="' + user['username'] + '"',
-										function(error, results, fields) {
-											if (error) {
-												reject('kunszg', '@kunszg cookie error: ' + error)
-											} else {
-												if (results.length === 0) {
-													kb.say(channel, '');
-												} else {
-													if (cookieStatus.prestige === 1) {
-														if (cookieApi.seconds_left < 3580) {
-															kb.whisper(user['username'],
-																' your cookie is still on cooldown (' +
-																cookieApi.time_left_formatted + '), wait 1h intervals. ' +
-																'To force your cookie reminder do ' +
-																'"kb cookie force" in chat.');
-														} else {
-															Date.prototype.addMinutes = function(minutes) {
-															    var copiedDate = new Date(this.getTime());
-															    return new Date(copiedDate.getTime() + minutes * 60000);
-															}
-															const now = new Date();
-															kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 1h :)');
-															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
-																now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
-																'WHERE username="' + user['username'] + '"',
-																function(error, results, fields) {
-																	if (error) {
-																		kb.say(channel, user['username'] + 
-																			", database error LUL")
-																	}
-																})
-														}
-													} else if (cookieStatus.prestige === 2) {
-														if (cookieApi.seconds_left < 1780) {
-															kb.whisper(user['username'],
-																' your cookie is still on cooldown (' +
-																cookieApi.time_left_formatted +
-																'), wait 30m intervals. To force your cookie reminder do ' +
-																' "kb cookie force" in chat.');
-														} else {
-															Date.prototype.addMinutes = function(minutes) {
-															    var copiedDate = new Date(this.getTime());
-															    return new Date(copiedDate.getTime() + minutes * 60000);
-															}
-															const now = new Date();
-															kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 30m :)');
-															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
-																now.addMinutes(30).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
-																'WHERE username="' + user['username'] + '"',
-																function(error, results, fields) {
-																	if (error) {
-																		kb.say(channel, user['username'] + 
-																			", database error LUL")
-																	}
-																})
-														}
-													} else if (cookieStatus.prestige === 3) {
-														if (cookieApi.seconds_left < 1180) {
-															kb.whisper(user['username'],
-																' your cookie is still on cooldown (' +
-																cookieApi.time_left_formatted +
-																'), wait 20m intervals. To force your cookie reminder do ' +
-																'"kb cookie force" in chat.');
-														} else {
-															Date.prototype.addMinutes = function(minutes) {
-															    var copiedDate = new Date(this.getTime());
-															    return new Date(copiedDate.getTime() + minutes * 60000);
-															}
-															const now = new Date();
-															kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 20m :)');
-															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
-																now.addMinutes(20).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
-																'WHERE username="' + user['username'] + '"',
-																function(error, results, fields) {
-																	if (error) {
-																		kb.say(channel, user['username'] + 
-																			", database error LUL")
-																	}
-																})
-														}
-													} else if (cookieStatus.prestige === 4) {
-														if (cookieApi.can_claim === false) {
-															kb.whisper(user['username'] +
-																' your cookie is still on cooldown (' +
-																cookieApi.time_left_formatted + '), wait intervals. ' +
-																'To force your cookie reminder do ' +
-																'"kb cookie force" in chat.');
-														} else {
-															kb.say(channel, user['username'] + ', this rank is currently ' +
-																'not supported, see "kb help cookie" for command syntax.');
-															con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' +
-																'WHERE username="' + user['username'] + '"',
-																function(error, results, fields) {
-																	if (error) {
-																		kb.say(channel, user['username'] +
-																			", database error LUL")
-																	}
-																})
-														}
-													} else if (cookieStatus.prestige === 5) {
-														if (cookieApi.can_claim === false) {
-															kb.whisper(user['username'] +
-																' your cookie is still on cooldown (' +
-																cookieApi.time_left_formatted +
-																'), wait intervals. To force your cookie reminder do ' +
-																'"kb cookie force" in chat.');
-														} else {
-															kb.say(channel, user['username'] +
-																', this rank is currently not supported, see ' +
-																'"kb help cookie" for command syntax.');
-															con.query('UPDATE cookies SET last_executed=CURRENT_TIMESTAMP ' +
-																'WHERE username="' + user['username'] + '"',
-																function(error, results, fields) {
-																	if (error) {
-																		kb.say(channel, user['username'] +
-																			", database error LUL")
-																	}
-																})
-														}
-													} else if (cookieStatus.prestige === 0) {
-														if (cookieApi.cookieApi < 7180) {
-															kb.whisper(user['username'],
-																' your cookie is still on cooldown (' +
-																cookieApi.time_left_formatted +
-																'), wait 2h intervals. To force your cookie reminder do ' +
-																'"kb cookie force" in chat.');
-														} else {
-															Date.prototype.addMinutes = function(minutes) {
-															    var copiedDate = new Date(this.getTime());
-															    return new Date(copiedDate.getTime() + minutes * 60000);
-															}
-															const now = new Date();
-															kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 2h :)');
-															con.query('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
-																now.addMinutes(120).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
-																'WHERE username="' + user['username'] + '"',
-																function(error, results, fields) {
-																	if (error) {
-																		kb.say(channel, user['username'] + 
-																			", database error LUL")
-																	}
-																})
-														}
-													} else {
-														kb.say(channel, '')
-													}
-												}
-											}
-										})
-								})
-								return query;
+							Date.prototype.addMinutes = function(minutes) {
+								var copiedDate = new Date(this.getTime());
+								return new Date(copiedDate.getTime() + minutes * 60000);
 							}
-							respo()
+							if (cookieStatus.prestige === 1) {
+								if (cookieApi.seconds_left < 3580) {
+									kb.whisper(user['username'],
+										' your cookie is still on cooldown (' +
+										cookieApi.time_left_formatted + '), wait 1h intervals. ' +
+										'To force your cookie reminder do ' +
+										'"kb cookie force" in the chat.');
+								} else {
+									const now = new Date();
+									kb.whisper(user['username'], user['username'] + ', I will remind you to eat the cookie in 1h :)');
+								 	await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+										now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+										'WHERE username="' + user['username'] + '"');
+							 	}
+							} else if (cookieStatus.prestige === 2) {
+								if (cookieApi.seconds_left < 1780) {
+									kb.whisper(user['username'],
+										' your cookie is still on cooldown (' +
+										cookieApi.time_left_formatted +
+										'), wait 30m intervals. To force your cookie reminder do ' +
+										' "kb cookie force" in the chat.');
+								} else {
+									const now = new Date();
+									kb.whisper(user['username'], user['username'] + ', I will remind you to eat the cookie in 30m :)');
+									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+										now.addMinutes(30).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+										'WHERE username="' + user['username'] + '"');
+								}
+							} else if (cookieStatus.prestige === 3) {
+								if (cookieApi.seconds_left < 1180) {
+									kb.whisper(user['username'],
+										' your cookie is still on cooldown (' +
+										cookieApi.time_left_formatted +
+										'), wait 20m intervals. To force your cookie reminder do ' +
+										'"kb cookie force" the in chat.');
+								} else {
+									const now = new Date();
+									kb.whisper(user['username'], user['username'] + ', I will remind you to eat the cookie in 20m :)');
+									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+										now.addMinutes(20).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+										'WHERE username="' + user['username'] + '"');
+								}
+							} else if (cookieStatus.prestige === 4) {
+								if (cookieApi.can_claim === false) {
+									kb.whisper(user['username'] +
+										' your cookie is still on cooldown (' +
+										cookieApi.time_left_formatted + '), wait intervals. ' +
+										'To force your cookie reminder do ' +
+										'"kb cookie force" in chat.');
+								} else {
+									kb.whisper(user['username'], user['username'] + ', this rank is currently ' +
+										'not supported, see "kb help cookie" for command syntax.');
+								}
+							} else if (cookieStatus.prestige === 5) {
+								if (cookieApi.can_claim === false) {
+									kb.whisper(user['username'] +
+										' your cookie is still on cooldown (' +
+										cookieApi.time_left_formatted +
+										'), wait intervals. To force your cookie reminder do ' +
+										'"kb cookie force" in chat.');
+								} else {
+									kb.whisper(user['username'], user['username'] +
+										', this rank is currently not supported, see ' +
+										'"kb help cookie" for command syntax.');
+								}
+							} else if (cookieStatus.prestige === 0) {
+								if (cookieApi.cookieApi < 7180) {
+									kb.whisper(user['username'],
+										' your cookie is still on cooldown (' +
+										cookieApi.time_left_formatted +
+										'), wait 2h intervals. To force your cookie reminder do ' +
+										'"kb cookie force" in chat.');
+								} else {
+									const now = new Date();
+									kb.whisper(user['username'], user['username'] + ', I will remind you to eat the cookie in 2h :)');
+									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+										now.addMinutes(120).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+										'WHERE username="' + user['username'] + '"');
+								}
+							} else {
+								kb.say(channel, '')
+							}
 						}
-					})
+					}
 					return '';
 				} catch (returnValue) {
 					return returnValue.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').replace(/\d/g, '').replace(/\./g, '');
 				}
+			}
+		},
+		
+		{
+			name: "+ed",
+			aliases: null,
+			invocation: async (channel, user, message, args) => {
+				if (talkedRecently2.has(user['user-id'])) { 
+					return '';
+				} else {
+					talkedRecently2.add(user['user-id']);
+					setTimeout(() => {
+						talkedRecently2.delete(user['user-id']);
+					}, 2000);
+				}
+				const cookieModule = await doQuery('SELECT reminders FROM cookieModule WHERE type="ed"');
+				if (cookieModule[0].reminders === false) {
+					return '';
+				} else {
+					const checkUsername = await doQuery('SELECT username FROM ed WHERE username="' + user['username'] + '"');
+					if (checkUsername.length === 0) {
+						return '';
+				    } else {
+						commandsExecuted.push("1");
+						const value = await doQuery('SELECT status AS val FROM ed_reminders WHERE username="' + checkUsername[0].username + '"');
+						if (value[0].val === "scheduled") {
+							return '';
+						} else {
+							Date.prototype.addMinutes = function(minutes) {
+								var copiedDate = new Date(this.getTime());
+								return new Date(copiedDate.getTime() + minutes * 60000);
+							}
+							const now = new Date();
+							kb.whisper(channel, user['username'] + ', I will remind you to enter the dungeon in 10m :)');
+							const update = await doQuery('UPDATE ed_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+									now.addMinutes(10).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+									'WHERE username="' + user['username'] + '"');
+						}
+					}
+				}
+				return '';
 			}
 		},
 
@@ -3160,66 +3224,82 @@ kb.on('connected', (adress, port) => {
 	});
 
 	// check and send reminders 
-	function reminder() {
-		const select = new Promise((resolve, reject) => {
-			con.query('SELECT username, channel, fires, status FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC',
-				function(error, results, fields) {
-					if (error) {
-						reject(error)
-					} else {
-						resolve(results)
-					}
-				})
-		})
-		select.then(function(value) {
-			
-			// if there is no "fired" argument, ignore
-			if (!value[0]) {
-				return;
-			} else {
+	async function reminder() {
+		const value = await doQuery('SELECT username, channel, fires, status FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC');
+		
+		// if there is no "fired" argument, ignore
+		if (!value[0]) {
+			return;
+		} else {
 
-				// some KKona shit going out there
-				const serverDate = new Date();
-				const fires = new Date(value[0].fires);
-				const diff = serverDate - fires
-				const differenceToSec = diff/1000;
+			// some KKona shit going out there
+			const serverDate = new Date();
+			const fires = new Date(value[0].fires);
+			const diff = serverDate - fires
+			const differenceToSec = diff/1000;
 
-				// consider only cases where reminder is apart from current date by 7 seconds
-				if ((differenceToSec<=7) && !(differenceToSec<0)) {
-					const limit = new Set();
+			// consider only cases where reminder is apart from current date by 7 seconds
+			if ((differenceToSec<=7) && !(differenceToSec<0)) {
+				const limit = new Set();
 
-					// make sure not to repeat the same reminder by adding a unique username
-					// to the Set Object and delete it after 10s 
-					if (limit.has(value[0].username)) {
-						return;
-					} else {
-						limit.add(value[0].username)
-						kb.say(value[0].channel, '(cookie reminder) ' + value[0].username + ', eat cookie please :)')
-						setTimeout(() => {limit.delete(value[0].username)}, 10000)		
-					}
-
-					// update the database with fired reminder with a timeout, so the TMI message can keep up
-					setTimeout(() => {
-						const status = new Promise((resolve, reject) => {
-							con.query('UPDATE cookie_reminders SET status="fired" WHERE username="' + 
-								value[0].username + '" AND status="scheduled"',
-								function(error, results, fields) {
-									if (error) {
-										reject(error)
-									} else {
-										resolve(results)
-									}
-								})
-						})
-					}, 500)
+				// make sure not to repeat the same reminder by adding a unique username
+				// to the Set Object and delete it after 10s 
+				if (limit.has(value[0].username)) {
+					return;
+				} else {
+					limit.add(value[0].username)
+					kb.say(value[0].channel, '(cookie reminder) ' + value[0].username + ', eat cookie please :) 🍪 ')
+					setTimeout(() => {limit.delete(value[0].username)}, 10000)		
 				}
+
+				// update the database with fired reminder
+				await doQuery('UPDATE cookie_reminders SET status="fired" WHERE username="' + 
+					value[0].username + '" AND status="scheduled"');
 			}
-		})
+		}
 	}
 	setInterval(() => {
 		reminder()
 	}, 1000)
 
+	// check and send reminders 
+	async function reminder2() {
+		const value = await doQuery('SELECT username, channel, fires, status FROM ed_reminders WHERE status!="fired" ORDER BY fires ASC');
+
+		// if there is no "fired" argument, ignore
+		if (!value[0]) {
+			return;
+		} else {
+
+			// some KKona shit going out there
+			const serverDate = new Date();
+			const fires = new Date(value[0].fires);
+			const diff = serverDate - fires
+			const differenceToSec = diff/1000;
+
+			// consider only cases where reminder is apart from current date by 7 seconds
+			if ((differenceToSec<=7) && !(differenceToSec<0)) {
+				const limit = new Set();
+
+				// make sure not to repeat the same reminder by adding a unique username
+				// to the Set Object and delete it after 10s 
+				if (limit.has(value[0].username)) {
+					return;
+				} else {
+					limit.add(value[0].username)
+					kb.whisper(value[0].username, '(ed reminder) ' + value[0].username + ', enter dungeon please :) 🏰 ')
+					setTimeout(() => {limit.delete(value[0].username)}, 10000)		
+				}
+
+				// update the database with fired reminder
+				await doQuery('UPDATE ed_reminders SET status="fired" WHERE username="' + 
+					value[0].username + '" AND status="scheduled"');
+			}
+		}
+	}
+	setInterval(() => {
+		reminder2()
+	}, 1000)
 
 	{
 		//active commands
