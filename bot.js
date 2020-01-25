@@ -2942,7 +2942,7 @@ kb.on('connected', (adress, port) => {
 							talkedRecently.delete(user['user-id']);
 						}, 10000);
 					}
-					const cookieModule = await doQuery('SELECT reminders FROM cookieModule WHERE type="cookie');
+					const cookieModule = await doQuery('SELECT reminders FROM cookieModule WHERE type="cookie"');
 					if (cookieModule[0].reminders === false) {
 						return '';
 					} else {
@@ -3047,7 +3047,7 @@ kb.on('connected', (adress, port) => {
 					}
 					return '';
 				} catch (returnValue) {
-					return returnValue.toString().replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').replace(/\d/g, '').replace(/\./g, '');
+					console.log(returnValue)
 				}
 			}
 		},
