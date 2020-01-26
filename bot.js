@@ -2910,7 +2910,7 @@ kb.on('connected', (adress, port) => {
 										'"kb cookie force" in the chat.');
 								} else {
 									const now = new Date();
-									kb.say(user['username'], user['username'] + ', I will remind in channel ' + channel + '  to eat the cookie in 1h :)');
+									kb.say(channel, user['username'] + ', I will remind in channel ' + channel.replace(/^(.{2})/, "$1\u{E0000}") + '  to eat the cookie in 1h :)');
 								 	await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
 										now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 										'WHERE username="' + user['username'] + '"');
@@ -2924,7 +2924,7 @@ kb.on('connected', (adress, port) => {
 										' "kb cookie force" in the chat.');
 								} else {
 									const now = new Date();
-									kb.say(user['username'], user['username'] + ', I will remind you in channel ' + channel + ' to eat the cookie in 30m :)');
+									kb.say(channel, user['username'] + ', I will remind you in channel ' + channel.replace(/^(.{2})/, "$1\u{E0000}") + ' to eat the cookie in 30m :)');
 									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
 										now.addMinutes(30).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 										'WHERE username="' + user['username'] + '"');
@@ -2938,7 +2938,7 @@ kb.on('connected', (adress, port) => {
 										'"kb cookie force" the in chat.');
 								} else {
 									const now = new Date();
-									kb.say(user['username'], user['username'] + ', I will remind you in channel ' + channel + ' to eat the cookie in 20m :)');
+									kb.say(channel, user['username'] + ', I will remind you in channel ' + channel.replace(/^(.{2})/, "$1\u{E0000}") + ' to eat the cookie in 20m :)');
 									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
 										now.addMinutes(20).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 										'WHERE username="' + user['username'] + '"');
@@ -2975,7 +2975,7 @@ kb.on('connected', (adress, port) => {
 										'"kb cookie force" in chat.');
 								} else {
 									const now = new Date();
-									kb.say(user['username'], user['username'] + ', I will remind you in channel ' + channel + ' to eat the cookie in 2h :)');
+									kb.say(channel, user['username'] + ', I will remind you in channel ' + channel.replace(/^(.{2})/, "$1\u{E0000}") + ' to eat the cookie in 2h :)');
 									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
 										now.addMinutes(120).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 										'WHERE username="' + user['username'] + '"');
