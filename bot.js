@@ -2880,7 +2880,7 @@ kb.on('connected', (adress, port) => {
 						talkedRecently.add(user['user-id']);
 						setTimeout(() => {
 							talkedRecently.delete(user['user-id']);
-						}, 10000);
+						}, 3000);
 					}
 					const cookieModule = await doQuery('SELECT reminders FROM cookieModule WHERE type="cookie"');
 					if (cookieModule[0].reminders === false) {
