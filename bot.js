@@ -87,6 +87,9 @@ kb.on('connected', (adress, port) => {
 	const doQuery = (query) => new Promise((resolve, reject) => {
 	    con.query(query, (err, results, fields) => {
 	        if (err) {
+	        	const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+				const insert = [err, new Date()];
+	        	doQuery(mysql.format(sql, insert));
 	            reject(err);
 	        }
 	        else {
@@ -173,6 +176,9 @@ kb.on('connected', (adress, port) => {
 						}
 					}
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
 				}
 			}
@@ -252,6 +258,9 @@ kb.on('connected', (adress, port) => {
 					}
 					return '';
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					if (err.message.includes("undefined")) {
 						return user['username'] + ", N OMEGALUL"
 					} else {
@@ -313,6 +322,9 @@ kb.on('connected', (adress, port) => {
 							space.launch_site.site_name_long + ', reddit campaign: ' + space.links.reddit_campaign;
 					}
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
 				}
 			}
@@ -347,6 +359,9 @@ kb.on('connected', (adress, port) => {
 							apodToday.hdurl + ' | by ' + apodToday.copyright
 					}
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
 				}
 			}
@@ -383,6 +398,9 @@ kb.on('connected', (adress, port) => {
 						return user['username'] + ", please provide a phrase to search with :)";
 					}
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					if (err.message.includes("'link' of undefined")) {
 						return (user['username'] + ", no youtube link was found with provided phrase :(")
 					}
@@ -447,6 +465,9 @@ kb.on('connected', (adress, port) => {
 						}
 					}
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ", " + err + " FeelsDankMan ❗";
 				}
 			}
@@ -471,6 +492,9 @@ kb.on('connected', (adress, port) => {
 					}
 					return user['username'] + ", " + json.text.toLowerCase() + " 🤔";
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
 				}
 			}
@@ -521,6 +545,9 @@ kb.on('connected', (adress, port) => {
 						}
 					}
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
 				}
 			}
@@ -558,6 +585,9 @@ kb.on('connected', (adress, port) => {
 						}
 					}
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
 				}
 			}
@@ -591,6 +621,9 @@ kb.on('connected', (adress, port) => {
 						}
 					}
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
 				}
 			}
@@ -627,6 +660,9 @@ kb.on('connected', (adress, port) => {
 						}
 					}
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					if (err.message) {
 						console.log(err.message);
 						return user['username'] + ", an error occured while fetching data monkaS";
@@ -694,7 +730,9 @@ kb.on('connected', (adress, port) => {
 						}
 					}
 				} catch (err) {
-					console.log(err);
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
 				}
 			}
@@ -838,6 +876,9 @@ kb.on('connected', (adress, port) => {
 						}
 					}
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
 				}
 			}
@@ -870,6 +911,9 @@ kb.on('connected', (adress, port) => {
 						return user['username'] + ", " + reverse(msg.join(" "));
 					}
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
 				}
 			}
@@ -926,7 +970,9 @@ kb.on('connected', (adress, port) => {
 						}
 					}
 				} catch (err) {
-					console.log(err);
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					if (err.message.includes("read property")) {
 						return user['username'] + ", location not found.";
 					} else {
@@ -969,6 +1015,9 @@ kb.on('connected', (adress, port) => {
 						random_near_earth.is_potentially_hazardous_asteroid + " | orbiting body: " +
 						random_near_earth.close_approach_data[0].orbiting_body;
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
 				}
 			}
@@ -1006,6 +1055,9 @@ kb.on('connected', (adress, port) => {
 						return user['username'] + ", " + tweet.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
 					}
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ", " + err.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '') +
 						" FeelsDankMan !!!";
 				}
@@ -1050,6 +1102,9 @@ kb.on('connected', (adress, port) => {
 						}
 					}
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					const msg = message.split(" ").splice(2);
 					const fetchUrl = require("fetch").fetchUrl;
 					const foo = await new Promise((resolve, reject) => {
@@ -1095,6 +1150,9 @@ kb.on('connected', (adress, port) => {
 						return user['username'] + ", " + bttv;
 					}
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
 				}
 			}
@@ -1124,6 +1182,9 @@ kb.on('connected', (adress, port) => {
 						return "";
 					}
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
 				}
 			}
@@ -1177,7 +1238,9 @@ kb.on('connected', (adress, port) => {
 						return user['username'] + ', ' + firstLettertoLowerCase(jokeGeneral.setup);
 					}
 				} catch (err) {
-					console.log(err);
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + err + ' FeelsDankMan !!!';
 				}
 			}
@@ -1464,7 +1527,9 @@ kb.on('connected', (adress, port) => {
 					}
 					return '';
 				} catch (err) {
-					console.log(err);
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + err + ' FeelsDankMan !!!';
 				}
 			}
@@ -1641,7 +1706,9 @@ kb.on('connected', (adress, port) => {
 					}
 					return '';
 				} catch (err) {
-					console.log(err);
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + err + ' FeelsDankMan !!!';
 				}
 			}
@@ -1699,7 +1766,9 @@ kb.on('connected', (adress, port) => {
 						return user['username'] + ', active known bots MrDestructoid 👉' + bots;
 					}
 				} catch (err) {
-					console.log(err);
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + err + ' FeelsDankMan !!!';
 				}
 			}
@@ -1723,7 +1792,9 @@ kb.on('connected', (adress, port) => {
 					return user['username'] + ', my node_modules directory has ' +
 						getDirectories().length + ' modules PepeLaugh';
 				} catch (err) {
-					console.log(err);
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + err + ' FeelsDankMan !!!';
 				}
 			}
@@ -1753,7 +1824,9 @@ kb.on('connected', (adress, port) => {
 						return user['username'] + ", you just danked " + msg.join(' ') + " FeelsDankMan 👍";
 					}
 				} catch (err) {
-					console.log(err);
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + err + ' FeelsDankMan !!!';
 				}
 			}
@@ -1805,8 +1878,9 @@ kb.on('connected', (adress, port) => {
 						throw 'internal error monkaS';
 					}
 				} catch (err) {
-					console.log(err);
-					// return the thrown error to chat
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ', ' + err + ' ';
 				}
 			}
@@ -1863,7 +1937,9 @@ kb.on('connected', (adress, port) => {
 					}
 					return user['username'] + ', ' + firstLettertoLowerCase(joemama.split('"')[3]) + emotesJoke;
 				} catch (err) {
-					console.log(err);
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + err + ' FeelsDankMan !!!';
 				}
 			}
@@ -1921,7 +1997,9 @@ kb.on('connected', (adress, port) => {
 						}
 					}
 				} catch (err) {
-					console.log(err);
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ' ' + err + ' FeelsDankMan !!!';
 				}
 			}
@@ -1970,7 +2048,9 @@ kb.on('connected', (adress, port) => {
 					return user['username'] + ', my public repo Okayga 👉' +
 						' https://github.com/KUNszg/kbot last commit: ' + format(DifftoSeconds) + ' ago';
 				} catch (err) {
-					console.log(err);
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
 				}
 			}
@@ -2113,6 +2193,9 @@ kb.on('connected', (adress, port) => {
 						})
 					}
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
 				}
 			}
@@ -2213,6 +2296,9 @@ kb.on('connected', (adress, port) => {
 					}
 					return '';
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
 				}
 			}
@@ -2276,6 +2362,9 @@ kb.on('connected', (adress, port) => {
 					}
 					return '';
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
 				}
 			}
@@ -2627,6 +2716,9 @@ kb.on('connected', (adress, port) => {
 						})
 					}
 				} catch (err) {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
 				}
 			}
@@ -2636,38 +2728,45 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "surah",
 			aliases: prefix + "dailysurah",
 			invocation: async (channel, user, message, args) => {
-				if (talkedRecently.has(user['user-id'])) {
-					return '';
-				} else {
-					talkedRecently.add(user['user-id']);
-					setTimeout(() => {
-						talkedRecently.delete(user['user-id']);
-					}, 8000);
-				}
-				const randomNumberFromRange = Math.floor(Math.random() * 6237) + 1;
-				const quranApi = await fetch("http://api.alquran.cloud/ayah/" + randomNumberFromRange + 
-					"/editions/quran-uthmani,en.pickthall").then(response => response.json());
-				const output = quranApi.data[0].surah.englishName + ' - ' + 
-					quranApi.data[0].surah.englishNameTranslation + ': ' + quranApi.data[0].text.split(' ').reverse().join(' ')  + ' - ' + 
-					quranApi.data[1].text + ' ' + quranApi.data[0].page + ':' + quranApi.data[0].surah.numberOfAyahs;
-				const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
-					method: "POST",
-					url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-					body: "message=" + output,
-					headers: {
-						"Content-Type": "application/x-www-form-urlencoded"
-					},
-				}).then(response => response.json()))
-				if (channel === "#nymn") {
-					if (banphrasePass.banned === true) {
-						kb.whisper(user['username'], output);
-						return user['username'] +
-							', the result is banphrased, I whispered it to you tho cmonBruh';		
+				try {
+					if (talkedRecently.has(user['user-id'])) {
+						return '';
+					} else {
+						talkedRecently.add(user['user-id']);
+						setTimeout(() => {
+							talkedRecently.delete(user['user-id']);
+						}, 8000);
+					}
+					const randomNumberFromRange = Math.floor(Math.random() * 6237) + 1;
+					const quranApi = await fetch("http://api.alquran.cloud/ayah/" + randomNumberFromRange + 
+						"/editions/quran-uthmani,en.pickthall").then(response => response.json());
+					const output = quranApi.data[0].surah.englishName + ' - ' + 
+						quranApi.data[0].surah.englishNameTranslation + ': ' + quranApi.data[0].text.split(' ').reverse().join(' ')  + ' - ' + 
+						quranApi.data[1].text + ' ' + quranApi.data[0].page + ':' + quranApi.data[0].surah.numberOfAyahs;
+					const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
+						method: "POST",
+						url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+						body: "message=" + output,
+						headers: {
+							"Content-Type": "application/x-www-form-urlencoded"
+						},
+					}).then(response => response.json()))
+					if (channel === "#nymn") {
+						if (banphrasePass.banned === true) {
+							kb.whisper(user['username'], output);
+							return user['username'] +
+								', the result is banphrased, I whispered it to you tho cmonBruh';		
+						} else {
+							return user['username'] + ', ' + output;
+						}
 					} else {
 						return user['username'] + ', ' + output;
 					}
-				} else {
-					return user['username'] + ', ' + output;
+				} catch {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
+					return user['username'] + ', ' + err + ' FeelsDankMan!!!'
 				}
 			}	
 		},
@@ -2810,6 +2909,9 @@ kb.on('connected', (adress, port) => {
 					xd.sort().toString().replace(/,/g, " | ").replace(/kb/g, '') + " |".split(' | ')
 
 			} catch (err) {
+				const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+				const insert = [err, new Date()];
+				await doQuery(mysql.format(sql, insert));
 				return user['username'] + ", " + err + " FeelsDankMan !!!";
 			}
 		}
@@ -2987,7 +3089,9 @@ kb.on('connected', (adress, port) => {
 					}
 					return '';
 				} catch (returnValue) {
-					console.log(returnValue)
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [returnValue, new Date()];
+					await doQuery(mysql.format(sql, insert));
 				}
 			}
 		},
@@ -3037,18 +3141,25 @@ kb.on('connected', (adress, port) => {
 			name: "kunszgbot",
 			aliases: "kunszgbot,",
 			invocation: async (channel, user, message, args) => {
-				if (talkedRecently2.has(user['user-id'])) { //if set has user id - ignore
-					return '';
-				} else {
-					talkedRecently2.add(user['user-id']);
-					setTimeout(() => {
-						talkedRecently2.delete(user['user-id']);
-					}, 30000);
+				try {
+					if (talkedRecently2.has(user['user-id'])) {
+						return '';
+					} else {
+						talkedRecently2.add(user['user-id']);
+						setTimeout(() => {
+							talkedRecently2.delete(user['user-id']);
+						}, 30000);
+					}
+					if (user['user-id'] === '68136884') {
+						return ''
+					}
+					return 'get 🅱️inged back ' + user['username'] + ' FeelsDankMan';
+				} catch	{
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
+					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
 				}
-				if (user['user-id'] === '68136884') {
-					return ''
-				}
-				return 'get 🅱️inged back ' + user['username'] + ' FeelsDankMan';
 			}
 		},
 
@@ -3056,27 +3167,31 @@ kb.on('connected', (adress, port) => {
 			name: "AlienPls",
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
-				const allowedChannels = [{
-						ID: '#supinic'
-					},
-					{
-						ID: '#nymn'
-					},
-					{
-						ID: '#pajlada'
+				try {
+					const allowedChannels = [{
+							ID: '#supinic'
+						},
+						{
+							ID: '#nymn'
+						},
+						{
+							ID: '#pajlada'
+						}
+					];
+					const checkChannels = allowedChannels.filter(
+						i => i.ID === channel
+					);
+					const checkChannelsMap = checkChannels.map(
+						i => i.ID
+					)
+					if (channel === checkChannelsMap[0] && user['user-id'] === "178087241") {
+						return "AlienPls";
+					} else {
+						return '';
 					}
-				];
-				const checkChannels = allowedChannels.filter(
-					i => i.ID === channel
-				);
-				const checkChannelsMap = checkChannels.map(
-					i => i.ID
-				)
-				if (channel === checkChannelsMap[0] && user['user-id'] === "178087241") {
-					return "AlienPls";
-				} else {
-					return '';
-				}
+				} catch {
+					return user['username'] + ', ' + err + 'FeelsDankMan !!!'
+				} 
 			}
 		},
 
@@ -3112,7 +3227,9 @@ kb.on('connected', (adress, port) => {
 						return String(ev);
 					}
 				} catch (err) {
-					console.log(err);
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [err, new Date()];
+					await doQuery(mysql.format(sql, insert));
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
 				}
 			}
@@ -3163,7 +3280,7 @@ kb.on('connected', (adress, port) => {
 		});
 	});
 
-	// check and send reminders 
+	// check and send reminders - cookie
 	async function reminder() {
 		const value = await doQuery('SELECT username, channel, fires, status FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC');
 		
@@ -3202,7 +3319,7 @@ kb.on('connected', (adress, port) => {
 		reminder()
 	}, 1000)
 
-	// check and send reminders 
+	// check and send reminders - ed 
 	async function reminder2() {
 		const value = await doQuery('SELECT username, channel, fires, status FROM ed_reminders WHERE status!="fired" ORDER BY fires ASC');
 
