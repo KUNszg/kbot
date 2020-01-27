@@ -3014,9 +3014,12 @@ kb.on('connected', (adress, port) => {
 					xd.sort().toString().replace(/,/g, " | ").replace(/kb/g, '') + " |".split(' | ')
 
 			} catch (err) {
-				const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
-				const insert = [err, new Date()];
-				await doQuery(mysql.format(sql, insert));
+				async function errorLog() {
+					const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+					const insert = [returnValue, new Date()];
+					await doQuery(mysql.format(sql, insert));
+				}
+				errorLog()
 				return user['username'] + ", " + err + " FeelsDankMan !!!";
 			}
 		}
