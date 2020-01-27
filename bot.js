@@ -3212,6 +3212,39 @@ kb.on('connected', (adress, port) => {
 		});
 	});
 
+	// unfire clogging reminders
+	async function unfire() {
+		const unfire = await doQuery('SELECT username, channel, fires, status FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC');
+
+		if (!unfire[0]) {
+			return;
+		} else {
+
+			// some KKona shit going out there
+			const serverDate = new Date();
+			const fires = new Date(unfire[0].fires);
+			const diff = serverDate - fires
+			const differenceToSec = diff/1000;
+
+			if (differenceToSec>15) {
+
+				// update the database with fired reminder
+				const selectUnfiredUsers = await doQuery('SELECT * FROM cookie_reminders WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;')
+				if (!selectUnfiredUsers[0]) {
+					return '';
+				} else {
+					const dateUnfiredUsers = new Date(selectUnfiredUsers[0].fires)
+					const unfiredDiff = (serverDate - dateUnfiredUsers)/1000/60
+					kb.say(selectUnfiredUsers[0].channel, selectUnfiredUsers[0].username + ', you had an unfired cookie reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and eat your cookie please :)')
+					await doQuery('UPDATE cookie_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
+				}
+			}
+		}
+	}
+	setInterval(() => {
+		unfire()
+	}, 10000)
+
 	// check and send reminders - cookie
 	async function reminder() {
 		const value = await doQuery('SELECT username, channel, fires, status FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC');
