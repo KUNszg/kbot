@@ -1309,12 +1309,28 @@ kb.on('connected', (adress, port) => {
 								);
 
 							if (banphrasePass.banned === true) {
-								if (timeDifference>48) {
-									kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...');
+								if (channel==="#nymn") {
+									if (timeDifference>48) {
+										kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...');
+									} else {
+										kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...');
+									}
+									return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 								} else {
-									kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...');
+									if (timeDifference>48) {
+										if (randomLine[0].message.length>430) {
+											return '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...';
+										} else {
+											return '(' + (timeDifference/24).toFixed(0) + 'd' + reply;
+										}
+									} else {
+										if (randomLine[0].message.length>430) {
+											return '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
+										} else {
+											return '(' + format(timeDifferenceRaw/1000) + reply;
+										}
+									}
 								}
-								return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 							} else {
 								if (timeDifference>48) {
 									if (randomLine[0].message.length>430) {
@@ -1361,12 +1377,28 @@ kb.on('connected', (adress, port) => {
 							const reply =' ago) ' + randomLine[0].username.replace(/^(.{2})/, "$1\u{E0000}") + 
 								': ' + randomLine[0].message;
 							if (banphrasePass.banned === true) {
-								if (timeDifference>48) {
-									kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...');
+								if (channel==="#nymn") {
+									if (timeDifference>48) {
+										kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...');
+									} else {
+										kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...');
+									}
+									return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 								} else {
-									kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...');
+									if (timeDifference>48) {
+										if (randomLine[0].message.length>430) {
+											return '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...';
+										} else {
+											return '(' + (timeDifference/24).toFixed(0) + 'd' + reply;
+										}
+									} else {
+										if (randomLine[0].message.length>430) {
+											return '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
+										} else {
+											return '(' + format(timeDifferenceRaw/1000) + reply;
+										}
+									}
 								}
-								return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 							} else {
 								if (timeDifference>48) {
 									if (randomLine[0].message.length>430) {
@@ -1454,12 +1486,28 @@ kb.on('connected', (adress, port) => {
 							)/1000/3600;
 
 						if (banphrasePass.banned === true) {
-							if (timeDifference>48) {
-								kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...');
+							if (channel==="#nymn") {
+								if (timeDifference>48) {
+									kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...');
+								} else {
+									kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...');
+								}
+								return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 							} else {
-								kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...');
+								if (timeDifference>48) {
+									if (randomLine[0].message.length>430) {
+										return '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...';
+									} else {
+										return '(' + (timeDifference/24).toFixed(0) + 'd' + reply;
+									}
+								} else {
+									if (randomLine[0].message.length>430) {
+										return '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
+									} else {
+										return '(' + format(timeDifferenceRaw/1000) + reply;
+									}
+								}
 							}
-							return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 						} else {
 							if (timeDifference>48) {
 								if (randomLine[0].message.length>430) {
