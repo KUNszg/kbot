@@ -3177,6 +3177,17 @@ kb.on('connected', (adress, port) => {
 					kb.say('supinic', '+join count me in KKona')
 					return;
 				}
+			} else if (channel==="#supinic"&&message.includes("$ps sneeze")) {
+				if (talkedRecently.has(user['user-id'])) {
+					return;
+				} else {
+					talkedRecently.add(user['user-id']);
+					setTimeout(() => {
+						talkedRecently.delete(user['user-id']);
+					}, 3000);
+				}
+				kb.say('supinic', ' bless u peepoSadDank')
+				return;
 			} else {
 				return; 
 			}
