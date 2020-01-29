@@ -84,6 +84,19 @@ kb.on('connected', (adress, port) => {
 			ID: '31400525'
 		} //supinic
 	];
+	const allowModule = [{
+			ID: '178087241'
+		}, //kunszg
+		{
+			ID: '229225576'
+		}, //kunszgbot
+		{
+			ID: '40379362'
+		}, //sinris
+		{
+			ID: '103973901'
+		} //alazymeme
+	]
 	const doQuery = (query) => new Promise((resolve, reject) => {
 	    con.query(query, (err, results, fields) => {
 	        if (err) {
@@ -2005,9 +2018,12 @@ kb.on('connected', (adress, port) => {
 							talkedRecently.delete(user['user-id']);
 						}, 8000);
 					}
+					const perms = allowModule.filter(
+						i => i.ID === user['user-id']
+					);
 					switch (msg[0]) {
 						case 'module':
-							if (user['user-id'] != '178087241') {
+							if (!perms[0]) {
 								return '';
 							} else {
 								await doQuery('UPDATE cookieModule SET reminders="' + msg[1] + '" WHERE type="cookie"');
@@ -3184,7 +3200,7 @@ kb.on('connected', (adress, port) => {
 					talkedRecently.add(user['user-id']);
 					setTimeout(() => {
 						talkedRecently.delete(user['user-id']);
-					}, 3000);
+					}, 5000);
 				}
 				kb.say('supinic', ' bless u peepoSadDank')
 				return;
