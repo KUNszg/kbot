@@ -1247,7 +1247,7 @@ kb.on('connected', (adress, port) => {
 						if (hours === 0 && minutes != 0) {
 							return minutes + 'm ' + seconds + "s";
 						} else {
-							if (minutes === 0 && hours === 0) {
+							if (minutes === 0 && hours === 0 && seconds != 0) {
 								return seconds + "s"
 							} else {
 								return hours + 'h ' + minutes + 'm ' + seconds + "s";
