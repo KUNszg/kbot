@@ -233,17 +233,29 @@ kb.on('connected', (adress, port) => {
 						}, 5000);
 					}
 					if (!msg[0]) {
-						const apiCommits = "https://api.github.com/repos/KUNszg/kbot/commits?per_page=100"
-						const commits = await fetch(apiCommits)
-							.then(response => response.json());
-						const commits2 = await fetch(apiCommits + '&page=2')
-							.then(response => response.json());
-						const commits3 = await fetch(apiCommits + '&page=3')
-							.then(response => response.json());
-						const commits4 = await fetch(apiCommits + '&page=4')
-							.then(response => response.json());
-						const commitsCount = commits.length + commits2.length + commits3.length + commits4.length;
-						const commitDate = new Date(commits[0].commit.committer.date);
+						
+						const apiCommits = "https://api.github.com/repos/KUNszg/kbot/commits?per_page=100";
+						const urls = [apiCommits, apiCommits + '&page=2', apiCommits + '&page=3', apiCommits + '&page=4']
+						async function getAllUrls(urls) {
+						    try {
+						        var data = await Promise.all(
+						            urls.map(
+						                url =>
+						                    fetch(url).then(
+						                        (response) => response.json()
+						                    )));
+
+						        return data
+
+						    } catch (error) {
+						        console.log(error)
+						        throw (error)
+						    }
+						}
+
+						const commitsCount = await getAllUrls(urls);
+						const countCommits = ((commitsCount.length * 100) - (100 - commitsCount[commitsCount.length-1].length));
+						const commitDate = new Date(commitsCount[0][0].commit.committer.date);
 						const serverDate = new Date();
 						const diff = Math.abs(commitDate - serverDate)
 						const latestCommit = (diff / 1000).toFixed(2);
@@ -251,11 +263,11 @@ kb.on('connected', (adress, port) => {
 						if (latestCommit > 259200) {
 							return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: " +
 								(latestCommit / 86400).toFixed(0) + " ago (master, " + commits[0].sha.slice(0, 7) +
-								", commit " + commitsCount + ")";
+								", commit " + countCommits + ")";
 						} else {
 							return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: " +
-								format(latestCommit) + " ago (master, " + commits[0].sha.slice(0, 7) + ", commit " +
-								commitsCount + ")";
+								format(latestCommit) + " ago (master, " + commitsCount[0][0].sha.slice(0, 7) + ", commit " +
+								countCommits + ")";
 						}
 					} else {
 						const ping = require('ping');
@@ -3032,80 +3044,79 @@ kb.on('connected', (adress, port) => {
 
 	// check and send reminders - cookie
 	async function reminder() {
-		const value = await doQuery('SELECT username, channel, fires, status FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC');
-		
-		// if there is no "fired" argument, ignore
-		if (!value[0]) {
-			return;
-		} else {
 
-			// some KKona shit going out there
-			const serverDate = new Date();
-			const fires = new Date(value[0].fires);
-			const diff = serverDate - fires
-			const differenceToSec = diff/1000;
+		{
+			const value = await doQuery('SELECT username, channel, fires, status FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC');
+			
+			// if there is no "fired" argument, ignore
+			if (!value[0]) {
+				return;
+			} else {
 
-			// consider only cases where reminder is apart from current date by 7 seconds
-			if ((differenceToSec<=7) && !(differenceToSec<0)) {
-				const limit = new Set();
+				// some KKona shit going out there
+				const serverDate = new Date();
+				const fires = new Date(value[0].fires);
+				const diff = serverDate - fires
+				const differenceToSec = diff/1000;
 
-				// make sure not to repeat the same reminder by adding a unique username
-				// to the Set Object and delete it after 10s 
-				if (limit.has(value[0].username)) {
-					return;
-				} else {
-					limit.add(value[0].username)
-					kb.say(value[0].channel, '(cookie reminder) ' + value[0].username + ', eat cookie please :) 🍪 ')
-					setTimeout(() => {limit.delete(value[0].username)}, 10000)		
+				// consider only cases where reminder is apart from current date by 7 seconds
+				if ((differenceToSec<=7) && !(differenceToSec<0)) {
+					const limit = new Set();
+
+					// make sure not to repeat the same reminder by adding a unique username
+					// to the Set Object and delete it after 10s 
+					if (limit.has(value[0].username)) {
+						return;
+					} else {
+						limit.add(value[0].username)
+						kb.say(value[0].channel, '(cookie reminder) ' + value[0].username + ', eat cookie please :) 🍪 ')
+						setTimeout(() => {limit.delete(value[0].username)}, 10000)		
+					}
+
+					// update the database with fired reminder
+					await doQuery('UPDATE cookie_reminders SET status="fired" WHERE username="' + 
+						value[0].username + '" AND status="scheduled"');
 				}
+			}
+		}
+	
+		{
+			const value = await doQuery('SELECT username, channel, fires, status FROM ed_reminders WHERE status!="fired" ORDER BY fires ASC');
 
-				// update the database with fired reminder
-				await doQuery('UPDATE cookie_reminders SET status="fired" WHERE username="' + 
-					value[0].username + '" AND status="scheduled"');
+			// if there is no "fired" argument, ignore
+			if (!value[0]) {
+				return;
+			} else {
+
+				// some KKona shit going out there
+				const serverDate = new Date();
+				const fires = new Date(value[0].fires);
+				const diff = serverDate - fires
+				const differenceToSec = diff/1000;
+
+				// consider only cases where reminder is apart from current date by 7 seconds
+				if ((differenceToSec<=7) && !(differenceToSec<0)) {
+					const limit = new Set();
+
+					// make sure not to repeat the same reminder by adding a unique username
+					// to the Set Object and delete it after 10s 
+					if (limit.has(value[0].username)) {
+						return;
+					} else {
+						limit.add(value[0].username)
+						kb.whisper(value[0].username, '(ed reminder) ' + value[0].username + ', enter dungeon please :) 🏰 ')
+						setTimeout(() => {limit.delete(value[0].username)}, 10000)		
+					}
+
+					// update the database with fired reminder
+					await doQuery('UPDATE ed_reminders SET status="fired" WHERE username="' + 
+						value[0].username + '" AND status="scheduled"');
+				}
 			}
 		}
 	}
 	setInterval(() => {
 		reminder()
-	}, 1000)
-
-	// check and send reminders - ed 
-	async function reminder2() {
-		const value = await doQuery('SELECT username, channel, fires, status FROM ed_reminders WHERE status!="fired" ORDER BY fires ASC');
-
-		// if there is no "fired" argument, ignore
-		if (!value[0]) {
-			return;
-		} else {
-
-			// some KKona shit going out there
-			const serverDate = new Date();
-			const fires = new Date(value[0].fires);
-			const diff = serverDate - fires
-			const differenceToSec = diff/1000;
-
-			// consider only cases where reminder is apart from current date by 7 seconds
-			if ((differenceToSec<=7) && !(differenceToSec<0)) {
-				const limit = new Set();
-
-				// make sure not to repeat the same reminder by adding a unique username
-				// to the Set Object and delete it after 10s 
-				if (limit.has(value[0].username)) {
-					return;
-				} else {
-					limit.add(value[0].username)
-					kb.whisper(value[0].username, '(ed reminder) ' + value[0].username + ', enter dungeon please :) 🏰 ')
-					setTimeout(() => {limit.delete(value[0].username)}, 10000)		
-				}
-
-				// update the database with fired reminder
-				await doQuery('UPDATE ed_reminders SET status="fired" WHERE username="' + 
-					value[0].username + '" AND status="scheduled"');
-			}
-		}
-	}
-	setInterval(() => {
-		reminder2()
 	}, 1000)
 
 	{
