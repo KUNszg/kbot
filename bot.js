@@ -1247,7 +1247,7 @@ kb.on('connected', (adress, port) => {
 						if (hours === 0 && minutes != 0) {
 							return minutes + 'm ' + seconds + "s";
 						} else {
-							if (minutes === 0 && hours === 0 && seconds != 0) {
+							if (minutes === 0 && hours === 0) {
 								return seconds + "s"
 							} else {
 								return hours + 'h ' + minutes + 'm ' + seconds + "s";
@@ -1292,12 +1292,15 @@ kb.on('connected', (adress, port) => {
 							const timeDifference = (Math.abs(
 								serverDate - (new Date(randomLine[0].date).getTime()))
 								)/1000/3600;
+							const timeDifferenceRaw = (Math.abs(
+								serverDate - (new Date(randomLine[0].date).getTime()))
+								);
 
 							if (banphrasePass.banned === true) {
 								if (timeDifference>48) {
 									kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...');
 								} else {
-									kb.whisper(user['username'], '(' + format(timeDifference/1000) + reply.substring(0, 430) + '...');
+									kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...');
 								}
 								return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 							} else {
@@ -1309,9 +1312,9 @@ kb.on('connected', (adress, port) => {
 									}
 								} else {
 									if (randomLine[0].message.length>430) {
-										return '(' + format(timeDifference/1000) + reply.substring(0, 430) + '...';
+										return '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
 									} else {
-										return '(' + format(timeDifference/1000) + reply;
+										return '(' + format(timeDifferenceRaw/1000) + reply;
 									}
 								}
 							}
@@ -1339,6 +1342,9 @@ kb.on('connected', (adress, port) => {
 							const timeDifference = (Math.abs(
 								serverDate - (new Date(randomLine[0].date).getTime()))
 								)/1000/3600;
+							const timeDifferenceRaw = (Math.abs(
+								serverDate - (new Date(randomLine[0].date).getTime()))
+								);
 
 							const reply =' ago) ' + randomLine[0].username.replace(/^(.{2})/, "$1\u{E0000}") + 
 								': ' + randomLine[0].message;
@@ -1346,7 +1352,7 @@ kb.on('connected', (adress, port) => {
 								if (timeDifference>48) {
 									kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...');
 								} else {
-									kb.whisper(user['username'], '(' + format(timeDifference/1000) + reply.substring(0, 430) + '...');
+									kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...');
 								}
 								return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 							} else {
@@ -1358,9 +1364,9 @@ kb.on('connected', (adress, port) => {
 									}
 								} else {
 									if (randomLine[0].message.length>430) {
-										return '(' + format(timeDifference/1000) + reply.substring(0, 430) + '...';
+										return '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
 									} else {
-										return '(' + format(timeDifference/1000) + reply;
+										return '(' + format(timeDifferenceRaw/1000) + reply;
 									}
 								}
 							}
@@ -1431,12 +1437,15 @@ kb.on('connected', (adress, port) => {
 						const timeDifference = (Math.abs(
 							serverDate - (new Date(randomLine[0].date).getTime()))
 							)/1000/3600;
+						const timeDifferenceRaw = (Math.abs(
+							serverDate - (new Date(randomLine[0].date).getTime()))
+							)/1000/3600;
 
 						if (banphrasePass.banned === true) {
 							if (timeDifference>48) {
 								kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...');
 							} else {
-								kb.whisper(user['username'], '(' + format(timeDifference/1000) + reply.substring(0, 430) + '...');
+								kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...');
 							}
 							return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 						} else {
@@ -1448,9 +1457,9 @@ kb.on('connected', (adress, port) => {
 								}
 							} else {
 								if (randomLine[0].message.length>430) {
-									return '(' + format(timeDifference/1000) + reply.substring(0, 430) + '...';
+									return '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
 								} else {
-									return '(' + format(timeDifference/1000) + reply;
+									return '(' + format(timeDifferenceRaw/1000) + reply;
 								}
 							}
 						}
