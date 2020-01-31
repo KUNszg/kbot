@@ -1248,6 +1248,198 @@ kb.on('connected', (adress, port) => {
 		},
 
 		{
+			name: prefix + "fl",
+			aliases: prefix + "firstline",
+			description: 'kb fl [input] - first line from database in current channel for given user, no input will return a first line of the executing user.',
+			invocation: async (channel, user, message, args) => {
+				try {
+					if (talkedRecently.has(user['user-id'])) {
+						return '';
+					} else {
+						talkedRecently.add(user['user-id']);
+						setTimeout(() => {
+							talkedRecently.delete(user['user-id']);
+						}, 2000);
+					}
+
+					function format(seconds) {
+						function pad(s) {
+							return (s < 10 ? '0' : '') + s;
+						}
+						var hours = Math.floor(seconds / (60 * 60));
+						var minutes = Math.floor(seconds % (60 * 60) / 60);
+						var seconds = Math.floor(seconds % 60);
+						if (hours === 0 && minutes != 0) {
+							return minutes + 'm ' + seconds + "s";
+						} else {
+							if ((minutes === 0 && hours === 0) && seconds != 0) {
+								return seconds + "s"
+							} else {
+								return hours + 'h ' + minutes + 'm ' + seconds + "s";
+							}
+						}
+					}
+					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
+					if (!msg[0]) {
+						const firstline = await doQuery('SELECT * FROM logs_haxk WHERE username="' + user['username'] + '" ORDER BY DATE ASC');
+						if (!firstline[0]) {
+							return user['username'] + ", I don't have any logs from that user";
+						} else {
+							const banphrasePass = (await fetch(
+								'https://nymn.pajbot.com/api/v1/banphrases/test', {
+								method: "POST",
+								url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+								body: "message=" + firstline[0].message,
+								headers: {
+									"Content-Type": "application/x-www-form-urlencoded"
+								},
+							}).then(response => response.json()))
+
+							const reply =' ago) ' +  firstline[0].username.replace(/^(.{2})/, "$1\u{E0000}") + 
+								': ' + firstline[0].message;
+
+							const serverDate = new Date().getTime();
+							const timeDifference = (Math.abs(
+								serverDate - (new Date(firstline[0].date).getTime()))
+								)/1000/3600;
+							const timeDifferenceRaw = (Math.abs(
+								serverDate - (new Date(firstline[0].date).getTime()))
+								);
+							if (banphrasePass.banned === true) {
+								if (channel==="#nymn") {
+									if (timeDifference>48) {
+										kb.whisper(user['username'], ', Your first line in this channel was: (' + 
+											(timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...');
+									} else {
+										kb.whisper(user['username'], ', Your first line in this channel was: (' + 
+											format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...');
+									}
+									return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
+								} else {
+									if (timeDifference>48) {
+										if (firstline[0].message.length>430) {
+											return user['username'] + ', Your first line in this channel was: (' + 
+											(timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...';
+										} else {
+											return user['username'] + ', Your first line in this channel was: (' + 
+											(timeDifference/24).toFixed(0) + 'd' + reply;
+										}
+									} else {
+										if (firstline[0].message.length>430) {
+											return user['username'] + ', Your first line in this channel was: (' + 
+											format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
+										} else {
+											return user['username'] + ', Your first line in this channel was: (' + 
+											format(timeDifferenceRaw/1000) + reply;
+										}
+									}
+								}
+							} else {
+								if (timeDifference>48) {
+									if (firstline[0].message.length>430) {
+										return user['username'] + ', Your first line in this channel was: (' + 
+										(timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...';
+									} else {
+										return user['username'] + ', Your first line in this channel was: (' + 
+										(timeDifference/24).toFixed(0) + 'd' + reply;
+									}
+								} else {
+									if (firstline[0].message.length>430) {
+										return  user['username'] + ', Your first line in this channel was: (' + 
+										format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
+									} else {
+										return user['username'] + ', Your first line in this channel was: (' + 
+										format(timeDifferenceRaw/1000) + reply;
+									}
+								}
+							}
+						}
+					} else {
+						const sql = 'SELECT * FROM logs_haxk WHERE username=? ORDER BY DATE ASC';
+						const inserts = [msg[0]];
+						const firstline = await doQuery(mysql.format(sql, inserts));
+						if (!firstline[0]) {
+							return user['username'] + ", I don't have any logs from that user";
+						} else {
+							const banphrasePass = (await fetch(
+								'https://nymn.pajbot.com/api/v1/banphrases/test', {
+								method: "POST",
+								url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+								body: "message=" + firstline[0].message,
+								headers: {
+									"Content-Type": "application/x-www-form-urlencoded"
+								},
+							}).then(response => response.json()))
+
+							const reply =' ago) ' +  firstline[0].username.replace(/^(.{2})/, "$1\u{E0000}") + 
+								': ' + firstline[0].message;
+
+							const serverDate = new Date().getTime();
+							const timeDifference = (Math.abs(
+								serverDate - (new Date(firstline[0].date).getTime()))
+								)/1000/3600;
+							const timeDifferenceRaw = (Math.abs(
+								serverDate - (new Date(firstline[0].date).getTime()))
+								);
+							if (banphrasePass.banned === true) {
+								if (channel==="#nymn") {
+									if (timeDifference>48) {
+										kb.whisper(user['username'], ', first line of that user in this channel: (' + 
+											(timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...');
+									} else {
+										kb.whisper(user['username'], ', first line of that user in this channel: (' + 
+											format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...');
+									}
+									return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
+								} else {
+									if (timeDifference>48) {
+										if (firstline[0].message.length>430) {
+											return user['username'] + ', first line of that user in this channel: (' + 
+											(timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...';
+										} else {
+											return user['username'] + ', first line of that user in this channel: (' + 
+											(timeDifference/24).toFixed(0) + 'd' + reply;
+										}
+									} else {
+										if (firstline[0].message.length>430) {
+											return user['username'] + ', first line of that user in this channel: (' + 
+											format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
+										} else {
+											return user['username'] + ', first line of that user in this channel: (' + 
+											format(timeDifferenceRaw/1000) + reply;
+										}
+									}
+								}
+							} else {
+								if (timeDifference>48) {
+									if (firstline[0].message.length>430) {
+										return user['username'] + ', first line of that user in this channel: (' + 
+										(timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...';
+									} else {
+										return user['username'] + ', first line of that user in this channel: (' + 
+										(timeDifference/24).toFixed(0) + 'd' + reply;
+									}
+								} else {
+									if (firstline[0].message.length>430) {
+										return user['username'] + ', first line of that user in this channel: (' + 
+										format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
+									} else {
+										return user['username'] + ', first line of that user in this channel: (' + 
+										format(timeDifferenceRaw/1000) + reply;
+									}
+								}
+							}
+						}
+					}
+
+				} catch (err) {
+					errorLog(err)
+					return user['username'] + ' ' + err + ' FeelsDankMan !!!';
+				}
+			}
+		},
+
+		{
 			name: prefix + "rl",
 			aliases: prefix + "randomline",
 			description: 'kb rl [input] - random line from current chat, use input to get random line from a specified user, no input will return a random quote.',
