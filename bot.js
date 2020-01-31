@@ -1281,7 +1281,7 @@ kb.on('connected', (adress, port) => {
 					}
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
 					if (!msg[0]) {
-						const firstline = await doQuery('SELECT * FROM logs_haxk WHERE username="' + user['username'] + '" ORDER BY DATE ASC');
+						const firstline = await doQuery('SELECT * FROM logs_' + channel.replace('#', '') + ' WHERE username="' + user['username'] + '" ORDER BY DATE ASC');
 						if (!firstline[0]) {
 							return user['username'] + ", I don't have any logs from that user";
 						} else {
@@ -1355,7 +1355,7 @@ kb.on('connected', (adress, port) => {
 							}
 						}
 					} else {
-						const sql = 'SELECT * FROM logs_haxk WHERE username=? ORDER BY DATE ASC';
+						const sql = 'SELECT * FROM logs_' + channel.replace('#', '') + ' WHERE username=? ORDER BY DATE ASC';
 						const inserts = [msg[0]];
 						const firstline = await doQuery(mysql.format(sql, inserts));
 						if (!firstline[0]) {
