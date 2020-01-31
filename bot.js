@@ -1272,7 +1272,7 @@ kb.on('connected', (adress, port) => {
 						if (hours === 0 && minutes != 0) {
 							return minutes + 'm ' + seconds + "s";
 						} else {
-							if (minutes === 0 && hours === 0) {
+							if ((minutes === 0 && hours === 0) && seconds != 0) {
 								return seconds + "s"
 							} else {
 								return hours + 'h ' + minutes + 'm ' + seconds + "s";
@@ -1462,7 +1462,7 @@ kb.on('connected', (adress, port) => {
 						if (hours === 0 && minutes != 0) {
 							return minutes + 'm ' + seconds + "s";
 						} else {
-							if (minutes === 0 && hours === 0) {
+							if ((minutes === 0 && hours === 0) && seconds != 0) {
 								return seconds + "s"
 							} else {
 								return hours + 'h ' + minutes + 'm ' + seconds + "s";
@@ -2121,9 +2121,12 @@ kb.on('connected', (adress, port) => {
 							talkedRecently.delete(user['user-id']);
 						}, 10000);
 					}
+					const perms = allowModule.filter(
+						i => i.ID === user['user-id']
+					);
 					switch (msg[0]) {
 						case 'module':
-							if (user['user-id'] != '178087241') {
+							if (!perms[0]) {
 								return '';
 							} else {
 								await doQuery('UPDATE cookieModule SET reminders="' + msg[1] + '" WHERE type="ed"');
@@ -2839,7 +2842,7 @@ kb.on('connected', (adress, port) => {
 										'"kb cookie force" the in chat.');
 								} else {
 									const now = new Date();
-									kb.say(channel, user['username'] + ', I will remind you in channel to eat the cookie in 20m :)');
+									kb.say(channel, user['username'] + ', I will remind you in to eat the cookie in 20m :)');
 									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
 										now.addMinutes(20).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 										'WHERE username="' + user['username'] + '"');
