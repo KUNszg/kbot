@@ -653,6 +653,7 @@ kb.on('connected', (adress, port) => {
 			aliases: prefix + "ct",
 			description: "syntax: kb chat [message] | " +
 				"message - provide a message to chat with the AI bot, no parameter will return error",
+			permission: 'restricted',
 			invocation: async (channel, user, message, args) => {
 				try {
 					if (user['user-id'] != '178087241') {
@@ -2757,7 +2758,7 @@ kb.on('connected', (adress, port) => {
 					}
 				} catch (err) {
 					errorLog(err)
-					return user['username'] + ', ' + err + ' FeelsDankMan!!!'
+					return user['username'] + ', error FeelsDankMan!!!'
 				}
 			}	
 		},
