@@ -13,7 +13,7 @@ const channelOptions = fs.readFileSync('./db/channels.js').toString().split('"')
 	}).join('').split(' ')
 const options = {
 	options: {
-		debug: false,
+		debug: true,
 	},
 	connection: {
 		cluster: 'aws',
@@ -2385,7 +2385,7 @@ kb.on('connected', (adress, port) => {
 					}
 					
 					commandsExecuted.push('1');
-					if ((msg[0] != "-channel" && msg[0] != "-bruh") && msg.length != 0) { 
+					if (((msg[0] != "-channel" && msg[0] != "-bruh") && msg.length != 0) && msg.length === 2) { 
 						const sql = 'SELECT message, COUNT(message) AS value_occurance FROM ?? WHERE message=? GROUP BY message ORDER BY value_occurance DESC LIMIT 1;'
 						const inserts = ['logs_' + channel.replace('#', ''), msg.join(' ')]
 						const occurence = await doQuery(mysql.format(sql, inserts));
