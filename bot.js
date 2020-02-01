@@ -13,7 +13,7 @@ const channelOptions = fs.readFileSync('./db/channels.js').toString().split('"')
 	}).join('').split(' ')
 const options = {
 	options: {
-		debug: true,
+		debug: false,
 	},
 	connection: {
 		cluster: 'aws',
@@ -1689,7 +1689,7 @@ kb.on('connected', (adress, port) => {
 							)/1000/3600;
 						const timeDifferenceRaw = (Math.abs(
 							serverDate - (new Date(randomLine[0].date).getTime()))
-							)/1000/3600;
+							);
 
 						if (banphrasePass.banned === true) {
 							if (channel==="#nymn") {
