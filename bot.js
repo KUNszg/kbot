@@ -2768,28 +2768,33 @@ kb.on('connected', (adress, port) => {
 			aliases: prefix + 'tc',
 			description: "kb tc [user] - returns if given user has TwitchCon Amsterdam 2020 badge (the badge has to be displayed globally) - cooldown 5s",
 			invocation: async (channel, user, message, args) => {
-				if (talkedRecently.has(user['user-id'])) {
-					return '';
-				} else {
-					talkedRecently.add(user['user-id']);
-					setTimeout(() => {
-						talkedRecently.delete(user['user-id']);
-					}, 5000);
-				}
-				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2)
-				const tcStatus = await fetch("https://api.ivr.fi/twitch/badges/" + msg[0])
-					.then(response => response.json());
-				const checkBadge = tcStatus.badges.filter(i=>i.id === "twitchconAmsterdam2020")
-				if (checkBadge.length === 0) {
-					return user['username'] + ', that user has no TwitchCon Amsterdam 2020 global badge set, or is not attending the event :/';
-				} else {
-					if (checkBadge[0].id === "twitchconAmsterdam2020") {
-						return user['username'] + ', that user is attending TwitchCon Amsterdam 2020 PogChamp !!!';
+				try {
+					if (talkedRecently.has(user['user-id'])) {
+						return '';
 					} else {
-						return user['username'] + ', that user has no TwitchCon Amsterdam 2020 global badge set, or is not attending the event :/';
+						talkedRecently.add(user['user-id']);
+						setTimeout(() => {
+							talkedRecently.delete(user['user-id']);
+						}, 5000);
 					}
-				}	
-			}	
+					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2)
+					const tcStatus = await fetch("https://api.ivr.fi/twitch/badges/" + msg[0])
+						.then(response => response.json());
+					const checkBadge = tcStatus.badges.filter(i=>i.id === "twitchconAmsterdam2020")
+					if (checkBadge.length === 0) {
+						return user['username'] + ', that user has no TwitchCon Amsterdam 2020 global badge set, or is not attending the event :/';
+					} else {
+						if (checkBadge[0].id === "twitchconAmsterdam2020") {
+							return user['username'] + ', that user is attending TwitchCon Amsterdam 2020 PogChamp !!!';
+						} else {
+							return user['username'] + ', that user has no TwitchCon Amsterdam 2020 global badge set, or is not attending the event :/';
+						}
+					}	
+				} catch (err) {
+					errorLog(err)
+					return user['username'] + ' ' + err + ' FeelsDankMan !!!';
+				}
+			}	 
 		},
 
 		{
