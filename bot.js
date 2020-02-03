@@ -2792,7 +2792,7 @@ kb.on('connected', (adress, port) => {
 					}	
 				} catch (err) {
 					errorLog(err)
-					return user['username'] + ' ' + err + ' FeelsDankMan !!!';
+					return user['username'] + ' ' + err.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').replace(/\d/g, '').replace(/./g, '') + ' FeelsDankMan !!!';
 				}
 			}	 
 		},
