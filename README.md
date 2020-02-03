@@ -12,5 +12,3 @@ Fairly easy to get started
 # Note:
 - bot is not meant to run on other machines (most likely won't work because of database integration)
 - it's meant to be a project that you get inspired of, I don't take any responsibility for damage on other machines
-
-this repo is going to be stored in an arctic vault and will last over 500 years there, if you see this message im probably dead by that time :) also if you read this i von ZULUL
