@@ -2774,7 +2774,7 @@ kb.on('connected', (adress, port) => {
 					talkedRecently.add(user['user-id']);
 					setTimeout(() => {
 						talkedRecently.delete(user['user-id']);
-					}, 8000);
+					}, 5000);
 				}
 				const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2)
 				const tcStatus = await fetch("https://api.ivr.fi/twitch/badges/" + msg[0])
