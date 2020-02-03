@@ -3072,7 +3072,7 @@ kb.on('connected', (adress, port) => {
 										'"kb cookie force" in chat.');
 								} else {
 									const now = new Date();
-									kb.say(channel, user['username'] + ', I will remind you in channel to eat the cookie in 2h :)');
+									kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 2h :)');
 									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
 										now.addMinutes(120).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 										'WHERE username="' + user['username'] + '"');
