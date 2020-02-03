@@ -2781,15 +2781,19 @@ kb.on('connected', (adress, port) => {
 					const tcStatus = await fetch("https://api.ivr.fi/twitch/badges/" + msg[0])
 						.then(response => response.json());
 					const checkBadge = tcStatus.badges.filter(i=>i.id === "twitchconAmsterdam2020")
-					if (checkBadge.length === 0) {
-						return user['username'] + ', that user has no TwitchCon Amsterdam 2020 global badge set, or is not attending the event :/';
-					} else {
-						if (checkBadge[0].id === "twitchconAmsterdam2020") {
-							return user['username'] + ', that user is attending TwitchCon Amsterdam 2020 PogChamp !!!';
-						} else {
+					if (!msg[0]) {
+						return user['username'] + ', no user provided.';
+					} else {	
+						if (checkBadge.length === 0) {
 							return user['username'] + ', that user has no TwitchCon Amsterdam 2020 global badge set, or is not attending the event :/';
-						}
-					}	
+						} else {
+							if (checkBadge[0].id === "twitchconAmsterdam2020") {
+								return user['username'] + ', that user is attending TwitchCon Amsterdam 2020 PogChamp !!!';
+							} else {
+								return user['username'] + ', that user has no TwitchCon Amsterdam 2020 global badge set, or is not attending the event :/';
+							}
+						}	
+					}
 				} catch (err) {
 					errorLog(err)
 					return user['username'] + ' ' + err.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').replace(/\d/g, '').replace(/./g, '') + ' FeelsDankMan !!!';
