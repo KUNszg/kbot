@@ -2814,6 +2814,7 @@ kb.on('connected', (adress, port) => {
 		const input = message.split(' ')
 		if (user['user-id'] === "441611405") return;
 		if (user['user-id'] === "81613973") return;
+		if (user['user-id'] === "176481960") return; //boiiiann
 		if (self) return;
 
 		commands.forEach(async command => {
@@ -2955,6 +2956,7 @@ kb.on('connected', (adress, port) => {
 		if (user['user-id'] === "441611405") return;
 		if (user['user-id'] === "81613973") return;
 		if (user['user-id'] === "249408349") return;
+		if (user['user-id'] === "176481960") return; // boiiiann
 		if (self) return;
 		commandlist.forEach(async command => {
 			if (
