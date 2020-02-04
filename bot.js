@@ -1664,7 +1664,7 @@ kb.on('connected', (adress, port) => {
 					}
 
 					const randomLine = await doQuery(
-						'SELECT ID, username, message, date FROM logs_nymn WHERE username="' +
+						'SELECT ID, username, message, date FROM logs_' + channel.replace('#', '') + ' WHERE username="' +
 						user['username'] + '" ORDER BY RAND() LIMIT 1'
 						);
 
