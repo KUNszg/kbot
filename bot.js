@@ -67,9 +67,6 @@ kb.on('connected', (adress, port) => {
 		{
 			ID: '229225576'
 		}, //kunszgbot
-		{
-			ID: '40379362'
-		} //sinris
 	];
 	const allowEval = [{
 			ID: '178087241'
