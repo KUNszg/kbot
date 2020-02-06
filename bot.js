@@ -1678,7 +1678,7 @@ kb.on('connected', (adress, port) => {
 							},
 						}).then(response => response.json()))
 
-						const reply =' ago) ' +  randomLine[0].username.replace(/^(.{2})/, "$1\u{E0000}") + 
+						const reply =' ago) ' +  randomLine[0].username + 
 							': ' + randomLine[0].message;
 
 						const timeDifference = (Math.abs(
