@@ -2500,7 +2500,7 @@ kb.on('connected', (adress, port) => {
 							const trichomp = new Promise((resolve, reject) => {
 								con.query('SELECT COUNT(message) AS valueCount FROM logs_' + 
 									channel.replace('#', '') + 
-									' WHERE message LIKE "%nigg%"',
+									' WHERE message LIKE "%nigg%" or message LIKE "%nibba%"',
 									function(error, results, fields) {
 										if (error) {
 											kb.say(channel, user['username'] + 
@@ -2514,7 +2514,7 @@ kb.on('connected', (adress, port) => {
 								const trichompCount = new Promise((resolve, reject) => {
 									con.query('SELECT COUNT(username) AS value FROM logs_' + 
 										channel.replace('#', '') + 
-										' WHERE (message LIKE "%nigg%") AND username="' +
+										' WHERE (message LIKE "%nigg%" OR message LIKE "%nibba%") AND username="' +
 										 user['username'] + '"',
 										function(error, results, fields) {
 											if (error) {
@@ -2559,7 +2559,7 @@ kb.on('connected', (adress, port) => {
 							const trichomp = new Promise((resolve, reject) => {
 							con.query('SELECT COUNT(message) AS valueCount FROM logs_' + 
 								channel.replace('#', '') + 
-								' WHERE username="' + msg[1] + '" AND (message LIKE "%nigg%")',
+								' WHERE username="' + msg[1] + '" AND (message LIKE "%nigg%" or message LIKE "%nibba%")',
 								function(error, results, fields) {
 									if (error) {
 										kb.say(channel, user['username'] + 
@@ -2573,7 +2573,7 @@ kb.on('connected', (adress, port) => {
 								const trichompCount = new Promise((resolve, reject) => {
 									con.query('SELECT COUNT(username) AS value FROM logs_' + 
 										channel.replace('#', '') + 
-										' WHERE (message LIKE "%nigg%") AND username="' +
+										' WHERE (message LIKE "%nigg%" OR message LIKE "%nibba%") AND username="' +
 										 msg[1] + '"',
 										function(error, results, fields) {
 											if (error) {
