@@ -61,7 +61,7 @@ kb.on('connected', (adress, port) => {
 	});
 	kb.on('message', function(channel, user, message) {
 		const filterBots = ignoreList.filter(i => i === user['user-id'])
-		const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '')
+		const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
 		if (filterBots.length != 0 || msg === '') {
 			return;
 		} else {
