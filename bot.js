@@ -3027,6 +3027,7 @@ kb.on('connected', (adress, port) => {
 								user['user-id'] + '?id=true')
 							.then(response => response.json());
 						const query = await doQuery('SELECT username FROM cookies WHERE username="' + user['username'] + '"');
+						const updateCheck = await doQuery('SELECT username, status FROM cookie_reminders WHERE username="' + user['username'] + '"')
 						if (query.length === 0) {
 							kb.say(channel, '');
 						} else {
@@ -3043,9 +3044,13 @@ kb.on('connected', (adress, port) => {
 										'To force your cookie reminder do ' +
 										'"kb cookie force" in the chat.');
 								} else {
-									const now = new Date();
-									kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 1h :)');
-								 	await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+									if (updateCheck[0].status === "scheduled") {
+										kb.say(channel, user['username'] + ', updating your pending cookie reminder, I will remind you in 1h :D')
+									} else {
+										kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 1h :)');
+								 	}
+								 	const now = new Date();
+									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
 										now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 										'WHERE username="' + user['username'] + '"');
 							 	}
@@ -3057,10 +3062,14 @@ kb.on('connected', (adress, port) => {
 										'), wait 30m intervals. To force your cookie reminder do ' +
 										' "kb cookie force" in the chat.');
 								} else {
-									const now = new Date();
-									kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 30m :)');
+									if (updateCheck[0].status === "scheduled") {
+										kb.say(channel, user['username'] + ', updating your pending cookie reminder, I will remind you in 30m :D')
+									} else {
+										kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 30m :)');
+								 	}
+								 	const now = new Date();
 									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
-										now.addMinutes(30).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+										now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 										'WHERE username="' + user['username'] + '"');
 								}
 							} else if (cookieStatus.prestige === 3) {
@@ -3071,10 +3080,14 @@ kb.on('connected', (adress, port) => {
 										'), wait 20m intervals. To force your cookie reminder do ' +
 										'"kb cookie force" the in chat.');
 								} else {
-									const now = new Date();
-									kb.say(channel, user['username'] + ', I will remind you in to eat the cookie in 20m :)');
+									if (updateCheck[0].status === "scheduled") {
+										kb.say(channel, user['username'] + ', updating your pending cookie reminder, I will remind you in 20m :D')
+									} else {
+										kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 20m :)');
+								 	}
+								 	const now = new Date();
 									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
-										now.addMinutes(20).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+										now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 										'WHERE username="' + user['username'] + '"');
 								}
 							} else if (cookieStatus.prestige === 4) {
@@ -3108,10 +3121,14 @@ kb.on('connected', (adress, port) => {
 										'), wait 2h intervals. To force your cookie reminder do ' +
 										'"kb cookie force" in chat.');
 								} else {
-									const now = new Date();
-									kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 2h :)');
+									if (updateCheck[0].status === "scheduled") {
+										kb.say(channel, user['username'] + ', updating your pending cookie reminder, I will remind you in 2h :D')
+									} else {
+										kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 2h :)');
+								 	}
+								 	const now = new Date();
 									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
-										now.addMinutes(120).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+										now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 										'WHERE username="' + user['username'] + '"');
 								}
 							} else {
@@ -3307,7 +3324,9 @@ kb.on('connected', (adress, port) => {
 	});
 
 	// unfire clogging reminders
-	async function unfire() {
+	async function unfireCookie() {
+		
+		// cookies
 		const unfire = await doQuery('SELECT username, channel, fires, status FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC');
 
 		if (!unfire[0]) {
@@ -3323,20 +3342,52 @@ kb.on('connected', (adress, port) => {
 			if (differenceToSec>15) {
 
 				// update the database with fired reminder
-				const selectUnfiredUsers = await doQuery('SELECT * FROM cookie_reminders WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;')
+				const selectUnfiredUsers = await doQuery('SELECT * FROM cookie_reminders WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
 				if (!selectUnfiredUsers[0]) {
 					return '';
 				} else {
 					const dateUnfiredUsers = new Date(selectUnfiredUsers[0].fires)
 					const unfiredDiff = (serverDate - dateUnfiredUsers)/1000/60
-					kb.say(selectUnfiredUsers[0].channel, selectUnfiredUsers[0].username + ', you had an unfired cookie reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and eat your cookie please :)')
+					kb.say(selectUnfiredUsers[0].channel, selectUnfiredUsers[0].username + ', you had an unfired cookie reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and eat your cookie please :)');
 					await doQuery('UPDATE cookie_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
 				}
 			}
 		}
 	}
 	setInterval(() => {
-		unfire()
+		unfireCookie()
+	}, 10000)
+
+	// unfire clogging reminders
+	async function unfireEd() {
+
+		// ed
+		const unfire = await doQuery('SELECT username, channel, fires, status FROM ed_reminders WHERE status!="fired" ORDER BY fires ASC');
+		if (!unfire[0]) {
+			return;
+		} else {
+			const serverDate = new Date();
+			const fires = new Date(unfire[0].fires);
+			const diff = serverDate - fires
+			const differenceToSec = diff/1000;
+
+			if (differenceToSec>15) {
+
+				// update the database with fired reminder
+				const selectUnfiredUsers = await doQuery('SELECT * FROM ed_reminders WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
+				if (!selectUnfiredUsers[0]) {
+					return '';
+				} else {
+					const dateUnfiredUsers = new Date(selectUnfiredUsers[0].fires)
+					const unfiredDiff = (serverDate - dateUnfiredUsers)/1000/60
+					kb.whisper(selectUnfiredUsers[0].username, 'You had an unfired dungeon reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and enter the dungeon please :)');
+					await doQuery('UPDATE ed_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
+				}
+			}
+		}
+	}
+	setInterval(() => {
+		unfireEd()
 	}, 10000)
 
 	// check and send reminders - cookie
