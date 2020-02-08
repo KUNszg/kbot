@@ -1977,7 +1977,7 @@ kb.on('connected', (adress, port) => {
 
 							setTimeout(() => {
 								if (channel === '#nymn') {
-									kb.say('nymn', 'restarting pajaWalk1 pajaWalk2 pajaWalk3 🚪')
+									kb.say('nymn', 'restarting pajaWalk3 🚪')
 								} else {
 									kb.say(channel, 'restarting KKona ')
 								}
@@ -3503,9 +3503,9 @@ kb.on('connected', (adress, port) => {
 				return;
 			} else {
 				if (duration == '1') {
-					kb.say(channel, username + " vanished Article13 magicWand ")
+					kb.say(channel, username + " vanished Article13 MagicTime")
 				} else {
-					kb.say(channel, username + " has been timed out for " + duration + "s Article13 magicWand ")
+					kb.say(channel, username + " has been timed out for " + duration + "s Article13 MagicTime")
 				}
 			}
 		});
