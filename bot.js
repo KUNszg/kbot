@@ -86,13 +86,7 @@ kb.on('connected', (adress, port) => {
 		}, //kunszg
 		{
 			ID: '229225576'
-		}, //kunszgbot
-		{
-			ID: '40379362'
-		}, //sinris
-		{
-			ID: '103973901'
-		} //alazymeme
+		} //kunszgbot
 	]
 	const doQuery = (query) => new Promise((resolve, reject) => {
 	    con.query(query, (err, results, fields) => {
