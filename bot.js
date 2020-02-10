@@ -88,6 +88,7 @@ kb.on('connected', (adress, port) => {
 			ID: '229225576'
 		} //kunszgbot
 	]
+
 	const doQuery = (query) => new Promise((resolve, reject) => {
 	    con.query(query, (err, results, fields) => {
 	        if (err) {
@@ -109,12 +110,25 @@ kb.on('connected', (adress, port) => {
 	        }      
 	    });
 	});
+
 	async function errorLog(err) {
 		console.log(err)
 		const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
 		const insert = [JSON.stringify(err), new Date()];
 		await doQuery(mysql.format(sql, insert));
 	}
+
+	const banphrasePass = (output) => new Promise((resolve, reject) => {
+		const banphrasePass = (fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
+			method: "POST",
+			url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+			body: "message=" + output,
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"
+			},
+		}).then(response => response.json()))
+		resolve(banphrasePass);
+	});
 
 	const prefix = "kb ";
 	const commandsExecuted = [];
@@ -1277,16 +1291,6 @@ kb.on('connected', (adress, port) => {
 						if (!firstline[0]) {
 							return user['username'] + ", I don't have any logs from that user";
 						} else {
-							const banphrasePass = (await fetch(
-								'https://nymn.pajbot.com/api/v1/banphrases/test', {
-								method: "POST",
-								url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-								body: "message=" + firstline[0].message,
-								headers: {
-									"Content-Type": "application/x-www-form-urlencoded"
-								},
-							}).then(response => response.json()))
-
 							const reply =' ago) ' +  firstline[0].username.replace(/^(.{2})/, "$1\u{E0000}") + 
 								': ' + firstline[0].message;
 
@@ -1297,7 +1301,7 @@ kb.on('connected', (adress, port) => {
 							const timeDifferenceRaw = (Math.abs(
 								serverDate - (new Date(firstline[0].date).getTime()))
 								);
-							if (banphrasePass.banned === true) {
+							if (await banphrasePass(firstline[0].message).banned === true) {
 								if (channel==="#nymn") {
 									if (timeDifference>48) {
 										kb.whisper(user['username'], ', Your first line in this channel was: (' + 
@@ -1353,16 +1357,6 @@ kb.on('connected', (adress, port) => {
 						if (!firstline[0]) {
 							return user['username'] + ", I don't have any logs from that user";
 						} else {
-							const banphrasePass = (await fetch(
-								'https://nymn.pajbot.com/api/v1/banphrases/test', {
-								method: "POST",
-								url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-								body: "message=" + firstline[0].message,
-								headers: {
-									"Content-Type": "application/x-www-form-urlencoded"
-								},
-							}).then(response => response.json()))
-
 							const reply =' ago) ' +  firstline[0].username.replace(/^(.{2})/, "$1\u{E0000}") + 
 								': ' + firstline[0].message;
 
@@ -1373,7 +1367,7 @@ kb.on('connected', (adress, port) => {
 							const timeDifferenceRaw = (Math.abs(
 								serverDate - (new Date(firstline[0].date).getTime()))
 								);
-							if (banphrasePass.banned === true) {
+							if (await banphrasePass(firstline[0].message).banned === true) {
 								if (channel==="#nymn") {
 									if (timeDifference>48) {
 										kb.whisper(user['username'], ', first line of that user in this channel: (' + 
@@ -1485,16 +1479,6 @@ kb.on('connected', (adress, port) => {
 						if (!randomLine[0]) {
 							return user['username'] + ", I don't have any logs from this channel :z";
 						} else {
-							const banphrasePass = (await fetch(
-								'https://nymn.pajbot.com/api/v1/banphrases/test', {
-								method: "POST",
-								url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-								body: "message=" + randomLine[0].message,
-								headers: {
-									"Content-Type": "application/x-www-form-urlencoded"
-								},
-							}).then(response => response.json()))
-
 							const reply =' ago) ' +  randomLine[0].username.replace(/^(.{2})/, "$1\u{E0000}") + 
 								': ' + randomLine[0].message;
 
@@ -1505,7 +1489,7 @@ kb.on('connected', (adress, port) => {
 								serverDate - (new Date(randomLine[0].date).getTime()))
 								);
 
-							if (banphrasePass.banned === true) {
+							if (await banphrasePass(randomLine[0].message).banned === true) {
 								if (channel==="#nymn") {
 									if (timeDifference>48) {
 										kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...');
@@ -1554,16 +1538,6 @@ kb.on('connected', (adress, port) => {
 						if (!randomLine[0]) {
 							return user['username'] + ', there are no logs in my database related to that user xD';
 						} else {
-							const banphrasePass = (await fetch(
-								'https://nymn.pajbot.com/api/v1/banphrases/test', {
-								method: "POST",
-								url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-								body: "message=" + randomLine[0].message,
-								headers: {
-									"Content-Type": "application/x-www-form-urlencoded"
-								},
-							}).then(response => response.json()))
-
 							const timeDifference = (Math.abs(
 								serverDate - (new Date(randomLine[0].date).getTime()))
 								)/1000/3600;
@@ -1573,7 +1547,7 @@ kb.on('connected', (adress, port) => {
 
 							const reply =' ago) ' + randomLine[0].username.replace(/^(.{2})/, "$1\u{E0000}") + 
 								': ' + randomLine[0].message;
-							if (banphrasePass.banned === true) {
+							if (await banphrasePass(randomLine[0].message).banned === true) {
 								if (channel==="#nymn") {
 									if (timeDifference>48) {
 										kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...');
@@ -1662,16 +1636,6 @@ kb.on('connected', (adress, port) => {
 					if (!randomLine[0]) {
 						return user['username'] + ", I don't have any logs from this channel :z";
 					} else {
-						const banphrasePass = (await fetch(
-							'https://nymn.pajbot.com/api/v1/banphrases/test', {
-							method: "POST",
-							url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-							body: "message=" + randomLine[0].message,
-							headers: {
-								"Content-Type": "application/x-www-form-urlencoded"
-							},
-						}).then(response => response.json()))
-
 						const reply =' ago) ' +  randomLine[0].username + 
 							': ' + randomLine[0].message;
 
@@ -1682,7 +1646,7 @@ kb.on('connected', (adress, port) => {
 							serverDate - (new Date(randomLine[0].date).getTime()))
 							);
 
-						if (banphrasePass.banned === true) {
+						if (await banphrasePass(randomLine[0].message).banned === true) {
 							if (channel==="#nymn") {
 								if (timeDifference>48) {
 									kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...');
@@ -2361,12 +2325,12 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'stats',
 			aliases: null,
-			description: `syntax: kb stats [-channel / -bruh / [input]] | no parameter - returns information about your logs in my
-				database | -channel - returns information about the current channel | -bruh - returns amount of racists in the chat | 
+			description: `syntax: kb stats [-channel / -bruh / [input]] | no parameter - information about your logs in my
+				database | -channel - information about the current channel | -bruh - amount of racists in the chat | 
 				[input] - provide a custom message - cooldown 8s`,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
+					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
 					const channelParsed = channel.replace('#', '')
 					const fetch = require('node-fetch');
 					if (talkedRecently.has(user['user-id'])) {
@@ -2377,56 +2341,52 @@ kb.on('connected', (adress, port) => {
 							talkedRecently.delete(user['user-id']);
 						}, 8000);
 					}
-					
 					commandsExecuted.push('1');
-					if (((msg[0] != "-channel" && msg[0] != "-bruh") && msg.length != 0) && msg.length != 2) { 
-						const sql = `SELECT message, COUNT(message) AS value_occurance FROM ?? WHERE message=? 
-							GROUP BY message ORDER BY value_occurance DESC LIMIT 1;`;
-						const inserts = [`logs_${channelParsed}`, msg.join(' ')]
-						const occurence = await doQuery(mysql.format(sql, inserts));
-						if (occurence.length === 0) {
-							return `${user['username']}, no message logs found for that query`
-						}
-						const output = `${user['username']}, message " ${occurence[0].message.substr(0, 255)}
-							" has been typed ${occurence[0].value_occurance} times in this channel.`;
-						if (output.toString().length>500) {
-							const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
-								method: "POST",
-								url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-								body: "message=" + output.substr(0, 500) + '...',
-								headers: {
-									"Content-Type": "application/x-www-form-urlencoded"
-								},
-							}).then(response => response.json()))
-							if (banphrasePass.banned === true) {
-								kb.whisper(user['username'], output);
-								return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
-							} else {
-								return `${output.substr(0, 500)}...`
-							}
+
+					// if no parameters provided...
+					if (((msg[0] != "-channel" && msg[0] != "-bruh") && msg.length != 0)) {
+						if (msg.join(' ').length<4) {
+							return user['username'] + ', provided word has not enough characters to run a query.'
 						} else {
-							const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
-								method: "POST",
-								url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-								body: "message=" + output,
-								headers: {
-									"Content-Type": "application/x-www-form-urlencoded"
-								},
-							}).then(response => response.json()))
-							if (banphrasePass.banned === true) {
-								kb.whisper(user['username'], output);
-								return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+
+							// positional query
+							const sql = `SELECT message, count(*) AS value_occurance FROM ?? WHERE message LIKE ?
+								GROUP BY message ORDER BY value_occurance DESC LIMIT 1;`;
+							const inserts = [`logs_${channelParsed}`, '%'+msg.join(' ')+'%']
+							const occurence = await doQuery(mysql.format(sql, inserts));
+
+
+							if (occurence.length === 0) {
+								return `${user['username']}, no message logs found for that query`
+							}
+							const output = `${user['username']}, message similar to " ${occurence[0].message.substr(0, 255)}
+								" has been typed ${occurence[0].value_occurance} times in this channel.`;
+
+							// check if response exceeds 500 characters limit
+							if (output.toString().length>500) {
+								// check if response would cause timeout in the channel
+								if (await banphrasePass(output.substr(0, 500)).banned === true) {
+									kb.whisper(user['username'], output);
+									return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+								} else {
+									return `${output.substr(0, 500)}...`
+								}
 							} else {
-								return output;
+								if (await banphrasePass(output).banned === true) {
+									kb.whisper(user['username'], output);
+									return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+								} else {
+									return output;
+								}
 							}
 						}
 					} else if (msg[0] === "-channel") {
 
 						// amount of rows in specific channel logs table
-						const values = await doQuery(`SELECT COUNT(ID) as value FROM logs_${channelParsed}`);
+						const values = await doQuery(`SELECT COUNT(ID) AS value FROM logs_${channelParsed}`);
 
 						// table size
-						const size = await doQuery(`SELECT TABLE_NAME AS Table, (DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024 
+						const size = await doQuery(`SELECT TABLE_NAME AS ` + '`' + 'Table' + '`' + `, (DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024 
 							AS size FROM information_schema.TABLES WHERE TABLE_NAME = "logs_${channelParsed}" 
 							ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;`);
 
@@ -2444,16 +2404,16 @@ kb.on('connected', (adress, port) => {
 							${(differenceToSec/86400).toFixed(0)} days ago`;
 					} 
 					else if (msg[0] === "-bruh") {
-
+						kb.say(channel, `${user['username']}, fetching data, give me few seconds :)`)
 						// if there is no user parameter
 						if (!msg[1]) {
 
 							// count the words in the channel
-							const channelValue = await doQuery(`SELECT COUNT(message) AS valueCount FROM logs_${channelParsed} 
+							const channelValue = await doQuery(`SELECT COUNT(*) AS valueCount FROM logs_${channelParsed} 
 								WHERE message LIKE "%nigg%"`);
 
 							// count the words in the channel for sender
-							const userValue = await doQuery(`SELECT COUNT(username) AS value FROM logs_${channelParsed} 
+							const userValue = await doQuery(`SELECT COUNT(*) AS value FROM logs_${channelParsed} 
 								WHERE (message LIKE "%nigg%") AND username="${user['username']}"`);
 
 							// channel specific responses
@@ -2478,9 +2438,9 @@ kb.on('connected', (adress, port) => {
 								}
 							}
 						} else {
-							const channelValue = await doQuery(`SELECT COUNT(message) AS valueCount FROM logs_${channelParsed} 
+							const channelValue = await doQuery(`SELECT COUNT(*) AS valueCount FROM logs_${channelParsed} 
 								WHERE username="${msg[1]}" AND (message LIKE "%nigg%")`);
-							const userValue = await doQuery(`SELECT COUNT(username) AS value FROM logs_${channelParsed} 
+							const userValue = await doQuery(`SELECT COUNT(*) AS value FROM logs_${channelParsed} 
 								WHERE (message LIKE "%nigg%") AND username="${msg[1]}"`);
 
 							// replace second character in user's name with an invisible character to prevent the ping
@@ -2526,15 +2486,7 @@ kb.on('connected', (adress, port) => {
 
 						// if response has more than 500 characters, truncate it	
 						if (output.toString().length>500) {
-							const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
-								method: "POST",
-								url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-								body: "message=" + val[0].message.substr(0, 255),
-								headers: {
-									"Content-Type": "application/x-www-form-urlencoded"
-								},
-							}).then(response => response.json()))
-							if (banphrasePass.banned === true) {
+							if (await banphrasePass(val[0].message.substr(0, 255)).banned === true) {
 								kb.whisper(user['username'], output);
 								return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
 							} else {
@@ -2544,15 +2496,7 @@ kb.on('connected', (adress, port) => {
 									(${val[0].value_occurance} times)`;
 							}
 						} else {
-							const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
-								method: "POST",
-								url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-								body: "message=" + output,
-								headers: {
-									"Content-Type": "application/x-www-form-urlencoded"
-								},
-							}).then(response => response.json()))
-							if (banphrasePass.banned === true) {
+							if (await banphrasePass(output).banned === true) {
 								kb.whisper(user['username'], output);
 								return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
 							} else {
@@ -2589,16 +2533,8 @@ kb.on('connected', (adress, port) => {
 					const output = quranApi.data[0].surah.englishName + ' - ' + 
 						quranApi.data[0].surah.englishNameTranslation + ': ' + quranApi.data[0].text.split(' ').reverse().join(' ')  + ' - ' + 
 						quranApi.data[1].text + ' ' + quranApi.data[0].page + ':' + quranApi.data[0].surah.numberOfAyahs;
-					const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
-						method: "POST",
-						url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-						body: "message=" + output,
-						headers: {
-							"Content-Type": "application/x-www-form-urlencoded"
-						},
-					}).then(response => response.json()))
 					if (channel === "#nymn") {
-						if (banphrasePass.banned === true) {
+						if (await banphrasePass(output).banned === true) {
 							kb.whisper(user['username'], output);
 							return user['username'] +
 								', the result is banphrased, I whispered it to you tho cmonBruh';		
