@@ -2404,7 +2404,6 @@ kb.on('connected', (adress, port) => {
 							${(differenceToSec/86400).toFixed(0)} days ago`;
 					} 
 					else if (msg[0] === "-bruh") {
-						kb.say(channel, `${user['username']}, fetching data, give me few seconds :)`)
 						// if there is no user parameter
 						if (!msg[1]) {
 
@@ -2819,6 +2818,7 @@ kb.on('connected', (adress, port) => {
 							.then(response => response.json());
 						const query = await doQuery('SELECT username FROM cookies WHERE username="' + user['username'] + '"');
 						const updateCheck = await doQuery('SELECT username, status FROM cookie_reminders WHERE username="' + user['username'] + '"')
+						const userChannel = '#' + user['username'];
 						if (query.length === 0) {
 							kb.say(channel, '');
 						} else {
@@ -2836,9 +2836,9 @@ kb.on('connected', (adress, port) => {
 										'"kb cookie force" in the chat.');
 								} else {
 									if (updateCheck[0].status === "scheduled") {
-										kb.say(channel, user['username'] + ', updating your pending cookie reminder, I will remind you in 1h :D')
+										kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 1h :D')
 									} else {
-										kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 1h :)');
+										kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 1h :)');
 								 	}
 								 	const now = new Date();
 									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
@@ -2854,9 +2854,9 @@ kb.on('connected', (adress, port) => {
 										' "kb cookie force" in the chat.');
 								} else {
 									if (updateCheck[0].status === "scheduled") {
-										kb.say(channel, user['username'] + ', updating your pending cookie reminder, I will remind you in 30m :D')
+										kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 30m :D')
 									} else {
-										kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 30m :)');
+										kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 30m :)');
 								 	}
 								 	const now = new Date();
 									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
@@ -2872,9 +2872,9 @@ kb.on('connected', (adress, port) => {
 										'"kb cookie force" the in chat.');
 								} else {
 									if (updateCheck[0].status === "scheduled") {
-										kb.say(channel, user['username'] + ', updating your pending cookie reminder, I will remind you in 20m :D')
+										kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 20m :D')
 									} else {
-										kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 20m :)');
+										kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 20m :)');
 								 	}
 								 	const now = new Date();
 									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
@@ -2913,9 +2913,9 @@ kb.on('connected', (adress, port) => {
 										'"kb cookie force" in chat.');
 								} else {
 									if (updateCheck[0].status === "scheduled") {
-										kb.say(channel, user['username'] + ', updating your pending cookie reminder, I will remind you in 2h :D')
+										kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 2h :D')
 									} else {
-										kb.say(channel, user['username'] + ', I will remind you to eat the cookie in 2h :)');
+										kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 2h :)');
 								 	}
 								 	const now = new Date();
 									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
