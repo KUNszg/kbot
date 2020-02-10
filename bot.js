@@ -2819,6 +2819,7 @@ kb.on('connected', (adress, port) => {
 						const query = await doQuery('SELECT username FROM cookies WHERE username="' + user['username'] + '"');
 						const updateCheck = await doQuery('SELECT username, status FROM cookie_reminders WHERE username="' + user['username'] + '"')
 						const userChannel = '#' + user['username'];
+						const channelNoPing = channel.replace(/^(.{2})/, "$1\u{E0000}");
 						if (query.length === 0) {
 							kb.say(channel, '');
 						} else {
@@ -2836,9 +2837,9 @@ kb.on('connected', (adress, port) => {
 										'"kb cookie force" in the chat.');
 								} else {
 									if (updateCheck[0].status === "scheduled") {
-										kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 1h (channel ' + channel + ' ) :D')
+										kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 1h (channel ' + channelNoPing + ') :D')
 									} else {
-										kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 1h (channel ' + channel + ' ) :)');
+										kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 1h (channel ' + channelNoPing + ') :)');
 								 	}
 								 	const now = new Date();
 									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
@@ -2854,9 +2855,9 @@ kb.on('connected', (adress, port) => {
 										' "kb cookie force" in the chat.');
 								} else {
 									if (updateCheck[0].status === "scheduled") {
-										kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 30m (channel ' + channel + ' ) :D')
+										kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 30m (channel ' + channelNoPing + ') :D')
 									} else {
-										kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 30m (channel ' + channel + ' ) :)');
+										kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 30m (channel ' + channelNoPing + ') :)');
 								 	}
 								 	const now = new Date();
 									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
@@ -2872,9 +2873,9 @@ kb.on('connected', (adress, port) => {
 										'"kb cookie force" the in chat.');
 								} else {
 									if (updateCheck[0].status === "scheduled") {
-										kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 20m (channel ' + channel + ' ) :D')
+										kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 20m (channel ' + channelNoPing + ') :D')
 									} else {
-										kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 20m (channel ' + channel + ' ) :)');
+										kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 20m (channel ' + channelNoPing + ') :)');
 								 	}
 								 	const now = new Date();
 									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
@@ -2913,9 +2914,9 @@ kb.on('connected', (adress, port) => {
 										'"kb cookie force" in chat.');
 								} else {
 									if (updateCheck[0].status === "scheduled") {
-										kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 2h (channel ' + channel + ' ) :D')
+										kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 2h (channel ' + channelNoPing + ') :D')
 									} else {
-										kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 2h (channel ' + channel + ' ) :)');
+										kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 2h (channel ' + channelNoPing + ') :)');
 								 	}
 								 	const now = new Date();
 									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
