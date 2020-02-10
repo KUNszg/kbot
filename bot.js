@@ -2361,11 +2361,14 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'stats',
 			aliases: null,
-			description: 'syntax: kb stats [-channel / -bruh / [input]] | no parameter - returns information about your logs in my  '  + 
-			'database | -channel - returns information about the current channel | -bruh - returns amount of racists in the chat | [input] - provide a custom message - cooldown 8s',
+			description: `syntax: kb stats [-channel / -bruh / [input]] | no parameter - returns information about your logs in my
+				database | -channel - returns information about the current channel | -bruh - returns amount of racists in the chat | 
+				[input] - provide a custom message - cooldown 8s`,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
+					const channelParsed = channel.replace('#', '')
+					const fetch = require('node-fetch');
 					if (talkedRecently.has(user['user-id'])) {
 						return '';
 					} else {
@@ -2377,331 +2380,189 @@ kb.on('connected', (adress, port) => {
 					
 					commandsExecuted.push('1');
 					if (((msg[0] != "-channel" && msg[0] != "-bruh") && msg.length != 0) && msg.length != 2) { 
-						const sql = 'SELECT message, COUNT(message) AS value_occurance FROM ?? WHERE message=? GROUP BY message ORDER BY value_occurance DESC LIMIT 1;'
-						const inserts = ['logs_' + channel.replace('#', ''), msg.join(' ')]
+						const sql = `SELECT message, COUNT(message) AS value_occurance FROM ?? WHERE message=? 
+							GROUP BY message ORDER BY value_occurance DESC LIMIT 1;`;
+						const inserts = [`logs_${channelParsed}`, msg.join(' ')]
 						const occurence = await doQuery(mysql.format(sql, inserts));
-						const fetch = require('node-fetch');
 						if (occurence.length === 0) {
-							kb.say(channel, user['username'] + ', no message logs found for that query')
-							return;
+							return `${user['username']}, no message logs found for that query`
 						}
-						const output = user['username'] + ', message " ' + occurence[0].message.substr(0, 255) + 
-							' " has been typed ' + occurence[0].value_occurance + ' times in this channel.';
+						const output = `${user['username']}, message " ${occurence[0].message.substr(0, 255)}
+							" has been typed ${occurence[0].value_occurance} times in this channel.`;
 						if (output.toString().length>500) {
-							async function check1() {
-								const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
-									method: "POST",
-									url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-									body: "message=" + output.substr(0, 500) + '...',
-									headers: {
-										"Content-Type": "application/x-www-form-urlencoded"
-									},
-								}).then(response => response.json()))
-								if (banphrasePass.banned === true) {
-									kb.say(channel, user['username'] +
-										', the result is banphrased, I whispered it to you tho cmonBruh')
-									kb.whisper(user['username'], output);
-								} else {
-									kb.say(channel, output.substr(0, 500) + '...');
-								}
+							const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
+								method: "POST",
+								url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+								body: "message=" + output.substr(0, 500) + '...',
+								headers: {
+									"Content-Type": "application/x-www-form-urlencoded"
+								},
+							}).then(response => response.json()))
+							if (banphrasePass.banned === true) {
+								kb.whisper(user['username'], output);
+								return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+							} else {
+								return `${output.substr(0, 500)}...`
 							}
-							check1()
 						} else {
-							async function check2() {
-								const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
-									method: "POST",
-									url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-									body: "message=" + output,
-									headers: {
-										"Content-Type": "application/x-www-form-urlencoded"
-									},
-								}).then(response => response.json()))
-								if (banphrasePass.banned === true) {
-									kb.say(channel, user['username'] +
-										', the result is banphrased, I whispered it to you tho cmonBruh')
-									kb.whisper(user['username'], output);
-								} else {
-									kb.say(channel, output);
-								}
+							const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
+								method: "POST",
+								url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+								body: "message=" + output,
+								headers: {
+									"Content-Type": "application/x-www-form-urlencoded"
+								},
+							}).then(response => response.json()))
+							if (banphrasePass.banned === true) {
+								kb.whisper(user['username'], output);
+								return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+							} else {
+								return output;
 							}
-							check2()
 						}
 					} else if (msg[0] === "-channel") {
-						const rows = new Promise((resolve, reject) => {
-							con.query('SELECT COUNT(ID) as value FROM logs_' + channel.replace('#', ''),
-								function(error, results, fields) {
-									if (error) {
-										kb.say(channel, user['username'] + 
-											", I don't have any logs from this channel :/");
-									} else {
-										resolve(results)
-									}
-								})
-						})
-						rows.then(function(values) {
-							const tableSize = new Promise((resolve, reject) => {
-								con.query('SELECT TABLE_NAME AS `Table`, (DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024 ' +
-									'AS `size` FROM information_schema.TABLES WHERE TABLE_NAME = "logs_' +
-									channel.replace('#', '') + '" ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;',
-									function(error, results, fields) {
-										if (error) {
-											reject(error)
-										} else {
-											resolve(results)
-										}
-									})
-							})
-							tableSize.then(function(size) {
-								const logs = new Promise((resolve, reject) => {
-								con.query('SELECT TABLE_NAME AS `Table`, (DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024 ' +
-									'AS `size` FROM information_schema.TABLES WHERE TABLE_NAME = "logs_' +
-									channel.replace('#', '') + '" ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;',
-									function(error, results, fields) {
-										if (error) {
-											reject(error)
-										} else {
-											resolve(results)
-										}
-									})
-								})
-								logs.then(function(log) {
-									const loggers = new Promise((resolve, reject) => {
-									con.query("SELECT date AS create_time FROM `logs_" + channel.replace("#", "") + 
-										"` ORDER BY `date` ASC LIMIT 1",
-										function(error, results, fields) {
-											if (error) {
-												reject(error)
-											} else {
-												resolve(results)
-											}
-										})
-									})
-									loggers.then(function(logg) {
-										const logsDate = new Date(logg[0].create_time);
-										const serverDate = new Date();
-										const difference = Math.abs(serverDate - logsDate);
-										const differenceToSec = difference/1000
-										kb.say(channel, user['username'] + ', this channel has ' + values[0].value +
-											' lines logged, which is ' + size[0].size.substring(0, 4) + 
-											'MB total. Logs in this channel started ' + 
-											(differenceToSec/86400).toFixed(0) + ' days ago')
-									})
-								})
-							})
-						})
-					} else if (msg[0] === "-bruh") {
+
+						// amount of rows in specific channel logs table
+						const values = await doQuery(`SELECT COUNT(ID) as value FROM logs_${channelParsed}`);
+
+						// table size
+						const size = await doQuery(`SELECT TABLE_NAME AS Table, (DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024 
+							AS size FROM information_schema.TABLES WHERE TABLE_NAME = "logs_${channelParsed}" 
+							ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;`);
+
+						// date of first log in the channel
+						const firstLog = await doQuery(`SELECT date AS create_time FROM logs_${channelParsed} 
+							 ORDER BY date ASC LIMIT 1`);
+
+						// date formatting
+						const logsDate = new Date(firstLog[0].create_time);
+						const serverDate = new Date();
+						const difference = Math.abs(serverDate - logsDate);
+						const differenceToSec = difference/1000;
+						return `${user['username']}, this channel has ${values[0].value}
+							lines logged, which is ${size[0].size.substring(0, 4)} MB total. Logs in this channel started 
+							${(differenceToSec/86400).toFixed(0)} days ago`;
+					} 
+					else if (msg[0] === "-bruh") {
+
+						// if there is no user parameter
 						if (!msg[1]) {
-							const trichomp = new Promise((resolve, reject) => {
-								con.query('SELECT COUNT(message) AS valueCount FROM logs_' + 
-									channel.replace('#', '') + 
-									' WHERE message LIKE "%nigg%" or message LIKE "%nibba%"',
-									function(error, results, fields) {
-										if (error) {
-											kb.say(channel, user['username'] + 
-												", I don't have any logs from this channel :/");
-										} else {
-											resolve(results)
-										}
-									})
-							})
-							trichomp.then(function(channelValue) {
-								const trichompCount = new Promise((resolve, reject) => {
-									con.query('SELECT COUNT(username) AS value FROM logs_' + 
-										channel.replace('#', '') + 
-										' WHERE (message LIKE "%nigg%" OR message LIKE "%nibba%") AND username="' +
-										 user['username'] + '"',
-										function(error, results, fields) {
-											if (error) {
-												reject(error)
-											} else {
-												resolve(results)
-											}
-										})
-								})
-								trichompCount.then(function(userValue) {
-									if (channel === '#haxk') {
-										if (userValue[0].value<2 && userValue[0].value != 1) {
-											kb.say(channel, user['username'] + ', you have spelled it ' + 
-												userValue[0].value + ' times, we coo TriHard - total of ' + 
-												channelValue[0].valueCount + 
-												' n bombs in this channel TriChomp TeaTime')
-										} else if (userValue[0].value===1){
-											kb.say(channel, user['username'] + ', you have spelled it ' +
-												userValue[0].value + ' time WideHard - total of ' +
-												channelValue[0].valueCount + 
-												' n bombs in this channel TriChomp TeaTime')
-										} else {
-											kb.say(channel, user['username'] + ', you have spelled it ' + 
-												userValue[0].value + ' times TriChomp Clap - total of ' + 
-												channelValue[0].valueCount + 
-												' n bombs in this channel TriChomp TeaTime')
-										}
-									} else {
-										if (channelValue[0].valueCount === 0) {
-											kb.say(channel, user['username'] + ', total of ' + 
-												channelValue[0].valueCount + 
-												' racists in this channel, we coo TriHard Clap')
-										} else {
-											kb.say(channel, user['username'] + ', total of ' + 
-												channelValue[0].valueCount + 
-												' racists in this channel cmonBruh')
-										}
-									}
-								})
-							})
+
+							// count the words in the channel
+							const channelValue = await doQuery(`SELECT COUNT(message) AS valueCount FROM logs_${channelParsed} 
+								WHERE message LIKE "%nigg%"`);
+
+							// count the words in the channel for sender
+							const userValue = await doQuery(`SELECT COUNT(username) AS value FROM logs_${channelParsed} 
+								WHERE (message LIKE "%nigg%") AND username="${user['username']}"`);
+
+							// channel specific responses
+							if (channel === '#haxk') {
+								if (userValue[0].value<2 && userValue[0].value != 1) {
+									return `${user['username']}, you have spelled it ${userValue[0].value} times, we coo TriHard - 
+										total of ${channelValue[0].valueCount} n bombs in this channel TriChomp TeaTime`;
+								} else if (userValue[0].value===1){
+									return `${user['username']}, you have spelled it ${userValue[0].value} time WideHard - total of
+										${channelValue[0].valueCount} n bombs in this channel TriChomp TeaTime`;
+								} else {
+									return `${user['username']}, you have spelled it ${userValue[0].value} times TriChomp Clap - 
+										total of ${channelValue[0].valueCount} n bombs in this channel TriChomp TeaTime`;
+								}
+							} else {
+								if (channelValue[0].valueCount === 0) {
+									return `${user['username']}, total of ${channelValue[0].valueCount} racists 
+										in this channel, we coo TriHard Clap`;
+								} else {
+									return `${user['username']}, total of ${channelValue[0].valueCount} racists 
+										in this channel cmonBruh`;
+								}
+							}
 						} else {
-							const trichomp = new Promise((resolve, reject) => {
-							con.query('SELECT COUNT(message) AS valueCount FROM logs_' + 
-								channel.replace('#', '') + 
-								' WHERE username="' + msg[1] + '" AND (message LIKE "%nigg%" or message LIKE "%nibba%")',
-								function(error, results, fields) {
-									if (error) {
-										kb.say(channel, user['username'] + 
-											", I don't have any logs from this channel :/");
-									} else {
-										resolve(results)
-									}
-								})
-							})
-							trichomp.then(function(channelValue) {
-								const trichompCount = new Promise((resolve, reject) => {
-									con.query('SELECT COUNT(username) AS value FROM logs_' + 
-										channel.replace('#', '') + 
-										' WHERE (message LIKE "%nigg%" OR message LIKE "%nibba%") AND username="' +
-										 msg[1] + '"',
-										function(error, results, fields) {
-											if (error) {
-												reject(error)
-											} else {
-												resolve(results)
-											}
-										})
-								})
-								trichompCount.then(function(userValue) {
-									if (channel === '#haxk') {
-										if (userValue[0].value<2 && userValue[0].value != 1) {
-											kb.say(channel, user['username'] + ', user ' + 
-												msg[1].replace(/^(.{2})/, "$1\u{E0000}") + ' has spelled it ' + 
-												userValue[0].value + ' times, we coo TriHard')
-										} else if (userValue[0].value===1){
-											kb.say(channel, user['username'] + ', user ' + 
-												msg[1].replace(/^(.{2})/, "$1\u{E0000}") + ' has spelled it ' +
-												userValue[0].value + ' time WideHard')
-										} else {
-											kb.say(channel, user['username'] + ', user ' + 
-												msg[1].replace(/^(.{2})/, "$1\u{E0000}") + ' has spelled it ' + 
-												userValue[0].value + ' times TriChomp Clap')
-										}
-									} else {
-										if (channelValue[0].valueCount === 0) {
-											kb.say(channel, user['username'] + ', total of ' + 
-												channelValue[0].valueCount + 
-												' racist activities by user ' + 
-												msg[1].replace(/^(.{2})/, "$1\u{E0000}")  + ', we coo TriHard Clap')
-										} else {
-											kb.say(channel, user['username'] + ', total of ' + 
-												channelValue[0].valueCount + 
-												' racist activities by user ' + msg[1].replace(/^(.{2})/, "$1\u{E0000}") + ' in this channel cmonBruh bruh')
-										}
-									}
-								})
-							})
+							const channelValue = await doQuery(`SELECT COUNT(message) AS valueCount FROM logs_${channelParsed} 
+								WHERE username="${msg[1]}" AND (message LIKE "%nigg%")`);
+							const userValue = await doQuery(`SELECT COUNT(username) AS value FROM logs_${channelParsed} 
+								WHERE (message LIKE "%nigg%") AND username="${msg[1]}"`);
+
+							// replace second character in user's name with an invisible character to prevent the ping
+							const userNoPing = msg[1].replace(/^(.{2})/, "$1\u{E0000}");
+							if (channel === '#haxk') {
+								if (userValue[0].value<2 && userValue[0].value != 1) {
+									return `${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
+										times, we coo TriHard`;
+								} else if (userValue[0].value===1){
+									return` ${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
+										time WideHard`;
+								} else {
+									return `${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
+										times TriChomp Clap`;
+								}
+							} else {
+								if (channelValue[0].valueCount === 0) {
+									return `${user['username']} total of ${channelValue[0].valueCount} racist activities by user
+										${userNoPing} we coo TriHard Clap`;
+								} else {
+									return `${user['username']} total of ${channelValue[0].valueCount} racist activities by user 
+										${userNoPing} in this channel cmonBruh bruh`
+								}
+							}
 						}
 					} else {
-						const userMessages = new Promise((resolve, reject) => {
-							con.query('SELECT COUNT(username) as value FROM logs_' + channel.replace('#', '') +
-								' WHERE username="' + user['username'] + '"',
-								function(error, results, fields) {
-									if (error) {
-										kb.say(channel, user['username'] + 
-											", I don't have any logs from this channel :/");
-									} else {
-										resolve(results)
-									}
-								})
-						})
-						userMessages.then(function(values) {
-							const chatMessages = new Promise((resolve, reject) => {
-								con.query('SELECT COUNT(username) as value FROM logs_' + channel.replace('#', ''),
-									function(error, results, fields) {
-										if (error) {
-											reject(error)
-										} else {
-											resolve(results)
-										}
-									})
-							})
-							chatMessages.then(function(occurence) {
-								const occurenceVal = new Promise((resolve, reject) => {
-									con.query('SELECT message, COUNT(message) AS value_occurance FROM logs_' +
-										channel.replace('#', '') + ' WHERE username="' + user['username'] +
-										'" GROUP BY message ORDER BY value_occurance DESC LIMIT 1;',
-										function(error, results, fields) {
-											if (error) {
-												reject(error)
-											} else {
-												resolve(results)
-											}
-										})
-								})
-								occurenceVal.then(function(val) {
-									const fetch = require('node-fetch');
-									const output = user['username'] + ", you have total of " + values[0].value +
-										" lines logged, that's " + ((values[0].value / occurence[0].value) * 
-											100).toFixed(2) +
-										'% of all lines in this channel, your most frequently typed message is: " ' +
-										val[0].message + ' " (' + val[0].value_occurance + ' times)';
-									if (output.toString().length>500) {
-										async function check1() {
-											const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
-												method: "POST",
-												url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-												body: "message=" + val[0].message.substr(0, 255),
-												headers: {
-													"Content-Type": "application/x-www-form-urlencoded"
-												},
-											}).then(response => response.json()))
-											if (banphrasePass.banned === true) {
-												kb.say(channel, user['username'] +
-													', the result is banphrased, I whispered it to you tho cmonBruh')
-												kb.whisper(user['username'], output);
-											} else {
-												kb.say(channel, user['username'] + ", you have total of " + values[0].value +
-													" lines logged, that's " + ((values[0].value / occurence[0].value) * 
-														100).toFixed(2) +
-													'% of all lines in this channel, your most frequently typed message is: " ' +
-													val[0].message.substr(0, 255) + '...' + ' " (' + val[0].value_occurance + ' times)');
-											}
-										}
-										check1()
-									} else {
-										async function check2() {
-											const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
-												method: "POST",
-												url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-												body: "message=" + output,
-												headers: {
-													"Content-Type": "application/x-www-form-urlencoded"
-												},
-											}).then(response => response.json()))
-											if (banphrasePass.banned === true) {
-												kb.say(channel, user['username'] +
-													', the result is banphrased, I whispered it to you tho cmonBruh')
-												kb.whisper(user['username'], output);
-											} else {
-												kb.say(channel, user['username'] + ", you have total of " + values[0].value +
-													" lines logged, that's " + ((values[0].value / occurence[0].value) * 
-														100).toFixed(2) +
-													'% of all lines in this channel, your most frequently typed message is: " ' +
-													val[0].message.substr(0, 255) + ' " (' + val[0].value_occurance + ' times)');
-											}
-										}
-										check2()
-									}
-								})
-							})
-						})
-					}
+
+						// get amout lines of sender user in the current channel
+						const values = await doQuery(`SELECT COUNT(username) as value FROM logs_${channelParsed} 
+							WHERE username="${user['username']}"`)
+
+						// all lines in the channel
+						const occurence = await	 doQuery(`SELECT COUNT(username) as value FROM logs_${channelParsed}`)
+
+						// channel lines occurence
+						const val = await doQuery(`SELECT message, COUNT(message) AS value_occurance FROM logs_${channelParsed} 
+							WHERE username="${user['username']}" GROUP BY message ORDER BY value_occurance DESC LIMIT 1;`)
+
+						// output message
+						const output = `${user['username']}, you have total of ${values[0].value}
+							lines logged, that's ${((values[0].value / occurence[0].value) * 100).toFixed(2)}% of all lines 
+							in this channel, your most frequently typed message: " ${val[0].message} " (${val[0].value_occurance} times)`;
+
+						// if response has more than 500 characters, truncate it	
+						if (output.toString().length>500) {
+							const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
+								method: "POST",
+								url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+								body: "message=" + val[0].message.substr(0, 255),
+								headers: {
+									"Content-Type": "application/x-www-form-urlencoded"
+								},
+							}).then(response => response.json()))
+							if (banphrasePass.banned === true) {
+								kb.whisper(user['username'], output);
+								return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+							} else {
+								return `${user['username']}, you have total of ${ values[0].value} lines logged, that's 
+									${((values[0].value / occurence[0].value) * 100).toFixed(2)}% of all lines in this channel, 
+									your most frequently typed message: " ${val[0].message.substr(0, 255)}... " 
+									(${val[0].value_occurance} times)`;
+							}
+						} else {
+							const banphrasePass = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
+								method: "POST",
+								url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+								body: "message=" + output,
+								headers: {
+									"Content-Type": "application/x-www-form-urlencoded"
+								},
+							}).then(response => response.json()))
+							if (banphrasePass.banned === true) {
+								kb.whisper(user['username'], output);
+								return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+							} else {
+								return `${user['username']}, you have total of ${values[0].value} lines logged, that's 
+									${((values[0].value / occurence[0].value) * 100).toFixed(2)}%  of all lines in this channel, 
+									your most frequently typed message: " ${val[0].message.substr(0, 255)} " 
+									(${val[0].value_occurance} times)`;
+							}
+						}
+					}	
 				} catch (err) {
 					errorLog(err)
 					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
