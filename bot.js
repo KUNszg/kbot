@@ -2594,7 +2594,7 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "hug",
 			aliases: prefix + "kiss",
-			description: "",
+			description: "kb [hug/kiss] [user] - hug or kiss a user to make their day better :)",
 			invocation: async (channel, user, message, args) => {
 				try {
 					if (talkedRecently.has(user['user-id'])) {
@@ -2609,7 +2609,8 @@ kb.on('connected', (adress, port) => {
 					const msgRaw = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2)
 					const msg2 = msgRaw.filter(Boolean);
 					if (!msg2[0]) {
-						return `${user['username']}, you should provide a user to hug/kiss, there is someone like that for sure FeelsOkayMan`
+						return `${user['username']}, you should provide a user to hug/kiss, 
+							there is someone like that for sure FeelsOkayMan`
 					} else {
 						if (msg[0] === "hug") {
 							return `${user['username']} hugs ${msg2[0]} 🤗 <3 ily`
