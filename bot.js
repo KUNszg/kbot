@@ -2333,8 +2333,7 @@ kb.on('connected', (adress, port) => {
 					const msgRaw = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
 					const channelParsed = channel.replace('#', '')
 					const fetch = require('node-fetch');
-					var msg = msgRaw.filter(Boolean);
-					console.log(msg)
+					const msg = msgRaw.filter(Boolean);
 					if (talkedRecently.has(user['user-id'])) {
 						return '';
 					} else {
@@ -2607,12 +2606,16 @@ kb.on('connected', (adress, port) => {
 						}, 5000);
 					}
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(1)
-					const msg2 = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2)
-
-					if (msg[0] === "hug") {
-						return `${user['username']} hugs ${msg2[0]} 🤗 <3 ily`
+					const msgRaw = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2)
+					const msg2 = msgRaw.filter(Boolean);
+					if (!msg2[0]) {
+						return `${user['username']}, you should provide a user to hug/kiss, there is someone like that for sure FeelsOkayMan`
 					} else {
-						return `${user['username']} kisses ${msg2[0]} 😗 💋 `
+						if (msg[0] === "hug") {
+							return `${user['username']} hugs ${msg2[0]} 🤗 <3 ily`
+						} else {
+							return `${user['username']} kisses ${msg2[0]} 😗 💋 `
+						}
 					}
 				} catch (err) {
 					errorLog(err)
