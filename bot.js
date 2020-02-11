@@ -2330,9 +2330,11 @@ kb.on('connected', (adress, port) => {
 				[input] - provide a custom message - cooldown 8s`,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
+					const msgRaw = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
 					const channelParsed = channel.replace('#', '')
 					const fetch = require('node-fetch');
+					var msg = msgRaw.filter(Boolean);
+					console.log(msg)
 					if (talkedRecently.has(user['user-id'])) {
 						return '';
 					} else {
@@ -2346,7 +2348,7 @@ kb.on('connected', (adress, port) => {
 					// if no parameters provided...
 					if (((msg[0] != "-channel" && msg[0] != "-bruh") && msg.length != 0)) {
 						if (msg.join(' ').length<4) {
-							return user['username'] + ', provided word has not enough characters to run a query.'
+							return `${user['username']}, provided word has not enough characters to run a query.`
 						} else {
 
 							// positional query
