@@ -751,7 +751,7 @@ kb.on('connected', (adress, port) => {
 								});
 							}
 							const ev = await eval('(async () => {' +
-								msg.join(" ").replace(/[\u{E0000}|\u{206d}]/gu, '') + '})()');
+								msg.join(" ").replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '') + '})()');
 							console.log(ev)
 							return String(ev);
 						}
@@ -3106,7 +3106,7 @@ kb.on('connected', (adress, port) => {
 						const msg = message.split(" ");
 						const msg2 = msg.shift();
 						const ev = await eval('(async () => {' +
-							msg.join(" ").replace(/[\u{E0000}|\u{206d}]/gu, '') + '})()');
+							msg.join(" ").replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '') + '})()');
 						console.log(ev);
 						return String(ev);
 					}
