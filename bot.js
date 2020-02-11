@@ -2610,12 +2610,22 @@ kb.on('connected', (adress, port) => {
 					const msg2 = msgRaw.filter(Boolean);
 					if (!msg2[0]) {
 						return `${user['username']}, you should provide a user to hug/kiss, 
-							there is someone like that for sure FeelsOkayMan`
+							there is someone like that for sure FeelsOkayMan`;
 					} else {
 						if (msg[0] === "hug") {
-							return `${user['username']} hugs ${msg2[0]} 🤗 <3 ily`
+							if (channel === "#nymn") {
+								return `${user['username']} hugs ${msg2[0]} iLOVEyou PeepoHappy`;
+							} else if (channel === "#haxk") {
+								return `${user['username']} hugs ${msg2[0]} forsenHug`;
+							} else {
+								return `${user['username']} hugs ${msg2[0]} 🤗 <3 ily`;
+							}
 						} else {
-							return `${user['username']} kisses ${msg2[0]} 😗 💋 `
+							if (channel === "#nymn") {
+								return `${user['username']} kisses ${msg2[0]} PeepoHappy 💋`;
+							} else {
+								return `${user['username']} kisses ${msg2[0]} 😗 💋 `;
+							}
 						}
 					}
 				} catch (err) {
