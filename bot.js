@@ -2593,6 +2593,35 @@ kb.on('connected', (adress, port) => {
 		},
 
 		{
+			name: prefix + "hug",
+			aliases: prefix + "kiss",
+			description: "",
+			invocation: async (channel, user, message, args) => {
+				try {
+					if (talkedRecently.has(user['user-id'])) {
+						return '';
+					} else {
+						talkedRecently.add(user['user-id']);
+						setTimeout(() => {
+							talkedRecently.delete(user['user-id']);
+						}, 5000);
+					}
+					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(1)
+					const msg2 = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2)
+
+					if (msg[0] === "hug") {
+						return `${user['username']} hugs ${msg2[0]} 🤗 <3 ily`
+					} else {
+						return `${user['username']} kisses ${msg2[0]} 😗 💋 `
+					}
+				} catch (err) {
+					errorLog(err)
+					return user['username'] + ' ' + err + ' FeelsDankMan !!!';
+				}	
+			}
+		},
+
+		{
 			name: prefix + "commands",
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
