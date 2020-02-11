@@ -2614,7 +2614,7 @@ kb.on('connected', (adress, port) => {
 					} else {
 						if (msg[0] === "hug") {
 							if (channel === "#nymn") {
-								return `${user['username']} hugs ${msg2[0]} iLOVEyou PeepoHappy`;
+								return `${user['username']} hugs ${msg2[0]} iLOVEyou PeepoHappy FBCatch`;
 							} else if (channel === "#haxk") {
 								return `${user['username']} hugs ${msg2[0]} forsenHug`;
 							} else {
