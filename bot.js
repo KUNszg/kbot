@@ -3291,7 +3291,7 @@ kb.on('connected', (adress, port) => {
 						return;
 					} else {
 						limit.add(value[0].username)
-						kb.whisper(value[0].username, '(ed reminder) ' + value[0].username + ', enter dungeon please :) 🏰 ')
+						kb.whisper(value[0].username, '(ed reminder) enter dungeon please :) 🏰 ')
 						setTimeout(() => {limit.delete(value[0].username)}, 10000)		
 					}
 
