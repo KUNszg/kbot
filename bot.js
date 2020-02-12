@@ -2153,7 +2153,7 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'cookie',
 			aliases: null,
-			description: `Usage: kb cookie [register/unregister/whisper] | register - register in cookie database. | unregister - unregister from the database. | whisper - set the indicating message to appear in whispers`,
+			description: `usage: kb cookie [register/unregister/whisper] | register - register in cookie database. | unregister - unregister from the database. | whisper - set the indicating message to appear in whispers - cooldown 8s`,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
@@ -2879,15 +2879,15 @@ kb.on('connected', (adress, port) => {
 								} else {
 									if (platformCheck[0].initplatform === "channel") {
 										if (updateCheck[0].status === "scheduled") {
-											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 2h (channel ' + channelNoPing + ') :D')
+											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 2h (channel ' + channelNoPing + ') :D [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]')
 										} else {
-											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 2h (channel ' + channelNoPing + ') :)');
+											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 2h (channel ' + channelNoPing + ') :) [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]');
 									 	}
 									 } else {
 									 	if (updateCheck[0].status === "scheduled") {
-											kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 2h (channel ' + channelNoPing + ') :D')
+											kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 2h (channel ' + channelNoPing + ') :D [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]')
 										} else {
-											kb.whisper(user['username'], ' I will remind you to eat the cookie in 2h (channel ' + channelNoPing + ') :)');
+											kb.whisper(user['username'], ' I will remind you to eat the cookie in 2h (channel ' + channelNoPing + ') :) [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]');
 									 	}
 									 }
 								 	const now = new Date();
@@ -2905,15 +2905,15 @@ kb.on('connected', (adress, port) => {
 								} else {
 									if (platformCheck[0].initplatform === "channel") {
 										if (updateCheck[0].status === "scheduled") {
-											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 1h (channel ' + channelNoPing + ') :D')
+											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 1h (channel ' + channelNoPing + ') :D [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]')
 										} else {
-											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 1h (channel ' + channelNoPing + ') :)');
+											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 1h (channel ' + channelNoPing + ') :) [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]');
 									 	}
 								 	} else {
 								 		if (updateCheck[0].status === "scheduled") {
-											kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 1h (channel ' + channelNoPing + ') :D')
+											kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 1h (channel ' + channelNoPing + ') :D [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]')
 										} else {
-											kb.whisper(user['username'], ' I will remind you to eat the cookie in 1h (channel ' + channelNoPing + ') :)');
+											kb.whisper(user['username'], ' I will remind you to eat the cookie in 1h (channel ' + channelNoPing + ') :) [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]');
 									 	}
 								 	}
 								 	const now = new Date();
@@ -2931,15 +2931,15 @@ kb.on('connected', (adress, port) => {
 								} else {
 									if (platformCheck[0].initplatform === "channel") {
 										if (updateCheck[0].status === "scheduled") {
-											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 30m (channel ' + channelNoPing + ') :D')
+											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 30m (channel ' + channelNoPing + ') :D [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]')
 										} else {
-											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 30m (channel ' + channelNoPing + ') :)');
+											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 30m (channel ' + channelNoPing + ') :) [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]');
 									 	}
 									 } else {
 									 	if (updateCheck[0].status === "scheduled") {
-											kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 30m (channel ' + channelNoPing + ') :D')
+											kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 30m (channel ' + channelNoPing + ') :D [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]')
 										} else {
-											kb.whisper(user['username'], ' I will remind you to eat the cookie in 30m (channel ' + channelNoPing + ') :)');
+											kb.whisper(user['username'], ' I will remind you to eat the cookie in 30m (channel ' + channelNoPing + ') :) [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]');
 									 	}
 									 }
 								 	const now = new Date();
@@ -2957,15 +2957,15 @@ kb.on('connected', (adress, port) => {
 								} else {
 									if (platformCheck[0].initplatform === "channel") {
 										if (updateCheck[0].status === "scheduled") {
-											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 20m (channel ' + channelNoPing + ') :D')
+											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 20m (channel ' + channelNoPing + ') :D [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]')
 										} else {
-											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 20m (channel ' + channelNoPing + ') :)');
+											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 20m (channel ' + channelNoPing + ') :) [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]');
 									 	}
 									 } else {
 									 	if (updateCheck[0].status === "scheduled") {
-											kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 20m (channel ' + channelNoPing + ') :D')
+											kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 20m (channel ' + channelNoPing + ') :D [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]')
 										} else {
-											kb.whisper(user['username'], ' I will remind you to eat the cookie in 20m (channel ' + channelNoPing + ') :)');
+											kb.whisper(user['username'], ' I will remind you to eat the cookie in 20m (channel ' + channelNoPing + ') :) [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]');
 									 	}
 									 }
 								 	const now = new Date();
@@ -3282,7 +3282,7 @@ kb.on('connected', (adress, port) => {
 						return;
 					} else {
 						limit.add(value[0].username)
-						kb.say(value[0].channel, '(cookie reminder) ' + value[0].username + ', eat cookie please :) 🍪 ')
+						kb.say(value[0].channel, '(cookie reminder) ' + value[0].username + ', eat cookie please :) 🍪')
 						setTimeout(() => {limit.delete(value[0].username)}, 10000)		
 					}
 
