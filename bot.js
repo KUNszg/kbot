@@ -2168,6 +2168,7 @@ kb.on('connected', (adress, port) => {
 					const perms = allowModule.filter(
 						i => i.ID === user['user-id']
 					);
+					const resultsRegister = await doQuery(`SELECT * FROM cookie_reminders WHERE username="${user['username']}"`);
 					switch (msg[0]) {
 						case 'module':
 							if (!perms[0]) {
@@ -2193,7 +2194,6 @@ kb.on('connected', (adress, port) => {
 							}
 							break;
 						case 'register':
-							const resultsRegister = await doQuery('SELECT username FROM cookies WHERE username="' + user['username'] + '"');
 							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
 								kb.say(channel, user['username'] + ', you have been successfully registered for ' +
 									'a cookie reminder.');
@@ -2222,15 +2222,14 @@ kb.on('connected', (adress, port) => {
 							}
 							break;
 						case 'whisper':
-							const resultsRegister = await doQuery(`SELECT * FROM cookie_reminders WHERE username="${user['username']}"`);
 							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
 								return `${user['username']}, you are not registered in my database, check out "kb help cookie" to do so.`;
  							} else if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform === 'channel') {
- 								await doQuery(`UPDATE cookie_reminders SET initplatform="whisper" WHERE username="${user['username']}"`;
+ 								await doQuery(`UPDATE cookie_reminders SET initplatform="whisper" WHERE username="${user['username']}"`);
  								return `${user['username']}, you have changed your indicating message to appear in whispers 
  									(note that your reminders will still appear in the channel where you executed them). Type this command again to undo it.`;
 							} else if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform === 'whisper') {
-								await doQuery(`UPDATE cookie_reminders SET initplatform="channel" WHERE username="${user['username']}"`;
+								await doQuery(`UPDATE cookie_reminders SET initplatform="channel" WHERE username="${user['username']}"`);
  								return `${user['username']}, you have changed your indicating message to appear in your own channel 
  									(note that reminders are still going to fire in the channel where you executed them). Type this command again to undo it.`;
  							} else {
