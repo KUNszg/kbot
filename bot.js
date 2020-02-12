@@ -2153,7 +2153,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'cookie',
 			aliases: null,
-			description: `usage: kb cookie [register/unregister/whisper] | register - register in cookie database. | unregister - unregister from the database. | whisper - set the indicating message to appear in whispers - cooldown 8s`,
+			description: `usage: kb cookie [register/unregister/whisper/silence] | register - register in cookie database. | 
+			unregister - unregister from the database. | whisper - set the indicating message to appear in whispers. | silence - mute the feedback. - cooldown 8s`,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
