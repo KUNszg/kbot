@@ -2236,6 +2236,15 @@ kb.on('connected', (adress, port) => {
  								return '';
  							}
 							break;
+						case 'silence':
+							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
+								return `${user['username']}, you are not registered in my database, check out "kb help cookie" to do so.`;
+ 							} else if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform != 'silence') {
+ 								await doQuery(`UPDATE cookie_reminders SET initplatform="silence" WHERE username="${user['username']}"`);
+ 								return `${user['username']}, you will no longer receive feedback from ?cookie command.`;
+ 							} else {
+ 								return `${user['username']}, you are already marked to not receive the feedback.`;
+ 							}
 						default:
 							return user['username'] + ', invalid syntax. See "kb help cookie" for command help.';
 					}
@@ -2877,23 +2886,27 @@ kb.on('connected', (adress, port) => {
 										'), wait 2h intervals. To force your cookie reminder do ' +
 										'"kb cookie force" in chat.');
 								} else {
+								 	const now = new Date();
+									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+										now.addMinutes(120).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+										'WHERE username="' + user['username'] + '"');
 									if (platformCheck[0].initplatform === "channel") {
 										if (updateCheck[0].status === "scheduled") {
-											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 2h (channel ' + channelNoPing + ') :D [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]')
+											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 2h (channel ' + channelNoPing + 
+												') :D [note: you can set up this message to show up in your whispers by doing "kb cookie whisper" or completly remove it by doing "kb cookie silence"]');
 										} else {
-											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 2h (channel ' + channelNoPing + ') :) [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]');
+											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 2h (channel ' + channelNoPing + 
+												') :) [note: you can set up this message to show up in your whispers by doing "kb cookie whisper" or completly remove it by doing "kb cookie silence"]');
 									 	}
-									 } else {
+									} else if (platformCheck[0].initplatform === "whisper") {
 									 	if (updateCheck[0].status === "scheduled") {
 											kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 2h (channel ' + channelNoPing + ') :D')
 										} else {
 											kb.whisper(user['username'], ' I will remind you to eat the cookie in 2h (channel ' + channelNoPing + ') :)');
 									 	}
+									 } else if (platformCheck[0].initplatform === "silence") {
+									 	return '';
 									 }
-								 	const now = new Date();
-									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
-										now.addMinutes(120).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
-										'WHERE username="' + user['username'] + '"');
 								}
 							} else if (cookieStatus.prestige === 1) {
 								if (cookieApi.seconds_left < 3580 || cookieApi.seconds_left === 0) {
@@ -2903,23 +2916,27 @@ kb.on('connected', (adress, port) => {
 										'To force your cookie reminder do ' +
 										'"kb cookie force" in the chat.');
 								} else {
+								 	const now = new Date();
+									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+										now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+										'WHERE username="' + user['username'] + '"');
 									if (platformCheck[0].initplatform === "channel") {
 										if (updateCheck[0].status === "scheduled") {
-											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 1h (channel ' + channelNoPing + ') :D [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]')
+											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 1h (channel ' + channelNoPing + 
+												') :D [note: you can set up this message to show up in your whispers by doing "kb cookie whisper" or completly remove it by doing "kb cookie silence"]');
 										} else {
-											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 1h (channel ' + channelNoPing + ') :) [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]');
+											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 1h (channel ' + channelNoPing + 
+												') :) [note: you can set up this message to show up in your whispers by doing "kb cookie whisper" or completly remove it by doing "kb cookie silence"]');
 									 	}
-								 	} else {
+								 	} else if (platformCheck[0].initplatform === "whisper") {
 								 		if (updateCheck[0].status === "scheduled") {
 											kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 1h (channel ' + channelNoPing + ') :D')
 										} else {
 											kb.whisper(user['username'], ' I will remind you to eat the cookie in 1h (channel ' + channelNoPing + ') :)');
 									 	}
+								 	} else if (platformCheck[0].initplatform === "silence") {
+									 	return '';
 								 	}
-								 	const now = new Date();
-									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
-										now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
-										'WHERE username="' + user['username'] + '"');
 							 	}
 							} else if (cookieStatus.prestige === 2) {
 								if (cookieApi.seconds_left < 1780 || cookieApi.seconds_left === 0) {
@@ -2929,23 +2946,27 @@ kb.on('connected', (adress, port) => {
 										'), wait 30m intervals. To force your cookie reminder do ' +
 										' "kb cookie force" in the chat.');
 								} else {
+									const now = new Date();
+									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+										now.addMinutes(30).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+										'WHERE username="' + user['username'] + '"');
 									if (platformCheck[0].initplatform === "channel") {
 										if (updateCheck[0].status === "scheduled") {
-											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 30m (channel ' + channelNoPing + ') :D [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]')
+											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 30m (channel ' + channelNoPing + 
+												') :D [note: you can set up this message to show up in your whispers by doing "kb cookie whisper" or completly remove it by doing "kb cookie silence"]');
 										} else {
-											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 30m (channel ' + channelNoPing + ') :) [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]');
+											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 30m (channel ' + channelNoPing + 
+												') :) [note: you can set up this message to show up in your whispers by doing "kb cookie whisper" or completly remove it by doing "kb cookie silence"]');
 									 	}
-									 } else {
+									} else if (platformCheck[0].initplatform === "whisper") {
 									 	if (updateCheck[0].status === "scheduled") {
 											kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 30m (channel ' + channelNoPing + ') :D')
 										} else {
 											kb.whisper(user['username'], ' I will remind you to eat the cookie in 30m (channel ' + channelNoPing + ') :)');
 									 	}
-									 }
-								 	const now = new Date();
-									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
-										now.addMinutes(30).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
-										'WHERE username="' + user['username'] + '"');
+									} else if (platformCheck[0].initplatform === "silence") {
+										return '';
+									}
 								}
 							} else if (cookieStatus.prestige === 3) {
 								if (cookieApi.seconds_left < 1180 || cookieApi.seconds_left === 0) {
@@ -2955,23 +2976,27 @@ kb.on('connected', (adress, port) => {
 										'), wait 20m intervals. To force your cookie reminder do ' +
 										'"kb cookie force" the in chat.');
 								} else {
+									const now = new Date();
+									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+										now.addMinutes(20).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+										'WHERE username="' + user['username'] + '"');
 									if (platformCheck[0].initplatform === "channel") {
 										if (updateCheck[0].status === "scheduled") {
-											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 20m (channel ' + channelNoPing + ') :D [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]')
+											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 20m (channel ' + channelNoPing + 
+												') :D [note: you can set up this message to show up in your whispers by doing "kb cookie whisper" or completly remove it by doing "kb cookie silence"]')
 										} else {
-											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 20m (channel ' + channelNoPing + ') :) [note: you can set this message to be displayed in your whispers by doing "kb cookie whisper"]');
+											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 20m (channel ' + channelNoPing + 
+												') :) [note: you can set up this message to show up in your whispers by doing "kb cookie whisper" or completly remove it by doing "kb cookie silence"]');
 									 	}
-									 } else {
+									} else if (platformCheck[0].initplatform === "whisper") {
 									 	if (updateCheck[0].status === "scheduled") {
 											kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 20m (channel ' + channelNoPing + ') :D')
 										} else {
 											kb.whisper(user['username'], ' I will remind you to eat the cookie in 20m (channel ' + channelNoPing + ') :)');
 									 	}
-									 }
-								 	const now = new Date();
-									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
-										now.addMinutes(20).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
-										'WHERE username="' + user['username'] + '"');
+									} else if (platformCheck[0].initplatform === "silence") {
+										return '';
+									}
 								}
 							} else if (cookieStatus.prestige === 4) {
 								if (cookieApi.can_claim === false) {
