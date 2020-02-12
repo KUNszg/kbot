@@ -2246,7 +2246,7 @@ kb.on('connected', (adress, port) => {
 								return `${user['username']}, you are not registered in my database, check out "kb help cookie" to do so.`;
  							} else if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform != 'silence') {
  								await doQuery(`UPDATE cookie_reminders SET initplatform="silence" WHERE username="${user['username']}"`);
- 								return `${user['username']}, you will no longer receive feedback from ?cookie command.`;
+ 								return `${user['username']}, you will no longer receive feedback from the cookie command.`;
  							} else {
  								return `${user['username']}, you are already marked to not receive the feedback.`;
  							}
