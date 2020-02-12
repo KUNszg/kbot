@@ -2154,7 +2154,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + 'cookie',
 			aliases: null,
 			description: `usage: kb cookie [register/unregister/whisper/silence] | register - register in cookie database. | 
-			unregister - unregister from the database. | whisper - set the indicating message to appear in whispers. | silence - mute the feedback. - cooldown 8s`,
+			unregister - unregister from the database. | whisper - set the feedback message to appear in whispers. | silence - mute the feedback. - cooldown 8s`,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
@@ -2227,11 +2227,11 @@ kb.on('connected', (adress, port) => {
 								return `${user['username']}, you are not registered in my database, check out "kb help cookie" to do so.`;
  							} else if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform === 'channel') {
  								await doQuery(`UPDATE cookie_reminders SET initplatform="whisper" WHERE username="${user['username']}"`);
- 								return `${user['username']}, you have changed your indicating message to appear in whispers 
+ 								return `${user['username']}, you have changed your feedback message to appear in whispers 
  									(note that your reminders will still appear in the channel where you executed them). Type this command again to undo it.`;
 							} else if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform === 'whisper') {
 								await doQuery(`UPDATE cookie_reminders SET initplatform="channel" WHERE username="${user['username']}"`);
- 								return `${user['username']}, you have changed your indicating message to appear in your own channel 
+ 								return `${user['username']}, you have changed your feedback message to appear in your own channel 
  									(note that reminders are still going to fire in the channel where you executed them). Type this command again to undo it.`;
  							} else {
  								return '';
