@@ -3286,82 +3286,83 @@ kb.on('connected', (adress, port) => {
 	}, 10000)
 
 	// check and send reminders - cookie
-	async function reminder() {
+	async function reminder() {	
+		const value = await doQuery('SELECT username, channel, fires, status FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC');
+		
+		// if there is no "fired" argument, ignore
+		if (!value[0]) {
+			return;
+		} else {
 
-		{
-			const value = await doQuery('SELECT username, channel, fires, status FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC');
-			
-			// if there is no "fired" argument, ignore
-			if (!value[0]) {
-				return;
-			} else {
+			// some KKona shit going out there
+			const serverDate = new Date();
+			const fires = new Date(value[0].fires);
+			const diff = serverDate - fires
+			const differenceToSec = diff/1000;
 
-				// some KKona shit going out there
-				const serverDate = new Date();
-				const fires = new Date(value[0].fires);
-				const diff = serverDate - fires
-				const differenceToSec = diff/1000;
+			// consider only cases where reminder is apart from current date by 7 seconds
+			if ((differenceToSec<=7) && !(differenceToSec<0)) {
+				const limit = new Set();
 
-				// consider only cases where reminder is apart from current date by 7 seconds
-				if ((differenceToSec<=7) && !(differenceToSec<0)) {
-					const limit = new Set();
-
-					// make sure not to repeat the same reminder by adding a unique username
-					// to the Set Object and delete it after 10s 
-					if (limit.has(value[0].username)) {
-						return;
-					} else {
-						limit.add(value[0].username)
-						kb.say(value[0].channel, '(cookie reminder) ' + value[0].username + ', eat cookie please :) 🍪')
-						setTimeout(() => {limit.delete(value[0].username)}, 10000)		
-					}
-
-					// update the database with fired reminder
-					await doQuery('UPDATE cookie_reminders SET status="fired" WHERE username="' + 
-						value[0].username + '" AND status="scheduled"');
+				// make sure not to repeat the same reminder by adding a unique username
+				// to the Set Object and delete it after 10s 
+				if (limit.has(value[0].username)) {
+					return;
+				} else {
+					limit.add(value[0].username)
+					kb.say(value[0].channel, '(cookie reminder) ' + value[0].username + ', eat cookie please :) 🍪')
+					setTimeout(() => {limit.delete(value[0].username)}, 10000)		
 				}
-			}
-		}
-	
-		{
-			const value = await doQuery('SELECT username, channel, fires, status FROM ed_reminders WHERE status!="fired" ORDER BY fires ASC');
 
-			// if there is no "fired" argument, ignore
-			if (!value[0]) {
-				return;
-			} else {
-
-				// some KKona shit going out there
-				const serverDate = new Date();
-				const fires = new Date(value[0].fires);
-				const diff = serverDate - fires
-				const differenceToSec = diff/1000;
-
-				// consider only cases where reminder is apart from current date by 7 seconds
-				if ((differenceToSec<=7) && !(differenceToSec<0)) {
-					const limit = new Set();
-
-					// make sure not to repeat the same reminder by adding a unique username
-					// to the Set Object and delete it after 10s 
-					if (limit.has(value[0].username)) {
-						return;
-					} else {
-						limit.add(value[0].username)
-						kb.whisper(value[0].username, '(ed reminder) enter dungeon please :) 🏰 ')
-						setTimeout(() => {limit.delete(value[0].username)}, 10000)		
-					}
-
-					// update the database with fired reminder
-					await doQuery('UPDATE ed_reminders SET status="fired" WHERE username="' + 
-						value[0].username + '" AND status="scheduled"');
-				}
+				// update the database with fired reminder
+				await doQuery('UPDATE cookie_reminders SET status="fired" WHERE username="' + 
+					value[0].username + '" AND status="scheduled"');
 			}
 		}
 	}
+
 	setInterval(() => {
 		reminder()
 	}, 1000)
 
+	async function reminder2() {
+		const value = await doQuery('SELECT username, channel, fires, status FROM ed_reminders WHERE status!="fired" ORDER BY fires ASC');
+
+		// if there is no "fired" argument, ignore
+		if (!value[0]) {
+			return;
+		} else {
+
+			// some KKona shit going out there
+			const serverDate = new Date();
+			const fires = new Date(value[0].fires);
+			const diff = serverDate - fires
+			const differenceToSec = diff/1000;
+
+			// consider only cases where reminder is apart from current date by 7 seconds
+			if ((differenceToSec<=7) && !(differenceToSec<0)) {
+				const limit = new Set();
+
+				// make sure not to repeat the same reminder by adding a unique username
+				// to the Set Object and delete it after 10s 
+				if (limit.has(value[0].username)) {
+					return;
+				} else {
+					limit.add(value[0].username)
+					kb.whisper(value[0].username, '(ed reminder) enter dungeon please :) 🏰 ')
+					setTimeout(() => {limit.delete(value[0].username)}, 10000)		
+				}
+
+				// update the database with fired reminder
+				await doQuery('UPDATE ed_reminders SET status="fired" WHERE username="' + 
+					value[0].username + '" AND status="scheduled"');
+			}
+		}
+	}
+	setInterval(() => {
+		reminder2()
+	}, 1000)
+	
 	{
 		//active commands
 		kb.on('chat', function(channel, user, message) {
