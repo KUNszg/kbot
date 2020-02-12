@@ -2485,7 +2485,7 @@ kb.on('connected', (adress, port) => {
 						// channel lines occurence
 						const val = await doQuery(`SELECT message, COUNT(message) AS value_occurance FROM logs_${channelParsed} 
 							WHERE username="${user['username']}" AND (message NOT LIKE "?%" AND message NOT LIKE "+%" AND 
-							message NOT LIKE "kb%" AND message NOT LIKE "$%" AND message NOT LIKE "!%") GROUP BY message 
+							message NOT LIKE "kb%" AND message NOT LIKE "$%" AND message NOT LIKE "!%" AND message NOT LIKE "&%") GROUP BY message 
 							ORDER BY value_occurance DESC LIMIT 1;`)
 
 						// output message
