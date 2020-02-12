@@ -2236,7 +2236,7 @@ kb.on('connected', (adress, port) => {
  							} else if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform === "silence"){
  								await doQuery(`UPDATE cookie_reminders SET initplatform="channel" WHERE username="${user['username']}"`);
  								return `${user['username']}, you have changed your feedback message to appear in your own channel 
- 									(note that your reminders will still appear in the channel where you executed them). Type this command again to undo it.`;
+ 									(note that your reminders will still appear in the channel where you executed them). Type this command again to set them to whispers.`;
  							} else {
  								return ''
  							}
