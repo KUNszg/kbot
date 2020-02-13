@@ -2368,7 +2368,7 @@ kb.on('connected', (adress, port) => {
 								return `${user['username']}, no message logs found for that query`
 							}
 							const output = `${user['username']}, messages similar to " ${occurence[0].message.substr(0, 255)}
-								" has been typed ${occurence[0].value_occurance} times in this channel.`;
+								" have been typed ${occurence[0].value_occurance} times in this channel.`;
 
 							// check if response exceeds 500 characters limit
 							if (output.toString().length>500) {
@@ -2412,6 +2412,7 @@ kb.on('connected', (adress, port) => {
 							${(differenceToSec/86400).toFixed(0)} days ago`;
 					} 
 					else if (msg[0] === "-bruh") {
+
 						// if there is no user parameter
 						if (!msg[1]) {
 
