@@ -1687,7 +1687,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "restart",
 			aliases: null,
 			permission: 'restricted',
-			description: `restart [logger] | logger - restarts the logger | no parameter - restarts the bot -- cooldown 10ms`
+			description: `restart [logger] | logger - restarts the logger | no parameter - restarts the bot -- cooldown 10ms`,
 			cooldown: 10,
 			invocation: async (channel, user, message, args) => {
 				try {
