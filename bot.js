@@ -133,11 +133,13 @@ kb.on('connected', (adress, port) => {
 	const prefix = "kb ";
 	const commandsExecuted = [];
 	const talkedRecently = new Set();
+
 	const commands = [{
 			name: prefix + "uptime",
 			aliases: null,
-			description: 'displays informations about current runtime of the bot, lines, memory usage,' +
-				' host uptime and commands used in the current session - cooldown 8s',
+			description: `displays informations about current runtime of the bot, lines, memory usage,
+				host uptime and commands used in the current session -- cooldown 8s`,
+			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					function format(seconds) {
@@ -217,8 +219,9 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "ping",
 			aliases: null,
-			description: "syntax: kb ping [service] | no parameter - data about latest github activity |" +
-				" service - checks if server/domain is alive - cooldown 5s",
+			description: `syntax: kb ping [service] | no parameter - data about latest github activity |
+				service - checks if server/domain is alive -- cooldown 5s`,
+			cooldown: 5000,
 			invocation: async (channel, user, message, args, err) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
@@ -313,8 +316,9 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "spacex",
 			aliases: null,
-			description: "data from SpaceX about next launch rocket launch date, " +
-				" mission and launch site - cooldown 15s",
+			description: `data from SpaceX about next launch rocket launch date, 
+				mission and launch site -- cooldown 15s`,
+			cooldown: 15000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const space = await SpacexApiWrapper.getNextLaunch();
@@ -369,90 +373,11 @@ kb.on('connected', (adress, port) => {
 		},
 
 		{
-			name: prefix + "apod",
-			aliases: null,
-			description: "syntax: kb apod [random] | no parameter - astronomical picture for today | " +
-				"random - APOD from a random day, data gathered from NASA's API reaching year 1997 - cooldown 6s",
-			invocation: async (channel, user, message, args) => {
-				try {
-					const msg = message.split(' ').splice(2);
-					const apodRandom = await randomApod();
-
-					if (talkedRecently.has(user['user-id'])) { //if set has user id - ignore
-						return '';
-					} else {
-						talkedRecently.add(user['user-id']);
-						setTimeout(() => {
-							talkedRecently.delete(user['user-id']);
-						}, 6000);
-					}
-					if (msg[0] === 'random') {
-						return user['username'] + ", here is your random 🌌 picture of the day | " +
-							apodRandom.title + ": " + apodRandom.image;
-					} else {
-						const apodToday = await fetch('https://api.nasa.gov/planetary/apod' +
-								api.nasa2.replace('&', '?'))
-							.then(response => response.json());
-						return user['username'] + ', APOD for today SeemsGood ' + apodToday.title + ' | ' +
-							apodToday.hdurl + ' | by ' + apodToday.copyright
-					}
-				} catch (err) {
-					errorLog(err)
-					return user['username'] + ", " + err + " FeelsDankMan !!!";
-				}
-			}
-		},
-
-		{
-			name: prefix + "yt",
-			aliases: null,
-			description: "syntax: kb yt [query] |" +
-				" query - search for a YouTube video with provided query - cooldown 7s",
-			invocation: async (channel, user, message, args) => {
-				try {
-					const msg = message.split(" ").splice(2);
-					const random1 = await search(msg.join(" "), {
-						totalResults: 3,
-						maxResults: 2,
-						type: "video",
-						safeSearch: "strict",
-						key: api.youtube
-					});
-
-					if (talkedRecently.has(user['user-id'])) { //if set has user id - ignore
-						return '';
-					} else {
-						talkedRecently.add(user['user-id']);
-						setTimeout(() => {
-							talkedRecently.delete(user['user-id']);
-						}, 7000);
-					}
-					if (msg[0].length > 0) {
-						return user['username'] + ", results with searched phrase '" + msg.join(" ") +
-							"' => " + random1.results[0].link
-					} else if (!msg[0]) {
-						return user['username'] + ", please provide a phrase to search with :)";
-					}
-				} catch (err) {
-					errorLog(err)
-					if (err.message.includes("'link' of undefined")) {
-						return (user['username'] + ", no youtube link was found with provided phrase :(")
-					}
-					if (err.message.includes("status code 403")) {
-						return user['username'] + ", " + "[error 403] seems like we ran out of daily requests" +
-							" (that means the loop bug is still not fixed PepeLaugh )";
-					} else {
-						return user['username'] + ", " + err + " FeelsDankMan ❗";
-					}
-				}
-			}
-		},
-
-		{
 			name: prefix + "rt",
 			aliases: null,
-			description: "syntax: kb rt [ID] | no parameter - returns a link to the list of genres |" +
-				" ID - search for the song in the specified genre (numeric ID) - cooldown 5s",
+			description: `syntax: kb rt [ID] | no parameter - returns a link to the list of genres |
+				ID - search for the song in the specified genre (numeric ID) -- cooldown 5s`,
+			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);
@@ -508,7 +433,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "rf",
 			aliases: null,
-			description: "random fact. Provides facts about random stuff - cooldown 5s",
+			description: `random fact. Provides facts about random stuff -- cooldown 5s`,
+			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const json = await fetch(api.randomFact)
@@ -533,8 +459,9 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "channels",
 			aliases: prefix + "chn",
-			description: "displays all the channels the bot is currently in. | " +
-				"Permitted users syntax: kb chn [join-save/part-session/join-session] [channel] - cooldown 5s",
+			description: `displays all the channels the bot is currently in. | 
+				Permitted users syntax: kb chn [join-save/part-session/join-session] [channel] -- cooldown 5s`,
+			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const length = kb.getChannels().length;
@@ -582,82 +509,11 @@ kb.on('connected', (adress, port) => {
 		},
 
 		{
-			name: prefix + "decode",
-			aliases: null,
-			description: "syntax: kb decode [binary] | " +
-				"binary - decode given full octet binary code into unicode characters - cooldown 5s",
-			invocation: async (channel, user, message, args) => {
-				try {
-					const msg = message.split(" ").splice(2);
-					if (talkedRecently.has(user['user-id'])) {
-						return '';
-					} else {
-						talkedRecently.add(user['user-id']);
-						setTimeout(() => {
-							talkedRecently.delete(user['user-id']);
-						}, 5000);
-					}
-					if (!msg.join("")) {
-						return user['username'] + ", please provide binary code to convert :)"
-					} else {
-						if (msg.join(' ').split(" ").map(i => String.fromCharCode(parseInt(i, 2))).join("") === "") {
-							return user['username'] +
-								', an error occured monkaS check if you are using correct octets (eg.:01010001)'
-						}
-						if (!msg.join(' ').includes(/\d/)) {
-							return user['username'] +
-								', you can decode only full octet binary code';
-						} else {
-							return user['username'] + ", " +
-								msg.join(' ').split(" ").map(i => String.fromCharCode(parseInt(i, 2))).join("");
-						}
-					}
-				} catch (err) {
-					errorLog(err)
-					return user['username'] + ", " + err + " FeelsDankMan !!!";
-				}
-			}
-		},
-
-		{
-			name: prefix + "encode",
-			aliases: null,
-			description: "syntax: kb encode [character] | " +
-				"character - encode any character into binary code - cooldown 5s",
-			invocation: async (channel, user, message, args) => {
-				try {
-					const msg = message.split(" ").splice(2);
-					if (talkedRecently.has(user['user-id'])) { //if set has user id - ignore
-						return '';
-					} else {
-						talkedRecently.add(user['user-id']);
-						setTimeout(() => {
-							talkedRecently.delete(user['user-id']);
-						}, 5000);
-					}
-					const response = msg.join(" ").replace(/[\u{E0000}|\u{206d}]/gu, '').split("").map(i => i.charCodeAt(0).toString(2)).join(" ");
-					if (!msg.join(" ")) {
-						return user['username'] + ", please provide text to convert B)"
-					} else {
-						if (response.length > 500) {
-							return user['username'] +
-								', returned message is too long to be displayed in chat (>500 characters)';
-						} else {
-							return user['username'] + ', ' + response;
-						}
-					}
-				} catch (err) {
-					errorLog(err)
-					return user['username'] + ", " + err + " FeelsDankMan !!!";
-				}
-			}
-		},
-
-		{
 			name: prefix + "chat",
 			aliases: prefix + "ct",
-			description: "syntax: kb chat [message] | " +
-				"message - provide a message to chat with the AI bot, no parameter will return error",
+			description: `syntax: kb chat [message] | 
+				message - provide a message to chat with the AI bot, no parameter will return error -- cooldown 1s`,
+			cooldown: 1000,
 			permission: 'restricted',
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -705,7 +561,8 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "eval",
 			aliases: null,
 			permission: 'restricted',
-			description: "debugging command, permitted users only - no cooldown",
+			description: `debugging command, permitted users only -- cooldown 10ms`,
+			cooldown: 10,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.split(" ").splice(2);
@@ -767,8 +624,9 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "pattern",
 			aliases: null,
 			permission: 'restricted',
-			description: "permitted users syntax: kb pattern [fast/slow] [pyramid/triangle] [height] [message] | " +
-				"Invalid or missing parameter will return an error - no cooldown",
+			description: `permitted users syntax: kb pattern [fast/slow] [pyramid/triangle] [height] [message] | 
+				Invalid or missing parameter will return an error -- cooldown 10ms`,
+			cooldown: 10,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, "").split(" ").splice(2);
@@ -908,43 +766,11 @@ kb.on('connected', (adress, port) => {
 		},
 
 		{
-			name: prefix + "reverse",
-			aliases: null,
-			description: "syntax: kb reverse [message] | message - reverse given word or sentence - cooldown 5s",
-			invocation: async (channel, user, message, args) => {
-				try {
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);
-
-					function reverse(s) {
-						let a = [...s];
-						a.reverse();
-						return a.join('');
-					}
-					if (talkedRecently.has(user['user-id'])) { //if set has user id - ignore
-						return '';
-					} else {
-						talkedRecently.add(user['user-id']);
-						setTimeout(() => {
-							talkedRecently.delete(user['user-id']);
-						}, 5000);
-					}
-					if (!msg[0]) {
-						return user['username'] + ', please provide phrase to reverse :D';
-					} else {
-						return user['username'] + ", " + reverse(msg.join(" "));
-					}
-				} catch (err) {
-					errorLog(err)
-					return user['username'] + ", " + err + " FeelsDankMan !!!";
-				}
-			}
-		},
-
-		{
 			name: prefix + "locate",
 			aliases: prefix + "location",
-			description: "syntax: kb locate [IP/message] | IP - provide an IP adress to search for its location | " +
-				"message - provide a non-numeric message to search for its location - cooldown 6s",
+			description: `syntax: kb locate [IP/message] | IP - provide an IP adress to search for its location | 
+				message - provide a non-numeric message to search for its location -- cooldown 6s`,
+			cooldown: 6000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);
@@ -1003,48 +829,11 @@ kb.on('connected', (adress, port) => {
 		},
 
 		{
-			name: prefix + "neo",
-			aliases: prefix + "asteroid",
-			description: "shows information about a random Near Earth Object, " +
-				"that is close to Earth in current day. Data refreshes every 24h - cooldown 5s",
-			invocation: async (channel, user, message, args) => {
-				try {
-					const today = new Date().toLocaleDateString().split('/');
-					const today2 = today[2] + '-' + today[0] + '-' + today[1];
-					const neo = await fetch(api.nasa1 + today2 + api.nasa2)
-						.then(response => response.json());
-
-					const near_earth = Object.entries(neo.near_earth_objects).sort(([a], [b]) =>
-						new Date(a) - new Date(b))[0][1];
-					const random_near_earth = near_earth[Math.floor(Math.random() * near_earth.length)];
-					const miss = random_near_earth.close_approach_data[0].miss_distance.kilometers;
-
-					if (talkedRecently.has(user['user-id'])) {
-						return '';
-					} else {
-						talkedRecently.add(user['user-id']);
-						setTimeout(() => {
-							talkedRecently.delete(user['user-id']);
-						}, 5000);
-					}
-					return user['username'] + ", near earth objects: " + neo.element_count + " | name: " +
-						random_near_earth.name + " | diameter: " +
-						random_near_earth.estimated_diameter.kilometers.estimated_diameter_max.toFixed(3) +
-						"km | miss distance: " + Math.trunc(miss + " ") + "km | is hazardous?: " +
-						random_near_earth.is_potentially_hazardous_asteroid + " | orbiting body: " +
-						random_near_earth.close_approach_data[0].orbiting_body;
-				} catch (err) {
-					errorLog(err)
-					return user['username'] + ", " + err + " FeelsDankMan !!!";
-				}
-			}
-		},
-
-		{
 			name: prefix + "twitter",
 			aliases: null,
-			description: "syntax: kb twitter [account] | no parameter - returns an error | " +
-				"account - returns latest tweet from specified user - cooldown 8s",
+			description: `syntax: kb twitter [account] | no parameter - returns an error | 
+				account - returns latest tweet from specified user -- cooldown 8s`,
+			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.split(" ").splice(2);
@@ -1082,7 +871,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "hosts",
 			aliases: null,
-			description: 'kb hosts [input] - get users that are hosting a specified channel (in input), no input will return an error.',
+			description: `kb hosts [input] - get users that are hosting a specified channel (in input), no input will return an error -- cooldown 8s`,
+			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.split(" ").splice(2);
@@ -1135,44 +925,12 @@ kb.on('connected', (adress, port) => {
 		},
 
 		{
-			name: prefix + "bttv",
-			aliases: null,
-			invocation: async (channel, user, message, args) => {
-				try {
-					const fetchUrl = require("fetch").fetchUrl;
-					const bttv = await new Promise((resolve, reject) => {
-						fetchUrl(api.bttv + channel.substring(1), function(error, meta, body) {
-							if (error) {
-								reject(error)
-							} else {
-								resolve(body.toString())
-							}
-						})
-					});
-					if (talkedRecently.has(user['user-id'])) {
-						return '';
-					} else {
-						talkedRecently.add(user['user-id']);
-						setTimeout(() => {
-							talkedRecently.delete(user['user-id']);
-						}, 30000);
-					}
-					if (channel === '#nymn') {
-						return user['username'] + ', I cannot display BTTV emotes in this channel :('
-					} else {
-						return user['username'] + ", " + bttv;
-					}
-				} catch (err) {
-					errorLog(err)
-					return user['username'] + ", " + err + " FeelsDankMan !!!";
-				}
-			}
-		},
-
-		{
 			name: prefix + "rp",
 			aliases: prefix + "randomplaysound",
 			permission: 'restricted',
+			description: `interaction command with Supibot's $ps command, 
+				sends a random playsound to appear on stream -- cooldown 5s`,
+			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const playsound = await fetch("https://supinic.com/api/bot/playsound/list")
@@ -1202,6 +960,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + '4Head',
 			aliases: prefix + '4head',
+			description: `says a random joke related to programming or other stuff -- cooldown 4s`,
+			cooldown: 4000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const arr = [
@@ -1256,7 +1016,9 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "fl",
 			aliases: prefix + "firstline",
-			description: 'kb fl [input] - first line from database in current channel for given user, no input will return a first line of the executing user.',
+			description: `kb fl [input] - first line from database in current channel for given user, 
+				no input will return a first line of the executing user -- cooldown 2s`,
+			cooldown: 2000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					if (talkedRecently.has(user['user-id'])) {
@@ -1428,7 +1190,9 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "rl",
 			aliases: prefix + "randomline",
-			description: 'kb rl [input] - random line from current chat, use input to get random line from a specified user, no input will return a random quote.',
+			description: `kb rl [input] - random line from current chat, use input to get random line from a 
+				specified user, no input will return a random quote -- cooldown 2s`,
+			cooldown: 2000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					if (talkedRecently.has(user['user-id'])) {
@@ -1597,7 +1361,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'rq',
 			aliases: prefix + 'randomquote',
-			description: "Your random quote from the current chat",
+			description: `Your random quote from the current chat -- cooldown 2s`,
+			cooldown: 2000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const serverDate = new Date().getTime();
@@ -1695,8 +1460,9 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'bots',
 			aliases: prefix + 'bot',
-			description: 'list of known bots and when they were last seen, registered in Supibot database. This list supports only bots active in ' + 
-			"Supinic's".replace(/^(.{2})/, "$1\u{E0000}") + ' channel.',
+			description: `list of known bots and when they were last seen, registered in Supibot database. 
+				This list supports only bots active in Su 🅱 inic's channel -- cooldown 3s`,
+			cooldown: 3000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const dateMinute = new Date().getMinutes()
@@ -1753,7 +1519,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'PepeLaugh',
 			aliases: prefix + 'pepelaugh',
-			description: 'information about how many NPM modules my bot has installed in node_modules directory.',
+			description: `information about how many NPM modules my bot has installed in node_modules directory -- cooldown 3s`,
+			cooldown: 3000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const {
@@ -1777,7 +1544,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "dank",
 			aliases: null,
-			description: 'kb dank [input] - dank a random person (use input) or yourself (without input) FeelsDankMan',
+			description: `kb dank [input] - dank a random person (use input) or yourself (without input) FeelsDankMan -- cooldown 2s`,
+			cooldown: 2000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.split(" ").splice(2);
@@ -1807,8 +1575,9 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "help",
 			aliases: null,
-			description: "syntax: kb help [command] | no parameter - shows basic information about bot, " +
-				"it's owner and host | command - shows description of a specified command - cooldown 5s",
+			description: `syntax: kb help [command] | no parameter - shows basic information about bot,
+				it's owner and host | command - shows description of a specified command -- cooldown 5s`,
+			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.toLowerCase().split(' ').splice(2);
@@ -1859,7 +1628,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "joemama",
 			aliases: prefix + "mama",
-			description: 'random "your mom" joke.',
+			description: `random "your mom" joke -- cooldown 5s`,
+			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					if (talkedRecently2.has(user['user-id'])) {
@@ -1917,6 +1687,8 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "restart",
 			aliases: null,
 			permission: 'restricted',
+			description: `restart [logger] | logger - restarts the logger | no parameter - restarts the bot -- cooldown 10ms`
+			cooldown: 10,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const perms = allowEval.filter(
@@ -1974,7 +1746,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'github',
 			aliases: prefix + 'git',
-			description: 'link to my github repo and last commit timer.',
+			description: `link to my github repo and last commit timer -- cooldown 5s`,
+			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
@@ -2023,7 +1796,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'suggest',
 			aliases: null,
-			description: 'kb suggest [input] - suggest something for me to improve/change in my bot.',
+			description: `kb suggest [input] - suggest something for me to improve/change in my bot -- cooldown 8s`,
+			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2)
@@ -2067,6 +1841,8 @@ kb.on('connected', (adress, port) => {
 			name: prefix + 'check',
 			aliases: null,
 			permission: 'restricted',
+			description: `check [id] - check for suggestion with specific ID -- cooldown 10ms`,
+			cooldown: 10,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.split(' ')[2];
@@ -2105,7 +1881,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'supee',
 			aliases: prefix + 'sp',
-			permission: 'restricted',
+			permission: `restricted`,
+			cooldown: 30000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					if (talkedRecently.has('supee')) {
@@ -2154,7 +1931,8 @@ kb.on('connected', (adress, port) => {
 			name: prefix + 'cookie',
 			aliases: null,
 			description: `usage: kb cookie [register/unregister/whisper/silence] | register - register in cookie database. | 
-			unregister - unregister from the database. | whisper - set the feedback message to appear in whispers. | silence - mute the feedback. - cooldown 8s`,
+			unregister - unregister from the database. | whisper - set the feedback message to appear in whispers. | silence - mute the feedback. -- cooldown 8s`,
+			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
@@ -2264,7 +2042,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'ed',
 			aliases: null,
-			description: 'after "kb ed" type register/unregister to register or unregister from the database - cooldown 10s',
+			description: `after "kb ed" type register/unregister to register or unregister from the database -- cooldown 10s`,
+			cooldown: 10000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
@@ -2334,7 +2113,8 @@ kb.on('connected', (adress, port) => {
 			aliases: null,
 			description: `syntax: kb stats [-channel / -bruh / [input]] | no parameter - information about your logs in my
 				database | -channel - information about the current channel | -bruh - amount of racists in the chat | 
-				[input] - provide a custom message - cooldown 8s`,
+				[input] - provide a custom message -- cooldown 8s`,
+			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msgRaw = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
@@ -2527,6 +2307,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "surah",
 			aliases: prefix + "dailysurah",
+			description: `random verse from quran -- cooldown 8s`,
+			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					if (talkedRecently.has(user['user-id'])) {
@@ -2564,7 +2346,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "twitchcon",
 			aliases: prefix + 'tc',
-			description: "kb tc [user] - returns if given user has TwitchCon Amsterdam 2020 badge (the badge has to be displayed globally) - cooldown 5s",
+			description: "kb tc [user] - returns if given user has TwitchCon Amsterdam 2020 badge (the badge has to be displayed globally) -- cooldown 5s",
+			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					if (talkedRecently.has(user['user-id'])) {
@@ -2602,7 +2385,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "hug",
 			aliases: prefix + "kiss",
-			description: "kb [hug/kiss] [user] - hug or kiss a user to make their day better :)",
+			description: "kb [hug/kiss] [user] - hug or kiss a user to make their day better :) -- cooldown 5s",
+			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					if (talkedRecently.has(user['user-id'])) {
