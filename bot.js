@@ -1523,6 +1523,15 @@ kb.on('connected', (adress, port) => {
 			cooldown: 3000,
 			invocation: async (channel, user, message, args) => {
 				try {
+					if (talkedRecently2.has(user['user-id'])) { //if set has user id - ignore
+						return '';
+					} else {
+						talkedRecently2.add(user['user-id']);
+						setTimeout(() => {
+							talkedRecently2.delete(user['user-id']);
+						}, 3000);
+					}
+
 					const {
 						readdirSync
 					} = require('fs')
