@@ -1939,8 +1939,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'cookie',
 			aliases: null,
-			description: `usage: kb cookie [register/unregister/whisper/silence] | register - register in cookie database. | 
-			unregister - unregister from the database. | whisper - set the feedback message to appear in whispers. | silence - mute the feedback. -- cooldown 8s`,
+			description: `usage: kb cookie [register/unregister/whisper/silence] | register - register in database. | unregister - unregister from the database. | 
+				whisper - set the feedback message to appear in whispers. | silence - mute the feedback. -- cooldown 8s`,
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -1962,51 +1962,44 @@ kb.on('connected', (adress, port) => {
 							if (!perms[0]) {
 								return '';
 							} else {
-								await doQuery('UPDATE cookieModule SET reminders="' + msg[1] + '" WHERE type="cookie"');
-								kb.say(channel, 'updated "cookie" module status to ' + msg[1])
+								await doQuery(`UPDATE cookieModule SET reminders="${msg[1]}" WHERE type="cookie"`);
+								kb.say(channel, `updated "cookie" module status to ${msg[1]}`)
 							}
 							break;
 						case 'force':
-							const cookieApi = await fetch('https://api.roaringiron.com/cooldown/' + user['username'])
+							const cookieApi = await fetch(`https://api.roaringiron.com/cooldown/${user['username']}`)
 								.then(response => response.json());
 							if (cookieApi.interval_unformatted === 3600) {
-								return '$remind ' + user['username'] + ' eat cookie in 3630s';
+								return `$remind ${user['username']} eat cookie in 3630s`;
 							} else if (cookieApi.interval_unformatted === 7200) {
-								return '$remind ' + user['username'] + ' eat cookie in 7230s';
+								return `$remind ${user['username']} eat cookie in 7230s`;
 							} else if (cookieApi.interval_unformatted === 1800) {
-								return '$remind ' + user['username'] + ' eat cookie in 1830s';
+								return `$remind ${user['username']} eat cookie in 1830s`;
 							} else if (cookieApi.interval_unformatted === 1200) {
-								return '$remind ' + user['username'] + ' eat cookie in 1230s';
+								return `$remind ${user['username']} eat cookie in 1230s`;
 							} else {
-								return user['username'] + ' error WutFace';
+								return `${user['username']} error WutFace`;
 							}
 							break;
 						case 'register':
 							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
-								kb.say(channel, user['username'] + ', you have been successfully registered for ' +
-									'a cookie reminder.');
-								await doQuery('INSERT INTO cookies (username, created) VALUES ("' + user['username'] +
-									'", CURRENT_TIMESTAMP)');
-								await doQuery('INSERT INTO cookie_reminders (username) VALUES ("' + user['username'] +
-									'")');
+								kb.say(channel, `${user['username']}, you have been successfully registered for a cookie reminder, see "kb help cookie" for exclusive commands PogChamp`);
+								await doQuery(`INSERT INTO cookies (username, created) VALUES ("${user['username']}", CURRENT_TIMESTAMP)`);
+								await doQuery(`INSERT INTO cookie_reminders (username) VALUES ("${user['username']}")`);
 							} else if (resultsRegister[0].username === user['username']) {
-								kb.say(channel, user['username'] + ', you are already registered for cookie ' +
-									'reminders, type "kb help cookie" for command syntax.');
+								kb.say(channel, `${user['username']}, you are already registered for cookie reminders, type "kb help cookie" for command syntax.`);
 							} else {
 								return '';
 							}
 							break;
 						case 'unregister':
-							const resultsUnregister = await doQuery('SELECT username FROM cookies WHERE username="' + user['username'] + '"');
+							const resultsUnregister = await doQuery(`SELECT username FROM cookies WHERE username="${user['username']}"`);
 							if (resultsUnregister != 0) {
-								await doQuery('DELETE FROM cookies WHERE username="' + user['username'] + '"');
-								await doQuery('DELETE FROM cookie_reminders WHERE username="' + user['username'] + '"');
-								kb.say(channel, user['username'] +
-									', you are no longer registered for a cookie reminder.');
+								await doQuery(`DELETE FROM cookies WHERE username="${user['username']}"`);
+								await doQuery(`DELETE FROM cookie_reminders WHERE username="${user['username']}"`);
+								kb.say(channel, `${user['username']}, you are no longer registered for a cookie reminder.`);
 							} else {
-								kb.say(channel, user['username'] +
-									", you are not registered for a cookie reminder, therefore you can't be" +
-									" unregistered FeelsDankMan");
+								kb.say(channel, `${user['username']}, you are not registered for a cookie reminder, therefore you can't be unregistered FeelsDankMan`);
 							}
 							break;
 						case 'whisper':
@@ -2147,9 +2140,8 @@ kb.on('connected', (adress, port) => {
 						} else {
 
 							// positional query
-							const sql = `SELECT message, count(*) AS value_occurance FROM ?? WHERE message LIKE ?
-								GROUP BY message ORDER BY value_occurance DESC LIMIT 1;`;
-							const inserts = [`logs_${channelParsed}`, '%'+msg.join(' ')+'%']
+							const sql = `SELECT COUNT(*) AS luler FROM ?? WHERE MATCH(message) AGAINST (? IN NATURAL LANGUAGE MODE)`;
+							const inserts = [`logs_${channelParsed}`, msg.join(' ')]
 							const occurence = await doQuery(mysql.format(sql, inserts));
 
 
@@ -2692,10 +2684,10 @@ kb.on('connected', (adress, port) => {
 									if (platformCheck[0].initplatform === "channel") {
 										if (updateCheck[0].status === "scheduled") {
 											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 2h (channel ' + channelNoPing + 
-												') :D [note: you can set up this message to show up in your whispers by doing "kb cookie whisper" or completly remove it by doing "kb cookie silence"]');
+												') :D');
 										} else {
 											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 2h (channel ' + channelNoPing + 
-												') :) [note: you can set up this message to show up in your whispers by doing "kb cookie whisper" or completly remove it by doing "kb cookie silence"]');
+												') :)');
 									 	}
 									} else if (platformCheck[0].initplatform === "whisper") {
 									 	if (updateCheck[0].status === "scheduled") {
@@ -2722,10 +2714,10 @@ kb.on('connected', (adress, port) => {
 									if (platformCheck[0].initplatform === "channel") {
 										if (updateCheck[0].status === "scheduled") {
 											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 1h (channel ' + channelNoPing + 
-												') :D [note: you can set up this message to show up in your whispers by doing "kb cookie whisper" or completly remove it by doing "kb cookie silence"]');
+												') :D');
 										} else {
 											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 1h (channel ' + channelNoPing + 
-												') :) [note: you can set up this message to show up in your whispers by doing "kb cookie whisper" or completly remove it by doing "kb cookie silence"]');
+												') :)');
 									 	}
 								 	} else if (platformCheck[0].initplatform === "whisper") {
 								 		if (updateCheck[0].status === "scheduled") {
@@ -2752,10 +2744,10 @@ kb.on('connected', (adress, port) => {
 									if (platformCheck[0].initplatform === "channel") {
 										if (updateCheck[0].status === "scheduled") {
 											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 30m (channel ' + channelNoPing + 
-												') :D [note: you can set up this message to show up in your whispers by doing "kb cookie whisper" or completly remove it by doing "kb cookie silence"]');
+												') :D');
 										} else {
 											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 30m (channel ' + channelNoPing + 
-												') :) [note: you can set up this message to show up in your whispers by doing "kb cookie whisper" or completly remove it by doing "kb cookie silence"]');
+												') :)');
 									 	}
 									} else if (platformCheck[0].initplatform === "whisper") {
 									 	if (updateCheck[0].status === "scheduled") {
@@ -2782,10 +2774,10 @@ kb.on('connected', (adress, port) => {
 									if (platformCheck[0].initplatform === "channel") {
 										if (updateCheck[0].status === "scheduled") {
 											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 20m (channel ' + channelNoPing + 
-												') :D [note: you can set up this message to show up in your whispers by doing "kb cookie whisper" or completly remove it by doing "kb cookie silence"]')
+												') :D')
 										} else {
 											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 20m (channel ' + channelNoPing + 
-												') :) [note: you can set up this message to show up in your whispers by doing "kb cookie whisper" or completly remove it by doing "kb cookie silence"]');
+												') :)');
 									 	}
 									} else if (platformCheck[0].initplatform === "whisper") {
 									 	if (updateCheck[0].status === "scheduled") {
