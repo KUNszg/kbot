@@ -2140,8 +2140,9 @@ kb.on('connected', (adress, port) => {
 						} else {
 
 							// positional query
-							const sql = `SELECT message, COUNT(*) AS value_occurance FROM ?? WHERE MATCH(message) AGAINST (? IN NATURAL LANGUAGE MODE)`;
-							const inserts = [`logs_${channelParsed}`, msg.join(' ')]
+							const sql = `SELECT message, count(*) AS value_occurance FROM ?? WHERE message LIKE ?
+								GROUP BY message ORDER BY value_occurance DESC LIMIT 1;`;
+							const inserts = [`logs_${channelParsed}`, '%'+msg.join(' ')+'%']
 							const occurence = await doQuery(mysql.format(sql, inserts));
 
 
