@@ -2135,7 +2135,7 @@ kb.on('connected', (adress, port) => {
 
 					// if no parameters provided...
 					if (((msg[0] != "-channel" && msg[0] != "-bruh") && msg.length != 0)) {
-						if (msg.join(' ').length<4) {
+						if (msg.join(' ').length<3) {
 							return `${user['username']}, provided word has not enough characters to run a query.`
 						} else {
 
