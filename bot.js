@@ -2827,7 +2827,7 @@ kb.on('connected', (adress, port) => {
 		
 		{
 			name: "+ed",
-			aliases: null,
+			aliases: "+enterdungeon",
 			invocation: async (channel, user, message, args) => {
 				if (talkedRecently2.has(user['user-id'])) { 
 					return '';
