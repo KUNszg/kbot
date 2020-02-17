@@ -67,6 +67,9 @@ kb.on('connected', (adress, port) => {
 		{
 			ID: '229225576'
 		}, //kunszgbot
+		{
+			ID: '62300805'
+		}, //nymn
 	];
 	const allowEval = [{
 			ID: '178087241'
