@@ -2143,17 +2143,17 @@ kb.on('connected', (adress, port) => {
 						} else {
 
 							// positional query
-							const sql = `SELECT message, count(*) AS value_occurance FROM ?? WHERE message LIKE ?
-								GROUP BY message ORDER BY value_occurance DESC LIMIT 1;`;
-							const inserts = [`logs_${channelParsed}`, '%'+msg.join(' ')+'%']
-							const occurence = await doQuery(mysql.format(sql, inserts));
-
+							const sql = `SELECT message FROM ?? WHERE MATCH(message) AGAINST (?) ORDER BY RAND() LIMIT 1;`;
+							const inserts = [`logs_${channelParsed}`, `'"*${msg.join(' ')}*"'`]
+							const sql2 = `SELECT count(*) AS value_occurance FROM ?? WHERE MATCH(message) AGAINST (?);`;
+							const inserts2 = [`logs_${channelParsed}`, `'"*${msg.join(' ')}*"'`]
+							const occurence = await Promise.all([doQuery(mysql.format(sql, inserts)), doQuery(mysql.format(sql2, inserts2))])
 
 							if (occurence.length === 0) {
 								return `${user['username']}, no message logs found for that query`
 							}
-							const output = `${user['username']}, messages similar to " ${occurence[0].message.substr(0, 255)}
-								" have been typed ${occurence[0].value_occurance} times in this channel.`;
+							const output = `${user['username']}, messages similar to " ${occurence[0][0].message.substr(0, 255)}
+								" (random result that contains given word/s) have been typed ${occurence[1][0].value_occurance} times in this channel.`;
 
 							// check if response exceeds 500 characters limit
 							if (output.toString().length>500) {
@@ -2175,25 +2175,27 @@ kb.on('connected', (adress, port) => {
 						}
 					} else if (msg[0] === "-channel") {
 
-						// amount of rows in specific channel logs table
-						const values = await doQuery(`SELECT COUNT(ID) AS value FROM logs_${channelParsed}`);
+						const values = await Promise.all([
+						
+							// amount of rows
+							doQuery(`SELECT COUNT(*) AS value FROM logs_${channelParsed}`),
+						 	
+							// table size
+						 	doQuery(`SELECT TABLE_NAME AS ` + '`' + 'Table' + '`' + `, (DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024 
+								AS size FROM information_schema.TABLES WHERE TABLE_NAME = "logs_${channelParsed}" 
+								ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;`),
 
-						// table size
-						const size = await doQuery(`SELECT TABLE_NAME AS ` + '`' + 'Table' + '`' + `, (DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024 
-							AS size FROM information_schema.TABLES WHERE TABLE_NAME = "logs_${channelParsed}" 
-							ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;`);
-
-						// date of first log in the channel
-						const firstLog = await doQuery(`SELECT date AS create_time FROM logs_${channelParsed} 
-							 ORDER BY date ASC LIMIT 1`);
+						 	// create time
+						 	doQuery(`SELECT date AS create_time FROM logs_${channelParsed} ORDER BY date ASC LIMIT 1`) 
+					 	])
 
 						// date formatting
-						const logsDate = new Date(firstLog[0].create_time);
+						const logsDate = new Date(values[2][0].create_time);
 						const serverDate = new Date();
 						const difference = Math.abs(serverDate - logsDate);
 						const differenceToSec = difference/1000;
-						return `${user['username']}, this channel has ${values[0].value}
-							lines logged, which is ${size[0].size.substring(0, 4)} MB total. Logs in this channel started 
+						return `${user['username']}, this channel has ${values[0][0].value}
+							lines logged, which is ${values[1][0].size.substring(0, 4)} MB total. Logs in this channel started 
 							${(differenceToSec/86400).toFixed(0)} days ago`;
 					} 
 					else if (msg[0] === "-bruh") {
