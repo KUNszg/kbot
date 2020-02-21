@@ -286,7 +286,7 @@ kb.on('connected', (adress, port) => {
 						const ping = await kb.ping();
 						if (latestCommit > 259200) {
 							return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: " +
-								(latestCommit / 86400).toFixed(0) + " ago (master, " + commits[0].sha.slice(0, 7) +
+								(latestCommit / 86400).toFixed(0) + " ago (master, " + commitsCount[0][0].sha.slice(0, 7) +
 								", commit " + countCommits + ")";
 						} else {
 							return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 latest commit: " +
@@ -2145,7 +2145,7 @@ kb.on('connected', (adress, port) => {
 							// positional query
 							const sql = `SELECT message, count(*) AS value_occurance FROM ?? WHERE message LIKE ?
 								GROUP BY message ORDER BY value_occurance DESC LIMIT 1;`;
-							const inserts = [`logs_${channelParsed}`, '%'+msg.join(' ')+'%']
+							const inserts = [`logs_${channelParsed}`, msg.join(' ')+'% OR ' + msg.join(' ')]
 							const occurence = await doQuery(mysql.format(sql, inserts));
 
 
