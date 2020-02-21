@@ -2435,6 +2435,28 @@ kb.on('connected', (adress, port) => {
 		},
 
 		{
+			name: prefix + "website",
+			aliases: prefix + "site",
+			description: `link to my project's website`,
+			invocation: async (channel, user, message, args) => {
+				try {
+					if (talkedRecently.has(user['user-id'])) {
+						return '';
+					} else {
+						talkedRecently.add(user['user-id']);
+						setTimeout(() => {
+							talkedRecently.delete(user['user-id']);
+						}, 5000);
+					}
+					return `${user['username']}, website doesn't load on some browsers - http://kunszg.xyz/`;
+				} catch (err) {
+					errorLog(err)
+					return user['username'] + ' ' + err + ' FeelsDankMan !!!';
+				}
+			}
+		},
+
+		{
 			name: prefix + "commands",
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
