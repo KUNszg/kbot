@@ -2145,7 +2145,7 @@ kb.on('connected', (adress, port) => {
 							// positional query
 							const sql = `SELECT message, count(*) AS value_occurance FROM ?? WHERE message LIKE ?
 								GROUP BY message ORDER BY value_occurance DESC LIMIT 1;`;
-							const inserts = [`logs_${channelParsed}`, msg.join(' ')+'% OR ' + msg.join(' ')]
+							const inserts = [`logs_${channelParsed}`, '%'+msg.join(' ')+'%']
 							const occurence = await doQuery(mysql.format(sql, inserts));
 
 
