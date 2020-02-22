@@ -1719,7 +1719,7 @@ kb.on('connected', (adress, port) => {
 
 							setTimeout(() => {
 								if (channel === '#nymn') {
-									kb.say('nymn', 'restarting pajaWalk3 🚪')
+									kb.say('nymn', 'restarting LUL 👉  🚪')
 								} else {
 									kb.say(channel, 'restarting KKona ')
 								}
@@ -1735,7 +1735,7 @@ kb.on('connected', (adress, port) => {
 
 							setTimeout(() => {
 								if (channel === '#nymn') {
-									kb.say('nymn', 'restarting logger pajaWalk1 pajaWalk2 pajaWalk3 🚪')
+									kb.say('nymn', 'restarting logger LUL 👉 🚪')
 								} else {
 									kb.say(channel, 'restarting logger KKona ')
 								}
