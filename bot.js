@@ -2882,7 +2882,7 @@ kb.on('connected', (adress, port) => {
 								return new Date(copiedDate.getTime() + minutes * 60000);
 							}
 							const now = new Date();
-							kb.whisper(user['username'], 'I will remind you to enter the dungeon in 10m :)');
+							kb.whisper(user['username'], 'I will remind you to enter the dungeon in 1h :)');
 							const update = await doQuery('UPDATE ed_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
 									now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
 									'WHERE username="' + user['username'] + '"');
