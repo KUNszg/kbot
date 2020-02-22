@@ -2635,12 +2635,18 @@ kb.on('connected', (adress, port) => {
 		})
 	})
 	const pingAmount = [];
+	async function sendOnlineStatusOnLaunc() { 
+		pingAmount.push('ping')
+		await fetch(api.supinic, {
+			method: 'PUT',
+		}).then(response => response.json())
+	} 
+	setTimeout(() => { sendOnlineStatusOnLaunc() }, 5000);
 	async function sendOnlineStatus() {
 		pingAmount.push('ping')
 		const test = (await fetch(api.supinic, {
 			method: 'PUT',
 		}).then(response => response.json()))
-		console.log(test)
 	}
 	setInterval(() => {
 		sendOnlineStatus()
