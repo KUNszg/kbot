@@ -2650,7 +2650,7 @@ kb.on('connected', (adress, port) => {
 	}
 	setInterval(() => {
 		sendOnlineStatus()
-	}, 300000);
+	}, 295000);
 
 	const dankPrefix = '?';
 	const talkedRecently2 = new Set();
