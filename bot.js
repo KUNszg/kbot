@@ -2448,7 +2448,7 @@ kb.on('connected', (adress, port) => {
 							talkedRecently.delete(user['user-id']);
 						}, 5000);
 					}
-					return `${user['username']}, website doesn't load on some browsers - https://kunszg.xyz/`;
+					return `${user['username']}, https://kunszg.xyz/`;
 				} catch (err) {
 					errorLog(err)
 					return user['username'] + ' ' + err + ' FeelsDankMan !!!';
