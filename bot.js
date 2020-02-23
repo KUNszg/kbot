@@ -285,11 +285,11 @@ kb.on('connected', (adress, port) => {
 						const latestCommit = (diff / 1000).toFixed(2);
 						const ping = await kb.ping();
 						if (latestCommit > 259200) {
-							return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 you can check live bot status at http://kunszg.xyz/ latest commit: " +
+							return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 you can check live bot status at https://kunszg.xyz/ latest commit: " +
 								(latestCommit / 86400).toFixed(0) + " ago (master, " + commitsCount[0][0].sha.slice(0, 7) +
 								", commit " + countCommits + ")";
 						} else {
-							return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 you can check live bot status at http://kunszg.xyz/ latest commit: " +
+							return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 you can check live bot status at https://kunszg.xyz/ latest commit: " +
 								format(latestCommit) + " ago (master, " + commitsCount[0][0].sha.slice(0, 7) + ", commit " +
 								countCommits + ")";
 						}
@@ -2448,7 +2448,7 @@ kb.on('connected', (adress, port) => {
 							talkedRecently.delete(user['user-id']);
 						}, 5000);
 					}
-					return `${user['username']}, website doesn't load on some browsers - http://kunszg.xyz/`;
+					return `${user['username']}, website doesn't load on some browsers - https://kunszg.xyz/`;
 				} catch (err) {
 					errorLog(err)
 					return user['username'] + ' ' + err + ' FeelsDankMan !!!';
