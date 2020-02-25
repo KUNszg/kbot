@@ -2149,7 +2149,7 @@ kb.on('connected', (adress, port) => {
 							const inserts2 = [`logs_${channelParsed}`, `'"*${msg.join(' ')}*"'`]
 							const occurence = await Promise.all([doQuery(mysql.format(sql, inserts)), doQuery(mysql.format(sql2, inserts2))])
 
-							if (occurence.length === 0) {
+							if (occurence[0].length === 0) {
 								return `${user['username']}, no message logs found for that query`;
 							} else {
 								const output = `${user['username']}, messages similar to " ${occurence[0][0].message.substr(0, 255)}
