@@ -2150,26 +2150,27 @@ kb.on('connected', (adress, port) => {
 							const occurence = await Promise.all([doQuery(mysql.format(sql, inserts)), doQuery(mysql.format(sql2, inserts2))])
 
 							if (occurence.length === 0) {
-								return `${user['username']}, no message logs found for that query`
-							}
-							const output = `${user['username']}, messages similar to " ${occurence[0][0].message.substr(0, 255)}
-								" have been typed ${occurence[1][0].value_occurance} times in this channel.`;
-
-							// check if response exceeds 500 characters limit
-							if (output.toString().length>500) {
-								// check if response would cause timeout in the channel
-								if (await banphrasePass(output.substr(0, 500)).banned === true) {
-									kb.whisper(user['username'], output);
-									return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
-								} else {
-									return `${output.substr(0, 500)}...`
-								}
+								return `${user['username']}, no message logs found for that query`;
 							} else {
-								if (await banphrasePass(output).banned === true) {
-									kb.whisper(user['username'], output);
-									return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+								const output = `${user['username']}, messages similar to " ${occurence[0][0].message.substr(0, 255)}
+									" have been typed ${occurence[1][0].value_occurance} times in this channel.`;
+
+								// check if response exceeds 500 characters limit
+								if (output.toString().length>500) {
+									// check if response would cause timeout in the channel
+									if (await banphrasePass(output.substr(0, 500)).banned === true) {
+										kb.whisper(user['username'], output);
+										return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+									} else {
+										return `${output.substr(0, 500)}...`
+									}
 								} else {
-									return output;
+									if (await banphrasePass(output).banned === true) {
+										kb.whisper(user['username'], output);
+										return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+									} else {
+										return output;
+									}
 								}
 							}
 						}
