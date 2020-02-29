@@ -1744,6 +1744,22 @@ kb.on('connected', (adress, port) => {
 								shell.execSync('pm2 restart logger')
 							}, 4000);
 							return '';
+						} else if (msg[0] === 'all') {
+							const shell = require('child_process');
+							kb.say(channel, 'pulling from @master PogChamp 👉 ' +
+								await shell.execSync('sudo git pull').toString().replace(/-{2,}/g, "").replace(/\+{2,}/g, ""))
+
+							setTimeout(() => {
+								if (channel === '#nymn') {
+									kb.say('nymn', 'restarting all processes KKona 7')
+								} else {
+									kb.say(channel, 'restarting all processes KKona 7')
+								}
+							}, 4000);
+							setTimeout(() => {
+								shell.execSync('pm2 restart all')
+							}, 4000);
+							return '';
 						} else {
 							return 'imagine forgetting your own syntax OMEGALUL'
 						}
