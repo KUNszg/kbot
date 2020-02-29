@@ -48,7 +48,7 @@ kb.on('connected', (adress, port) => {
 	const con = mysql.createConnection({
 		host: "localhost",
 		user: "root",
-		password: "",
+		password: api.db_pass,
 		database: "kbot",
 	});
 	con.connect(function(err) {
