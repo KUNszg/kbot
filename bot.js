@@ -1556,7 +1556,7 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "dank",
 			aliases: null,
-			description: `kb dank [input] - dank a random person (use input) or yourself (without input) FeelsDankMan -- cooldown 2s`,
+			description: `kb dank [input] - dank other person (use input) or yourself (without input) FeelsDankMan -- cooldown 2s`,
 			cooldown: 2000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -2414,7 +2414,7 @@ kb.on('connected', (adress, port) => {
 					} else {
 						if (msg[0] === "hug") {
 							if (channel === "#nymn") {
-								return `${user['username']} hugs ${msg2[0]} iLOVEyou PeepoHappy FBCatch`;
+								return `${user['username']} hugs ${msg2[0]} PeepoHappy FBCatch`;
 							} else if (channel === "#haxk") {
 								return `${user['username']} hugs ${msg2[0]} forsenHug`;
 							} else {
