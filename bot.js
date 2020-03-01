@@ -462,13 +462,11 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "channels",
 			aliases: prefix + "chn",
-			description: `displays all the channels the bot is currently in. | 
+			description: `amount of channels the bot is currently in. | 
 				Permitted users syntax: kb chn [join-save/part-session/join-session] [channel] -- cooldown 5s`,
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const length = kb.getChannels().length;
-					const joinedChannels = kb.getChannels().toString().split("").toString().replace(/,/g, "\u{E0000}").replace(/#/g, ", ").replace(",", " ");
 					const msg = message.replace("\u{E0000}", "").split(" ").splice(2);
 					if (talkedRecently.has(user['user-id'])) {
 						return '';
@@ -478,10 +476,9 @@ kb.on('connected', (adress, port) => {
 							talkedRecently.delete(user['user-id']);
 						}, 5000);
 					}
-					console.log(msg)
 					// Non-administrator people
 					if (user['user-id'] != "178087241") {
-						return "I'm active in " + length + " channels => " + joinedChannels + " 4Head";
+						return "I'm active in " + length + " channels, list coming soon 4Head";
 					}
 
 					// administrator
@@ -499,9 +496,9 @@ kb.on('connected', (adress, port) => {
 							kb.part(msg[1]);
 							return "parted the channel for this session";
 						} else if (!msg[0] && !msg[1]) {
-							return "I'm active in " + length + " channels => " + joinedChannels + " 4Head";
+							return "I'm active in " + length + " channels, list coming soon 4Head";
 						} else {
-							return "I'm active in " + length + " channels => " + joinedChannels + " 4Head";
+							return "I'm active in " + length + " channels, list coming soon 4Head";
 						}
 					}
 				} catch (err) {
