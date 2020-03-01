@@ -2255,27 +2255,31 @@ kb.on('connected', (adress, port) => {
 							const userValue = await doQuery(`SELECT COUNT(*) AS value FROM logs_${channelParsed} 
 								WHERE (message LIKE "%nigg%") AND username="${msg[1]}"`);
 
-							// replace second character in user's name with an invisible character to prevent the ping
-							const userNoPing = msg[1].replace(/^(.{2})/, "$1\u{E0000}");
-							if (channel === '#haxk') {
-								if (userValue[0].value<2 && userValue[0].value != 1) {
-									return `${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
-										times, we coo TriHard`;
-								} else if (userValue[0].value===1){
-									return` ${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
-										time WideHard`;
+							if (msg[1].toLowerCase() != 'teodorv') {
+								// replace second character in user's name with an invisible character to prevent the ping
+								const userNoPing = msg[1].replace(/^(.{2})/, "$1\u{E0000}");
+								if (channel === '#haxk') {
+									if (userValue[0].value<2 && userValue[0].value != 1) {
+										return `${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
+											times, we coo TriHard`;
+									} else if (userValue[0].value===1){
+										return` ${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
+											time WideHard`;
+									} else {
+										return `${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
+											times TriChomp Clap`;
+									}
 								} else {
-									return `${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
-										times TriChomp Clap`;
+									if (channelValue[0].valueCount === 0) {
+										return `${user['username']} total of ${channelValue[0].valueCount} racist activities by user
+											${userNoPing} we coo TriHard Clap`;
+									} else {
+										return `${user['username']} total of ${channelValue[0].valueCount} racist activities by user 
+											${userNoPing} in this channel cmonBruh bruh`
+									}
 								}
 							} else {
-								if (channelValue[0].valueCount === 0) {
-									return `${user['username']} total of ${channelValue[0].valueCount} racist activities by user
-										${userNoPing} we coo TriHard Clap`;
-								} else {
-									return `${user['username']} total of ${channelValue[0].valueCount} racist activities by user 
-										${userNoPing} in this channel cmonBruh bruh`
-								}
+								return `${user['username']}, that user has opted out from this command.`; 
 							}
 						}
 					} else {
