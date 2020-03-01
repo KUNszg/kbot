@@ -467,6 +467,7 @@ kb.on('connected', (adress, port) => {
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
+					const length = kb.getChannels().length;
 					const msg = message.replace("\u{E0000}", "").split(" ").splice(2);
 					if (talkedRecently.has(user['user-id'])) {
 						return '';
