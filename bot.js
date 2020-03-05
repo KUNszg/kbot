@@ -2488,6 +2488,7 @@ kb.on('connected', (adress, port) => {
 		const input = message.split(' ')
 		if (user['user-id'] === "441611405") return;
 		if (user['user-id'] === "81613973") return;
+                if (user['user-id'] === '103973901') return;
 		if (user['user-id'] === "176481960") return; //boiiiann
 		if (self) return;
 
