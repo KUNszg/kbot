@@ -1531,7 +1531,7 @@ kb.on('connected', (adress, port) => {
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.toLowerCase().split(' ').splice(2);
+					const msg = message.toLowerCase().replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2).filter(Boolean);
 					if (talkedRecently2.has(user['user-id'])) {
 						return '';
 					} else {
@@ -2093,9 +2093,16 @@ kb.on('connected', (adress, port) => {
 
 					// if no parameters provided...
 					if (((msg[0] != "-channel" && msg[0] != "-bruh") && msg.length != 0)) {
+						/*						
 						if (msg.filter(i => i.startsWith('@'))) {
-							console.log(msg.filter(i => i.startsWith('@')))
+							const sql = 'SELECT message, username FROM ?? WHERE message LIKE ? AND username=?;';
+							const inserts = [`logs_${channelParsed}`, msg.filter(i => !i.startsWith('@')).join(' '), msg.filter(i => i.startsWith('@'))[0].replace('@', '')]
+							console.log(await doQuery(mysql.format(sql, inserts)))
+							console.log(sql)
+							console.log(inserts)
 						} else {
+
+						*/
 							if (msg.join(' ').length<3) {
 								return `${user['username']}, provided word has not enough characters to run a query.`
 							} else {
@@ -2132,7 +2139,7 @@ kb.on('connected', (adress, port) => {
 									}
 								}
 							}
-						}
+						//}
 					} else if (msg[0] === "-channel") {
 
 						const values = await Promise.all([
