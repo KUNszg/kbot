@@ -1459,65 +1459,6 @@ kb.on('connected', (adress, port) => {
 		},
 
 		{
-			name: prefix + 'bots',
-			aliases: prefix + 'bot',
-			description: `list of known bots and when they were last seen, registered in Supibot database. 
-				This list supports only bots active in Su 🅱 inic's channel -- cooldown 3s`,
-			cooldown: 3000,
-			invocation: async (channel, user, message, args) => {
-				try {
-					const dateMinute = new Date().getMinutes()
-					const time = await fetch("https://supinic.com/api/bot/active")
-						.then(response => response.json());
-
-					if (talkedRecently.has(user['user-id'])) {
-						return '';
-					} else {
-						talkedRecently.add(user['user-id']);
-						setTimeout(() => {
-							talkedRecently.delete(user['user-id']);
-						}, 3000);
-					}
-					if (time.data.filter(i => i.lastSeenTimestamp != null)) {
-						function format(seconds) {
-							function pad(s) {
-								return (s < 10 ? '0' : '') + s;
-							}
-							var hours = Math.floor(seconds/(60 * 60));
-							var minutes = Math.floor(seconds % (60 * 60) / 60);
-							var seconds = Math.floor(seconds % 60);
-							if (hours === 0 && minutes != 0) {
-								return minutes + 'm ago';
-							} else {
-								if (minutes === 0 && hours === 0) {
-									return seconds + "s ago";
-								} else if (seconds === 0 || hours === 0 && minutes === 0) {
-									return 'just now';
-								} else if (hours<168) {
-									return hours + 'h ago';
-								} else if (count.evaluate('720<' + hours + '<1440')) {
-									return (hours/720).toFixed(2) + 'month ago';
-								} else if (count.evaluate('720<' + hours + '>1440')) {
-									return (hours/720).toFixed(2) + 'months ago';
-								} else {
-									return (hours/24).toFixed(0) + 'd ago';
-								}
-							}
-						}
-						const bots = time.data.filter(i => i.lastSeenTimestamp != null).map(
-							i => ' ' + i.name + ' ' + format(
-								((Math.abs(new Date() - new Date(i.lastSeenTimestamp))) / 1000))
-						);
-						return user['username'] + ', active known bots MrDestructoid 👉' + bots;
-					}
-				} catch (err) {
-					errorLog(err)
-					return user['username'] + err + ' FeelsDankMan !!!';
-				}
-			}
-		},
-
-		{
 			name: prefix + 'PepeLaugh',
 			aliases: prefix + 'pepelaugh',
 			description: `information about how many NPM modules my bot has installed in node_modules directory -- cooldown 3s`,
@@ -2152,38 +2093,42 @@ kb.on('connected', (adress, port) => {
 
 					// if no parameters provided...
 					if (((msg[0] != "-channel" && msg[0] != "-bruh") && msg.length != 0)) {
-						if (msg.join(' ').length<3) {
-							return `${user['username']}, provided word has not enough characters to run a query.`
+						if (msg.filter(i => i.startsWith('@'))) {
+							console.log(msg.filter(i => i.startsWith('@')))
 						} else {
-
-							// positional query
-							const sql = `SELECT message FROM ?? WHERE MATCH(message) AGAINST (?) ORDER BY RAND() LIMIT 1;`;
-							const inserts = [`logs_${channelParsed}`, `'"*${msg.join(' ')}*"'`]
-							const sql2 = `SELECT count(*) AS value_occurance FROM ?? WHERE MATCH(message) AGAINST (?);`;
-							const inserts2 = [`logs_${channelParsed}`, `'"*${msg.join(' ')}*"'`]
-							const occurence = await Promise.all([doQuery(mysql.format(sql, inserts)), doQuery(mysql.format(sql2, inserts2))])
-
-							if (occurence[0].length === 0) {
-								return `${user['username']}, no message logs found for that query`;
+							if (msg.join(' ').length<3) {
+								return `${user['username']}, provided word has not enough characters to run a query.`
 							} else {
-								const output = `${user['username']}, messages similar to " ${occurence[0][0].message.substr(0, 255)}
-									" have been typed ${occurence[1][0].value_occurance} times in this channel.`;
 
-								// check if response exceeds 500 characters limit
-								if (output.toString().length>500) {
-									// check if response would cause timeout in the channel
-									if (await banphrasePass(output.substr(0, 500)).banned === true) {
-										kb.whisper(user['username'], output);
-										return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
-									} else {
-										return `${output.substr(0, 500)}...`
-									}
+								// positional query
+								const sql = `SELECT message FROM ?? WHERE MATCH(message) AGAINST (?) ORDER BY RAND() LIMIT 1;`;
+								const inserts = [`logs_${channelParsed}`, `'"*${msg.join(' ')}*"'`]
+								const sql2 = `SELECT count(*) AS value_occurance FROM ?? WHERE MATCH(message) AGAINST (?);`;
+								const inserts2 = [`logs_${channelParsed}`, `'"*${msg.join(' ')}*"'`]
+								const occurence = await Promise.all([doQuery(mysql.format(sql, inserts)), doQuery(mysql.format(sql2, inserts2))])
+
+								if (occurence[0].length === 0) {
+									return `${user['username']}, no message logs found for that query`;
 								} else {
-									if (await banphrasePass(output).banned === true) {
-										kb.whisper(user['username'], output);
-										return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+									const output = `${user['username']}, messages similar to " ${occurence[0][0].message.substr(0, 255)}
+										" have been typed ${occurence[1][0].value_occurance} times in this channel.`;
+
+									// check if response exceeds 500 characters limit
+									if (output.toString().length>500) {
+										// check if response would cause timeout in the channel
+										if (await banphrasePass(output.substr(0, 500)).banned === true) {
+											kb.whisper(user['username'], output);
+											return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+										} else {
+											return `${output.substr(0, 500)}...`
+										}
 									} else {
-										return output;
+										if (await banphrasePass(output).banned === true) {
+											kb.whisper(user['username'], output);
+											return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+										} else {
+											return output;
+										}
 									}
 								}
 							}
@@ -2486,10 +2431,10 @@ kb.on('connected', (adress, port) => {
 
 	kb.on("chat", async (channel, user, message, self) => {
 		const input = message.split(' ')
-		if (user['user-id'] === "441611405") return;
-		if (user['user-id'] === "81613973") return;
-                if (user['user-id'] === '103973901') return;
-		if (user['user-id'] === "176481960") return; //boiiiann
+		if (user['user-id'] === "441611405") return; // reallordborne
+		if (user['user-id'] === "81613973") return; // hehetunzo
+		if (user['user-id'] === "103973901") return; // alazymeme
+		if (user['user-id'] === "176481960") return; // boiiiann
 		if (self) return;
 
 		commands.forEach(async command => {
