@@ -2106,7 +2106,7 @@ kb.on('connected', (adress, port) => {
 							if (msg.join(' ').length<3) {
 								return `${user['username']}, provided word has not enough characters to run a query.`
 							} else {
-								if (msg.join(' ').includes('hax') || msg.join(' ').includes('imgur')) {
+								if ((msg.join(' ').includes('hax') || msg.join(' ').includes('imgu')) || msg.join(' ').includes('nig')) {
 									return `${user['username']}, I cannot search with this query, it contains an internally banned phrase.`;
 								} else {
 									// positional query
