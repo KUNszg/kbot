@@ -2106,35 +2106,38 @@ kb.on('connected', (adress, port) => {
 							if (msg.join(' ').length<3) {
 								return `${user['username']}, provided word has not enough characters to run a query.`
 							} else {
-
-								// positional query
-								const sql = `SELECT message FROM ?? WHERE MATCH(message) AGAINST (?) ORDER BY RAND() LIMIT 1;`;
-								const inserts = [`logs_${channelParsed}`, `'"*${msg.join(' ')}*"'`]
-								const sql2 = `SELECT count(*) AS value_occurance FROM ?? WHERE MATCH(message) AGAINST (?);`;
-								const inserts2 = [`logs_${channelParsed}`, `'"*${msg.join(' ')}*"'`]
-								const occurence = await Promise.all([doQuery(mysql.format(sql, inserts)), doQuery(mysql.format(sql2, inserts2))])
-
-								if (occurence[0].length === 0) {
-									return `${user['username']}, no message logs found for that query`;
+								if (msg.join(' ').includes('hax') || msg.join(' ').includes('imgur')) {
+									return `${user['username']}, I cannot search with this query, it contains an internally banned phrase.`;
 								} else {
-									const output = `${user['username']}, messages similar to " ${occurence[0][0].message.substr(0, 255)}
-										" have been typed ${occurence[1][0].value_occurance} times in this channel.`;
+									// positional query
+									const sql = `SELECT message FROM ?? WHERE MATCH(message) AGAINST (?) ORDER BY RAND() LIMIT 1;`;
+									const inserts = [`logs_${channelParsed}`, `'"*${msg.join(' ')}*"'`]
+									const sql2 = `SELECT count(*) AS value_occurance FROM ?? WHERE MATCH(message) AGAINST (?);`;
+									const inserts2 = [`logs_${channelParsed}`, `'"*${msg.join(' ')}*"'`]
+									const occurence = await Promise.all([doQuery(mysql.format(sql, inserts)), doQuery(mysql.format(sql2, inserts2))])
 
-									// check if response exceeds 500 characters limit
-									if (output.toString().length>500) {
-										// check if response would cause timeout in the channel
-										if (await banphrasePass(output.substr(0, 500)).banned === true) {
-											kb.whisper(user['username'], output);
-											return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
-										} else {
-											return `${output.substr(0, 500)}...`
-										}
+									if (occurence[0].length === 0) {
+										return `${user['username']}, no message logs found for that query`;
 									} else {
-										if (await banphrasePass(output).banned === true) {
-											kb.whisper(user['username'], output);
-											return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+										const output = `${user['username']}, messages similar to " ${occurence[0][0].message.substr(0, 255)}
+											" have been typed ${occurence[1][0].value_occurance} times in this channel.`;
+
+										// check if response exceeds 500 characters limit
+										if (output.toString().length>500) {
+											// check if response would cause timeout in the channel
+											if (await banphrasePass(output.substr(0, 500)).banned === true) {
+												kb.whisper(user['username'], output);
+												return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+											} else {
+												return `${output.substr(0, 500)}...`;
+											}
 										} else {
-											return output;
+											if (await banphrasePass(output).banned === true) {
+												kb.whisper(user['username'], output);
+												return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+											} else {
+												return output;
+											}
 										}
 									}
 								}
@@ -2428,6 +2431,94 @@ kb.on('connected', (adress, port) => {
 		},
 
 		{
+			name: prefix + "ban",
+			aliases: null,
+			description: `ban a user`,
+			permission: `restricted`,
+			invocation: async (channel, user, message, args) => {
+				try {
+
+					// search for executer's permissions
+					const perms = allowEval.filter(
+						i => i.ID === user['user-id']
+					);
+
+					// check for executer's permissions
+					if (!perms[0]) {
+						return '';
+					} else {
+						const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2).filter(Boolean);
+						const comment = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(3).filter(Boolean);
+						const userid = await fetch('https://api.ivr.fi/twitch/resolve/' + msg[0]).then(response => response.json());
+						const checkRepeatedInsert = await doQuery(`SELECT * FROM ban_list WHERE user_id="${userid.id}"`);
+						if (checkRepeatedInsert.length != 0) {
+							return `${user['username']}, user with ID ${userid.id} is already banned.`;
+						} else {
+							if (comment.length != 0) {
+								if (!comment.join(' ').startsWith('//')) {
+									return `${user['username']}, syntax error, use // before comments.`;
+								} else {
+
+									// insert into the database to ban the user (if there is a comment)
+									await doQuery(`INSERT INTO ban_list (username, user_id, comment, date) VALUES ("${msg[0]}", "${userid.id}", "${comment.join(' ').replace('//', '')}", CURRENT_TIMESTAMP)`);
+									return `${user['username']}, user with ID ${userid.id} is now banned from the bot.`;
+								}
+							} else {
+
+								// insert into the database to ban the user (if there is no comment)
+								await doQuery(`INSERT INTO ban_list (username, user_id, date) VALUES ("${msg[0]}", "${userid.id}", CURRENT_TIMESTAMP)`);
+								return `${user['username']}, user with ID ${userid.id} is now banned from the bot.`;
+							}
+						}
+					}
+				} catch (err) {
+					errorLog(err)
+					return `${user['username']}, ${err} FeelsDankMan !!!`
+				}
+			}
+		},
+
+		{
+			name: prefix + "unban",
+			aliases: null,
+			description: `unban a user`,
+			permission: `restricted`,
+			invocation: async (channel, user, message, args) => {
+				try {
+
+					// search for executer's permissions
+					const perms = allowEval.filter(
+						i => i.ID === user['user-id']
+					);
+
+					// check for executer's permissions
+					if (!perms[0]) {
+						return '';
+					} else {
+						const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2).filter(Boolean);
+						const comment = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(3).filter(Boolean);
+						const userid = await fetch('https://api.ivr.fi/twitch/resolve/' + msg[0]).then(response => response.json());
+						const checkRepeatedInsert = await doQuery(`SELECT * FROM ban_list WHERE user_id="${userid.id}"`);
+						if (checkRepeatedInsert.length === 0) {
+							return `${user['username']}, no such user found in the database.`;
+						} else {
+
+							// delete the row with unbanned user
+							await doQuery(`DELETE FROM ban_list WHERE username="${msg[0].toLowerCase()}"`);
+
+							// insert into a table to store previously banned users
+							await doQuery(`INSERT INTO unbanned_list (username, user_id, date) VALUES ("${msg[0]}", "${userid.id}", CURRENT_TIMESTAMP)`)
+							return `${user['username']}, user with ID ${userid.id} has been unbanned from the bot`;	
+						}
+					}
+				} catch (err) {
+					errorLog(err)
+					return `${user['username']}, ${err} FeelsDankMan !!!`
+				}
+			}
+		},
+
+		{
 			name: prefix + "commands",
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
@@ -2438,10 +2529,6 @@ kb.on('connected', (adress, port) => {
 
 	kb.on("chat", async (channel, user, message, self) => {
 		const input = message.split(' ')
-		if (user['user-id'] === "441611405") return; // reallordborne
-		if (user['user-id'] === "81613973") return; // hehetunzo
-		if (user['user-id'] === "103973901") return; // alazymeme
-		if (user['user-id'] === "176481960") return; // boiiiann
 		if (self) return;
 
 		commands.forEach(async command => {
@@ -2452,40 +2539,59 @@ kb.on('connected', (adress, port) => {
 					input[1]).replace(/,/, '').replace('@', '').toLowerCase() === command.aliases)
 			) {
 				let result = await command.invocation(channel, user, message);
-				if (!result) {
-					kb.say(channel, '');
+
+				const checkBan = await doQuery(`SELECT * FROM ban_list WHERE user_id="${user['user-id']}"`);
+				if (checkBan.length != 0) {
 					return;
-				}
-				if (repeatedMessages[channel] === result) {
-					result += " \u{E0000}";
-				}
-				repeatedMessages[channel] = result;
+				} else {
+					if (!result) {
+						kb.say(channel, '');
+						return;
+					}
+					if (repeatedMessages[channel] === result) {
+						result += " \u{E0000}";
+					}
+					repeatedMessages[channel] = result;
 
-				const colorList = [
-					"Blue", "BlueViolet", "CadetBlue", "Chocolate",
-					"Coral", "DodgerBlue", "Firebrick", "GoldenRod",
-					"Green", "HotPink", "OrangeRed", "Red", "SeaGreen",
-					"SpringGreen", "YellowGreen"
-				];
-
-				const colors = colorList[Math.floor(Math.random() * colorList.length)]
-				kb.say(channel, "/color " + colors);
-
-				async function sendResponse() {
-					const test = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
-						method: "POST",
-						url: "https://nymn.pajbot.com/api/v1/banphrases/test",
-						body: "message=" + result,
-						headers: {
-							"Content-Type": "application/x-www-form-urlencoded"
-						},
-					}).then(response => response.json()))
-					if (channel === '#nymn') {
-						if (test.banned === true) {
-							kb.say(channel, user['username'] +
-								', the result is banphrased, I whispered it to you tho cmonBruh')
-							kb.whisper(user['username'], result);
-							return;
+					async function sendResponse() {
+						const test = (await fetch('https://nymn.pajbot.com/api/v1/banphrases/test', {
+							method: "POST",
+							url: "https://nymn.pajbot.com/api/v1/banphrases/test",
+							body: "message=" + result,
+							headers: {
+								"Content-Type": "application/x-www-form-urlencoded"
+							},
+						}).then(response => response.json()))
+						if (channel === '#nymn') {
+							if (test.banned === true) {
+								kb.say(channel, user['username'] +
+									', the result is banphrased, I whispered it to you tho cmonBruh')
+								kb.whisper(user['username'], result);
+								return;
+							} else {
+								if (!result) {
+									kb.say(channel, "");
+								} else {
+									if (result.replace(/[\u{E0000}|\u{206d}]/gu, '') === "undefined") {
+										kb.say(channel, 'Internal error monkaS')
+										return;
+									} else if (result.toLowerCase().startsWith(kb.getOptions().identity.password)) {
+										kb.say(channel, user['username'] + ', TriHard oauth key');
+										return;
+									} else if (result.toLowerCase() === 'object') {
+										if (channel === '#nymn') {
+											kb.say(channel, ' object peepoSquad')
+											return;
+										} else {
+											kb.say(channel, ' object 🦍')
+											return;
+										}
+									} else {
+										commandsExecuted.push('1');
+										kb.say(channel, result);
+									}
+								}
+							}
 						} else {
 							if (!result) {
 								kb.say(channel, "");
@@ -2510,32 +2616,9 @@ kb.on('connected', (adress, port) => {
 								}
 							}
 						}
-					} else {
-						if (!result) {
-							kb.say(channel, "");
-						} else {
-							if (result.replace(/[\u{E0000}|\u{206d}]/gu, '') === "undefined") {
-								kb.say(channel, 'Internal error monkaS')
-								return;
-							} else if (result.toLowerCase().startsWith(kb.getOptions().identity.password)) {
-								kb.say(channel, user['username'] + ', TriHard oauth key');
-								return;
-							} else if (result.toLowerCase() === 'object') {
-								if (channel === '#nymn') {
-									kb.say(channel, ' object peepoSquad')
-									return;
-								} else {
-									kb.say(channel, ' object 🦍')
-									return;
-								}
-							} else {
-								commandsExecuted.push('1');
-								kb.say(channel, result);
-							}
-						}
 					}
+					sendResponse()
 				}
-				sendResponse()
 			}
 		});
 	});
@@ -2676,7 +2759,7 @@ kb.on('connected', (adress, port) => {
 								return new Date(copiedDate.getTime() + minutes * 60000);
 							}
 							if (cookieStatus.prestige === 0 ) {
-								if (cookieApi.cookieApi < 7180 || cookieApi.seconds_left === 0) {
+								if (cookieApi.seconds_left < 7180 || cookieApi.seconds_left === 0) {
 									kb.whisper(user['username'],
 										' your cookie is still on cooldown (' +
 										cookieApi.time_left_formatted +
