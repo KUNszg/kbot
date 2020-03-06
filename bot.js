@@ -2325,45 +2325,6 @@ kb.on('connected', (adress, port) => {
 		},
 
 		{
-			name: prefix + "twitchcon",
-			aliases: prefix + 'tc',
-			description: "kb tc [user] - returns if given user has TwitchCon Amsterdam 2020 badge (the badge has to be displayed globally) -- cooldown 5s",
-			cooldown: 5000,
-			invocation: async (channel, user, message, args) => {
-				try {
-					if (talkedRecently.has(user['user-id'])) {
-						return '';
-					} else {
-						talkedRecently.add(user['user-id']);
-						setTimeout(() => {
-							talkedRecently.delete(user['user-id']);
-						}, 5000);
-					}
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2)
-					const tcStatus = await fetch("https://api.ivr.fi/twitch/badges/" + msg[0])
-						.then(response => response.json());
-					const checkBadge = tcStatus.badges.filter(i=>i.id === "twitchconAmsterdam2020")
-					if (!msg[0]) {
-						return user['username'] + ', no user provided.';
-					} else {	
-						if (checkBadge.length === 0) {
-							return user['username'] + ', that user has no TwitchCon Amsterdam 2020 global badge set, or is not attending the event :/';
-						} else {
-							if (checkBadge[0].id === "twitchconAmsterdam2020") {
-								return user['username'] + ', that user is attending TwitchCon Amsterdam 2020 PogChamp !!!';
-							} else {
-								return user['username'] + ', that user has no TwitchCon Amsterdam 2020 global badge set, or is not attending the event :/';
-							}
-						}	
-					}
-				} catch (err) {
-					errorLog(err)
-					return user['username'] + ' ' + err.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').replace(/\d/g, '').replace(/./g, '') + ' FeelsDankMan !!!';
-				}
-			}	 
-		},
-
-		{
 			name: prefix + "hug",
 			aliases: prefix + "kiss",
 			description: "kb [hug/kiss] [user] - hug or kiss a user to make their day better :) -- cooldown 5s",
