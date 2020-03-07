@@ -2071,9 +2071,9 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'stats',
 			aliases: null,
-			description: `syntax: kb stats [-channel / -bruh / [input]] | no parameter - information about your logs in my
+			description: `syntax: kb stats -channel / -bruh / [input] / @[user] | no parameter - information about your logs in my
 				database | -channel - information about the current channel | -bruh - amount of racists in the chat | 
-				[input] - provide a custom message -- cooldown 8s`,
+				[input] - provide a custom message | @[user] - searches for given user -- cooldown 8s`,
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
