@@ -1193,7 +1193,7 @@ kb.on('connected', (adress, port) => {
 			aliases: prefix + "randomline",
 			description: `kb rl [input] - random line from current chat, use input to get random line from a 
 				specified user, no input will return a random quote -- cooldown 2s`,
-			cooldown: 2000,
+			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					if (talkedRecently.has(user['user-id'])) {
@@ -1202,7 +1202,7 @@ kb.on('connected', (adress, port) => {
 						talkedRecently.add(user['user-id']);
 						setTimeout(() => {
 							talkedRecently.delete(user['user-id']);
-						}, 2000);
+						}, 5000);
 					}
 
 					function format(seconds) {
@@ -2092,19 +2092,61 @@ kb.on('connected', (adress, port) => {
 					commandsExecuted.push('1');
 
 					// if no parameters provided...
-					if (((msg[0] != "-channel" && msg[0] != "-bruh") && msg.length != 0)) {
-						/*						
-						if (msg.filter(i => i.startsWith('@'))) {
-							const sql = 'SELECT message, username FROM ?? WHERE message LIKE ? AND username=?;';
-							const inserts = [`logs_${channelParsed}`, msg.filter(i => !i.startsWith('@')).join(' '), msg.filter(i => i.startsWith('@'))[0].replace('@', '')]
-							console.log(await doQuery(mysql.format(sql, inserts)))
-							console.log(sql)
-							console.log(inserts)
+					if (((msg[0] != "-channel" && msg[0] != "-bruh") && msg.length != 0)) {				
+						if (msg.filter(i => i.startsWith('@')).toString().includes('@')) {
+							// check if user provided a user in flag
+							if (msg.filter(i => i.startsWith('@'))[0].replace('@', '').length === 0) {
+								return `${user['username']}, wrong flag syntax, no user after "@" provided`;
+							} else {
+								// check if user provided enough characters
+								if (msg.filter(i => !i.startsWith('@')).join(' ').length<3) {
+									return `${user['username']}, provided word has not enough characters to run a query.`;
+								} else {
+									// check if user provided any message to search for
+									if (!msg.filter(i => !i.startsWith('@'))) {
+										return `${user['username']}, no search query provided with the given flag, eg.: kb stats @kunszg nam`;
+									} else {
+										// check for internal banphrases
+										if (msg.filter(i => !i.startsWith('@')).join(' ').toLowerCase().match(/hax|imgu|nig/g) || msg.filter(i => i.startsWith('@'))[0].replace('@', '').match(/hax/g)) {
+											return `${user['username']}, I cannot search with this query, it contains an internally banned phrase or user.`;
+										} else {
+											// get the message
+											const sql = 'SELECT message, username FROM ?? WHERE message LIKE ? AND username=? ORDER BY RAND() LIMIT 1;';
+											const inserts = [`logs_${channelParsed}`, '%'+msg.filter(i => !i.startsWith('@')).join(' ')+'%', msg.filter(i => i.startsWith('@'))[0].replace('@', '')];
+											// get the occurence
+											const sql2 = 'SELECT message, COUNT(message) AS value_occurance FROM logs_' + channelParsed + ' WHERE message LIKE ? AND username=? GROUP BY message ORDER BY value_occurance DESC LIMIT 1;';
+											const inserts2 = ['%'+msg.filter(i => !i.startsWith('@')).join(' ')+'%', msg.filter(i => i.startsWith('@'))[0].replace('@', '')]
+											const compile = await Promise.all([doQuery(mysql.format(sql, inserts)), doQuery(mysql.format(sql2, inserts2))])
+											if (compile[0].length === 0) {
+												return `${user['username']}, no message logs found for that query or related to that user.`;
+											} else {
+												const output = `${user['username']}, messages similar to " ${compile[0][0].message.substr(0, 255)}
+													" have been typed ${compile[1][0].value_occurance} times in this channel by user ${compile[0][0].username.replace(/^(.{2})/, "$1\u{E0000}")}.`;
+												// check if response exceeds 500 characters limit
+												if (output.toString().length>500) {
+													// check if response would cause timeout in the channel
+													if (await banphrasePass(output.substr(0, 500)).banned === true) {
+														kb.whisper(user['username'], output);
+														return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+													} else {
+														return `${output.substr(0, 500)}...`;
+													}
+												} else {
+													if (await banphrasePass(output).banned === true) {
+														kb.whisper(user['username'], output);
+														return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+													} else {
+														return output;
+													}
+												}
+											}
+										}
+									}
+								}
+							}
 						} else {
-
-						*/
 							if (msg.join(' ').length<3) {
-								return `${user['username']}, provided word has not enough characters to run a query.`
+								return `${user['username']}, provided word has not enough characters to run a query.`;
 							} else {
 								if ((msg.join(' ').includes('hax') || msg.join(' ').includes('imgu')) || msg.join(' ').includes('nig')) {
 									return `${user['username']}, I cannot search with this query, it contains an internally banned phrase.`;
@@ -2142,7 +2184,7 @@ kb.on('connected', (adress, port) => {
 									}
 								}
 							}
-						//}
+						}
 					} else if (msg[0] === "-channel") {
 
 						const values = await Promise.all([
@@ -2626,7 +2668,6 @@ kb.on('connected', (adress, port) => {
 		const input = message.split(' ')
 		if (user['user-id'] === "441611405") return;
 		if (user['user-id'] === "81613973") return;
-		if (user['user-id'] === "249408349") return;
 		if (user['user-id'] === "176481960") return; // boiiiann
 		if (self) return;
 		commandlist.forEach(async command => {
@@ -3023,7 +3064,6 @@ kb.on('connected', (adress, port) => {
 	];
 
 	kb.on("chat", async (channel, user, message, self) => {
-		if (user['user-id'] === "249408349") return;
 		if (self) return;
 		dankeval.forEach(async smart => {
 			if ((message.split(' ')[0] === smart.name) ||
