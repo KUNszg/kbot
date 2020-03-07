@@ -2111,7 +2111,7 @@ kb.on('connected', (adress, port) => {
 							}
 							
 							// check for internal banphrases
-							if (msg.filter(i => !i.startsWith('@')).join(' ').toLowerCase().match(/hax|imgu|nig/g) || msg.filter(i => i.startsWith('@'))[0].replace('@', '').match(/hax/g)) {
+							if ((msg.filter(i => !i.startsWith('@')).join(' ').toLowerCase().match(/hax|imgu|nig/g) && channel === "#nymn") || (msg.filter(i => i.startsWith('@'))[0].replace('@', '').match(/hax/g)) && channel === "#nymn") {
 								return `${user['username']}, I cannot search with this query, it contains an internally banned phrase or user.`;
 							}
 							
@@ -3126,8 +3126,7 @@ kb.on('connected', (adress, port) => {
 		});
 		kb.on("resub", function(channel, username, months) {
 			if (channel != "#supinic") return;
-			else
-				kb.say("Supinic", username + " has resubscribed, welcome back in hackermans club HACKERMANS")
+			kb.say("Supinic", username + " has resubscribed, welcome back in hackermans club HACKERMANS")
 		});
 
 		kb.on("timeout", function(channel, username, message, duration) {
