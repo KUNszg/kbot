@@ -1737,28 +1737,58 @@ kb.on('connected', (adress, port) => {
 						case 'force':
 							const cookieApi = await fetch(`https://api.roaringiron.com/cooldown/${user['username']}`)
 								.then(response => response.json());
-							if (cookieApi.interval_unformatted === 3600) {
-								return `$remind ${user['username']} eat cookie in 3630s`;
-							} else if (cookieApi.interval_unformatted === 7200) {
-								return `$remind ${user['username']} eat cookie in 7230s`;
-							} else if (cookieApi.interval_unformatted === 1800) {
-								return `$remind ${user['username']} eat cookie in 1830s`;
-							} else if (cookieApi.interval_unformatted === 1200) {
-								return `$remind ${user['username']} eat cookie in 1230s`;
-							} else {
-								return `${user['username']} error WutFace`;
+							const now = new Date();
+							const regCheck = await doQuery(`SELECT * FROM cookie_reminders WHERE username="${user['username']}"`);
+
+							// check if user is registered
+							if (regCheck.length === 0) {
+								return `${user['username']}, you are not registered in the database, use "kb cookie register" to do so.`;
 							}
+
+							async function updateReminder(time) {
+								await doQuery(`UPDATE cookie_reminders SET channel="${channel.replace('#', '')}", 
+									fires="${now.addMinutes(time).toISOString().slice(0, 19).replace('T', ' ')}", status="scheduled" 
+									WHERE username="${user['username']}"`);
+							}
+
+							// force a 1h reminder
+							if (cookieApi.interval_unformatted === 3600) {
+								updateReminder(60)
+								return `${user['username']}, I will remind you to eat the cookie in 1h. (forced reminder)`;
+							} 
+							
+							// force a 2h reminder
+							if (cookieApi.interval_unformatted === 7200) {
+								updateReminder(120)
+								return `${user['username']}, I will remind you to eat the cookie in 2h. (forced reminder)`;
+							} 
+
+							// force a 30 min reminder
+							if (cookieApi.interval_unformatted === 1800) {
+								updateReminder(30)
+								return `${user['username']}, I will remind you to eat the cookie in 30m. (forced reminder)`;
+							} 
+
+							// force a 20 min reminder
+							if (cookieApi.interval_unformatted === 1200) {
+								updateReminder(20)
+								return `${user['username']}, I will remind you to eat the cookie in 20m. (forced reminder)`;
+							}
+							return `${user['username']} error WutFace`;
 							break;
 						case 'register':
 							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
 								kb.say(channel, `${user['username']}, you have been successfully registered for a cookie reminder, see "kb help cookie" for exclusive commands PogChamp`);
 								await doQuery(`INSERT INTO cookies (username, created) VALUES ("${user['username']}", CURRENT_TIMESTAMP)`);
 								await doQuery(`INSERT INTO cookie_reminders (username) VALUES ("${user['username']}")`);
-							} else if (resultsRegister[0].username === user['username']) {
+								return '';
+							} 
+
+							if (resultsRegister[0].username === user['username']) {
 								kb.say(channel, `${user['username']}, you are already registered for cookie reminders, type "kb help cookie" for command syntax.`);
-							} else {
 								return '';
 							}
+							return '';
 							break;
 						case 'unregister':
 							const resultsUnregister = await doQuery(`SELECT username FROM cookies WHERE username="${user['username']}"`);
@@ -2602,174 +2632,176 @@ kb.on('connected', (adress, port) => {
 					const cookieModule = await doQuery(`SELECT reminders FROM cookieModule WHERE type="cookie"`);
 					if (cookieModule[0].reminders === "false") {
 						return '';
-					} else {
-						const cookieApi = await fetch('https://api.roaringiron.com/cooldown/' +
-								user['user-id'] + '?id=true')
-							.then(response => response.json());
-						const cookieStatus = await fetch('https://api.roaringiron.com/user/' +
-								user['user-id'] + '?id=true')
-							.then(response => response.json());
-						const query = await doQuery(`SELECT username FROM cookies WHERE username="${user['username']}"`);
-						const updateCheck = await doQuery(`SELECT username, status FROM cookie_reminders WHERE username="${user['username']}"`)
-						const platformCheck = await doQuery(`SELECT initplatform, username FROM cookie_reminders WHERE username="${user['username']}"`)
-						const userChannel = '#' + user['username'];
-						const channelNoPing = channel.replace(/^(.{2})/, "$1\u{E0000}");
-						if (query.length === 0) {
-							kb.say(channel, '');
+					}
+					const cookieApi = await fetch('https://api.roaringiron.com/cooldown/' +
+							user['user-id'] + '?id=true')
+						.then(response => response.json());
+					const cookieStatus = await fetch('https://api.roaringiron.com/user/' +
+							user['user-id'] + '?id=true')
+						.then(response => response.json());
+					const query = await doQuery(`SELECT username FROM cookies WHERE username="${user['username']}"`);
+					const updateCheck = await doQuery(`SELECT username, status FROM cookie_reminders WHERE username="${user['username']}"`)
+					const platformCheck = await doQuery(`SELECT initplatform, username FROM cookie_reminders WHERE username="${user['username']}"`)
+					const countCookie = await doQuery(`SELECT cookie_count FROM cookie_reminders WHERE username="${user['username']}"`)
+					const userChannel = '#' + user['username'];
+					const channelNoPing = channel.replace(/^(.{2})/, "$1\u{E0000}");
+					if (query.length === 0) {
+						return '';
+					}
+
+					await doQuery(`UPDATE cookie_reminders SET cookie_count="${countCookie[0].cookie_count + 1}" WHERE username="${user['username']}"`)
+					commandsExecuted.push('1');
+					Date.prototype.addMinutes = function(minutes) {
+						var copiedDate = new Date(this.getTime());
+						return new Date(copiedDate.getTime() + minutes * 60000);
+					}
+					if (cookieStatus.prestige === 0 ) {
+						if (cookieApi.seconds_left < 7180 || cookieApi.seconds_left === 0) {
+							kb.whisper(user['username'],
+								' your cookie is still on cooldown (' +
+								cookieApi.time_left_formatted +
+								'), wait 2h intervals. To force your cookie reminder do ' +
+								'"kb cookie force" in chat.');
 						} else {
-							commandsExecuted.push('1');
-							Date.prototype.addMinutes = function(minutes) {
-								var copiedDate = new Date(this.getTime());
-								return new Date(copiedDate.getTime() + minutes * 60000);
-							}
-							if (cookieStatus.prestige === 0 ) {
-								if (cookieApi.seconds_left < 7180 || cookieApi.seconds_left === 0) {
-									kb.whisper(user['username'],
-										' your cookie is still on cooldown (' +
-										cookieApi.time_left_formatted +
-										'), wait 2h intervals. To force your cookie reminder do ' +
-										'"kb cookie force" in chat.');
+						 	const now = new Date();
+							await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+								now.addMinutes(120).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+								'WHERE username="' + user['username'] + '"');
+							if (platformCheck[0].initplatform === "channel") {
+								if (updateCheck[0].status === "scheduled") {
+									kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 2h (channel ' + channelNoPing + 
+										') :D');
 								} else {
-								 	const now = new Date();
-									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
-										now.addMinutes(120).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
-										'WHERE username="' + user['username'] + '"');
-									if (platformCheck[0].initplatform === "channel") {
-										if (updateCheck[0].status === "scheduled") {
-											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 2h (channel ' + channelNoPing + 
-												') :D');
-										} else {
-											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 2h (channel ' + channelNoPing + 
-												') :)');
-									 	}
-									} else if (platformCheck[0].initplatform === "whisper") {
-									 	if (updateCheck[0].status === "scheduled") {
-											kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 2h (channel ' + channelNoPing + ') :D')
-										} else {
-											kb.whisper(user['username'], ' I will remind you to eat the cookie in 2h (channel ' + channelNoPing + ') :)');
-									 	}
-									 } else if (platformCheck[0].initplatform === "silence") {
-									 	return '';
-									 }
-								}
-							} else if (cookieStatus.prestige === 1) {
-								if (cookieApi.seconds_left < 3580 || cookieApi.seconds_left === 0) {
-									kb.whisper(user['username'],
-										' your cookie is still on cooldown (' +
-										cookieApi.time_left_formatted + '), wait 1h intervals. ' +
-										'To force your cookie reminder do ' +
-										'"kb cookie force" in the chat.');
-								} else {
-								 	const now = new Date();
-									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
-										now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
-										'WHERE username="' + user['username'] + '"');
-									if (platformCheck[0].initplatform === "channel") {
-										if (updateCheck[0].status === "scheduled") {
-											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 1h (channel ' + channelNoPing + 
-												') :D');
-										} else {
-											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 1h (channel ' + channelNoPing + 
-												') :)');
-									 	}
-								 	} else if (platformCheck[0].initplatform === "whisper") {
-								 		if (updateCheck[0].status === "scheduled") {
-											kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 1h (channel ' + channelNoPing + ') :D')
-										} else {
-											kb.whisper(user['username'], ' I will remind you to eat the cookie in 1h (channel ' + channelNoPing + ') :)');
-									 	}
-								 	} else if (platformCheck[0].initplatform === "silence") {
-									 	return '';
-								 	}
+									kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 2h (channel ' + channelNoPing + 
+										') :)');
 							 	}
-							} else if (cookieStatus.prestige === 2) {
-								if (cookieApi.seconds_left < 1780 || cookieApi.seconds_left === 0) {
-									kb.whisper(user['username'],
-										' your cookie is still on cooldown (' +
-										cookieApi.time_left_formatted +
-										'), wait 30m intervals. To force your cookie reminder do ' +
-										' "kb cookie force" in the chat.');
+							} else if (platformCheck[0].initplatform === "whisper") {
+							 	if (updateCheck[0].status === "scheduled") {
+									kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 2h (channel ' + channelNoPing + ') :D')
 								} else {
-									const now = new Date();
-									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
-										now.addMinutes(30).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
-										'WHERE username="' + user['username'] + '"');
-									if (platformCheck[0].initplatform === "channel") {
-										if (updateCheck[0].status === "scheduled") {
-											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 30m (channel ' + channelNoPing + 
-												') :D');
-										} else {
-											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 30m (channel ' + channelNoPing + 
-												') :)');
-									 	}
-									} else if (platformCheck[0].initplatform === "whisper") {
-									 	if (updateCheck[0].status === "scheduled") {
-											kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 30m (channel ' + channelNoPing + ') :D')
-										} else {
-											kb.whisper(user['username'], ' I will remind you to eat the cookie in 30m (channel ' + channelNoPing + ') :)');
-									 	}
-									} else if (platformCheck[0].initplatform === "silence") {
-										return '';
-									}
-								}
-							} else if (cookieStatus.prestige === 3) {
-								if (cookieApi.seconds_left < 1180 || cookieApi.seconds_left === 0) {
-									kb.whisper(user['username'],
-										' your cookie is still on cooldown (' +
-										cookieApi.time_left_formatted +
-										'), wait 20m intervals. To force your cookie reminder do ' +
-										'"kb cookie force" the in chat.');
+									kb.whisper(user['username'], ' I will remind you to eat the cookie in 2h (channel ' + channelNoPing + ') :)');
+							 	}
+							 } else if (platformCheck[0].initplatform === "silence") {
+							 	return '';
+							 }
+						}
+					} else if (cookieStatus.prestige === 1) {
+						if (cookieApi.seconds_left < 3580 || cookieApi.seconds_left === 0) {
+							kb.whisper(user['username'],
+								' your cookie is still on cooldown (' +
+								cookieApi.time_left_formatted + '), wait 1h intervals. ' +
+								'To force your cookie reminder do ' +
+								'"kb cookie force" in the chat.');
+						} else {
+						 	const now = new Date();
+							await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+								now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+								'WHERE username="' + user['username'] + '"');
+							if (platformCheck[0].initplatform === "channel") {
+								if (updateCheck[0].status === "scheduled") {
+									kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 1h (channel ' + channelNoPing + 
+										') :D');
 								} else {
-									const now = new Date();
-									await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
-										now.addMinutes(20).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
-										'WHERE username="' + user['username'] + '"');
-									if (platformCheck[0].initplatform === "channel") {
-										if (updateCheck[0].status === "scheduled") {
-											kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 20m (channel ' + channelNoPing + 
-												') :D')
-										} else {
-											kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 20m (channel ' + channelNoPing + 
-												') :)');
-									 	}
-									} else if (platformCheck[0].initplatform === "whisper") {
-									 	if (updateCheck[0].status === "scheduled") {
-											kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 20m (channel ' + channelNoPing + ') :D')
-										} else {
-											kb.whisper(user['username'], ' I will remind you to eat the cookie in 20m (channel ' + channelNoPing + ') :)');
-									 	}
-									} else if (platformCheck[0].initplatform === "silence") {
-										return '';
-									}
-								}
-							} else if (cookieStatus.prestige === 4) {
-								if (cookieApi.can_claim === false) {
-									kb.whisper(user['username'] +
-										' your cookie is still on cooldown (' +
-										cookieApi.time_left_formatted + '), wait intervals. ' +
-										'To force your cookie reminder do ' +
-										'"kb cookie force" in chat.');
+									kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 1h (channel ' + channelNoPing + 
+										') :)');
+							 	}
+						 	} else if (platformCheck[0].initplatform === "whisper") {
+						 		if (updateCheck[0].status === "scheduled") {
+									kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 1h (channel ' + channelNoPing + ') :D')
 								} else {
-									kb.whisper(user['username'], user['username'] + ', this rank is currently ' +
-										'not supported, see "kb help cookie" for command syntax.');
-								}
-							} else if (cookieStatus.prestige === 5) {
-								if (cookieApi.can_claim === false) {
-									kb.whisper(user['username'] +
-										' your cookie is still on cooldown (' +
-										cookieApi.time_left_formatted +
-										'), wait intervals. To force your cookie reminder do ' +
-										'"kb cookie force" in chat.');
+									kb.whisper(user['username'], ' I will remind you to eat the cookie in 1h (channel ' + channelNoPing + ') :)');
+							 	}
+						 	} else if (platformCheck[0].initplatform === "silence") {
+							 	return '';
+						 	}
+					 	}
+					} else if (cookieStatus.prestige === 2) {
+						if (cookieApi.seconds_left < 1780 || cookieApi.seconds_left === 0) {
+							kb.whisper(user['username'],
+								' your cookie is still on cooldown (' +
+								cookieApi.time_left_formatted +
+								'), wait 30m intervals. To force your cookie reminder do ' +
+								' "kb cookie force" in the chat.');
+						} else {
+							const now = new Date();
+							await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+								now.addMinutes(30).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+								'WHERE username="' + user['username'] + '"');
+							if (platformCheck[0].initplatform === "channel") {
+								if (updateCheck[0].status === "scheduled") {
+									kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 30m (channel ' + channelNoPing + 
+										') :D');
 								} else {
-									kb.whisper(user['username'], user['username'] +
-										', this rank is currently not supported, see ' +
-										'"kb help cookie" for command syntax.');
-								}
-							} else {
-								kb.say(channel, '')
+									kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 30m (channel ' + channelNoPing + 
+										') :)');
+							 	}
+							} else if (platformCheck[0].initplatform === "whisper") {
+							 	if (updateCheck[0].status === "scheduled") {
+									kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 30m (channel ' + channelNoPing + ') :D')
+								} else {
+									kb.whisper(user['username'], ' I will remind you to eat the cookie in 30m (channel ' + channelNoPing + ') :)');
+							 	}
+							} else if (platformCheck[0].initplatform === "silence") {
+								return '';
 							}
 						}
+					} else if (cookieStatus.prestige === 3) {
+						if (cookieApi.seconds_left < 1180 || cookieApi.seconds_left === 0) {
+							kb.whisper(user['username'],
+								' your cookie is still on cooldown (' +
+								cookieApi.time_left_formatted +
+								'), wait 20m intervals. To force your cookie reminder do ' +
+								'"kb cookie force" the in chat.');
+						} else {
+							const now = new Date();
+							await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
+								now.addMinutes(20).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
+								'WHERE username="' + user['username'] + '"');
+							if (platformCheck[0].initplatform === "channel") {
+								if (updateCheck[0].status === "scheduled") {
+									kb.say(userChannel, user['username'] + ', updating your pending cookie reminder, I will remind you in 20m (channel ' + channelNoPing + 
+										') :D')
+								} else {
+									kb.say(userChannel, user['username'] + ', I will remind you to eat the cookie in 20m (channel ' + channelNoPing + 
+										') :)');
+							 	}
+							} else if (platformCheck[0].initplatform === "whisper") {
+							 	if (updateCheck[0].status === "scheduled") {
+									kb.whisper(user['username'], ' updating your pending cookie reminder, I will remind you in 20m (channel ' + channelNoPing + ') :D')
+								} else {
+									kb.whisper(user['username'], ' I will remind you to eat the cookie in 20m (channel ' + channelNoPing + ') :)');
+							 	}
+							} else if (platformCheck[0].initplatform === "silence") {
+								return '';
+							}
+						}
+					} else if (cookieStatus.prestige === 4) {
+						if (cookieApi.can_claim === false) {
+							kb.whisper(user['username'] +
+								' your cookie is still on cooldown (' +
+								cookieApi.time_left_formatted + '), wait intervals. ' +
+								'To force your cookie reminder do ' +
+								'"kb cookie force" in chat.');
+						} else {
+							kb.whisper(user['username'], user['username'] + ', this rank is currently ' +
+								'not supported, see "kb help cookie" for command syntax.');
+						}
+					} else if (cookieStatus.prestige === 5) {
+						if (cookieApi.can_claim === false) {
+							kb.whisper(user['username'] +
+								' your cookie is still on cooldown (' +
+								cookieApi.time_left_formatted +
+								'), wait intervals. To force your cookie reminder do ' +
+								'"kb cookie force" in chat.');
+						} else {
+							kb.whisper(user['username'], user['username'] +
+								', this rank is currently not supported, see ' +
+								'"kb help cookie" for command syntax.');
+						}
+					} else {
+						kb.say(channel, '')
 					}
+					
 					return '';
 				} catch (err) {
 					errorLog(err);
