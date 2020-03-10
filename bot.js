@@ -1729,10 +1729,9 @@ kb.on('connected', (adress, port) => {
 						case 'module':
 							if (!perms[0]) {
 								return '';
-							} else {
-								await doQuery(`UPDATE cookieModule SET reminders="${msg[1]}" WHERE type="cookie"`);
-								kb.say(channel, `updated "cookie" module status to ${msg[1]}`)
 							}
+							await doQuery(`UPDATE cookieModule SET reminders="${msg[1]}" WHERE type="cookie"`);
+							return `updated "cookie" module status to ${msg[1]}`;
 							break;
 						case 'force':
 							const cookieApi = await fetch(`https://api.roaringiron.com/cooldown/${user['username']}`)
@@ -1752,6 +1751,8 @@ kb.on('connected', (adress, port) => {
 								await doQuery(`UPDATE cookie_reminders SET channel="${channel.replace('#', '')}", 
 									fires="${now.addMinutes(time).toISOString().slice(0, 19).replace('T', ' ')}", status="scheduled" 
 									WHERE username="${user['username']}"`);
+								await doQuery(`UPDATE cookie_reminders SET cookie_count="${countCookie[0].cookie_count + 1}" 
+									WHERE username="${user['username']}"`)
 							}
 
 							// force a 2h reminder
@@ -1779,48 +1780,68 @@ kb.on('connected', (adress, port) => {
 							}
 							return `${user['username']} error WutFace`;
 							break;
+
 						case 'register':
+
+							// check if user is already registered
+							if (resultsRegister[0].username === user['username']) {
+								return `${user['username']}, you are already registered for cookie reminders, use 
+								"kb help cookie" for command syntax.`;
+							}
+							
+							// check if user is new and insert a new row in database
 							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
-								kb.say(channel, `${user['username']}, you have been successfully registered for a cookie reminder, see "kb help cookie" for exclusive commands PogChamp`);
 								await doQuery(`INSERT INTO cookies (username, created) VALUES ("${user['username']}", CURRENT_TIMESTAMP)`);
 								await doQuery(`INSERT INTO cookie_reminders (username) VALUES ("${user['username']}")`);
-								return '';
+								return `${user['username']}, you have been successfully registered for a cookie reminder, 
+								see "kb help cookie" for exclusive commands PogChamp`;
 							} 
-
-							if (resultsRegister[0].username === user['username']) {
-								kb.say(channel, `${user['username']}, you are already registered for cookie reminders, type "kb help cookie" for command syntax.`);
-								return '';
-							}
 							return '';
 							break;
+
 						case 'unregister':
+
+							// check if user is registered and delete rows from database
 							const resultsUnregister = await doQuery(`SELECT username FROM cookies WHERE username="${user['username']}"`);
 							if (resultsUnregister != 0) {
 								await doQuery(`DELETE FROM cookies WHERE username="${user['username']}"`);
 								await doQuery(`DELETE FROM cookie_reminders WHERE username="${user['username']}"`);
-								kb.say(channel, `${user['username']}, you are no longer registered for a cookie reminder.`);
-							} else {
-								kb.say(channel, `${user['username']}, you are not registered for a cookie reminder, therefore you can't be unregistered FeelsDankMan`);
+								return `${user['username']}, you are no longer registered for a cookie reminder.`;
 							}
+							return `${user['username']}, you are not registered for a 
+								cookie reminder, therefore you can't be unregistered FeelsDankMan`
 							break;
+						
 						case 'whisper':
+
+							// check if user is registered
 							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
 								return `${user['username']}, you are not registered in my database, check out "kb help cookie" to do so.`;
- 							} else if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform === 'channel') {
+ 							} 
+
+ 							// when user uses command the first time (feedback in whispers)
+ 							if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform === 'channel') {
  								await doQuery(`UPDATE cookie_reminders SET initplatform="whisper" WHERE username="${user['username']}"`);
  								return `${user['username']}, you have changed your feedback message to appear in whispers 
- 									(note that your reminders will still appear in the channel where you executed them). Type this command again to undo it.`;
-							} else if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform === 'whisper') {
+ 									(note that your reminders will still appear in the channel where you executed them). 
+ 									Type this command again to undo it.`;
+							} 
+
+							// when user uses the command 2nd time (feedback as default in channel)
+							if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform === 'whisper') {
 								await doQuery(`UPDATE cookie_reminders SET initplatform="channel" WHERE username="${user['username']}"`);
  								return `${user['username']}, you have changed your feedback message to appear in your own channel 
- 									(note that reminders are still going to fire in the channel where you executed them). Type this command again to undo it.`;
- 							} else if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform === "silence"){
+ 									(note that reminders are still going to fire in the channel where you executed them). 
+ 									Type this command again to undo it.`;
+ 							} 
+
+ 							// swap from silence to default feedback message
+ 							if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform === "silence"){
  								await doQuery(`UPDATE cookie_reminders SET initplatform="channel" WHERE username="${user['username']}"`);
  								return `${user['username']}, you have changed your feedback message to appear in your own channel 
- 									(note that your reminders will still appear in the channel where you executed them). Type this command again to set them to whispers.`;
- 							} else {
- 								return ''
- 							}
+ 									(note that your reminders will still appear in the channel where you executed them). 
+ 									Type this command again to set them to whispers.`;
+ 								return '';
 							break;
 						case 'silence':
 							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
