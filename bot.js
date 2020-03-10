@@ -1744,23 +1744,26 @@ kb.on('connected', (adress, port) => {
 							if (regCheck.length === 0) {
 								return `${user['username']}, you are not registered in the database, use "kb cookie register" to do so.`;
 							}
-
+							Date.prototype.addMinutes = function(minutes) {
+								const copiedDate = new Date(this.getTime());
+								return new Date(copiedDate.getTime() + minutes * 60000);
+							}
 							async function updateReminder(time) {
 								await doQuery(`UPDATE cookie_reminders SET channel="${channel.replace('#', '')}", 
 									fires="${now.addMinutes(time).toISOString().slice(0, 19).replace('T', ' ')}", status="scheduled" 
 									WHERE username="${user['username']}"`);
 							}
 
-							// force a 1h reminder
-							if (cookieApi.interval_unformatted === 3600) {
-								updateReminder(60)
-								return `${user['username']}, I will remind you to eat the cookie in 1h. (forced reminder)`;
-							} 
-							
 							// force a 2h reminder
 							if (cookieApi.interval_unformatted === 7200) {
 								updateReminder(120)
 								return `${user['username']}, I will remind you to eat the cookie in 2h. (forced reminder)`;
+							} 
+							
+							// force a 1h reminder
+							if (cookieApi.interval_unformatted === 3600) {
+								updateReminder(60)
+								return `${user['username']}, I will remind you to eat the cookie in 1h. (forced reminder)`;
 							} 
 
 							// force a 30 min reminder
@@ -2649,7 +2652,6 @@ kb.on('connected', (adress, port) => {
 						return '';
 					}
 
-					await doQuery(`UPDATE cookie_reminders SET cookie_count="${countCookie[0].cookie_count + 1}" WHERE username="${user['username']}"`)
 					commandsExecuted.push('1');
 					Date.prototype.addMinutes = function(minutes) {
 						var copiedDate = new Date(this.getTime());
@@ -2663,6 +2665,7 @@ kb.on('connected', (adress, port) => {
 								'), wait 2h intervals. To force your cookie reminder do ' +
 								'"kb cookie force" in chat.');
 						} else {
+							await doQuery(`UPDATE cookie_reminders SET cookie_count="${countCookie[0].cookie_count + 1}" WHERE username="${user['username']}"`)
 						 	const now = new Date();
 							await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
 								now.addMinutes(120).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
@@ -2693,6 +2696,7 @@ kb.on('connected', (adress, port) => {
 								'To force your cookie reminder do ' +
 								'"kb cookie force" in the chat.');
 						} else {
+							await doQuery(`UPDATE cookie_reminders SET cookie_count="${countCookie[0].cookie_count + 1}" WHERE username="${user['username']}"`)
 						 	const now = new Date();
 							await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
 								now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
@@ -2723,6 +2727,7 @@ kb.on('connected', (adress, port) => {
 								'), wait 30m intervals. To force your cookie reminder do ' +
 								' "kb cookie force" in the chat.');
 						} else {
+							await doQuery(`UPDATE cookie_reminders SET cookie_count="${countCookie[0].cookie_count + 1}" WHERE username="${user['username']}"`)
 							const now = new Date();
 							await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
 								now.addMinutes(30).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
@@ -2753,6 +2758,7 @@ kb.on('connected', (adress, port) => {
 								'), wait 20m intervals. To force your cookie reminder do ' +
 								'"kb cookie force" the in chat.');
 						} else {
+							await doQuery(`UPDATE cookie_reminders SET cookie_count="${countCookie[0].cookie_count + 1}" WHERE username="${user['username']}"`)
 							const now = new Date();
 							await doQuery('UPDATE cookie_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
 								now.addMinutes(20).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
@@ -2783,6 +2789,7 @@ kb.on('connected', (adress, port) => {
 								'To force your cookie reminder do ' +
 								'"kb cookie force" in chat.');
 						} else {
+							await doQuery(`UPDATE cookie_reminders SET cookie_count="${countCookie[0].cookie_count + 1}" WHERE username="${user['username']}"`)
 							kb.whisper(user['username'], user['username'] + ', this rank is currently ' +
 								'not supported, see "kb help cookie" for command syntax.');
 						}
@@ -2794,6 +2801,7 @@ kb.on('connected', (adress, port) => {
 								'), wait intervals. To force your cookie reminder do ' +
 								'"kb cookie force" in chat.');
 						} else {
+							await doQuery(`UPDATE cookie_reminders SET cookie_count="${countCookie[0].cookie_count + 1}" WHERE username="${user['username']}"`)
 							kb.whisper(user['username'], user['username'] +
 								', this rank is currently not supported, see ' +
 								'"kb help cookie" for command syntax.');
