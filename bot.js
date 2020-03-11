@@ -244,7 +244,7 @@ kb.on('connected', (adress, port) => {
 					}
 					if (!msg[0]) {	
 						const apiCommits = "https://api.github.com/repos/KUNszg/kbot/commits?per_page=100";
-						const urls = [apiCommits, apiCommits + '&page=2', apiCommits + '&page=3', apiCommits + '&page=4', apiCommits + '&page=5', apiCommits + "&page=5"]
+						const urls = [apiCommits, apiCommits + '&page=2', apiCommits + '&page=3', apiCommits + '&page=4', apiCommits + '&page=5']
 						async function getAllUrls(urls) {
 						    try {
 						        const data = await Promise.all(
@@ -2065,7 +2065,7 @@ kb.on('connected', (adress, port) => {
 							const output = `${user['username']}, messages similar to " ${compile[0][0].message.substr(0, 255)} " have been typed ${compile[1][0].value_occurance} times in this 
 								channel by user ${compile[0][0].username.replace(/^(.{2})/, "$1\u{E0000}")}.`;
 							
-							if (channel === '#kunszg') {
+							if (channel === '#nymn') {
 								if (output.toString().length>500) {
 								
 									// check if response would cause timeout in the channel
@@ -2126,7 +2126,7 @@ kb.on('connected', (adress, port) => {
 										const output = `${user['username']}, messages similar to " ${occurence[0][0].message.substr(0, 255)}
 											" have been typed ${occurence[1][0].value_occurance} times in this channel.`;
 										
-										if (channel === '#kunszg') {
+										if (channel === '#nymn') {
 											// check if response exceeds 500 characters limit
 											if (output.toString().length>500) {
 												// check if response would cause timeout in the channel
@@ -2279,7 +2279,7 @@ kb.on('connected', (adress, port) => {
 							lines logged, that's ${((values[0].value / occurence[0].value) * 100).toFixed(2)}% of all lines 
 							in this channel, your most frequently typed message: " ${val[0].message} " (${val[0].value_occurance} times)`;
 
-						if (channel === "#kunszg") {
+						if (channel === "#nymn") {
 							// if response has more than 500 characters, truncate it	
 							if (output.toString().length>500) {
 								if (await banphrasePass(val[0].message.substr(0, 300)).banned === true) {
