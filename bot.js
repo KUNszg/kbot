@@ -965,10 +965,10 @@ kb.on('connected', (adress, port) => {
 								if (channel==="#nymn") {
 									if (timeDifference>48) {
 										kb.whisper(user['username'], ', Your first line in this channel was: (' + 
-											(timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...');
+											(timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 300) + '...');
 									} else {
 										kb.whisper(user['username'], ', Your first line in this channel was: (' + 
-											format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...');
+											format(timeDifferenceRaw/1000) + reply.substring(0, 300) + '...');
 									}
 									return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 								} else {
@@ -991,21 +991,41 @@ kb.on('connected', (adress, port) => {
 									}
 								}
 							} else {
-								if (timeDifference>48) {
-									if (firstline[0].message.length>430) {
-										return user['username'] + ', Your first line in this channel was: (' + 
-										(timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...';
+								if (channel === "#nymn") {
+									if (timeDifference>48) {
+										if (firstline[0].message.length>100) {
+											return user['username'] + ', Your first line in this channel was: (' + 
+											(timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 100) + '...';
+										} else {
+											return user['username'] + ', Your first line in this channel was: (' + 
+											(timeDifference/24).toFixed(0) + 'd' + reply;
+										}
 									} else {
-										return user['username'] + ', Your first line in this channel was: (' + 
-										(timeDifference/24).toFixed(0) + 'd' + reply;
+										if (firstline[0].message.length>100) {
+											return  user['username'] + ', Your first line in this channel was: (' + 
+											format(timeDifferenceRaw/1000) + reply.substring(0, 100) + '...';
+										} else {
+											return user['username'] + ', Your first line in this channel was: (' + 
+											format(timeDifferenceRaw/1000) + reply;
+										}
 									}
 								} else {
-									if (firstline[0].message.length>430) {
-										return  user['username'] + ', Your first line in this channel was: (' + 
-										format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
+									if (timeDifference>48) {
+										if (firstline[0].message.length>430) {
+											return user['username'] + ', Your first line in this channel was: (' + 
+											(timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...';
+										} else {
+											return user['username'] + ', Your first line in this channel was: (' + 
+											(timeDifference/24).toFixed(0) + 'd' + reply;
+										}
 									} else {
-										return user['username'] + ', Your first line in this channel was: (' + 
-										format(timeDifferenceRaw/1000) + reply;
+										if (firstline[0].message.length>430) {
+											return  user['username'] + ', Your first line in this channel was: (' + 
+											format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
+										} else {
+											return user['username'] + ', Your first line in this channel was: (' + 
+											format(timeDifferenceRaw/1000) + reply;
+										}
 									}
 								}
 							}
@@ -1031,10 +1051,10 @@ kb.on('connected', (adress, port) => {
 								if (channel==="#nymn") {
 									if (timeDifference>48) {
 										kb.whisper(user['username'], ', first line of that user in this channel: (' + 
-											(timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...');
+											(timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 300) + '...');
 									} else {
 										kb.whisper(user['username'], ', first line of that user in this channel: (' + 
-											format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...');
+											format(timeDifferenceRaw/1000) + reply.substring(0, 300) + '...');
 									}
 									return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 								} else {
@@ -1057,21 +1077,41 @@ kb.on('connected', (adress, port) => {
 									}
 								}
 							} else {
-								if (timeDifference>48) {
-									if (firstline[0].message.length>430) {
-										return user['username'] + ', first line of that user in this channel: (' + 
-										(timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...';
+								if (channel === "#nymn") {
+									if (timeDifference>48) {
+										if (firstline[0].message.length>430) {
+											return user['username'] + ', first line of that user in this channel: (' + 
+											(timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...';
+										} else {
+											return user['username'] + ', first line of that user in this channel: (' + 
+											(timeDifference/24).toFixed(0) + 'd' + reply;
+										}
 									} else {
-										return user['username'] + ', first line of that user in this channel: (' + 
-										(timeDifference/24).toFixed(0) + 'd' + reply;
+										if (firstline[0].message.length>430) {
+											return user['username'] + ', first line of that user in this channel: (' + 
+											format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
+										} else {
+											return user['username'] + ', first line of that user in this channel: (' + 
+											format(timeDifferenceRaw/1000) + reply;
+										}
 									}
 								} else {
-									if (firstline[0].message.length>430) {
-										return user['username'] + ', first line of that user in this channel: (' + 
-										format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
+									if (timeDifference>48) {
+										if (firstline[0].message.length>100) {
+											return user['username'] + ', first line of that user in this channel: (' + 
+											(timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 100) + '...';
+										} else {
+											return user['username'] + ', first line of that user in this channel: (' + 
+											(timeDifference/24).toFixed(0) + 'd' + reply;
+										}
 									} else {
-										return user['username'] + ', first line of that user in this channel: (' + 
-										format(timeDifferenceRaw/1000) + reply;
+										if (firstline[0].message.length>100) {
+											return user['username'] + ', first line of that user in this channel: (' + 
+											format(timeDifferenceRaw/1000) + reply.substring(0, 100) + '...';
+										} else {
+											return user['username'] + ', first line of that user in this channel: (' + 
+											format(timeDifferenceRaw/1000) + reply;
+										}
 									}
 								}
 							}
@@ -1145,9 +1185,9 @@ kb.on('connected', (adress, port) => {
 							if (await banphrasePass(randomLine[0].message).banned === true) {
 								if (channel==="#nymn") {
 									if (timeDifference>48) {
-										kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...');
+										kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 300) + '...');
 									} else {
-										kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...');
+										kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 300) + '...');
 									}
 									return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 								} else {
@@ -1166,17 +1206,33 @@ kb.on('connected', (adress, port) => {
 									}
 								}
 							} else {
-								if (timeDifference>48) {
-									if (randomLine[0].message.length>430) {
-										return '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...';
+								if (channel === "#nymn") {
+									if (timeDifference>48) {
+										if (randomLine[0].message.length>100) {
+											return '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 100) + '...';
+										} else {
+											return '(' + (timeDifference/24).toFixed(0) + 'd' + reply;
+										}
 									} else {
-										return '(' + (timeDifference/24).toFixed(0) + 'd' + reply;
+										if (randomLine[0].message.length>100) {
+											return '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 100) + '...';
+										} else {
+											return '(' + format(timeDifferenceRaw/1000) + reply;
+										}
 									}
 								} else {
-									if (randomLine[0].message.length>430) {
-										return '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
+									if (timeDifference>48) {
+										if (randomLine[0].message.length>430) {
+											return '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...';
+										} else {
+											return '(' + (timeDifference/24).toFixed(0) + 'd' + reply;
+										}
 									} else {
-										return '(' + format(timeDifferenceRaw/1000) + reply;
+										if (randomLine[0].message.length>430) {
+											return '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
+										} else {
+											return '(' + format(timeDifferenceRaw/1000) + reply;
+										}
 									}
 								}
 							}
@@ -1203,9 +1259,9 @@ kb.on('connected', (adress, port) => {
 							if (await banphrasePass(randomLine[0].message).banned === true) {
 								if (channel==="#nymn") {
 									if (timeDifference>48) {
-										kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 400) + '...');
+										kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 300) + '...');
 									} else {
-										kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 400) + '...');
+										kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 300) + '...');
 									}
 									return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 								} else {
@@ -1224,17 +1280,33 @@ kb.on('connected', (adress, port) => {
 									}
 								}
 							} else {
-								if (timeDifference>48) {
-									if (randomLine[0].message.length>430) {
-										return '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 400) + '...';
+								if (channel === "#nymn") {
+									if (timeDifference>48) {
+										if (randomLine[0].message.length>100) {
+											return '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 100) + '...';
+										} else {
+											return '(' + (timeDifference/24).toFixed(0) + 'd' + reply;
+										}
 									} else {
-										return '(' + (timeDifference/24).toFixed(0) + 'd' + reply;
+										if (randomLine[0].message.length>100) {
+											return '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 100) + '...';
+										} else {
+											return '(' + format(timeDifferenceRaw/1000) + reply;
+										}
 									}
 								} else {
-									if (randomLine[0].message.length>430) {
-										return '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 400) + '...';
+									if (timeDifference>48) {
+										if (randomLine[0].message.length>430) {
+											return '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 400) + '...';
+										} else {
+											return '(' + (timeDifference/24).toFixed(0) + 'd' + reply;
+										}
 									} else {
-										return '(' + format(timeDifferenceRaw/1000) + reply;
+										if (randomLine[0].message.length>430) {
+											return '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 400) + '...';
+										} else {
+											return '(' + format(timeDifferenceRaw/1000) + reply;
+										}
 									}
 								}
 							}
@@ -1294,38 +1366,54 @@ kb.on('connected', (adress, port) => {
 						if (await banphrasePass(randomLine[0].message).banned === true) {
 							if (channel==="#nymn") {
 								if (timeDifference>48) {
-									kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 400) + '...');
+									kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 200) + '...');
 								} else {
-									kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 400) + '...');
+									kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 200) + '...');
 								}
 								return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 							} else {
 								if (timeDifference>48) {
 									if (randomLine[0].message.length>430) {
-										return '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 400) + '...';
+										return '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...';
 									} else {
 										return '(' + (timeDifference/24).toFixed(0) + 'd' + reply;
 									}
 								} else {
 									if (randomLine[0].message.length>430) {
-										return '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 400) + '...';
+										return '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
 									} else {
 										return '(' + format(timeDifferenceRaw/1000) + reply;
 									}
 								}
 							}
 						} else {
-							if (timeDifference>48) {
-								if (randomLine[0].message.length>430) {
-									return '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 400) + '...';
+							if (channel==="#nymn") {
+								if (timeDifference>48) {
+									if (randomLine[0].message.length>100) {
+										return '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 100) + '...';
+									} else {
+										return '(' + (timeDifference/24).toFixed(0) + 'd' + reply;
+									}
 								} else {
-									return '(' + (timeDifference/24).toFixed(0) + 'd' + reply;
+									if (randomLine[0].message.length>100) {
+										return '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 100) + '...';
+									} else {
+										return '(' + format(timeDifferenceRaw/1000) + reply;
+									}
 								}
 							} else {
-								if (randomLine[0].message.length>430) {
-									return '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 400) + '...';
+								if (timeDifference>48) {
+									if (randomLine[0].message.length>430) {
+										return '(' + (timeDifference/24).toFixed(0) + 'd' + reply.substring(0, 430) + '...';
+									} else {
+										return '(' + (timeDifference/24).toFixed(0) + 'd' + reply;
+									}
 								} else {
-									return '(' + format(timeDifferenceRaw/1000) + reply;
+									if (randomLine[0].message.length>430) {
+										return '(' + format(timeDifferenceRaw/1000) + reply.substring(0, 430) + '...';
+									} else {
+										return '(' + format(timeDifferenceRaw/1000) + reply;
+									}
 								}
 							}
 						}
@@ -1732,12 +1820,12 @@ kb.on('connected', (adress, port) => {
 							}
 							await doQuery(`UPDATE cookieModule SET reminders="${msg[1]}" WHERE type="cookie"`);
 							return `updated "cookie" module status to ${msg[1]}`;
-							break;
+
 						case 'force':
 							const cookieApi = await fetch(`https://api.roaringiron.com/cooldown/${user['username']}`)
 								.then(response => response.json());
-							const now = new Date();
 							const regCheck = await doQuery(`SELECT * FROM cookie_reminders WHERE username="${user['username']}"`);
+							const now = new Date();
 
 							// check if user is registered
 							if (regCheck.length === 0) {
@@ -1779,10 +1867,8 @@ kb.on('connected', (adress, port) => {
 								return `${user['username']}, I will remind you to eat the cookie in 20m. (forced reminder)`;
 							}
 							return `${user['username']} error WutFace`;
-							break;
 
 						case 'register':
-
 							// check if user is already registered
 							if (resultsRegister[0].username === user['username']) {
 								return `${user['username']}, you are already registered for cookie reminders, use 
@@ -1797,10 +1883,8 @@ kb.on('connected', (adress, port) => {
 								see "kb help cookie" for exclusive commands PogChamp`;
 							} 
 							return '';
-							break;
 
 						case 'unregister':
-
 							// check if user is registered and delete rows from database
 							const resultsUnregister = await doQuery(`SELECT username FROM cookies WHERE username="${user['username']}"`);
 							if (resultsUnregister != 0) {
@@ -1810,10 +1894,8 @@ kb.on('connected', (adress, port) => {
 							}
 							return `${user['username']}, you are not registered for a 
 								cookie reminder, therefore you can't be unregistered FeelsDankMan`
-							break;
 						
 						case 'whisper':
-
 							// check if user is registered
 							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
 								return `${user['username']}, you are not registered in my database, check out "kb help cookie" to do so.`;
@@ -1836,22 +1918,26 @@ kb.on('connected', (adress, port) => {
  							} 
 
  							// swap from silence to default feedback message
- 							if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform === "silence"){
+ 							if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform === "silence") {
  								await doQuery(`UPDATE cookie_reminders SET initplatform="channel" WHERE username="${user['username']}"`);
  								return `${user['username']}, you have changed your feedback message to appear in your own channel 
  									(note that your reminders will still appear in the channel where you executed them). 
  									Type this command again to set them to whispers.`;
- 								return '';
-							break;
+							}
+							return '';
+
 						case 'silence':
+							// check if user is registered
 							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
 								return `${user['username']}, you are not registered in my database, check out "kb help cookie" to do so.`;
- 							} else if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform != 'silence') {
+ 							} 
+
+ 							// change the feedback message to silence if it's already not set
+ 							if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform != 'silence') {
  								await doQuery(`UPDATE cookie_reminders SET initplatform="silence" WHERE username="${user['username']}"`);
  								return `${user['username']}, you will no longer receive feedback from the cookie command.`;
- 							} else {
- 								return `${user['username']}, you are already marked to not receive the feedback.`;
- 							}
+ 							} 
+							return `${user['username']}, you are already marked to not receive the feedback.`;
 						default:
 							return user['username'] + ', invalid syntax. See "kb help cookie" for command help.';
 					}
@@ -1959,8 +2045,9 @@ kb.on('connected', (adress, port) => {
 							}
 							
 							// check for internal banphrases
-							if ((msg.filter(i => !i.startsWith('@')).join(' ').toLowerCase().match(/hax|imgu|nig/g) && channel === "#nymn") || (msg.filter(i => i.startsWith('@'))[0].replace('@', '').match(/hax/g)) && channel === "#nymn") {
-								return `${user['username']}, I cannot search with this query, it contains an internally banned phrase or user.`;
+							if ((msg.filter(i => !i.startsWith('@')).join(' ').toLowerCase().match(/hax|imgu|nig/g) && channel === "#nymn") || 
+								(msg.filter(i => i.startsWith('@'))[0].replace('@', '').match(/hax/g)) && channel === "#nymn") {
+									return `${user['username']}, I cannot search with this query, it contains an internally banned phrase or user.`;
 							}
 							
 							// get the message
@@ -1977,24 +2064,46 @@ kb.on('connected', (adress, port) => {
 							}
 							const output = `${user['username']}, messages similar to " ${compile[0][0].message.substr(0, 255)} " have been typed ${compile[1][0].value_occurance} times in this 
 								channel by user ${compile[0][0].username.replace(/^(.{2})/, "$1\u{E0000}")}.`;
-			
-							if (output.toString().length>500) {
 							
-								// check if response would cause timeout in the channel
-								if (await banphrasePass(output.substr(0, 500)).banned === true) {
-									kb.whisper(user['username'], output);
-									return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+							if (channel === '#kunszg') {
+								if (output.toString().length>500) {
+								
+									// check if response would cause timeout in the channel
+									if (await banphrasePass(output.substr(0, 500)).banned === true) {
+										kb.whisper(`${user['username']}, ${output.substr(0, 300)}...`);
+										return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+									} else {
+										return `${output.substr(0, 50)}...`;
+									}
 								} else {
-									return `${output.substr(0, 500)}...`;
+							
+									// less than 500 characters
+									if (await banphrasePass(output).banned === true) {
+										kb.whisper(user['username'], output.substring(0, 50));
+										return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+									} else {
+										return output;
+									}
 								}
 							} else {
-						
-								// less than 500 characters
-								if (await banphrasePass(output).banned === true) {
-									kb.whisper(user['username'], output);
-									return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+								if (output.toString().length>500) {
+							
+									// check if response would cause timeout in the channel
+									if (await banphrasePass(output.substr(0, 500)).banned === true) {
+										kb.whisper(`${user['username']}, ${output.substr(0, 500)}...`);
+										return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+									} else {
+										return `${output.substr(0, 50)}...`;
+									}
 								} else {
-									return output;
+						
+									// less than 500 characters
+									if (await banphrasePass(output).banned === true) {
+										kb.whisper(user['username'], output);
+										return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+									} else {
+										return output;
+									}
 								}
 							}
 						} else {
@@ -2016,22 +2125,42 @@ kb.on('connected', (adress, port) => {
 									} else {
 										const output = `${user['username']}, messages similar to " ${occurence[0][0].message.substr(0, 255)}
 											" have been typed ${occurence[1][0].value_occurance} times in this channel.`;
-
-										// check if response exceeds 500 characters limit
-										if (output.toString().length>500) {
-											// check if response would cause timeout in the channel
-											if (await banphrasePass(output.substr(0, 500)).banned === true) {
-												kb.whisper(user['username'], output);
-												return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+										
+										if (channel === '#kunszg') {
+											// check if response exceeds 500 characters limit
+											if (output.toString().length>500) {
+												// check if response would cause timeout in the channel
+												if (await banphrasePass(output.substr(0, 500)).banned === true) {
+													kb.whisper(`${user['username']}, ${output.substr(0, 300)}...`);
+													return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+												} else {
+													return `${output.substr(0, 50)}...`;
+												}
 											} else {
-												return `${output.substr(0, 500)}...`;
+												if (await banphrasePass(output).banned === true) {
+													kb.whisper(user['username'], output);
+													return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+												} else {
+													return output;
+												}
 											}
 										} else {
-											if (await banphrasePass(output).banned === true) {
-												kb.whisper(user['username'], output);
-												return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+											// check if response exceeds 500 characters limit
+											if (output.toString().length>500) {
+												// check if response would cause timeout in the channel
+												if (await banphrasePass(output.substr(0, 500)).banned === true) {
+													kb.whisper(`${user['username']}, ${output.substr(0, 300)}...`);
+													return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+												} else {
+													return `${output.substr(0, 500)}...`;
+												}
 											} else {
-												return output;
+												if (await banphrasePass(output).banned === true) {
+													kb.whisper(user['username'], output);
+													return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+												} else {
+													return output;
+												}
 											}
 										}
 									}
@@ -2150,26 +2279,51 @@ kb.on('connected', (adress, port) => {
 							lines logged, that's ${((values[0].value / occurence[0].value) * 100).toFixed(2)}% of all lines 
 							in this channel, your most frequently typed message: " ${val[0].message} " (${val[0].value_occurance} times)`;
 
-						// if response has more than 500 characters, truncate it	
-						if (output.toString().length>500) {
-							if (await banphrasePass(val[0].message.substr(0, 255)).banned === true) {
-								kb.whisper(user['username'], output);
-								return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+						if (channel === "#kunszg") {
+							// if response has more than 500 characters, truncate it	
+							if (output.toString().length>500) {
+								if (await banphrasePass(val[0].message.substr(0, 300)).banned === true) {
+									kb.whisper(user['username'], output.substr(0, 300));
+									return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+								} else {
+									return `${user['username']}, you have total of ${ values[0].value} lines logged, that's 
+										${((values[0].value / occurence[0].value) * 100).toFixed(2)}% of all lines in this channel, 
+										your most frequently typed message: " ${val[0].message.substr(0, 50)}... " 
+										(${val[0].value_occurance} times)`;
+								}
 							} else {
-								return `${user['username']}, you have total of ${ values[0].value} lines logged, that's 
-									${((values[0].value / occurence[0].value) * 100).toFixed(2)}% of all lines in this channel, 
-									your most frequently typed message: " ${val[0].message.substr(0, 255)}... " 
-									(${val[0].value_occurance} times)`;
+								if (await banphrasePass(output).banned === true) {
+									kb.whisper(user['username'], output.substr(0, 50));
+									return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+								} else {
+									return `${user['username']}, you have total of ${values[0].value} lines logged, that's 
+										${((values[0].value / occurence[0].value) * 100).toFixed(2)}%  of all lines in this channel, 
+										your most frequently typed message: " ${val[0].message.substr(0, 50)} " 
+										(${val[0].value_occurance} times)`;
+								}
 							}
 						} else {
-							if (await banphrasePass(output).banned === true) {
-								kb.whisper(user['username'], output);
-								return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+							// if response has more than 500 characters, truncate it	
+							if (output.toString().length>300) {
+								if (await banphrasePass(val[0].message.substr(0, 300)).banned === true) {
+									kb.whisper(user['username'], output.substr(0, 300));
+									return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+								} else {
+									return `${user['username']}, you have total of ${ values[0].value} lines logged, that's 
+										${((values[0].value / occurence[0].value) * 100).toFixed(2)}% of all lines in this channel, 
+										your most frequently typed message: " ${val[0].message.substr(0, 255)}... " 
+										(${val[0].value_occurance} times)`;
+								}
 							} else {
-								return `${user['username']}, you have total of ${values[0].value} lines logged, that's 
-									${((values[0].value / occurence[0].value) * 100).toFixed(2)}%  of all lines in this channel, 
-									your most frequently typed message: " ${val[0].message.substr(0, 255)} " 
-									(${val[0].value_occurance} times)`;
+								if (await banphrasePass(output).banned === true) {
+									kb.whisper(user['username'], output);
+									return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+								} else {
+									return `${user['username']}, you have total of ${values[0].value} lines logged, that's 
+										${((values[0].value / occurence[0].value) * 100).toFixed(2)}%  of all lines in this channel, 
+										your most frequently typed message: " ${val[0].message.substr(0, 255)} " 
+										(${val[0].value_occurance} times)`;
+								}
 							}
 						}
 					}	
