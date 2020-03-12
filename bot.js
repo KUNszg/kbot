@@ -244,10 +244,10 @@ kb.on('connected', (adress, port) => {
 					}
 					if (!msg[0]) {	
 						const apiCommits = "https://api.github.com/repos/KUNszg/kbot/commits?per_page=100";
-						const urls = [apiCommits, apiCommits + '&page=2', apiCommits + '&page=3', apiCommits + '&page=4', apiCommits + '&page=5']
+						const urls = [apiCommits, apiCommits + '&page=2', apiCommits + '&page=3', apiCommits + '&page=4', apiCommits + '&page=5', apiCommits + '&page=6']
 						async function getAllUrls(urls) {
 						    try {
-						        const data = await Promise.all(
+						        var data = await Promise.all(
 						            urls.map(url =>
 										fetch(url).then((response) => response.json()))
 						            );
