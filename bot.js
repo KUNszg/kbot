@@ -1814,7 +1814,7 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'cookie',
 			aliases: null,
-			description: `usage: kb cookie [register/unregister/whisper/silence] | register - register in database. | unregister - unregister from the database. | 
+			description: `usage: kb cookie [register/unregister/status/whisper/silence] | register - register in database. | unregister - unregister from the database. | status - see your reminder status |
 				whisper - set the feedback message to appear in whispers. | silence - mute the feedback. -- cooldown 8s`,
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
