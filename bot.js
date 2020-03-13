@@ -1949,7 +1949,7 @@ kb.on('connected', (adress, port) => {
  								return `${user['username']}, you will no longer receive feedback from the cookie command.`;
  							} 
 							return `${user['username']}, you are already marked to not receive the feedback.`;
-						case: 'status':
+						case 'status':
 							// check if user is registered
 							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
 								return `${user['username']}, you are not registered in my database, check out "kb help cookie" to do so.`;
