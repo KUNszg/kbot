@@ -1949,6 +1949,14 @@ kb.on('connected', (adress, port) => {
  								return `${user['username']}, you will no longer receive feedback from the cookie command.`;
  							} 
 							return `${user['username']}, you are already marked to not receive the feedback.`;
+						case: 'status':
+							// check if user is registered
+							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
+								return `${user['username']}, you are not registered in my database, check out "kb help cookie" to do so.`;
+ 							} 
+ 							const getData = await doQuery(`SELECT * FROM cookie_reminders WHERE username="${user['username']}"`)
+
+ 							return `${user['username']}, you have used cookie reminders ${getData[0].cookie_count} times | feedback message is set to ${getData[0].initplatform} | your current reminder status - ${getData[0].status}`;
 						default:
 							return user['username'] + ', invalid syntax. See "kb help cookie" for command help.';
 					}
