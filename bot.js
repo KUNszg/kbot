@@ -945,6 +945,10 @@ kb.on('connected', (adress, port) => {
 							}
 						}
 					}
+					const checkChannel = await doQuery(`SHOW TABLES LIKE "logs_${channel.replace('#', '')}"`)
+					if (checkChannel.length === 0) {
+						return `${user['username']}, I'm not logging this channel, therefore I can't display data for this command :/`;
+					}
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
 					if (!msg[0]) {
 						const firstline = await doQuery('SELECT * FROM logs_' + channel.replace('#', '') + ' WHERE username="' + user['username'] + '" ORDER BY DATE ASC');
@@ -1150,7 +1154,10 @@ kb.on('connected', (adress, port) => {
 							}
 						}
 					}			
-
+					if (checkChannel.length === 0) {
+						return `${user['username']}, I'm not logging this channel, therefore I can't display data for this command :/`;
+					}
+					
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
 					const serverDate = new Date().getTime();
 
@@ -1344,7 +1351,9 @@ kb.on('connected', (adress, port) => {
 							}
 						}
 					}
-
+					if (checkChannel.length === 0) {
+						return `${user['username']}, I'm not logging this channel, therefore I can't display data for this command :/`;
+					}
 					const randomLine = await doQuery(
 						'SELECT ID, username, message, date FROM logs_' + channel.replace('#', '') + ' WHERE username="' +
 						user['username'] + '" ORDER BY RAND() LIMIT 1'
