@@ -1357,7 +1357,7 @@ kb.on('connected', (adress, port) => {
 						return `${user['username']}, I'm not logging this channel, therefore I can't display data for this command :/`;
 					}
 					const randomLine = await doQuery(
-						'SELECT ID, username, message, date FROM logs_' + channel.replace('#', '') + ' WHERE username="' +
+						'SELECT * FROM logs_' + channel.replace('#', '') + ' WHERE username="' +
 						user['username'] + '" ORDER BY RAND() LIMIT 1'
 						);
 
@@ -2152,13 +2152,13 @@ kb.on('connected', (adress, port) => {
 										
 										if (channel === '#nymn') {
 											// check if response exceeds 500 characters limit
-											if (output.toString().length>500) {
+											if (output.toString().length>25) {
 												// check if response would cause timeout in the channel
-												if (await banphrasePass(output.substr(0, 500)).banned === true) {
-													kb.whisper(`${user['username']}, ${output.substr(0, 300)}...`);
+												if (await banphrasePass(output.substr(0, 25)).banned === true) {
+													kb.whisper(`${user['username']}, ${output.substr(0, 100)}...`);
 													return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
 												} else {
-													return `${output.substr(0, 50)}...`;
+													return `${output.substr(0, 25)}...`;
 												}
 											} else {
 												if (await banphrasePass(output).banned === true) {
@@ -2305,24 +2305,24 @@ kb.on('connected', (adress, port) => {
 
 						if (channel === "#nymn") {
 							// if response has more than 500 characters, truncate it	
-							if (output.toString().length>500) {
-								if (await banphrasePass(val[0].message.substr(0, 300)).banned === true) {
-									kb.whisper(user['username'], output.substr(0, 300));
+							if (output.toString().length>25) {
+								if (await banphrasePass(val[0].message.substr(0, 100)).banned === true) {
+									kb.whisper(user['username'], output.substr(0, 100));
 									return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
 								} else {
 									return `${user['username']}, you have total of ${ values[0].value} lines logged, that's 
 										${((values[0].value / occurence[0].value) * 100).toFixed(2)}% of all lines in this channel, 
-										your most frequently typed message: " ${val[0].message.substr(0, 50)}... " 
+										your most frequently typed message: " ${val[0].message.substr(0, 25)}... " 
 										(${val[0].value_occurance} times)`;
 								}
 							} else {
 								if (await banphrasePass(output).banned === true) {
-									kb.whisper(user['username'], output.substr(0, 50));
+									kb.whisper(user['username'], output.substr(0, 100));
 									return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
 								} else {
 									return `${user['username']}, you have total of ${values[0].value} lines logged, that's 
 										${((values[0].value / occurence[0].value) * 100).toFixed(2)}%  of all lines in this channel, 
-										your most frequently typed message: " ${val[0].message.substr(0, 50)} " 
+										your most frequently typed message: " ${val[0].message.substr(0, 25)} " 
 										(${val[0].value_occurance} times)`;
 								}
 							}
