@@ -1956,7 +1956,8 @@ kb.on('connected', (adress, port) => {
  							} 
  							const getData = await doQuery(`SELECT * FROM cookie_reminders WHERE username="${user['username']}"`)
 
- 							return `${user['username']}, you have used cookie reminders ${getData[0].cookie_count} times | feedback message is set to ${getData[0].initplatform} | your current reminder status - ${getData[0].status}`;
+ 							return `${user['username']}, you have used cookie reminders ${getData[0].cookie_count} times | feedback message 
+ 								is set to ${getData[0].initplatform} | your current reminder status - ${getData[0].status}`;
 						default:
 							return user['username'] + ', invalid syntax. See "kb help cookie" for command help.';
 					}
