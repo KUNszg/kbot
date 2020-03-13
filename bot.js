@@ -2024,6 +2024,10 @@ kb.on('connected', (adress, port) => {
 					const fetch = require('node-fetch');
 					const msg = msgRaw.filter(Boolean);
 					commandsExecuted.push('1');
+					const checkChannel = await doQuery(`SHOW TABLES LIKE "logs_${channel.replace('#', '')}"`)
+					if (checkChannel.length === 0) {
+						return `${user['username']}, I'm not logging this channel, therefore I can't display stats for it :/`;
+					}
 
 					// if no parameters provided...
 					if (((msg[0] != "-channel" && msg[0] != "-bruh") && msg.length != 0)) {				
