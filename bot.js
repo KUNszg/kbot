@@ -1988,13 +1988,8 @@ kb.on('connected', (adress, port) => {
 								return `${user['username']}, provided word has not enough characters to run a query.`;
 							} 
 
-							const internalBans = [
-								'hax',
-								'imgu',
-								'nig',
-								'bing'
-							]
-							const checkIfBanned = internalBans.filter(i => msg.join(' ').includes(i))
+							const getInternalBans = await doQuery('SELECT * FROM internal_banphrases');
+							const checkIfBanned = getInternalBans.filter(i => msg.join(' ').includes(i.banphrase))
 							if (checkIfBanned.length != 0) {
 								return `${user['username']}, I cannot search with this query, it contains an internally banned phrase.`;
 							}
@@ -2363,6 +2358,65 @@ kb.on('connected', (adress, port) => {
 					// insert into a table to store previously banned users
 					await doQuery(`INSERT INTO unbanned_list (username, user_id, date) VALUES ("${msg[0]}", "${userid.id}", CURRENT_TIMESTAMP)`)
 					return `${user['username']}, user with ID ${userid.id} has been unbanned from the bot`;	
+				} catch (err) {
+					errorLog(err)
+					return `${user['username']}, ${err} FeelsDankMan !!!`
+				}
+			}
+		},
+
+		{
+			name: prefix + "banphrase",
+			aliases: prefix + "bp",
+			cooldown: 10,
+			permissions: 'restricted',
+			description: 'add or remove banphrase - (+, -, add, del) -- cooldown 10ms',
+			invocation: async (channel, user, message, args) => {
+				try {
+					// search for executer's permissions
+					const perms = allowEval.filter(
+						i => i.ID === user['user-id']
+					);
+
+					// check for executer's permissions
+					if (!perms[0]) {
+						return '';
+					}
+
+					// syntax check
+					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2).filter(Boolean);
+					if (!msg[0]) {
+						return `${user['username']}, no parameter provided`;
+					}
+
+					// add banphrase
+					if (msg[0] === "add" || msg[0] === "+") { 
+						
+						// check for repeated inserts
+						const checkRepeated = await doQuery(`SELECT * FROM internal_banphrases WHERE banphrase="${msg[1]}"`);
+						if (checkRepeated.length != 0) {
+							return `${user['username']}, this banphrase already exists.`;
+						}
+
+						await doQuery(`INSERT INTO internal_banphrases (banphrase, date) VALUES ("${msg[1]}", CURRENT_TIMESTAMP)`);
+						const getID = await	doQuery(`SELECT * FROM internal_banphrases WHERE banphrase="${msg[1]}"`);
+						return `${user['username']}, successfully added a banphrase "${msg[1]}" with ID ${getID[0].ID}.`;
+					}
+
+					// remove banphrase
+					if (msg[0] === "del" || msg[0] === "-") {
+						
+						// check if banphrase exists
+						const checkRepeated = await doQuery(`SELECT * FROM internal_banphrases WHERE banphrase="${msg[1]}"`);
+						if (checkRepeated.length === 0) {
+							return `${user['username']}, this banphrase doesn't exist.`;
+						}
+
+						await doQuery(`DELETE FROM internal_banphrases WHERE banphrase="${msg[1]}"`)
+						return `${user['username']}, successfully removed the banphrase.`;
+					}
+
+					return `${user['username']}, invalid parameter.`
 				} catch (err) {
 					errorLog(err)
 					return `${user['username']}, ${err} FeelsDankMan !!!`
