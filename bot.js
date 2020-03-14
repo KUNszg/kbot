@@ -1949,6 +1949,14 @@ kb.on('connected', (adress, port) => {
 							}
 
 							if (channel === '#nymn') {
+
+								// check for banned phrases
+								const getInternalBans = await doQuery('SELECT * FROM internal_banphrases');
+								const checkIfBanned = getInternalBans.filter(i => msg.join(' ').includes(i.banphrase))
+								if (checkIfBanned.length != 0) {
+									return `${user['username']}, I cannot search with this query, it contains an internally banned phrase.`;
+								}
+							
 								if (compile[0][0].message.toString().length>50) {
 								
 									// check if response would cause timeout in the channel
@@ -1988,12 +1996,6 @@ kb.on('connected', (adress, port) => {
 								return `${user['username']}, provided word has not enough characters to run a query.`;
 							} 
 
-							const getInternalBans = await doQuery('SELECT * FROM internal_banphrases');
-							const checkIfBanned = getInternalBans.filter(i => msg.join(' ').includes(i.banphrase))
-							if (checkIfBanned.length != 0) {
-								return `${user['username']}, I cannot search with this query, it contains an internally banned phrase.`;
-							}
-
 							// positional query
 							const sql = `SELECT message FROM ?? WHERE MATCH(message) AGAINST (?) ORDER BY RAND() LIMIT 1;`;
 							const inserts = [`logs_${channelParsed}`, `'"*${msg.join(' ')}*"'`]
@@ -2016,6 +2018,13 @@ kb.on('connected', (adress, port) => {
 							}
 
 							if (channel === '#nymn') {
+
+								// check for banphrases
+								const getInternalBans = await doQuery('SELECT * FROM internal_banphrases');
+								const checkIfBanned = getInternalBans.filter(i => msg.join(' ').includes(i.banphrase))
+								if (checkIfBanned.length != 0) {
+									return `${user['username']}, I cannot search with this query, it contains an internally banned phrase.`;
+								}
 								// check if response exceeds 500 characters limit
 								if (occurence[0][0].message.toString().length>50) {
 									// check if response would cause timeout in the channel
