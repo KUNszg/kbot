@@ -56,7 +56,7 @@ sleepGlob(1500)
 // check for empty items in an array
 const options = {
 	options: {
-		debug: true,
+		debug: false,
 	},
 	connection: {
 		cluster: 'aws',
