@@ -4,16 +4,59 @@
 
 const fs = require('fs');
 const api = require('./config.js');
+const mysql = require('mysql2');
 
+const con = mysql.createConnection({
+	host: "localhost",
+	user: "root",
+	password: api.db_pass,
+	database: "kbot"
+});
+
+const getChannels = () => new Promise((resolve, reject) => {
+    con.query('SELECT * FROM channels', (err, results, fields) => {
+        if (err) {
+        	const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+			const insert = [JSON.stringify(err), new Date()];
+			con.query(mysql.format(sql, insert),
+				function(error, results, fields) {
+					if (error) {
+						console.log(error)
+						reject(error)
+					} else {
+						resolve(results)
+					}
+				})
+            reject(err);
+        }
+        else {
+            resolve(results);
+        }      
+    });
+});
+
+const channelList = [];
+const channelOptions = []
+async function res() {
+	channelList.push(await getChannels());
+	await channelList[0].forEach(i => channelOptions.push(i.channel))
+}
+res()
+
+function sleepGlob(milliseconds) {
+	var start = new Date().getTime();
+	for (var i = 0; i < 1e7; i++) {
+		if ((new Date().getTime() - start) > milliseconds) {
+			break;
+		}
+	}
+}
+sleepGlob(1500)
 // parse the channel list 
 // check for empty items in an array
-const channelOptions = fs.readFileSync('./db/channels.js').toString().split('"').filter(
-	function(i) {
-		return i != null;
-	}).join('').split(' ')
 const options = {
 	options: {
-		debug: false,
+		debug: true,
 	},
 	connection: {
 		cluster: 'aws',
@@ -24,7 +67,6 @@ const options = {
 	},
 	channels: channelOptions,
 };
-
 const tmi = require('tmi.js');
 const kb = new tmi.client(options);
 const repeatedMessages = {
@@ -32,6 +74,14 @@ const repeatedMessages = {
 };
 
 kb.connect();
+con.connect(function(err) {
+	if (err) {
+		kb.say('supinic', '@kunszg database connection error Pepega')
+	} else {
+		console.log("Database connected!");
+	}
+});
+
 kb.on('connected', (adress, port) => {
 
 	kb.say('kunszg', 'reconnected KKona')
@@ -45,21 +95,6 @@ kb.on('connected', (adress, port) => {
 	const rUni = require('random-unicodes');
 	const SpacexApiWrapper = require("spacex-api-wrapper");
 	const fetch = require("node-fetch");
-	const mysql = require('mysql2');
-	const con = mysql.createConnection({
-		host: "localhost",
-		user: "root",
-		password: api.db_pass,
-		database: "kbot"
-	});
-	con.connect(function(err) {
-		if (err) {
-			kb.say('supinic', '@kunszg, database connection error monkaS')
-			console.log(err)
-		} else {
-			console.log("Connected!");
-		}
-	});
 
 	const allowFastramid = [{
 			ID: '178087241'
@@ -421,46 +456,67 @@ kb.on('connected', (adress, port) => {
 			invocation: async (channel, user, message, args) => {
 				try {
 					const length = kb.getChannels().length;
-					const msg = message.replace("\u{E0000}", "").split(" ").splice(2);
+					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(" ").splice(2).filter(Boolean);
 
 					// response for non-admin users
 					if (user['user-id'] != "178087241") {
-						return "I'm active in " + length + " channels, list coming soon 4Head";
+						return `I'm active in ${length} channels, list coming soon 4Head`;
 					}
 
 					// parameters for admins
 					// check for wrong parameters
 					if (msg[0] && !msg[1]) {
-						return user['username'] + ", invalid parameter or no channel provided";
+						return `${user['username']}, invalid parameter or no channel provided`;
 					} 
 
 					// join the channel only for current session, channel will be dismissed after process restarts
-					if (msg[0] == "join-session") {
+					if (msg[0] === "join-session") {
 						kb.join(msg[1]);
-						return "successfully joined :) 👍";
+						return `successfully joined channel ${msg[1].toLowerCase().replace(/^(.{2})/, "$1\u{E0000}")} :) 👍`;
 					} 
 
 					// join the channel "permanently" by appending it to a file which is being imported after process restarts
-					if (msg[0] == "join-save") {
-						fs.appendFileSync('./db/channels.js', ' "' + msg[1] + '"');
-						kb.join(msg[1]);
-						return "successfully joined :) 👍";
+					if (msg[0] === "join-save") {
+						
+						// check if bot is already joined in a channel 
+						const checkRepeatedInsert = await doQuery(`SELECT * FROM channels WHERE channel="${msg[1]}"`)
+						if (checkRepeatedInsert.length != 0) {
+							return `${user['username']}, I'm already in this channel.`
+						}
+
+						// add the channel to the table
+						await doQuery(`INSERT INTO channels (channel, added) VALUES ("${msg[1].toLowerCase()}", CURRENT_TIMESTAMP)`);
+						kb.join(msg[1].toLowerCase());
+						return `successfully joined #${msg[1].toLowerCase().replace(/^(.{2})/, "$1\u{E0000}")} :) 👍`;
 					} 
 
 					// leave the channel for this session, if channel is saved in the file it will be rejoined after session restarts
-					if (msg[0] == "part-session") {
+					if (msg[0] === "part-session") {
 						kb.part(msg[1]);
-						return "parted the channel for this session";
+						return `parted the channel ${msg[1].replace(/^(.{2})/, "$1\u{E0000}")} for this session`;
 					} 
 
+					if (msg[0] === "part-save") {
+
+						// check if bot is already joined in a channel 
+						const checkRepeatedInsert = await doQuery(`SELECT * FROM channels WHERE channel="${msg[1]}"`)
+						if (checkRepeatedInsert.length === 0) {
+							return `${user['username']}, I'm not joined in that channel.`
+						}
+
+						// delete the row with provided channel
+						await doQuery(`DELETE FROM channels WHERE channel="${msg[1]}"`)
+						kb.part(msg[1]);
+						return `parted the channel ${msg[1].replace(/^(.{2})/, "$1\u{E0000}")} for this session`;
+					}
 					// if nothing was provided by an admin, display a default message
 					if (!msg[0] && !msg[1]) {
-						return "I'm active in " + length + " channels, list coming soon 4Head";
+						return `I'm active in ${length} channels, list coming soon 4Head`;
 					}
-					return "I'm active in " + length + " channels, list coming soon 4Head";
+					return `I'm active in ${length} channels, list coming soon 4Head`;
 				} catch (err) {
 					errorLog(err)
-					return user['username'] + ", " + err + " FeelsDankMan !!!";
+					return `${user['username']}, ${err} FeelsDankMan !!!`;
 				}
 			}
 		},
