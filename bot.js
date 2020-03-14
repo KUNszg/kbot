@@ -1988,7 +1988,14 @@ kb.on('connected', (adress, port) => {
 								return `${user['username']}, provided word has not enough characters to run a query.`;
 							} 
 
-							if ((msg.join(' ').includes('hax') || msg.join(' ').includes('imgu')) || msg.join(' ').includes('nig')) {
+							const internalBans = [
+								'hax',
+								'imgu',
+								'nig',
+								'bing'
+							]
+							const checkIfBanned = internalBans.filter(i => msg.join(' ').includes(i))
+							if (checkIfBanned.length != 0) {
 								return `${user['username']}, I cannot search with this query, it contains an internally banned phrase.`;
 							}
 
