@@ -1788,19 +1788,20 @@ kb.on('connected', (adress, port) => {
 							return `${user['username']} error WutFace`;
 
 						case 'register':
-							// check if user is already registered
-							if (resultsRegister[0].username === user['username']) {
-								return `${user['username']}, you are already registered for cookie reminders, use 
-								"kb help cookie" for command syntax.`;
-							}
-							
+
 							// check if user is new and insert a new row in database
-							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
+							if (resultsRegister.length === 0) {
 								await doQuery(`INSERT INTO cookies (username, created) VALUES ("${user['username']}", CURRENT_TIMESTAMP)`);
 								await doQuery(`INSERT INTO cookie_reminders (username) VALUES ("${user['username']}")`);
 								return `${user['username']}, you have been successfully registered for a cookie reminder, 
 								see "kb help cookie" for exclusive commands PogChamp`;
 							} 
+
+							// check if user is already registered
+							if (resultsRegister[0].username === user['username']) {
+								return `${user['username']}, you are already registered for cookie reminders, use 
+								"kb help cookie" for command syntax.`;
+							}
 							return '';
 
 						case 'unregister':
@@ -2821,39 +2822,31 @@ kb.on('connected', (adress, port) => {
 						return new Date(copiedDate.getTime() + minutes * 1000);
 					}
 
-					if (cookieApi.seconds_left<cookieApi.interval_unformatted-10 && cookieApi.seconds_left!=0) {
+					if (cookieApi.seconds_left<cookieApi.interval_unformatted-10) {
 						kb.whisper(user['username'], `Your cookie is still on cooldown (${cookieApi.time_left_formatted}), with ${cookieApi.interval_formatted} intervals.`);
 						return '';
 					}
+				
+					await doQuery(`UPDATE cookie_reminders SET cookie_count="${countCookie[0].cookie_count + 1}" WHERE username="${user['username']}"`)
+					const now = new Date();
+					await doQuery(`UPDATE cookie_reminders 
+						SET channel="${channel.replace('#', '')}", fires="${now.addMinutes(`${cookieApi.interval_unformatted}`).toISOString().slice(0, 19).replace('T', ' ')}", status="scheduled" 
+						WHERE username="${user['username']}"`);
 
-					if (cookieApi.seconds_left === 0) {
-						sleepGlob(700)
-					}
-
-					if (cookieApi.seconds_left != 0) {
-						await doQuery(`UPDATE cookie_reminders SET cookie_count="${countCookie[0].cookie_count + 1}" WHERE username="${user['username']}"`)
-						const now = new Date();
-						await doQuery(`UPDATE cookie_reminders 
-							SET channel="${channel.replace('#', '')}", fires="${now.addMinutes(`${cookieApi.interval_unformatted}`).toISOString().slice(0, 19).replace('T', ' ')}", status="scheduled" 
-							WHERE username="${user['username']}"`);
-
-						if (platformCheck[0].initplatform === "channel") {
-							if (updatecheck[0].status === "scheduled") {
-								kb.say(userChannel, `${user['username']}, updating your pending cookie reminder, I will remind you in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :D`);
-							} else {
-								kb.say(userChannel, `${user['username']}, I will remind you to eat the cookie in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
-							}
-						} else if (platformCheck[0].initplatform === "whisper") {
-							if (updateCheck[0].status === "scheduled") {
-								kb.whisper(user['username'], `updating your pending cookie reminder, I will remind you in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :D`)
-							} else {
-								kb.whisper(user['username'], `I will remind you to eat the cookie in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
-							}
-						} else if (platformCheck[0].initplatform === "silence") {
-						 	return '';
+					if (platformCheck[0].initplatform === "channel") {
+						if (updatecheck[0].status === "scheduled") {
+							kb.say(userChannel, `${user['username']}, updating your pending cookie reminder, I will remind you in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :D`);
 						} else {
-							return '';
+							kb.say(userChannel, `${user['username']}, I will remind you to eat the cookie in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
 						}
+					} else if (platformCheck[0].initplatform === "whisper") {
+						if (updateCheck[0].status === "scheduled") {
+							kb.whisper(user['username'], `updating your pending cookie reminder, I will remind you in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :D`)
+						} else {
+							kb.whisper(user['username'], `I will remind you to eat the cookie in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
+						}
+					} else if (platformCheck[0].initplatform === "silence") {
+					 	return '';
 					}
 					return '';
 				} catch (err) {
