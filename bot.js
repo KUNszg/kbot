@@ -2822,31 +2822,31 @@ kb.on('connected', (adress, port) => {
 						return new Date(copiedDate.getTime() + minutes * 1000);
 					}
 
-					if (cookieApi.seconds_left<cookieApi.interval_unformatted-10) {
+					if (cookieApi.seconds_left<cookieApi.interval_unformatted-10 || cookieApi.seconds_left === 0) {
 						kb.whisper(user['username'], `Your cookie is still on cooldown (${cookieApi.time_left_formatted}), with ${cookieApi.interval_formatted} intervals.`);
-						return '';
-					}
+					} else {
 				
-					await doQuery(`UPDATE cookie_reminders SET cookie_count="${countCookie[0].cookie_count + 1}" WHERE username="${user['username']}"`)
-					const now = new Date();
-					await doQuery(`UPDATE cookie_reminders 
-						SET channel="${channel.replace('#', '')}", fires="${now.addMinutes(`${cookieApi.interval_unformatted}`).toISOString().slice(0, 19).replace('T', ' ')}", status="scheduled" 
-						WHERE username="${user['username']}"`);
+						await doQuery(`UPDATE cookie_reminders SET cookie_count="${countCookie[0].cookie_count + 1}" WHERE username="${user['username']}"`)
+						const now = new Date();
+						await doQuery(`UPDATE cookie_reminders 
+							SET channel="${channel.replace('#', '')}", fires="${now.addMinutes(`${cookieApi.interval_unformatted}`).toISOString().slice(0, 19).replace('T', ' ')}", status="scheduled" 
+							WHERE username="${user['username']}"`);
 
-					if (platformCheck[0].initplatform === "channel") {
-						if (updatecheck[0].status === "scheduled") {
-							kb.say(userChannel, `${user['username']}, updating your pending cookie reminder, I will remind you in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :D`);
-						} else {
-							kb.say(userChannel, `${user['username']}, I will remind you to eat the cookie in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
+						if (platformCheck[0].initplatform === "channel") {
+							if (updatecheck[0].status === "scheduled") {
+								kb.say(userChannel, `${user['username']}, updating your pending cookie reminder, I will remind you in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :D`);
+							} else {
+								kb.say(userChannel, `${user['username']}, I will remind you to eat the cookie in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
+							}
+						} else if (platformCheck[0].initplatform === "whisper") {
+							if (updateCheck[0].status === "scheduled") {
+								kb.whisper(user['username'], `updating your pending cookie reminder, I will remind you in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :D`)
+							} else {
+								kb.whisper(user['username'], `I will remind you to eat the cookie in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
+							}
+						} else if (platformCheck[0].initplatform === "silence") {
+						 	return '';
 						}
-					} else if (platformCheck[0].initplatform === "whisper") {
-						if (updateCheck[0].status === "scheduled") {
-							kb.whisper(user['username'], `updating your pending cookie reminder, I will remind you in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :D`)
-						} else {
-							kb.whisper(user['username'], `I will remind you to eat the cookie in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
-						}
-					} else if (platformCheck[0].initplatform === "silence") {
-					 	return '';
 					}
 					return '';
 				} catch (err) {
