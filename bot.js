@@ -2818,7 +2818,7 @@ kb.on('connected', (adress, port) => {
 					commandsExecuted.push('1');
 					
 					Date.prototype.addMinutes = function(minutes) {
-						var copiedDate = new Date(this.getTime());
+						const copiedDate = new Date(this.getTime());
 						return new Date(copiedDate.getTime() + minutes * 1000);
 					}
 
@@ -2836,18 +2836,14 @@ kb.on('connected', (adress, port) => {
 						if (platformCheck[0].initplatform === "channel") {
 							if (updateCheck[0].status === "scheduled") {
 								kb.say(userChannel, `${user['username']}, updating your pending cookie reminder, I will remind you in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :D`);
-								return '';
 							} else {
 								kb.say(userChannel, `${user['username']}, I will remind you to eat the cookie in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
-								return '';
 							}
 						} else if (platformCheck[0].initplatform === "whisper") {
 							if (updateCheck[0].status === "scheduled") {
 								kb.whisper(user['username'], `updating your pending cookie reminder, I will remind you in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :D`);
-								return '';
 							} else {
 								kb.whisper(user['username'], `I will remind you to eat the cookie in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
-								return '';
 							}
 						} else if (platformCheck[0].initplatform === "silence") {
 						 	return '';
