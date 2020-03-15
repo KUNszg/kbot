@@ -2804,8 +2804,6 @@ kb.on('connected', (adress, port) => {
 					
 					const cookieApi = await fetch(`https://api.roaringiron.com/cooldown/${user['user-id']}?id=true`)
 						.then(response => response.json());
-					const cookieStatus = await fetch(`https://api.roaringiron.com/user/${user['user-id']}?id=true`)
-						.then(response => response.json());
 					const query = await doQuery(`SELECT username FROM cookies WHERE username="${user['username']}"`);
 					const updateCheck = await doQuery(`SELECT username, status FROM cookie_reminders WHERE username="${user['username']}"`)
 					const platformCheck = await doQuery(`SELECT initplatform, username FROM cookie_reminders WHERE username="${user['username']}"`)
