@@ -2834,7 +2834,7 @@ kb.on('connected', (adress, port) => {
 							WHERE username="${user['username']}"`);
 
 						if (platformCheck[0].initplatform === "channel") {
-							if (updatecheck[0].status === "scheduled") {
+							if (updateCheck[0].status === "scheduled") {
 								kb.say(userChannel, `${user['username']}, updating your pending cookie reminder, I will remind you in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :D`);
 								return '';
 							} else {
