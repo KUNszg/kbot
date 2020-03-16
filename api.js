@@ -90,6 +90,6 @@ function apiData(data) {
 
 apiData({data: channelOptions})
 
-app.listen(3000, () => {
+app.listen(3000, '95.217.65.143' () => {
  	console.log("Express running on port 3000");
 });
