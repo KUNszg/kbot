@@ -90,7 +90,7 @@ function apiData(data) {
 
 apiData({data: channelOptions})
 
-const server = app.listen(process.env.PORT || 8080, '95.217.65.143', () => {
+const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
     const port = server.address().port;
     console.log('app running on port', port);
 });
