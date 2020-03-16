@@ -68,7 +68,7 @@ async function res() {
 	channelList.push(await getChannels());
 	await channelList[0].forEach(i => channelOptions.push(i.channel))
 }
-res()
+setInterval(()=>{res()}, 30000)
 
 function sleepGlob(milliseconds) {
 	var start = new Date().getTime();
@@ -88,7 +88,7 @@ function apiData(data) {
 	});
 }
 
-setInterval(()=>{apiData({data: channelOptions})}, 30000)
+apiData({data: channelOptions})
 
 const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
     const port = server.address().port;
