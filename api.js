@@ -88,7 +88,7 @@ function apiData(data) {
 	});
 }
 
-apiData({data: channelOptions})
+setInterval(()=>{apiData({data: channelOptions})}, 30000)
 
 const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
     const port = server.address().port;

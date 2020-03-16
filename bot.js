@@ -460,7 +460,7 @@ kb.on('connected', (adress, port) => {
 
 					// response for non-admin users
 					if (user['user-id'] != "178087241") {
-						return `I'm active in ${length} channels, list coming soon 4Head`;
+						return `I'm active in ${length} channels, list of channels: https://kunszg.xyz/index 4Head`;
 					}
 
 					// parameters for admins
@@ -507,13 +507,13 @@ kb.on('connected', (adress, port) => {
 						// delete the row with provided channel
 						await doQuery(`DELETE FROM channels WHERE channel="${msg[1]}"`)
 						kb.part(msg[1]);
-						return `parted the channel ${msg[1].replace(/^(.{2})/, "$1\u{E0000}")} for this session`;
+						return `parted the channel ${msg[1].replace(/^(.{2})/, "$1\u{E0000}")} via database.`;
 					}
 					// if nothing was provided by an admin, display a default message
 					if (!msg[0] && !msg[1]) {
-						return `I'm active in ${length} channels, list coming soon 4Head`;
+						return `I'm active in ${length} channels, list of channels: https://kunszg.xyz/index 4Head`;
 					}
-					return `I'm active in ${length} channels, list coming soon 4Head`;
+					return `I'm active in ${length} channels, list of channels: https://kunszg.xyz/index 4Head`;
 				} catch (err) {
 					errorLog(err)
 					return `${user['username']}, ${err} FeelsDankMan !!!`;
