@@ -460,7 +460,7 @@ kb.on('connected', (adress, port) => {
 
 					// response for non-admin users
 					if (user['user-id'] != "178087241") {
-						return `I'm active in ${length} channels, list of channels: https://kunszg.xyz/index 4Head`;
+						return `I'm active in ${length} channels, list of channels: https://kunszg.xyz/ 4Head`;
 					}
 
 					// parameters for admins
@@ -511,9 +511,9 @@ kb.on('connected', (adress, port) => {
 					}
 					// if nothing was provided by an admin, display a default message
 					if (!msg[0] && !msg[1]) {
-						return `I'm active in ${length} channels, list of channels: https://kunszg.xyz/index 4Head`;
+						return `I'm active in ${length} channels, list of channels: https://kunszg.xyz/ 4Head`;
 					}
-					return `I'm active in ${length} channels, list of channels: https://kunszg.xyz/index 4Head`;
+					return `I'm active in ${length} channels, list of channels: https://kunszg.xyz/ 4Head`;
 				} catch (err) {
 					errorLog(err)
 					return `${user['username']}, ${err} FeelsDankMan !!!`;

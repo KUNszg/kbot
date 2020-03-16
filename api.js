@@ -80,6 +80,7 @@ function sleepGlob(milliseconds) {
 }
 sleepGlob(1000)
 
+// kunszg.xyz/api/channels
 function apiData(data) {
 	app.get("/channels", (req, res, next) => {
 	 	res.json(
