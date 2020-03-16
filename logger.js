@@ -36,6 +36,27 @@ const ignoreList = [
 	'264879410', // schnozebot
 	'237719657' // fossabot
 ];
+const doQuery = (query) => new Promise((resolve, reject) => {
+    con.query(query, (err, results, fields) => {
+        if (err) {
+        	const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+			const insert = [JSON.stringify(err), new Date()];
+			con.query(mysql.format(sql, insert),
+				function(error, results, fields) {
+					if (error) {
+						console.log(error)
+						reject(error)
+					} else {
+						resolve(results)
+					}
+				})
+            reject(err);
+        }
+        else {
+            resolve(results);
+        }      
+    });
+});
 
 kb.connect();
 kb.on('connected', (adress, port) => {
@@ -66,7 +87,6 @@ kb.on('connected', (adress, port) => {
 			const inserts = ['logs_' + channel.replace('#', ''), collumns, user['username'], msg, new Date()];
 			con.query(mysql.format(sql, inserts), function(error, results, fields) {
 				if (error) {
-					console.log(error);
 					const errorLog = "INSERT INTO ?? (??, ??) VALUES (?, ?)";
 					const errorLogCollumns = ['error_message', 'date'];
 					const insertsLog = ['error_logs', errorLogCollumns, error, new Date()];
@@ -78,6 +98,30 @@ kb.on('connected', (adress, port) => {
 					})
 				}
 			})
-		}		
+		}
+		async function checkUser() {
+			const checkIfExists = await doQuery(`SELECT username FROM user_list WHERE username=${user['username']}`);
+			if (checkIfExists.length != 0) {
+				return;
+			} else {
+				const sqlUser = "INSERT INTO ?? (??) VALUES (?, ?, ?, CURRENT_TIMESTAMP)"
+				const insertCollumns = ['username', 'user-id', 'color']
+				const insertsUser = ['user_list', insertCollumns, user['username'], user['user-id'], user['color']]
+				con.query(mysql.format(sqlUser, insertsUser), function(error, results, fields) {
+					if (error) {
+						const errorLog = "INSERT INTO ?? (??, ??) VALUES (?, ?)";
+						const errorLogCollumns = ['error_message', 'date'];
+						const insertsLog = ['error_logs', errorLogCollumns, error, new Date()];
+						con.query(mysql.format(errorLog, insertsLog), function(error, results, fields) {
+							if (error) {
+								console.log(error);
+								throw error;
+							}
+						})
+					}
+				})
+			}
+		}
+		checkUser()
 	})
 })
