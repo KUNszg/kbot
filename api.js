@@ -90,6 +90,7 @@ function apiData(data) {
 
 apiData({data: channelOptions})
 
-app.listen(80, '0.0.0.0' () => {
- 	console.log("Express running on port 3000");
+const server = app.listen(process.env.PORT || 8080, () => {
+    const port = server.address().port;
+    console.log('app running on port', port);
 });
