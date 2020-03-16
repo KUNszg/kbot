@@ -36,27 +36,6 @@ const ignoreList = [
 	'264879410', // schnozebot
 	'237719657' // fossabot
 ];
-const doQuery = (query) => new Promise((resolve, reject) => {
-    con.query(query, (err, results, fields) => {
-        if (err) {
-        	const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
-			const insert = [JSON.stringify(err), new Date()];
-			con.query(mysql.format(sql, insert),
-				function(error, results, fields) {
-					if (error) {
-						console.log(error)
-						reject(error)
-					} else {
-						resolve(results)
-					}
-				})
-            reject(err);
-        }
-        else {
-            resolve(results);
-        }      
-    });
-});
 
 kb.connect();
 kb.on('connected', (adress, port) => {
@@ -76,6 +55,26 @@ kb.on('connected', (adress, port) => {
 			console.log("Connected!");
 		}
 	});
+const doQuery = (query) => new Promise((resolve, reject) => {
+    con.query(query, (err, results, fields) => {
+        if (err) {
+        	const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+			const insert = [JSON.stringify(err), new Date()];
+			con.query(mysql.format(sql, insert),
+				function(error, results, fields) {
+					if (error) {
+						reject(error)
+					} else {
+						resolve(results)
+					}
+				})
+            reject(err);
+        }
+        else {
+            resolve(results);
+        }      
+    });
+});
 	kb.on('message', function(channel, user, message) {
 		const filterBots = ignoreList.filter(i => i === user['user-id'])
 		const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
@@ -92,7 +91,6 @@ kb.on('connected', (adress, port) => {
 					const insertsLog = ['error_logs', errorLogCollumns, error, new Date()];
 					con.query(mysql.format(errorLog, insertsLog), function(error, results, fields) {
 						if (error) {
-							console.log(error);
 							throw error;
 						}
 					})
@@ -100,27 +98,29 @@ kb.on('connected', (adress, port) => {
 			})
 		}
 		async function checkUser() {
-			const checkIfExists = await doQuery(`SELECT username FROM user_list WHERE username=${user['username']}`);
+			if (channel === '#xqcow') {
+				return;
+			}
+			const checkIfExists = await doQuery(`SELECT username FROM user_list WHERE username="${user['username']}"`);
 			if (checkIfExists.length != 0) {
 				return;
-			} else {
-				const sqlUser = "INSERT INTO ?? (??) VALUES (?, ?, ?, CURRENT_TIMESTAMP)"
-				const insertCollumns = ['username', 'user-id', 'color']
-				const insertsUser = ['user_list', insertCollumns, user['username'], user['user-id'], user['color']]
-				con.query(mysql.format(sqlUser, insertsUser), function(error, results, fields) {
-					if (error) {
-						const errorLog = "INSERT INTO ?? (??, ??) VALUES (?, ?)";
-						const errorLogCollumns = ['error_message', 'date'];
-						const insertsLog = ['error_logs', errorLogCollumns, error, new Date()];
-						con.query(mysql.format(errorLog, insertsLog), function(error, results, fields) {
-							if (error) {
-								console.log(error);
-								throw error;
-							}
-						})
-					}
-				})
 			}
+			const sqlUser = "INSERT INTO user_list (username, userId, channel_first_appeared, color, added) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)"
+			const insertsUser = [user['username'], user['user-id'], channel.replace('#', ''), user['color']]
+			con.query(mysql.format(sqlUser, insertsUser), function(error, results, fields) {
+				if (error) {
+					const errorLog = "INSERT INTO ?? (??, ??) VALUES (?, ?)";
+					const errorLogCollumns = ['error_message', 'date'];
+					const insertsLog = ['error_logs', errorLogCollumns, error, new Date()];
+					con.query(mysql.format(errorLog, insertsLog), function(error, results, fields) {
+						if (error) {
+							console.log(error);
+							throw error;
+						}
+					})
+				}
+			})
+			
 		}
 		checkUser()
 	})
