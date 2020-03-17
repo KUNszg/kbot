@@ -124,7 +124,7 @@ async function diagramData() {
 		{"color": 'Coral', 'amount': await dataInsert('#FF7F50')},
 		{"color": 'Chocolate', 'amount': await dataInsert('#D2691E')},
 		{"color": 'Black', 'amount': await dataInsert('#000000')},
-		{"color": 'Gray', 'amount': await dataInsert('#696969')}
+		{"color": 'Gray', 'amount': await dataInsert('gray')}
 	])
 	return await getData
 }
