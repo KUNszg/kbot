@@ -68,7 +68,8 @@ async function res() {
 	channelList.push(await getChannels());
 	await channelList[0].forEach(i => channelOptions.push(i.channel))
 }
-setInterval(()=>{channelList.length = 0; channelOptions.length = 0; res();}, 3600000)
+res();
+// setInterval(()=>{channelList.length = 0; channelOptions.length = 0; res();}, 3600000)
 
 function sleepGlob(milliseconds) {
 	var start = new Date().getTime();
