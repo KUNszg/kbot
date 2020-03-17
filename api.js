@@ -125,7 +125,7 @@ async function diagramData() {
 diagramData().then(function(data) {apiDataColors({data: data})})
 const shell = require('child_process');
 // restart process every 4h
-setInterval(()=>{shell.execSync('pm2 restart api')}, 14400000)
+setInterval(()=>{shell.execSync('pm2 restart api')}, 7200000)
 const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
     const port = server.address().port;
     console.log('app running on port', port);
