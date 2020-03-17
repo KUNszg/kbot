@@ -106,6 +106,7 @@ async function diagramData() {
 		return info[0].data
 	}
 	const getData = await Promise.all([
+		{"color": 'Gray', 'amount': await dataInsert('gray')},
 		{"color": 'Red', 'amount': await dataInsert('#FF0000')}, 
 		{"color": 'SpringGreen', 'amount': await dataInsert('#00FF7F')},
 	 	{"color": 'DodgerBlue', 'amount': await dataInsert('#1E90FF')}, 
@@ -123,13 +124,12 @@ async function diagramData() {
 		{"color": 'CadetBlue', 'amount': await dataInsert('#5F9EA0')},
 		{"color": 'Coral', 'amount': await dataInsert('#FF7F50')},
 		{"color": 'Chocolate', 'amount': await dataInsert('#D2691E')},
-		{"color": 'Black', 'amount': await dataInsert('#000000')},
-		{"color": 'Gray', 'amount': await dataInsert('gray')}
+		{"color": 'Black', 'amount': await dataInsert('#000000')}
 	])
 	const cache = [];
 	const check = await getData.forEach(i=>cache.push(i.amount))
 	const reduce = cache.reduce((a, b) => a + b, 0)
-	return {'users': reduce, 'data': await getData}
+	return {'users': reduce, 'data': await getData.sort()}
 }
 diagramData().then(function(data) {apiDataColors(data)})
 const shell = require('child_process');
