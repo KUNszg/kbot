@@ -129,9 +129,9 @@ async function diagramData() {
 	const cache = [];
 	const check = await getData.forEach(i=>cache.push(i.amount))
 	const reduce = cache.reduce((a, b) => a + b, 0)
-	return {'data': await getData, 'users': reduce}
+	return {'users': reduce, 'data': await getData}
 }
-diagramData().then(function(data) {apiDataColors({data})})
+diagramData().then(function(data) {apiDataColors(data)})
 const shell = require('child_process');
 // restart process every 4h
 setInterval(()=>{shell.execSync('pm2 restart api')}, 7200000)
