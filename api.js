@@ -126,9 +126,12 @@ async function diagramData() {
 		{"color": 'Black', 'amount': await dataInsert('#000000')},
 		{"color": 'Gray', 'amount': await dataInsert('gray')}
 	])
-	return await getData
+	const cache = [];
+	const check = await getData.forEach(i=>cache.push(i.amount))
+	const reduce = cache.reduce((a, b) => a + b, 0)
+	return {'data': await getData, 'users': reduce}
 }
-diagramData().then(function(data) {apiDataColors({data: data})})
+diagramData().then(function(data) {apiDataColors({data})})
 const shell = require('child_process');
 // restart process every 4h
 setInterval(()=>{shell.execSync('pm2 restart api')}, 7200000)
