@@ -81,16 +81,48 @@ function sleepGlob(milliseconds) {
 sleepGlob(1000)
 
 // kunszg.xyz/api/channels
-function apiData(data) {
+function apiDataChannels(data) {
 	app.get("/channels", (req, res, next) => {
 	 	res.json(
 	 		data
 		);
 	});
 }
+apiDataChannels({data: channelOptions})
 
-apiData({data: channelOptions})
+// kunszg.xyz/api/colors
+function apiDataColors(data) {
+	app.get("/colors", (req, res, next) => {
+	 	res.json(
+	 		data
+		);
+	});
+}
 
+async function diagramData() {
+	async function dataInsert(data) {
+		const info = await doQuery(`SELECT count(*) As data FROM user_list WHERE color="${data}"`);
+		return info[0].data
+	}
+	const getData = await Promise.all([
+		{"color": 'Red', 'amount': await dataInsert('#FF0000')}, 
+		{"color": 'SpringGreen', 'amount': await dataInsert('#00FF7F')},
+	 	{"color": 'DodgerBlue', 'amount': await dataInsert('#1E90FF')}, 
+	 	{"color": 'BlueViolet', 'amount': await dataInsert('#8A2BE2')}, 
+	 	{"color": 'OrangeRed', 'amount': await dataInsert('#FF4500')}, 
+		{"color": 'GoldenRod', 'amount': await dataInsert('#DAA520')}, 
+		{"color": 'Blue', 'amount': await dataInsert('#0000FF')}, 
+		{"color": 'HotPink', 'amount': await dataInsert('#FF69B4')}, 
+		{"color": 'Green', 'amount': await dataInsert('#008000')}, 
+		{"color": 'YellowGreen', 'amount': await dataInsert('#9ACD32')}, 
+		{"color": 'FireBrick', 'amount': await dataInsert('#B22222')},
+		{"color": 'White', 'amount': await dataInsert('#FFFFFF')}, 
+		{"color": 'SeaGreen', 'amount':await  dataInsert('#2E8B57')}, 
+		{"color": 'Yellow', 'amount': await dataInsert('#FFFF00')}
+	])
+	apiDataColors({data: getData})
+}
+diagramData()
 const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
     const port = server.address().port;
     console.log('app running on port', port);
