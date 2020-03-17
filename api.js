@@ -120,9 +120,11 @@ async function diagramData() {
 		{"color": 'SeaGreen', 'amount':await  dataInsert('#2E8B57')}, 
 		{"color": 'Yellow', 'amount': await dataInsert('#FFFF00')}
 	])
-	apiDataColors({data: getData})
+	return await getData
 }
-diagramData()
+diagramData().then(function(data) {apiDataColors({data: data})})
+const shell = require('child_process');
+setInterval(()=>{shell.execSync('pm2 restart api')}, 5000)
 const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
     const port = server.address().port;
     console.log('app running on port', port);
