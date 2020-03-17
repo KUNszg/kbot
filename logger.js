@@ -127,4 +127,7 @@ const doQuery = (query) => new Promise((resolve, reject) => {
 		}
 		checkUser()
 	})
+	setInterval(async() => {
+		await doQuery('UPDATE user_list SET color="gray" WHERE color IS null;')
+	}, 1800000);
 })
