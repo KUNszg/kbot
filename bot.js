@@ -1750,10 +1750,12 @@ kb.on('connected', (adress, port) => {
 							if (regCheck.length === 0) {
 								return `${user['username']}, you are not registered in the database, use "kb cookie register" to do so.`;
 							}
+
 							Date.prototype.addMinutes = function(minutes) {
 								const copiedDate = new Date(this.getTime());
-								return new Date(copiedDate.getTime() + minutes * 60000);
+								return new Date(copiedDate.getTime() + minutes * 1000);
 							}
+
 							async function updateReminder(time) {
 								await doQuery(`UPDATE cookie_reminders SET channel="${channel.replace('#', '')}", 
 									fires="${now.addMinutes(time).toISOString().slice(0, 19).replace('T', ' ')}", status="scheduled" 
@@ -1762,30 +1764,28 @@ kb.on('connected', (adress, port) => {
 									WHERE username="${user['username']}"`)
 							}
 
-							// force a 2h reminder
-							if (cookieApi.interval_unformatted === 7200) {
-								updateReminder(120)
-								return `${user['username']}, I will remind you to eat the cookie in 2h. (forced reminder)`;
-							} 
-							
-							// force a 1h reminder
-							if (cookieApi.interval_unformatted === 3600) {
-								updateReminder(60)
-								return `${user['username']}, I will remind you to eat the cookie in 1h. (forced reminder)`;
-							} 
-
-							// force a 30 min reminder
-							if (cookieApi.interval_unformatted === 1800) {
-								updateReminder(30)
-								return `${user['username']}, I will remind you to eat the cookie in 30m. (forced reminder)`;
-							} 
-
-							// force a 20 min reminder
-							if (cookieApi.interval_unformatted === 1200) {
-								updateReminder(20)
-								return `${user['username']}, I will remind you to eat the cookie in 20m. (forced reminder)`;
+							function format(seconds) {
+								function pad(s) {
+									return (s < 10 ? '0' : '') + s;
+								}
+								var hours = Math.floor(seconds / (60 * 60));
+								var minutes = Math.floor(seconds % (60 * 60) / 60);
+								var seconds = Math.floor(seconds % 60);
+								if (hours === 0 && minutes != 0) {
+									return minutes + 'm ' + seconds + "s";
+								} else {
+									if (minutes === 0 && hours === 0) {
+										return seconds + "s"
+									} else if (seconds === 0 || hours === 0 && minutes === 0) {
+										return 'few seconds'
+									} else {
+										return hours + 'h ' + minutes + 'm ' + seconds + "s";
+									}
+								}
 							}
-							return `${user['username']} error WutFace`;
+
+							updateReminder(cookieApi.seconds_left.toFixed(0))
+							return `${user['username']}, I will remind you to eat the cookie in ${format(cookieApi.seconds_left.toFixed(0))} (forced reminder)`
 
 						case 'register':
 
