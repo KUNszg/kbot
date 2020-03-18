@@ -256,7 +256,7 @@ kb.on('connected', (adress, port) => {
 			cooldown: 5000,
 			invocation: async (channel, user, message, args, err) => {
 				try {
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
+					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
 
 					function format(seconds) {
 						function pad(s) {
@@ -391,7 +391,7 @@ kb.on('connected', (adress, port) => {
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);
+					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(" ").splice(2);
 					const options = {
 						api_key: api.randomTrack,
 						genre: msg[0], //21, 1134, 1147
@@ -529,7 +529,7 @@ kb.on('connected', (adress, port) => {
 			cooldown: 4000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);
+					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(" ").splice(2);
 					const json = await fetch("https://some-random-api.ml/chatbot?message=" +
 						msg.join("+").normalize("NFD").replace(/[\u0300-\u036f]/g, ""))
 							.then(response => response.json());
@@ -779,7 +779,7 @@ kb.on('connected', (adress, port) => {
 			cooldown: 6000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(" ").splice(2);
+					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(" ").splice(2);
 
 					function hasNumber(myString) {
 						return /\d/.test(myString);
@@ -1001,12 +1001,13 @@ kb.on('connected', (adress, port) => {
 							}
 						}
 					}
+
 					const checkChannel = await doQuery(`SHOW TABLES LIKE "logs_${channel.replace('#', '')}"`)
 					if (checkChannel.length === 0) {
 						return `${user['username']}, I'm not logging this channel, therefore I can't display data for this command :/`;
 					}
 
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
+					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
 					if (!msg[0]) {
 						const firstline = await doQuery('SELECT * FROM logs_' + channel.replace('#', '') + ' WHERE username="' + user['username'] + '" ORDER BY DATE ASC');
 						if (!firstline[0]) {
@@ -1055,6 +1056,13 @@ kb.on('connected', (adress, port) => {
 						return user['username'] + ', Your first line in this channel was: (' + format(timeDifferenceRaw/1000) + modifyOutput();
 
 					} else {
+
+						// check if user exists in the database
+						const checkIfUserExists = await doQuery(`SELECT * FROM user_list WHERE username="${msg[0]}"`);
+						if (checkIfUserExists.length === 0) {
+							return `${user['username']}, this user does not exist in my user list logs.`;
+						}
+						
 						const sql = 'SELECT * FROM logs_' + channel.replace('#', '') + ' WHERE username=? ORDER BY DATE ASC';
 						const inserts = [msg[0]];
 						const firstline = await doQuery(mysql.format(sql, inserts));
@@ -1141,7 +1149,7 @@ kb.on('connected', (adress, port) => {
 						return `${user['username']}, I'm not logging this channel, therefore I can't display data for this command :/`;
 					}
 
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
+					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
 					const serverDate = new Date().getTime();
 
 					if (!msg[0]) {
@@ -1200,26 +1208,30 @@ kb.on('connected', (adress, port) => {
 						
 					} else if (typeof msg[0] !== 'undefined' && msg[0] != '') {
 
-						const randomLine = await doQuery(
-							'SELECT username, message, date FROM logs_' + channel.replace('#', '') + 
-							' WHERE username="' + msg[0] + '" ORDER BY RAND() LIMIT 1'
-							);
-
-						if (!randomLine[0]) {
-							return user['username'] + ', there are no logs in my database related to that user xD';
+						// check if user exists in the database
+						const checkIfUserExists = await doQuery(`SELECT * FROM user_list WHERE username="${msg[0]}"`);
+						if (checkIfUserExists.length === 0) {
+							return `${user['username']}, this user does not exist in my user list logs.`;
 						}
-						const timeDifference = (Math.abs(serverDate - (new Date(randomLine[0].date).getTime())))/1000/3600;
-						const timeDifferenceRaw = (Math.abs(serverDate - (new Date(randomLine[0].date).getTime())));
+
+						const getLines = await doQuery(`SELECT username, message, date FROM logs_${channel.replace('#', '')} WHERE username="${msg[0]}"`);
+						const randomLine = getLines[Math.floor(Math.random() * getLines.length)]
+
+						if (!randomLine) {
+							return user['username'] + ', there are no logs in my database related to that user.';
+						}
+						const timeDifference = (Math.abs(serverDate - (new Date(randomLine.date).getTime())))/1000/3600;
+						const timeDifferenceRaw = (Math.abs(serverDate - (new Date(randomLine.date).getTime())));
 
 						function modifyOutput(modify) {
 							if (!modify) {
-								return ' ago) ' + randomLine[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + randomLine[0].message.substr(0, 350);
+								return ' ago) ' + randomLine.username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + randomLine.message.substr(0, 350);
 							} else {
-								return ' ago) ' + randomLine[0].username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + randomLine[0].message.substr(0, modify);
+								return ' ago) ' + randomLine.username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + randomLine.message.substr(0, modify);
 							}
 						}
 						// check for banphrases...
-						if (await banphrasePass(randomLine[0].message).banned === true) {
+						if (await banphrasePass(randomLine.message).banned === true) {
 							if (channel==="#nymn") {
 								if (timeDifference>48) {
 									kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + modifyOutput());
@@ -1286,28 +1298,27 @@ kb.on('connected', (adress, port) => {
 					if (checkChannel.length === 0) {
 						return `${user['username']}, I'm not logging this channel, therefore I can't display data for this command :/`;
 					}
-					const randomLine = await doQuery(
-						'SELECT * FROM logs_' + channel.replace('#', '') + ' WHERE username="' +
-						user['username'] + '" ORDER BY RAND() LIMIT 1'
-						);
 
-					if (!randomLine[0]) {
+					const getLines = await doQuery(`SELECT username, message, date FROM logs_${channel.replace('#', '')} WHERE username="${user['username']}"`);
+					const randomLine = getLines[Math.floor(Math.random() * getLines.length)]
+
+					if (!randomLine) {
 						return user['username'] + ", I don't have any logs from this channel :z";
 					}
 
 					function modifyOutput(modify) {
 						if (!modify) {
-							return ` ago) ${randomLine[0].username}: ${randomLine[0].message.substr(0, 350)}`;
+							return ` ago) ${randomLine.username}: ${randomLine.message.substr(0, 350)}`;
 						} else {
-							return ` ago) ${randomLine[0].username}: ${randomLine[0].message.substr(0, modify)}`;
+							return ` ago) ${randomLine.username}: ${randomLine.message.substr(0, modify)}`;
 						}
 					}
 
-					const timeDifference = (Math.abs(serverDate - (new Date(randomLine[0].date).getTime())))/1000/3600;
-					const timeDifferenceRaw = (Math.abs(serverDate - (new Date(randomLine[0].date).getTime())));
+					const timeDifference = (Math.abs(serverDate - (new Date(randomLine.date).getTime())))/1000/3600;
+					const timeDifferenceRaw = (Math.abs(serverDate - (new Date(randomLine.date).getTime())));
 
 					// if the output is banphrased...
-					if (await banphrasePass(randomLine[0].message).banned === true) {
+					if (await banphrasePass(randomLine.message).banned === true) {
 						if (channel==="#nymn") {
 							if (timeDifference>48) {
 								kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + modifyOutput());
@@ -1377,12 +1388,17 @@ kb.on('connected', (adress, port) => {
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msg = message.split(" ").splice(2);
-					if (!msg.join(' ').replace(/[\u{E0000}|\u{206d}]/gu, '')) {
+					if (!msg.join(' ').replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')) {
 						return user['username'] + ", FeelsDankMan oh zoinks, you just got flippin' danked " +
 							"by yourself FeelsDankMan FeelsDankMan FeelsDankMan";
-					} else {
-						return user['username'] + ", you just danked " + msg.join(' ') + " FeelsDankMan 👍";
 					}
+
+					// check if user exists in the database
+					const checkIfUserExists = await doQuery(`SELECT * FROM user_list WHERE username="${msg[0]}"`);
+					if (checkIfUserExists.length === 0) {
+						return `${user['username']}, this user does not exist in my user list logs.`;
+					}
+					return user['username'] + ", you just danked " + msg.join(' ') + " FeelsDankMan 👍";
 				} catch (err) {
 					errorLog(err)
 					return user['username'] + err + ' FeelsDankMan !!!';
@@ -1496,7 +1512,7 @@ kb.on('connected', (adress, port) => {
 					const perms = allowEval.filter(
 						i => i.ID === user['user-id']
 					);
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
+					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
 
 					if (!perms[0]) {
 						return "";
@@ -1609,7 +1625,7 @@ kb.on('connected', (adress, port) => {
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2)
+					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2)
 					if (!msg[0]) {
 						return user['username'] + ', no message provided FeelsDankMan';
 					} else {
@@ -1727,7 +1743,7 @@ kb.on('connected', (adress, port) => {
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
+					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
 					const perms = allowModule.filter(
 						i => i.ID === user['user-id']
 					);
@@ -1885,7 +1901,7 @@ kb.on('connected', (adress, port) => {
 			cooldown: 10000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2);
+					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
 					const perms = allowModule.filter(
 						i => i.ID === user['user-id']
 					);
@@ -1949,18 +1965,28 @@ kb.on('connected', (adress, port) => {
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msgRaw = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
+					const msg = msgRaw.filter(Boolean);
+
 					const channelParsed = channel.replace('#', '')
 					const fetch = require('node-fetch');
-					const msg = msgRaw.filter(Boolean);
 					commandsExecuted.push('1');
 					const checkChannel = await doQuery(`SHOW TABLES LIKE "logs_${channel.replace('#', '')}"`)
+
 					if (checkChannel.length === 0) {
 						return `${user['username']}, I'm not logging this channel, therefore I can't display stats for it :/`;
 					}
 
 					// if no parameters provided...
-					if (((msg[0] != "-channel" && msg[0] != "-bruh") && msg.length != 0)) {				
+					if (((msg[0] != "-channel" && msg[0] != "-bruh") && msg.length != 0)) {	
+
+						// kb stats @[user] [message]			
 						if (msg.filter(i => i.startsWith('@')).toString().includes('@')) {
+
+							// check if user exists in the database
+							const checkIfUserExists = await doQuery(`SELECT * FROM user_list WHERE username="${msg.filter(i=>i.startsWith('@'))[0].replace('@', '')}"`);
+							if (checkIfUserExists.length === 0) {
+								return `${user['username']}, this user does not exist in my user list logs.`;
+							}
 							
 							// check if user provided a user in flag
 							if (msg.filter(i => i.startsWith('@'))[0].replace('@', '').length === 0) {
@@ -1978,9 +2004,10 @@ kb.on('connected', (adress, port) => {
 							}
 							
 							// check for internal banphrases
-							if ((msg.filter(i => !i.startsWith('@')).join(' ').toLowerCase().match(/hax|imgu|nig/g) && channel === "#nymn") || 
-								(msg.filter(i => i.startsWith('@'))[0].replace('@', '').match(/hax/g)) && channel === "#nymn") {
-									return `${user['username']}, I cannot search with this query, it contains an internally banned phrase or user.`;
+							const getInternalBans = await doQuery('SELECT * FROM internal_banphrases');
+							const checkIfBanned = getInternalBans.filter(i => msg.join(' ').includes(i.banphrase))
+							if (checkIfBanned.length != 0) {
+								return `${user['username']}, I cannot search with this query, it contains an internally banned phrase.`;
 							}
 							
 							// get the message
@@ -1992,9 +2019,11 @@ kb.on('connected', (adress, port) => {
 							const inserts2 = ['%'+msg.filter(i => !i.startsWith('@')).join(' ')+'%', msg.filter(i => i.startsWith('@'))[0].replace('@', '')]
 							const compile = await Promise.all([doQuery(mysql.format(sql, inserts)), doQuery(mysql.format(sql2, inserts2))])
 							
+							// check if there are any logs for specified user
 							if (compile[0].length === 0) {
 								return `${user['username']}, no message logs found for that query or related to that user.`;
 							}
+
 							function modifyOutput(modify) {
 								if (!modify) {
 									return `${user['username']}, messages similar to " ${compile[0][0].message.substr(0, 255)} " have been typed ${compile[1][0].value_occurance} times in this 
@@ -2047,8 +2076,11 @@ kb.on('connected', (adress, port) => {
 								return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
 							} 
 							return modifyOutput();
+
+						// kb stats [message]
 						} else {
 
+							// check if query has enough characters
 							if (msg.join(' ').length<3) {
 								return `${user['username']}, provided word has not enough characters to run a query.`;
 							} 
@@ -2060,6 +2092,7 @@ kb.on('connected', (adress, port) => {
 							const inserts2 = [`logs_${channelParsed}`, `'"*${msg.join(' ')}*"'`]
 							const occurence = await Promise.all([doQuery(mysql.format(sql, inserts)), doQuery(mysql.format(sql2, inserts2))])
 
+							// check if there are any message logs for given query
 							if (occurence[0].length === 0) {
 								return `${user['username']}, no message logs found for that query`;
 							}
@@ -2136,10 +2169,9 @@ kb.on('connected', (adress, port) => {
 						return `${user['username']}, this channel has ${values[0][0].value}
 							lines logged, which is ${values[1][0].size.substring(0, 4)} MB total. Logs in this channel started 
 							${(differenceToSec/86400).toFixed(0)} days ago`;
-					} 
-					else if (msg[0] === "-bruh") {
+					} else if (msg[0] === "-bruh") {
 
-						// if there is no user parameter
+						// kb stats -bruh
 						if (!msg[1]) {
 
 							// count the words in the channel
@@ -2170,38 +2202,49 @@ kb.on('connected', (adress, port) => {
 								return `${user['username']}, total of ${channelValue[0].valueCount} racists 
 									in this channel cmonBruh`;
 							}
+
+						// kb stats -bruh [user]
 						} else {
+							// check if user exists in the database
+							const checkIfUserExists = await doQuery(`SELECT * FROM user_list WHERE username="${msg[1]}"`);
+							if (checkIfUserExists.length === 0) {
+								return `${user['username']}, this user does not exist in my user list logs.`;
+							}
+
 							const channelValue = await doQuery(`SELECT COUNT(*) AS valueCount FROM logs_${channelParsed} 
 								WHERE username="${msg[1]}" AND (message LIKE "%nigg%")`);
 							const userValue = await doQuery(`SELECT COUNT(*) AS value FROM logs_${channelParsed} 
 								WHERE (message LIKE "%nigg%") AND username="${msg[1]}"`);
 
-							if (msg[1].toLowerCase() != 'teodorv') {
-								// replace second character in user's name with an invisible character to prevent the ping
-								const userNoPing = msg[1].replace(/^(.{2})/, "$1\u{E0000}");
-								if (channel === '#haxk') {
-									if (userValue[0].value<2 && userValue[0].value != 1) {
-										return `${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
-											times, we coo TriHard`;
-									}  
-									if (userValue[0].value===1){
-										return` ${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
-											time WideHard`;
-									}
-									return `${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
-										times TriChomp Clap`;
-								} else {
-									if (channelValue[0].valueCount === 0) {
-										return `${user['username']} total of ${channelValue[0].valueCount} racist activities by user
-											${userNoPing} we coo TriHard Clap`;
-									}
-									return `${user['username']} total of ${channelValue[0].valueCount} racist activities by user 
-										${userNoPing} in this channel cmonBruh bruh`
-								}
-							} else {
+							if (msg[1].toLowerCase() === 'teodorv') {
 								return `${user['username']}, that user has opted out from this command.`; 
 							}
+							
+							// replace second character in user's name with an invisible character to prevent the ping
+							const userNoPing = msg[1].replace(/^(.{2})/, "$1\u{E0000}");
+
+							if (channel === '#haxk') {
+								if (userValue[0].value<2 && userValue[0].value != 1) {
+									return `${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
+										times, we coo TriHard`;
+								}  
+								if (userValue[0].value===1){
+									return` ${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
+										time WideHard`;
+								}
+								return `${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
+									times TriChomp Clap`;
+							} else {
+								if (channelValue[0].valueCount === 0) {
+									return `${user['username']} total of ${channelValue[0].valueCount} racist activities by user
+										${userNoPing} we coo TriHard Clap`;
+								}
+								return `${user['username']} total of ${channelValue[0].valueCount} racist activities by user 
+									${userNoPing} in this channel cmonBruh bruh`
+							}
 						}
+
+					// kb stats
 					} else {
 
 						// get amout lines of sender user in the current channel
@@ -2302,8 +2345,8 @@ kb.on('connected', (adress, port) => {
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(1)
-					const msgRaw = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2)
+					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(1)
+					const msgRaw = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2)
 					const msg2 = msgRaw.filter(Boolean);
 
 					if (!msg2[0]) {
@@ -2318,12 +2361,11 @@ kb.on('connected', (adress, port) => {
 							return `${user['username']} hugs ${msg2[0]} forsenHug`;
 						} 
 						return `${user['username']} hugs ${msg2[0]} 🤗 <3 ily`;
-					} else {
-						if (channel === "#nymn") {
-							return `${user['username']} kisses ${msg2[0]} PeepoHappy 💋`;
-						}
-						return `${user['username']} kisses ${msg2[0]} 😗 💋 `;
 					}
+					if (channel === "#nymn") {
+						return `${user['username']} kisses ${msg2[0]} PeepoHappy 💋`;
+					}
+					return `${user['username']} kisses ${msg2[0]} 😗 💋 `;
 				} catch (err) {
 					errorLog(err)
 					return user['username'] + ' ' + err + ' FeelsDankMan !!!';
@@ -2364,8 +2406,8 @@ kb.on('connected', (adress, port) => {
 					if (!perms[0]) {
 						return '';
 					}
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2).filter(Boolean);
-					const comment = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(3).filter(Boolean);
+					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2).filter(Boolean);
+					const comment = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(3).filter(Boolean);
 					const userid = await fetch('https://api.ivr.fi/twitch/resolve/' + msg[0]).then(response => response.json());
 					const checkRepeatedInsert = await doQuery(`SELECT * FROM ban_list WHERE user_id="${userid.id}"`);
 					if (checkRepeatedInsert.length != 0) {
@@ -2410,8 +2452,8 @@ kb.on('connected', (adress, port) => {
 					if (!perms[0]) {
 						return '';
 					}
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2).filter(Boolean);
-					const comment = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(3).filter(Boolean);
+					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2).filter(Boolean);
+					const comment = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(3).filter(Boolean);
 					const userid = await fetch('https://api.ivr.fi/twitch/resolve/' + msg[0]).then(response => response.json());
 					const checkRepeatedInsert = await doQuery(`SELECT * FROM ban_list WHERE user_id="${userid.id}"`);
 					if (checkRepeatedInsert.length === 0) {
@@ -2450,7 +2492,7 @@ kb.on('connected', (adress, port) => {
 					}
 
 					// syntax check
-					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, '').split(' ').splice(2).filter(Boolean);
+					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2).filter(Boolean);
 					if (!msg[0]) {
 						return `${user['username']}, no parameter provided`;
 					}
@@ -2629,7 +2671,7 @@ kb.on('connected', (adress, port) => {
 								kb.say(channel, "");
 								return;
 							}
-							if (result.replace(/[\u{E0000}|\u{206d}]/gu, '') === "undefined") {
+							if (result.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '') === "undefined") {
 								kb.say(channel, 'Internal error monkaS')
 								return;
 							}
@@ -2654,7 +2696,7 @@ kb.on('connected', (adress, port) => {
 								kb.say(channel, "");
 								return;
 							}
-							if (result.replace(/[\u{E0000}|\u{206d}]/gu, '') === "undefined") {
+							if (result.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '') === "undefined") {
 								kb.say(channel, 'Internal error monkaS')
 								return;
 							} 
@@ -2700,7 +2742,7 @@ kb.on('connected', (adress, port) => {
 								kb.say(channel, "");
 								return;
 							}
-							if (result.replace(/[\u{E0000}|\u{206d}]/gu, '') === "undefined") {
+							if (result.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '') === "undefined") {
 								kb.say(channel, 'Internal error monkaS')
 								return;
 							}
@@ -2725,7 +2767,7 @@ kb.on('connected', (adress, port) => {
 								kb.say(channel, "");
 								return;
 							}
-							if (result.replace(/[\u{E0000}|\u{206d}]/gu, '') === "undefined") {
+							if (result.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '') === "undefined") {
 								kb.say(channel, 'Internal error monkaS')
 								return;
 							} 
@@ -3027,7 +3069,7 @@ kb.on('connected', (adress, port) => {
 			invocation: async (channel, user, message, args) => {
 				try {
 					if (user['user-id'] != "178087241") {
-						return ''.replace(/[\u{E0000}|\u{206d}]/gu, '');
+						return ''.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '');
 					} else {
 						function reverse(s) {
 							return s.split('').reverse().join('');
