@@ -2521,6 +2521,9 @@ kb.on('connected', (adress, port) => {
 					
 					if (!msg[0]) {
 						const getSenderData = await doQuery(`SELECT * FROM user_list WHERE userId="${user['user-id']}"`);
+						if (getSenderData.length === 0) {
+							return `${user['username']}, you are not being logged in my database.`;
+						}
 						const dateDiff = Math.abs((new Date()) - (new Date(getSenderData[0].added))) 
 						const dateToSec = (dateDiff/1000).toFixed(0)
 
