@@ -2491,6 +2491,71 @@ kb.on('connected', (adress, port) => {
 		},
 
 		{
+			name: prefix + "id",
+			aliases: prefix + "ID",
+			cooldown: 5000,
+			description: `usage: kb id [user] | user - provide a user to see his ID and first seen timestamp | 
+			no parameter - shows your ID and first seen timestamp -- cooldown 5s`,
+			invocation: async (channel, user, message, args) => {	
+				try {
+					function format(seconds) {
+						function pad(s) {
+							return (s < 10 ? '0' : '') + s;
+						}
+						var hours = Math.floor(seconds / (60 * 60));
+						var minutes = Math.floor(seconds % (60 * 60) / 60);
+						var seconds = Math.floor(seconds % 60);
+						if (hours === 0 && minutes != 0) {
+							return minutes + 'm ' + seconds + "s";
+						} else {
+							if (minutes === 0 && hours === 0) {
+								return seconds + "s"
+							} else if (seconds === 0 || hours === 0 && minutes === 0) {
+								return 'few seconds'
+							} else {
+								return hours + 'h ' + minutes + 'm ' + seconds + "s";
+							}
+						}
+					}
+					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2).filter(Boolean);
+					
+					if (!msg[0]) {
+						const getSenderData = await doQuery(`SELECT * FROM user_list WHERE userId="${user['user-id']}"`);
+						const dateDiff = Math.abs((new Date()) - (new Date(getSenderData[0].added))) 
+						const dateToSec = (dateDiff/1000).toFixed(0)
+
+						// if user was seen more than 4 days ago
+						if (dateToSec>259200) {
+							return `${user['username']}, Your internal user ID is ${getSenderData[0].ID}, you were first seen by the bot ${((dateToSec/3600).toFixed(0)/24).toFixed(0)} ago.`;
+						}
+
+						// if user was seen less than 4 days ago
+						return `${user['username']}, Your internal user ID is ${getSenderData[0].ID}, you were first seen by the bot ${format(dateToSec)} ago.`;
+					}
+
+					const getUserData = await doQuery(`SELECT * FROM user_list WHERE username="${msg[0]}"`);
+					if (getUserData.length === 0) {
+						return `${user['username']}, that user does not exist in my database.`;
+					}
+
+					const dateDiff2 = Math.abs((new Date()) - (new Date(getUserData[0].added)))
+					const dateToSec2 = (dateDiff2/1000).toFixed(0)
+
+					// if user was seen more than 4 days ago
+					if (dateToSec2>259200) {
+						return `${user['username']}, user ${getUserData[0].username.replace(/^(.{2})/, "$1\u{E0000}")} has internal ID ${getUserData[0].ID} and was first seen by the bot ${((dateToSec2/3600).toFixed(0)/24).toFixed(0)} days ago.`;
+					}
+
+					// if user was seen less than 4 days ago
+					return `${user['username']}, user ${getUserData[0].username.replace(/^(.{2})/, "$1\u{E0000}")} has internal ID ${getUserData[0].ID} and was first seen by the bot ${format(dateToSec2)} ago.`;
+				} catch (err) {
+					errorLog(err)
+					return `${user['username']}, ${err} FeelsDankMan !!!`
+				}
+			}
+		},
+
+		{
 			name: prefix + "commands",
 			aliases: null,
 			cooldown: 10000,
