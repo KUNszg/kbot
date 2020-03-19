@@ -1767,6 +1767,10 @@ kb.on('connected', (adress, port) => {
 								return `${user['username']}, you are not registered in the database, use "kb cookie register" to do so.`;
 							}
 
+							if (cookieApi.seconds_left === 0) {
+								return `${user['username']}, you can eat your cookie right now!`;
+							}
+
 							Date.prototype.addMinutes = function(minutes) {
 								const copiedDate = new Date(this.getTime());
 								return new Date(copiedDate.getTime() + minutes * 1000);
