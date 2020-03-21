@@ -2899,7 +2899,6 @@ kb.on('connected', (adress, port) => {
 		{
 			name: dankPrefix + 'cookie',
 			aliases: '!cookie',
-			permission: 'restricted',
 			invocation: async (channel, user, args) => {
 				try {
 					
@@ -3150,6 +3149,36 @@ kb.on('connected', (adress, port) => {
 	});
 	
 	{
+		kb.on('chat', function(channels, user, message) {
+			if (message.startsWith('`')) {
+				const perms = allowEval.filter(
+					i => i.ID === user['user-id']
+				);
+
+				if (!perms[0]) {
+					return;
+				}
+				
+				if (talkedRecently.has(user['user-id'])) {
+					return;
+				} else {
+					talkedRecently.add(user['user-id']);
+					setTimeout(() => {
+						talkedRecently.delete(user['user-id']);
+					}, 10);
+				}
+
+				const msgChannel = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').replace('`', '').split(' ')[0];
+				const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(1).join(' ')
+				console.log(msgChannel)
+				console.log(msg)
+				if (!msg) {
+					kb.say(channel, `${user['username']}, no message provided.`);
+				}
+				kb.say(msgChannel, msg)
+			}
+			return;
+		})
 		//active commands
 		kb.on('chat', function(channel, user, message) {
 			if (channel === '#haxk' && message === "!xd") {
