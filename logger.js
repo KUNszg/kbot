@@ -11,7 +11,7 @@ const options = {
 		username: 'kunszgbot',
 		password: api.oauth,
 	},
-	channels: ['nymn', 'haxk', 'supinic', 'pajlada', 'forsen', 'xqcow', 'kunszg', 'itsgarosath'],
+	channels: ['nymn', 'haxk', 'supinic', 'pajlada', 'forsen', 'xqcow', 'kunszg', 'itsgarosath', 'lulclip'],
 };
 
 const tmi = require('tmi.js');
