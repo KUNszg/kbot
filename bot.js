@@ -575,6 +575,7 @@ kb.on('connected', (adress, port) => {
 					const msg = message.split(" ").splice(2);
 					const ping = await kb.ping();
 					const women = {};
+					const pi = require('pi-number');
 					const rU = eval('"' + rUni({
 						min: 0,
 						max: 1114109
