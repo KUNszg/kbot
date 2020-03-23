@@ -201,24 +201,34 @@ kb.on('connected', (adress, port) => {
 						}
 					}
 					const fs = require("fs");
-					const stats = fs.statSync("./bot.js");
-					const fileSizeInBytes = stats['size'];
-					const size = fileSizeInBytes / 1000
-					const used = process.memoryUsage().heapUsed / 1024 / 1024;
+					const fileStats = Promise.all([fs.statSync("./bot.js"), fs.statSync("./reminders.js"), fs.statSync("./api.js"), fs.statSync("./logger.js")]);
+					const getSize = await new Promise((resolve, reject) => {
+						fileStats.then(function(datas)  {
+							resolve(datas)
+						})
+					})
+					
+					const fileSizeInBytes = getSize.map(i => i['size']).reduce((a, b) => a + b);
+					const size = fileSizeInBytes/1000
+					const used = process.memoryUsage().heapUsed/1024/1024;
 					const uptime = process.uptime();
 					const os = require('os');
-					const up = os.uptime() / 3600; //system uptime in hours
-					const up2 = os.uptime() / 86400; //system uptime in days
+					const up = os.uptime()/3600; //system uptime in hours
+					const up2 = os.uptime()/86400; //system uptime in days
 					const linecount = require('linecount')
-					const lines = await new Promise((resolve, reject) => { //line count	
-						linecount('./bot.js', (err, count) => {
-							if (err) {
-								reject(err);
-							} else {
-								resolve(count);
-							}
+					async function getLineCount(file) {
+						const lines = await new Promise((resolve, reject) => { 	
+							linecount(file, (err, count) => {
+								if (err) {
+									reject(err);
+								} else {
+									resolve(count);
+								}
+							});
 						});
-					});
+						return lines;
+					} 
+					const lines = await getLineCount('./bot.js') + await getLineCount('./reminders.js') + await getLineCount('./logger.js') + await getLineCount('./api.js');
 
 					if (up > 72 && uptime < 172800) {
 						return user['username'] + ", code is running for " + format(uptime) + ", has " + lines +
