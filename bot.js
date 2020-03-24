@@ -1535,7 +1535,7 @@ kb.on('connected', (adress, port) => {
 					
 					// rapid restart flag
 					if (msg[1] === '-f') {
-						kb.say(channel, 'KKona restarting with -f flag');
+						kb.say(channel, `restarting with -f flag and pulling from @master PogChamp 👉 ${await pullFromRepo}`);
 						setTimeout(() => {
 							shell.execSync(`pm2 restart ${msg[0]}`);
 						}, 1000);
