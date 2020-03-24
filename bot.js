@@ -173,11 +173,13 @@ kb.on('connected', (adress, port) => {
 	const talkedRecently = new Set();
 	const globalCooldown = new Set();
 
-	const commands = [{
+	const commands = [
+
+		{
 			name: prefix + "uptime",
 			aliases: null,
-			description: `displays informations about current runtime of the bot, lines, memory usage,
-				host uptime and commands used in the current session -- cooldown 8s`,
+			description: `displays informations about current runtime of the bot, lines, 
+			memory usage, host uptime and commands used in the current session -- cooldown 8s`,
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -200,21 +202,17 @@ kb.on('connected', (adress, port) => {
 							}
 						}
 					}
-					const fs = require("fs");
-					const fileStats = Promise.all([fs.statSync("./bot.js"), fs.statSync("./reminders.js"), fs.statSync("./api.js"), fs.statSync("./logger.js")]);
-					const getSize = await new Promise((resolve, reject) => {
-						fileStats.then(function(datas)  {
-							resolve(datas)
-						})
-					})
 					
-					const fileSizeInBytes = getSize.map(i => i['size']).reduce((a, b) => a + b);
-					const size = fileSizeInBytes/1000
 					const used = process.memoryUsage().heapUsed/1024/1024;
 					const uptime = process.uptime();
 					const os = require('os');
-					const up = os.uptime()/3600; //system uptime in hours
-					const up2 = os.uptime()/86400; //system uptime in days
+					const serverUptimeHours = os.uptime()/3600;
+					const serverUptimeDays = os.uptime()/86400;
+					const shell = require('child_process');
+					kb.say('kunszg', JSON.stringify(shell.execSync('pm2 prettylist').map(i => i.monit)))
+
+
+					// get line count of all relevant bot files 
 					const linecount = require('linecount')
 					async function getLineCount(file) {
 						const lines = await new Promise((resolve, reject) => { 	
@@ -228,29 +226,37 @@ kb.on('connected', (adress, port) => {
 						});
 						return lines;
 					} 
-					const lines = await getLineCount('./bot.js') + await getLineCount('./reminders.js') + await getLineCount('./logger.js') + await getLineCount('./api.js');
+					const lines = await getLineCount('./bot.js') + await getLineCount('./reminders.js') + 
+					await getLineCount('./logger.js') + await getLineCount('./api.js');
 
-					if (up > 72 && uptime < 172800) {
-						return user['username'] + ", code is running for " + format(uptime) + ", has " + lines +
-							" lines,  memory usage: " + used.toFixed(2) + " MB, host is up for " + up2.toFixed(2) +
-							" days, commands used in this session " + commandsExecuted.length + " FeelsDankMan";
-					} else {
-						if (uptime > 172800 && up > 72) {
-							return user['username'] + ", code is running for " + (uptime / 86400).toFixed(1) + " days, has " + lines +
-								" lines,  memory usage: " + used.toFixed(2) + " MB, host is up for " + up.toFixed(1) +
-								"h (" + up2.toFixed(2) + " days), commands used in this session " +
-								commandsExecuted.length + " FeelsDankMan";
-						} else if (uptime > 172800 && up < 72) {
-							return user['username'] + ", code is running for " + (uptime / 86400).toFixed(1) + " days, has " + lines +
-								" lines,  memory usage: " + used.toFixed(2) + " MB, host is up for " + up.toFixed(1) +
-								"h, commands used in this session " + commandsExecuted.length + " FeelsDankMan";
-						} else {
-							return user['username'] + ", code is running for " + format(uptime) + ", has " + lines +
-								" lines,  memory usage: " + (used).toFixed(2) + " MB, host is up for " + up.toFixed(1) +
-								"h (" + up2.toFixed(2) + " days), commands used in this session " +
-								commandsExecuted.length + " FeelsDankMan";
-						}
+					// if server is live for more than 72 hours and code uptime is less than 42h 
+					if (serverUptimeHours > 72 && uptime < 172800) {
+						return `${user['username']}, code is running for ${format(uptime)}, has ${lines} lines, 
+						memory usage: ${used.toFixed(2)} MB, host is up for ${serverUptimeDays.toFixed(2)} days, 
+						commands used in this session ${commandsExecuted.length} FeelsDankMan`;
 					}
+					
+					// if code uptime is more than 42h and server is live for more than 72h
+					if (uptime > 172800 && serverUptimeHours > 72) {
+						return `${user['username']}, code is running for ${(uptime/86400).toFixed(1)} days, 
+						has ${lines} lines, memory usage: ${used.toFixed(2)} MB, host is up for 
+						${serverUptimeHours.toFixed(1)}h (${serverUptimeDays.toFixed(2)} days), 
+						commands used in this session ${commandsExecuted.length} FeelsDankMan`;
+					} 
+					
+					// if code uptime is more than 42h and server is live for less than 72h
+					if (uptime > 172800 && serverUptimeHours < 72) {
+						return `${user['username']}, code is running for ${(uptime/86400).toFixed(1)} days, 
+						has ${lines} lines, memory usage: ${used.toFixed(2)} MB, host is up for 
+						${serverUptimeHours.toFixed(1)}h, commands used in this session 
+						${commandsExecuted.length} FeelsDankMan`;
+					} 
+					
+					// default response
+					return `${user['username']}, code is running for ${format(uptime)}, has ${lines} lines, 
+					memory usage: ${(used).toFixed(2)} MB, host is up for ${serverUptimeHours.toFixed(1)}h 
+					(${serverUptimeDays.toFixed(2)} days), commands used in this session 
+					${commandsExecuted.length} FeelsDankMan`;
 				} catch (err) {
 					errorLog(err)
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
