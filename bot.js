@@ -52,8 +52,7 @@ function sleepGlob(milliseconds) {
 	}
 }
 sleepGlob(1500)
-// parse the channel list 
-// check for empty items in an array
+
 const options = {
 	options: {
 		debug: false,
@@ -1527,62 +1526,109 @@ kb.on('connected', (adress, port) => {
 						i => i.ID === user['user-id']
 					);
 					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
+					const shell = require('child_process');
+					const pullFromRepo = shell.execSync('sudo git pull').toString().replace(/-{2,}/g, "").replace(/\+{2,}/g, "");
 
 					if (!perms[0]) {
 						return "";
 					}
-					if (!msg[0]) {
-						const shell = require('child_process');
-						//pull from github
-						kb.say(channel, 'pulling from @master PogChamp 👉 ' +
-							await shell.execSync('sudo git pull').toString().replace(/-{2,}/g, "").replace(/\+{2,}/g, ""))
-
+					
+					// rapid restart flag
+					if (msg[1] === '-f') {
+						kb.say(channel, 'KKona restarting with -f flag');
 						setTimeout(() => {
-							if (channel === '#nymn') {
-								kb.say('nymn', 'restarting LUL 👉  🚪')
-							} else {
-								kb.say(channel, 'restarting KKona ')
-							}
-						}, 4000);
-						setTimeout(() => {
-							process.kill(process.pid)
-						}, 6000);
+							shell.execSync(`pm2 restart ${msg[0]}`);
+						}, 1000);
 						return '';
-					} else if (msg[0] === 'logger') {
-						const shell = require('child_process');
-						kb.say(channel, 'pulling from @master PogChamp 👉 ' +
-							await shell.execSync('sudo git pull').toString().replace(/-{2,}/g, "").replace(/\+{2,}/g, ""))
-
-						setTimeout(() => {
-							if (channel === '#nymn') {
-								kb.say('nymn', 'restarting logger LUL 👉 🚪')
-							} else {
-								kb.say(channel, 'restarting logger KKona ')
-							}
-						}, 4000);
-						setTimeout(() => {
-							shell.execSync('pm2 restart logger')
-						}, 4000);
-						return '';
-					} else if (msg[0] === 'all') {
-						const shell = require('child_process');
-						kb.say(channel, 'pulling from @master PogChamp 👉 ' +
-							await shell.execSync('sudo git pull').toString().replace(/-{2,}/g, "").replace(/\+{2,}/g, ""))
-
-						setTimeout(() => {
-							if (channel === '#nymn') {
-								kb.say('nymn', 'restarting all processes KKona 7')
-							} else {
-								kb.say(channel, 'restarting all processes KKona 7')
-							}
-						}, 4000);
-						setTimeout(() => {
-							shell.execSync('pm2 restart all')
-						}, 4000);
-						return '';
-					} else {
-						return 'imagine forgetting your own syntax OMEGALUL'
 					}
+
+					// restart bot.js
+					if (!msg[0]) {
+
+						// pull from repo
+						kb.say(channel, `pulling from @master PogChamp 👉 ${await pullFromRepo}`);
+
+						// send a message that bot is restarting
+						setTimeout(() => {
+							if (channel === '#nymn') {
+								return 'restarting LUL 👉 🚪';
+							} 
+							return 'restarting KKona 👉 🚪';	
+						}, 4000);
+
+						// restart via pm2
+						setTimeout(() => {
+							shell.execSync('pm2 restart bot');
+						}, 4200);
+						return '';
+					}
+					
+					// restart logger.js
+					if (msg[0] === 'logger') {
+
+						// pull from repo
+						kb.say(channel, `pulling from @master PogChamp 👉 ${await pullFromRepo}`);
+
+						// send a message that logger is restarting
+						setTimeout(() => {
+							if (channel === '#nymn') {
+								return 'restarting LUL 👉 🚪';
+							} 
+							return 'restarting KKona 👉 🚪';	
+						}, 4000);
+
+						// restart via pm2
+						setTimeout(() => {
+							shell.execSync('pm2 restart logger');
+						}, 4200);
+						return '';
+					} 
+					
+					// restart api.js
+					if (msg[0] === 'api') {
+
+						// pull from repo
+						kb.say(channel, `pulling from @master PogChamp 👉 ${await pullFromRepo}`);
+
+						// send a message that api is restarting
+						setTimeout(() => {
+							if (channel === '#nymn') {
+								kb.say('nymn', 'restarting api KKona 👉 🚪');
+							} else {
+								kb.say(channel, 'restarting api 👉 🚪');
+							}
+						}, 4000);
+
+						// restart via pm2
+						setTimeout(() => {
+							shell.execSync('pm2 restart api');
+						}, 4500);
+						return '';
+					}
+
+					// restart all processes
+					if (msg[0] === 'all') {
+
+						// pull from repo
+						kb.say(channel, `pulling from @master PogChamp 👉 ${await pullFromRepo}`);
+
+						// send a message that api is restarting
+						setTimeout(() => {
+							if (channel === '#nymn') {
+								kb.say('nymn', 'restarting all processes KKona 7');
+							} else {
+								kb.say(channel, 'restarting all processes KKona 7');
+							}
+						}, 4000);
+
+						// restart all processes via pm2
+						setTimeout(() => {
+							shell.execSync('pm2 restart all');
+						}, 4200);
+						return '';
+					} 
+
+					return 'imagine forgetting your own syntax OMEGALUL';
 				} catch (err) {
 					errorLog(err)
 					return user['username'] + ' ' + err + ' FeelsDankMan !!!';
