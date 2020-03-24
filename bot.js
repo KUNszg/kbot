@@ -208,9 +208,6 @@ kb.on('connected', (adress, port) => {
 					const os = require('os');
 					const serverUptimeHours = os.uptime()/3600;
 					const serverUptimeDays = os.uptime()/86400;
-					const shell = require('child_process');
-					kb.say('kunszg', shell.execSync('pm2 prettylist')[0].monit.memory)
-
 
 					// get line count of all relevant bot files 
 					const linecount = require('linecount')
