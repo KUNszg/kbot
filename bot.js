@@ -182,6 +182,7 @@ kb.on('connected', (adress, port) => {
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
+
 					function format(seconds) {
 						function pad(s) {
 							return (s < 10 ? '0' : '') + s;
@@ -253,6 +254,7 @@ kb.on('connected', (adress, port) => {
 					memory usage: ${(used).toFixed(2)} MB, host is up for ${serverUptimeHours.toFixed(1)}h 
 					(${serverUptimeDays.toFixed(2)} days), commands used in this session 
 					${commandsExecuted.length} FeelsDankMan`;
+
 				} catch (err) {
 					errorLog(err)
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
@@ -264,11 +266,15 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "ping",
 			aliases: null,
 			description: `syntax: kb ping [service] | no parameter - data about latest github activity |
-				service - checks if server/domain is alive -- cooldown 5s`,
+			service - checks if server/domain is alive -- cooldown 5s`,
 			cooldown: 5000,
 			invocation: async (channel, user, message, args, err) => {
 				try {
-					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
+
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(2);
 
 					function format(seconds) {
 						function pad(s) {
@@ -289,9 +295,18 @@ kb.on('connected', (adress, port) => {
 							}
 						}
 					}
+
 					if (!msg[0]) {	
 						const apiCommits = "https://api.github.com/repos/KUNszg/kbot/commits?per_page=100";
-						const urls = [apiCommits, apiCommits + '&page=2', apiCommits + '&page=3', apiCommits + '&page=4', apiCommits + '&page=5', apiCommits + '&page=6']
+						const urls = [
+							apiCommits, 
+							apiCommits + '&page=2', 
+							apiCommits + '&page=3', 
+							apiCommits + '&page=4', 
+							apiCommits + '&page=5', 
+							apiCommits + '&page=6'
+							];
+
 						async function getAllUrls(urls) {
 						    try {
 						        var data = await Promise.all(
@@ -306,40 +321,42 @@ kb.on('connected', (adress, port) => {
 						}
 
 						const commitsCount = await getAllUrls(urls);
-						const countCommits = ((commitsCount.length * 100) - (100 - commitsCount[commitsCount.length-1].length));
+						const countCommits = (
+							(commitsCount.length * 100) - (100 - commitsCount[commitsCount.length-1].length)
+							);
 						const commitDate = new Date(commitsCount[0][0].commit.committer.date);
 						const serverDate = new Date();
 						const diff = Math.abs(commitDate - serverDate)
 						const latestCommit = (diff / 1000).toFixed(2);
 						const ping = await kb.ping();
+
 						if (latestCommit > 259200) {
-							return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 check out my website (under development) https://kunszg.xyz/ latest commit: " +
-								(latestCommit / 86400).toFixed(0) + " ago (master, " + commitsCount[0][0].sha.slice(0, 7) +
-								", commit " + countCommits + ")";
-						} else {
-							return user['username'] + ", pong FeelsDankMan 🏓 ppHop 🏓💻 check out my website (under development) https://kunszg.xyz/ latest commit: " +
-								format(latestCommit) + " ago (master, " + commitsCount[0][0].sha.slice(0, 7) + ", commit " +
-								countCommits + ")";
-						}
-					} else {
-						const ping = require('ping');
-						const hosts = [msg[0]];
-						hosts.forEach(function(host) {
-							ping.sys.probe(host, function(isAlive) {
-								const mesg = isAlive ? 'host ' + host + ' is alive FeelsGoodMan' : 'host ' + host +
-									' is dead FeelsBadMan';
-								kb.say(channel, user['username'] + ', ' + mesg)
-							});
-						});
+							return `${user['username']}, pong FeelsDankMan 🏓 ppHop 🏓💻 my website 
+							(under development) https://kunszg.xyz/ latest commit: ${(latestCommit / 86400).toFixed(0)} 
+							ago (master, ${commitsCount[0][0].sha.slice(0, 7)}, commit ${countCommits})`;
+						} 
+						return `${user['username']}, pong FeelsDankMan 🏓 ppHop 🏓💻 check out my website 
+						(under development) https://kunszg.xyz/ latest commit: ${format(latestCommit)} ago 
+						(master, ${commitsCount[0][0].sha.slice(0, 7)}, commit ${countCommits})`;	
 					}
+					
+					const ping = require('ping');
+					const hosts = [msg[0]];
+					hosts.forEach(function(host) {
+						ping.sys.probe(host, function(isAlive) {
+							const mesg = isAlive ? 'host ' + host + ' is alive FeelsGoodMan' : 'host ' + host +
+								' is dead FeelsBadMan';
+							kb.say(channel, `${user['username']}, ${mesg}`);
+						});
+					});			
 					return '';
+		
 				} catch (err) {
 					errorLog(err)
 					if (err.message.includes("undefined")) {
-						return user['username'] + ", N OMEGALUL"
-					} else {
-						return user['username'] + ", " + err + " FeelsDankMan !!!";
+						return `${user['username']}, N OMEGALUL`;
 					}
+					return 	`${user['username']}, ${err} FeelsDankMan !!!`;
 				}
 			}
 		},
@@ -348,10 +365,11 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "spacex",
 			aliases: null,
 			description: `data from SpaceX about next launch rocket launch date, 
-				mission and launch site -- cooldown 15s`,
+			mission and launch site -- cooldown 15s`,
 			cooldown: 15000,
 			invocation: async (channel, user, message, args) => {
 				try {
+
 					const space = await SpacexApiWrapper.getNextLaunch();
 					const date = await space.launch_date_utc;
 					const apiDate = new Date(date);
@@ -379,18 +397,19 @@ kb.on('connected', (adress, port) => {
 							}
 						}
 					}
+
 					if (toHours > 72) {
-						return "Next rocket launch by SpaceX in " + (toHours / 24).toFixed(0) + " days, rocket " +
-							space.rocket.rocket_name + ", mission " + space.mission_name + ", " +
-							space.launch_site.site_name_long + ', reddit campaign: ' + space.links.reddit_campaign;
-					} else {
-						return "Next rocket launch by SpaceX in " + format(DifftoSeconds) + ", rocket " +
-							space.rocket.rocket_name + ", mission " + space.mission_name + ", " +
-							space.launch_site.site_name_long + ', reddit campaign: ' + space.links.reddit_campaign;
+						return `Next rocket launch by SpaceX in ${(toHours / 24).toFixed(0)} days, 
+						rocket ${space.rocket.rocket_name}, mission ${space.mission_name}, 
+						${space.launch_site.site_name_long}, reddit campaign: ${space.links.reddit_campaign}`;
 					}
+					return `Next rocket launch by SpaceX in ${format(DifftoSeconds)}, rocket 
+					${space.rocket.rocket_name}, mission ${space.mission_name}, 
+					${space.launch_site.site_name_long}, reddit campaign: ${space.links.reddit_campaign}`;
+					
 				} catch (err) {
 					errorLog(err)
-					return user['username'] + ", " + err + " FeelsDankMan !!!";
+					return `${user['username']}, ${err} FeelsDankMan !!!`;
 				}
 			}
 		},
@@ -399,17 +418,23 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "rt",
 			aliases: null,
 			description: `syntax: kb rt [ID] | no parameter - returns a link to the list of genres |
-				ID - search for the song in the specified genre (numeric ID) -- cooldown 5s`,
+			ID - search for the song in the specified genre (numeric ID) -- cooldown 5s`,
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(" ").splice(2);
+
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(" ")
+						.splice(2);
+
 					const options = {
 						api_key: api.randomTrack,
 						genre: msg[0], //21, 1134, 1147
 						snippet: false,
 						language: 'en'
 					};
+
 					const songData = await new Promise((resolve, reject) => {
 						rndSong(options, (err, res) => {
 							if (err) {
@@ -419,22 +444,26 @@ kb.on('connected', (adress, port) => {
 							}
 						});
 					});
+
 					const random = await search(songData.track.track_name + " by " + songData.track.artist_name, {
 						maxResults: 1,
 						key: api.youtube
 					});
 
 					if (msg.join(" ") === "") {
-						return user['username'] + ", list of genres " +
-							"(type in the genre identifier like eg.: kbot rt 15) https://pastebin.com/p5XvHkzn";
+						return `${user['username']}, list of genres (type in the genre identifier like eg.: 
+						kbot rt 15) https://pastebin.com/p5XvHkzn`;
 					}
+
 					if (channel != '#supinic') {
-						return user['username'] + ', ' + songData.track.track_name + " by " +
-							songData.track.artist_name + ', ' + random.results[0].link;
+						return `${user['username']}, ${songData.track.track_name} by ${songData.track.artist_name}, 
+						${random.results[0].link}`;
 					} 
+
 					if (channel === '#supinic') {
-						return '$sr ' + random.results[0].link;
+						return `$sr ${random.results[0].link}`;
 					}
+
 				} catch (err) {
 					errorLog(err)
 					return user['username'] + ", " + err + " FeelsDankMan ❗";
@@ -449,12 +478,15 @@ kb.on('connected', (adress, port) => {
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
+
 					const json = await fetch(api.randomFact)
 						.then(response => response.json());
-					return user['username'] + ", " + json.text.toLowerCase() + " 🤔";
+
+					return `${user['username']}, ${json.text.toLowerCase()} 🤔`;
+
 				} catch (err) {
 					errorLog(err)
-					return user['username'] + ", " + err + " FeelsDankMan !!!";
+					return `${user['username']}, ${err} FeelsDankMan !!!`;
 				}
 			}
 		},
@@ -467,8 +499,14 @@ kb.on('connected', (adress, port) => {
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
+
 					const length = kb.getChannels().length;
-					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(" ").splice(2).filter(Boolean);
+
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(" ")
+						.splice(2)
+						.filter(Boolean);
 
 					// response for non-admin users
 					if (user['user-id'] != "178087241") {
@@ -484,20 +522,30 @@ kb.on('connected', (adress, port) => {
 					// join the channel only for current session, channel will be dismissed after process restarts
 					if (msg[0] === "join-session") {
 						kb.join(msg[1]);
-						return `successfully joined channel ${msg[1].toLowerCase().replace(/^(.{2})/, "$1\u{E0000}")} :) 👍`;
+						return `successfully joined channel 
+						${msg[1].toLowerCase().replace(/^(.{2})/, "$1\u{E0000}")} :) 👍`;
 					} 
 
 					// join the channel "permanently" by appending it to a file which is being imported after process restarts
 					if (msg[0] === "join-save") {
 						
 						// check if bot is already joined in a channel 
-						const checkRepeatedInsert = await doQuery(`SELECT * FROM channels WHERE channel="${msg[1]}"`)
+						const checkRepeatedInsert = await doQuery(`
+							SELECT * 
+							FROM channels 
+							WHERE channel="${msg[1]}"
+							`)
+
 						if (checkRepeatedInsert.length != 0) {
 							return `${user['username']}, I'm already in this channel.`
 						}
 
 						// add the channel to the table
-						await doQuery(`INSERT INTO channels (channel, added) VALUES ("${msg[1].toLowerCase()}", CURRENT_TIMESTAMP)`);
+						await doQuery(`
+							INSERT INTO channels (channel, added) 
+							VALUES ("${msg[1].toLowerCase()}", CURRENT_TIMESTAMP)
+							`);
+
 						kb.join(msg[1].toLowerCase());
 						return `successfully joined #${msg[1].toLowerCase().replace(/^(.{2})/, "$1\u{E0000}")} :) 👍`;
 					} 
@@ -511,21 +559,33 @@ kb.on('connected', (adress, port) => {
 					if (msg[0] === "part-save") {
 
 						// check if bot is already joined in a channel 
-						const checkRepeatedInsert = await doQuery(`SELECT * FROM channels WHERE channel="${msg[1]}"`)
+						const checkRepeatedInsert = await doQuery(`
+							SELECT * 
+							FROM channels 
+							WHERE channel="${msg[1]}"
+							`)
+
 						if (checkRepeatedInsert.length === 0) {
 							return `${user['username']}, I'm not joined in that channel.`
 						}
 
 						// delete the row with provided channel
-						await doQuery(`DELETE FROM channels WHERE channel="${msg[1]}"`)
+						await doQuery(`
+							DELETE FROM channels 
+							WHERE channel="${msg[1]}"
+							`)
+
 						kb.part(msg[1]);
 						return `parted the channel ${msg[1].replace(/^(.{2})/, "$1\u{E0000}")} via database.`;
 					}
+
 					// if nothing was provided by an admin, display a default message
 					if (!msg[0] && !msg[1]) {
 						return `I'm active in ${length} channels, list of channels: https://kunszg.xyz/ 4Head`;
 					}
+
 					return `I'm active in ${length} channels, list of channels: https://kunszg.xyz/ 4Head`;
+
 				} catch (err) {
 					errorLog(err)
 					return `${user['username']}, ${err} FeelsDankMan !!!`;
@@ -541,9 +601,14 @@ kb.on('connected', (adress, port) => {
 			cooldown: 4000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(" ").splice(2);
-					const json = await fetch("https://some-random-api.ml/chatbot?message=" +
-						msg.join("+").normalize("NFD").replace(/[\u0300-\u036f]/g, ""))
+
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(" ")
+						.splice(2);
+
+					const json = await fetch(`https://some-random-api.ml/chatbot?message=
+						${msg.join("+").normalize("NFD").replace(/[\u0300-\u036f]/g, "")}`)
 							.then(response => response.json());
 
 					function capitalizeFirstLetter(string) {
@@ -551,27 +616,39 @@ kb.on('connected', (adress, port) => {
 					}
 
 					if (!msg.join(" ")) {
-						return user['username'] + ", please provide a text for me to respond to :)"
-					} else {
-						if (msg.includes("homeless")) {
-							return user['username'] + ", just get a house 4House"
-						} else if (msg.includes("forsen")) {
-							return user['username'] + ", maldsen LULW"
-						} else if (((json.response.charAt(0).toLowerCase() + 
-							json.response.slice(1)).replace(".", " 4Head ").replace("?", "? :) ").replace("ń", "n").replace("!", "! :o ")) === '') {
-							return user['username'] + ', [err CT1] - bad response monkaS'
-						} else {
-							return user['username'] + ", " + (json.response.charAt(0).toLowerCase() +
-								json.response.slice(1)).replace(".", " 4Head ").replace("?", "? :) ").replace("ń", "n").replace("!", "! :o ");
-						}
+						return `${user['username']}, please provide a text for me to respond to :)`;
 					}
+
+					if (msg.includes("homeless")) {
+						return `${user['username']}, just get a house 4House`;
+					} 
+
+					if (msg.includes("forsen")) {
+						return `${user['username']}, maldsen LULW`;
+					} 
+
+					if (((json.response.charAt(0).toLowerCase() + json.response.slice(1))
+							.replace(".", " 4Head ")
+							.replace("?", "? :) ")
+							.replace("ń", "n")
+							.replace("!", "! :o ")) === ''
+						) {
+							return `${user['username']}, [err CT1] - bad response monkaS`
+						} 
+					
+					return `${user['username']}, ${(json.response.charAt(0).toLowerCase() + json.response.slice(1))
+						.replace(".", " 4Head ")
+						.replace("?", "? :) ")
+						.replace("ń", "n")
+						.replace("!", "! :o ")}`;
+					
 				} catch (err) {
 					errorLog(err)
 					if (err.message) {
 						console.log(err.message);
-						return user['username'] + ", an error occured while fetching data monkaS";
+						return `${user['username']}, an error occured while fetching data monkaS`;
 					}
-					return user['username'] + ", " + err.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '') + " FeelsDankMan !!!";
+					return `${user['username']}, ${err.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '')} FeelsDankMan !!!`;
 				}
 			}
 		},
@@ -648,6 +725,7 @@ kb.on('connected', (adress, port) => {
 			cooldown: 10,
 			invocation: async (channel, user, message, args) => {
 				try {
+
 					const msg = message.replace(/[\u{E0000}|\u{206d}]/gu, "").split(" ").splice(2);
 					const emote = message.replace(/[\u{E0000}|\u{206d}]/gu, "").split(" ").splice(5);
 					const msgP = message.replace(/[\u{E0000}|\u{206d}]/gu, "").split(" ").splice(4);
@@ -772,11 +850,13 @@ kb.on('connected', (adress, port) => {
 								}
 								createTriangle(msgP[0]);
 								return '';
-							} else if (patternChosen[0].pattern != 'pyramid' && patternChosen[0].pattern != 'triangle') {
-								return user['username'] + ', currently supporting only pyramid/triangle.'
-							}
+							} else if (patternChosen[0].pattern != 'pyramid' && 
+								patternChosen[0].pattern != 'triangle') {
+									return user['username'] + ', currently supporting only pyramid/triangle.'
+								}
 						}
 					}
+
 				} catch (err) {
 					errorLog(err)
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
@@ -792,25 +872,31 @@ kb.on('connected', (adress, port) => {
 			cooldown: 6000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(" ").splice(2);
+
+					const msg = message
+					.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+					.split(" ")
+					.splice(2);
 
 					function hasNumber(myString) {
 						return /\d/.test(myString);
 					}
 					const locate = await fetch("http://api.ipstack.com/" +
-							msg.join(' ').normalize("NFD").replace(/[\u0300-\u036f]/g, "") + '?access_key=' + api.locate)
+							msg.join(' ').normalize("NFD").replace(/[\u0300-\u036f]/g, "") + '?access_key='+api.locate)
 						.then(response => response.json());
 
 					if (locate.type != null && hasNumber(msg[0])) {
-						return user['username'] + ", location for " + msg + " => type: " + locate.type + ", country: " +
+						return user['username'] + ", location for " + msg + " => type: " + locate.type + ", country: "+
 							locate.country_name + ", region: " + locate.region_name + ", city: " +
 							locate.city + " monkaS";
 					} else {
 						if (!msg[0]) {
 							return user['username'] + ", please provide an IP or location to search :)";
 						} else if (!hasNumber(msg[0]) && msg[0].match(/^\w+$/)) {
-							const location = await fetch(api.geonames + msg.join(' ').normalize("NFD").replace(/[\u0300-\u036f]/g, "") +
-									'&maxRows=1&username=kunszg')
+							const location = await fetch(api.geonames + msg
+								.join(' ')
+								.normalize("NFD")
+								.replace(/[\u0300-\u036f]/g, "") + '&maxRows=1&username=kunszg')
 								.then(response => response.json());
 							return user['username'] + ', results: ' + location.totalResultsCount + " | location: " +
 								location.geonames[0].countryName.replace("ń", "n") + ", " +
@@ -846,6 +932,7 @@ kb.on('connected', (adress, port) => {
 			cooldown: 6000,
 			invocation: async (channel, user, message, args) => {
 				try {
+
 					const msg = message.split(" ").splice(2);
 					const fetchUrl = require("fetch").fetchUrl;
 					const tweet = await new Promise((resolve, reject) => {
@@ -862,6 +949,7 @@ kb.on('connected', (adress, port) => {
 					} else {
 						return user['username'] + ", " + tweet.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
 					}
+
 				} catch (err) {
 					errorLog(err)
 					return user['username'] + ", " + err.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '') +
@@ -873,33 +961,57 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "hosts",
 			aliases: null,
-			description: `kb hosts [input] - get users that are hosting a specified channel (in input), no input will return an error -- cooldown 8s`,
+			description: `kb hosts [input] - get users that are hosting a specified channel 
+			(in input), no input will return an error -- cooldown 8s`,
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
+
 					const msg = message.split(" ").splice(2);
 					const hosts = await fetch(api.hosts + msg[0])
 						.then(response => response.json());
 					const hostlist = hosts.sort().map(function(e) {
-						return e.replace(/^(.{2})/, "$1\u{E0000}").split("").reverse().join("").replace(/^(.{2})/, "$1\u{E0000}").split("").reverse().join("")
+
+						return e.replace(/^(.{2})/, "$1\u{E0000}")
+							.split("")
+							.reverse()
+							.join("")
+							.replace(/^(.{2})/, "$1\u{E0000}")
+							.split("")
+							.reverse()
+							.join("")
+
 					}); //character \u{06E4}
 					if (!msg[0]) {
 						return user['username'] + ", no channel provided.";
 					} else {
 						if (hosts.length < 25 && hosts.length != 0) {
 							return user['username'] + ", users hosting " +
-								msg[0].replace(/^(.{2})/, "$1\u{E0000}").split("").reverse().join("").replace(/^(.{2})/, "$1\u{E0000}").split("").reverse().join("") +
-								" PagChomp 👉  " + hostlist.join(", ");
+								msg[0].replace(/^(.{2})/, "$1\u{E0000}")
+								.split("")
+								.reverse()
+								.join("")
+								.replace(/^(.{2})/, "$1\u{E0000}")
+								.split("")
+								.reverse()
+								.join("") + " PagChomp 👉  " + hostlist.join(", ");
 						} else if (hosts.length > 25) {
 							return user['username'] + ", channel " +
-								msg[0].replace(/^(.{2})/, "$1\u{E0000}").split("").reverse().join("").replace(/^(.{2})/, "$1\u{E0000}").split("").reverse().join("") +
-								" is being hosted by " + hosts.length + " users";
+								msg[0].replace(/^(.{2})/, "$1\u{E0000}")
+								.split("")
+								.reverse()
+								.join("")
+								.replace(/^(.{2})/, "$1\u{E0000}")
+								.split("")
+								.reverse()
+								.join("") + " is being hosted by " + hosts.length + " users";
 						} else if (hosts.length === 0) {
 							return user['username'] + ", channel is not being hosted by any user :("
 						} else {
 							return user['username'] + ", something fucked up eShrug";
 						}
 					}
+
 				} catch (err) {
 					errorLog(err)
 					const msg = message.split(" ").splice(2);
@@ -927,6 +1039,7 @@ kb.on('connected', (adress, port) => {
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
+
 					const playsound = await fetch("https://supinic.com/api/bot/playsound/list")
 						.then(response => response.json());
 					const randomPs = playsound.data.playsounds[Math.floor(Math.random() *
@@ -935,6 +1048,7 @@ kb.on('connected', (adress, port) => {
 						return '$ps ' + randomPs.name;
 					}
 					return "";
+
 				} catch (err) {
 					errorLog(err)
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
@@ -949,6 +1063,7 @@ kb.on('connected', (adress, port) => {
 			cooldown: 4000,
 			invocation: async (channel, user, message, args) => {
 				try {
+
 					const arr = [
 						'general',
 						'general',
@@ -982,6 +1097,7 @@ kb.on('connected', (adress, port) => {
 						}, 3000);
 						return user['username'] + ', ' + lCase(jokeGeneral.setup);
 					}
+
 				} catch (err) {
 					errorLog(err)
 					return user['username'] + err + ' FeelsDankMan !!!';
@@ -997,6 +1113,7 @@ kb.on('connected', (adress, port) => {
 			cooldown: 4000,
 			invocation: async (channel, user, message, args) => {
 				try {
+
 					function format(seconds) {
 						function pad(s) {
 							return (s < 10 ? '0' : '') + s;
@@ -1017,56 +1134,73 @@ kb.on('connected', (adress, port) => {
 
 					const checkChannel = await doQuery(`SHOW TABLES LIKE "logs_${channel.replace('#', '')}"`)
 					if (checkChannel.length === 0) {
-						return `${user['username']}, I'm not logging this channel, therefore I can't display data for this command :/`;
+						return `${user['username']}, I'm not logging this channel, 
+						therefore I can't display data for this command :/`;
 					}
 
-					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(2);
+
 					if (!msg[0]) {
-						const firstline = await doQuery('SELECT * FROM logs_' + channel.replace('#', '') + ' WHERE username="' + user['username'] + '" ORDER BY DATE ASC');
+						const firstline = await doQuery('SELECT * FROM logs_' + channel.replace('#', '') +
+						' WHERE username="' + user['username'] + '" ORDER BY DATE ASC');
 						if (!firstline[0]) {
 							return user['username'] + ", I don't have any logs from that user";
 						}
 
 						function modifyOutput(modify) {
 							if (!modify) {
-								return ` ago) ${firstline[0].username.replace(/^(.{2})/, "$1\u{E0000}")}: ${firstline[0].message.substr(0, 350)}`;
+								return ` ago) ${firstline[0].username.replace(/^(.{2})/, "$1\u{E0000}")}:
+								${firstline[0].message.substr(0, 350)}`;
 							} else {
-								return ` ago) ${firstline[0].username.replace(/^(.{2})/, "$1\u{E0000}")}: ${firstline[0].message.substr(0, modify)}`;
+								return ` ago) ${firstline[0].username.replace(/^(.{2})/, "$1\u{E0000}")}: 
+								${firstline[0].message.substr(0, modify)}`;
 							}
 						}
 
 						const serverDate = new Date().getTime();
-						const timeDifference = (Math.abs(serverDate - (new Date(firstline[0].date).getTime())))/1000/3600;
+						const timeDifference = (Math.abs(serverDate - 
+							(new Date(firstline[0].date).getTime())))/1000/3600;
 						const timeDifferenceRaw = (Math.abs(serverDate - (new Date(firstline[0].date).getTime())));
 
 						if (await banphrasePass(firstline[0].message).banned === true) {
 							if (channel==="#nymn") {
 								if (timeDifference>48) {
-									kb.whisper(user['username'], ', Your first line in this channel was: (' + (timeDifference/24).toFixed(0) + 'd' + modifyOutput());
+									kb.whisper(user['username'], ', Your first line in this channel was: (' + 
+										(timeDifference/24).toFixed(0) + 'd' + modifyOutput());
 								} else {
-									kb.whisper(user['username'], ', Your first line in this channel was: (' + format(timeDifferenceRaw/1000) + modifyOutput());
+									kb.whisper(user['username'], ', Your first line in this channel was: (' +
+									 format(timeDifferenceRaw/1000) + modifyOutput());
 								}
 								return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 							}
 
 							if (timeDifference>48) {
-								return user['username'] + ', Your first line in this channel was: (' +  (timeDifference/24).toFixed(0) + 'd' + modifyOutput();
+								return user['username'] + ', Your first line in this channel was: (' +  
+								(timeDifference/24).toFixed(0) + 'd' + modifyOutput();
 							}
-							return user['username'] + ', Your first line in this channel was: (' + format(timeDifferenceRaw/1000) + modifyOutput();
+							return user['username'] + ', Your first line in this channel was: (' + 
+							format(timeDifferenceRaw/1000) + modifyOutput();
 							
 						}
 
 						if (channel === "#nymn") {
 							if (timeDifference>48) {
-								return user['username'] + ', Your first line in this channel was: (' + (timeDifference/24).toFixed(0) + 'd' + modifyOutput(130);
+								return user['username'] + ', Your first line in this channel was: (' + 
+								(timeDifference/24).toFixed(0) + 'd' + modifyOutput(130);
 							}
-							return user['username'] + ', Your first line in this channel was: (' + format(timeDifferenceRaw/1000) + modifyOutput(130);	
+							return user['username'] + ', Your first line in this channel was: (' + 
+							format(timeDifferenceRaw/1000) + modifyOutput(130);	
 						} 
 
 						if (timeDifference>48) {
-							return user['username'] + ', Your first line in this channel was: (' + (timeDifference/24).toFixed(0) + 'd' + modifyOutput();
+							return user['username'] + ', Your first line in this channel was: (' + 
+							(timeDifference/24).toFixed(0) + 'd' + modifyOutput();
 						}
-						return user['username'] + ', Your first line in this channel was: (' + format(timeDifferenceRaw/1000) + modifyOutput();
+						return user['username'] + ', Your first line in this channel was: (' + 
+						format(timeDifferenceRaw/1000) + modifyOutput();
 
 					} else {
 
@@ -1076,7 +1210,8 @@ kb.on('connected', (adress, port) => {
 							return `${user['username']}, this user does not exist in my user list logs.`;
 						}
 						
-						const sql = 'SELECT * FROM logs_' + channel.replace('#', '') + ' WHERE username=? ORDER BY DATE ASC';
+						const sql = 'SELECT * FROM logs_' + channel.replace('#', '') + 
+						' WHERE username=? ORDER BY DATE ASC';
 						const inserts = [msg[0]];
 						const firstline = await doQuery(mysql.format(sql, inserts));
 
@@ -1086,43 +1221,54 @@ kb.on('connected', (adress, port) => {
 
 						function modifyOutput(modify) {
 							if (!modify) {
-								return ` ago) ${firstline[0].username.replace(/^(.{2})/, "$1\u{E0000}")}: ${firstline[0].message.substr(0, 350)}`;
+								return ` ago) ${firstline[0].username.replace(/^(.{2})/, "$1\u{E0000}")}: 
+								${firstline[0].message.substr(0, 350)}`;
 							} else {
-								return ` ago) ${firstline[0].username.replace(/^(.{2})/, "$1\u{E0000}")}: ${firstline[0].message.substr(0, modify)}`;
+								return ` ago) ${firstline[0].username.replace(/^(.{2})/, "$1\u{E0000}")}: 
+								${firstline[0].message.substr(0, modify)}`;
 							}
 						}
 					
 						const serverDate = new Date().getTime();
-						const timeDifference = (Math.abs(serverDate - (new Date(firstline[0].date).getTime())))/1000/3600;
+						const timeDifference = (Math.abs(serverDate - 
+							(new Date(firstline[0].date).getTime())))/1000/3600;
 						const timeDifferenceRaw = (Math.abs(serverDate - (new Date(firstline[0].date).getTime())));
 					
 						if (await banphrasePass(firstline[0].message).banned === true) {
 							if (channel==="#nymn") {
 								if (timeDifference>48) {
-									kb.whisper(user['username'], ', first line of that user in this channel: (' + (timeDifference/24).toFixed(0) + 'd' + modifyOutput());
+									kb.whisper(user['username'], ', first line of that user in this channel: (' + 
+										(timeDifference/24).toFixed(0) + 'd' + modifyOutput());
 								} else {
-									kb.whisper(user['username'], ', first line of that user in this channel: (' + format(timeDifferenceRaw/1000) + modifyOutput());
+									kb.whisper(user['username'], ', first line of that user in this channel: (' + 
+										format(timeDifferenceRaw/1000) + modifyOutput());
 								}
 								return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 							}
 							
 							if (timeDifference>48) {
-								return user['username'] + ', first line of that user in this channel: (' + (timeDifference/24).toFixed(0) + 'd' + modifyOutput();
+								return user['username'] + ', first line of that user in this channel: (' + 
+								(timeDifference/24).toFixed(0) + 'd' + modifyOutput();
 							}
-							return user['username'] + ', first line of that user in this channel: (' + format(timeDifferenceRaw/1000) + modifyOutput();
+							return user['username'] + ', first line of that user in this channel: (' + 
+							format(timeDifferenceRaw/1000) + modifyOutput();
 						}
 						
 						if (channel === "#nymn") {
 							if (timeDifference>48) {
-								return user['username'] + ', first line of that user in this channel: (' + (timeDifference/24).toFixed(0) + 'd' + modifyOutput(130);				
+								return user['username'] + ', first line of that user in this channel: (' + 
+								(timeDifference/24).toFixed(0) + 'd' + modifyOutput(130);				
 							}
-							return user['username'] + ', first line of that user in this channel: (' + format(timeDifferenceRaw/1000) + modifyOutput(130);
+							return user['username'] + ', first line of that user in this channel: (' + 
+							format(timeDifferenceRaw/1000) + modifyOutput(130);
 						}
 						
 						if (timeDifference>48) {
-							return user['username'] + ', first line of that user in this channel: (' + (timeDifference/24).toFixed(0) + 'd' + modifyOutput();	
+							return user['username'] + ', first line of that user in this channel: (' + 
+							(timeDifference/24).toFixed(0) + 'd' + modifyOutput();	
 						}
-						return user['username'] + ', first line of that user in this channel: (' + format(timeDifferenceRaw/1000) + modifyOutput();	
+						return user['username'] + ', first line of that user in this channel: (' + 
+						format(timeDifferenceRaw/1000) + modifyOutput();	
 					}
 				} catch (err) {
 					errorLog(err)
@@ -1159,10 +1305,15 @@ kb.on('connected', (adress, port) => {
 
 					const checkChannel = await doQuery(`SHOW TABLES LIKE "logs_${channel.replace('#', '')}"`)
 					if (checkChannel.length === 0) {
-						return `${user['username']}, I'm not logging this channel, therefore I can't display data for this command :/`;
+						return `${user['username']}, I'm not logging this channel, 
+						therefore I can't display data for this command :/`;
 					}
 
-					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(2);
+
 					const serverDate = new Date().getTime();
 
 					if (!msg[0]) {
@@ -1172,29 +1323,35 @@ kb.on('connected', (adress, port) => {
 
 						// get random ID from the range of ID's in database
 						const randNum = Math.floor(Math.random() * (maxID[0].number - 1)) + 1;
-						const randomLine = await doQuery(`SELECT ID, username, message, date FROM logs_${channel.replace('#', '')} WHERE ID="${randNum}"`);
+						const randomLine = await doQuery(`SELECT ID, username, message, date FROM 
+							logs_${channel.replace('#', '')} WHERE ID="${randNum}"`);
 						if (!randomLine[0]) {
 							return user['username'] + ", I don't have any logs from this channel :z";
 						}
 
 						function modifyOutput(modify) {
 							if (!modify) {
-								return ` ago) ${randomLine[0].username.replace(/^(.{2})/, "$1\u{E0000}")}: ${randomLine[0].message.substr(0, 350)}`;
+								return ` ago) ${randomLine[0].username.replace(/^(.{2})/, "$1\u{E0000}")}: 
+								${randomLine[0].message.substr(0, 350)}`;
 							} else {
-								return ` ago) ${randomLine[0].username.replace(/^(.{2})/, "$1\u{E0000}")}: ${randomLine[0].message.substr(0, modify)}`;
+								return ` ago) ${randomLine[0].username.replace(/^(.{2})/, "$1\u{E0000}")}: 
+								${randomLine[0].message.substr(0, modify)}`;
 							}
 						}
 
-						const timeDifference = (Math.abs(serverDate - (new Date(randomLine[0].date).getTime())))/1000/3600;
+						const timeDifference = (Math.abs(serverDate - 
+							(new Date(randomLine[0].date).getTime())))/1000/3600;
 						const timeDifferenceRaw = (Math.abs(serverDate - (new Date(randomLine[0].date).getTime())));
 
 						// check for banphrases...
 						if (await banphrasePass(randomLine[0].message).banned === true) {
 							if (channel==="#nymn") {
 								if (timeDifference>48) {
-									kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + modifyOutput());
+									kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' +
+									 modifyOutput());
 								} else {
-									kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + modifyOutput());
+									kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + 
+										modifyOutput());
 								}
 								return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 							}
@@ -1227,29 +1384,35 @@ kb.on('connected', (adress, port) => {
 							return `${user['username']}, this user does not exist in my user list logs.`;
 						}
 
-						const getLines = await doQuery(`SELECT username, message, date FROM logs_${channel.replace('#', '')} WHERE username="${msg[0]}"`);
+						const getLines = await doQuery(`SELECT username, message, date FROM 
+							logs_${channel.replace('#', '')} WHERE username="${msg[0]}"`);
 						const randomLine = getLines[Math.floor(Math.random() * getLines.length)]
 
 						if (!randomLine) {
 							return user['username'] + ', there are no logs in my database related to that user.';
 						}
-						const timeDifference = (Math.abs(serverDate - (new Date(randomLine.date).getTime())))/1000/3600;
+						const timeDifference = (Math.abs(serverDate - 
+							(new Date(randomLine.date).getTime())))/1000/3600;
 						const timeDifferenceRaw = (Math.abs(serverDate - (new Date(randomLine.date).getTime())));
 
 						function modifyOutput(modify) {
 							if (!modify) {
-								return ' ago) ' + randomLine.username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + randomLine.message.substr(0, 350);
+								return ' ago) ' + randomLine.username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
+								randomLine.message.substr(0, 350);
 							} else {
-								return ' ago) ' + randomLine.username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + randomLine.message.substr(0, modify);
+								return ' ago) ' + randomLine.username.replace(/^(.{2})/, "$1\u{E0000}") + ': ' + 
+								randomLine.message.substr(0, modify);
 							}
 						}
 						// check for banphrases...
 						if (await banphrasePass(randomLine.message).banned === true) {
 							if (channel==="#nymn") {
 								if (timeDifference>48) {
-									kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + modifyOutput());
+									kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + 
+										modifyOutput());
 								} else {
-									kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + modifyOutput());
+									kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + 
+										modifyOutput());
 								}
 								return user['username'] + ', result is banphrased, I whispered it to you tho cmonBruh';
 							}
@@ -1309,10 +1472,12 @@ kb.on('connected', (adress, port) => {
 					}
 					const checkChannel = await doQuery(`SHOW TABLES LIKE "logs_${channel.replace('#', '')}"`)
 					if (checkChannel.length === 0) {
-						return `${user['username']}, I'm not logging this channel, therefore I can't display data for this command :/`;
+						return `${user['username']}, I'm not logging this channel, therefore I can't display 
+						data for this command :/`;
 					}
 
-					const getLines = await doQuery(`SELECT username, message, date FROM logs_${channel.replace('#', '')} WHERE username="${user['username']}"`);
+					const getLines = await doQuery(`SELECT username, message, date 
+						FROM logs_${channel.replace('#', '')} WHERE username="${user['username']}"`);
 					const randomLine = getLines[Math.floor(Math.random() * getLines.length)]
 
 					if (!randomLine) {
@@ -1334,7 +1499,8 @@ kb.on('connected', (adress, port) => {
 					if (await banphrasePass(randomLine.message).banned === true) {
 						if (channel==="#nymn") {
 							if (timeDifference>48) {
-								kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' + modifyOutput());
+								kb.whisper(user['username'], '(' + (timeDifference/24).toFixed(0) + 'd' +
+								modifyOutput());
 							} else {
 								kb.whisper(user['username'], '(' + format(timeDifferenceRaw/1000) + modifyOutput());
 							}
@@ -1369,52 +1535,40 @@ kb.on('connected', (adress, port) => {
 		},
 
 		{
-			name: prefix + 'PepeLaugh',
-			aliases: prefix + 'pepelaugh',
-			description: `information about how many NPM modules my bot has installed in node_modules directory -- cooldown 3s`,
-			cooldown: 3000,
-			invocation: async (channel, user, message, args) => {
-				try {
-					const {
-						readdirSync
-					} = require('fs')
-					const getDirectories = source =>
-						readdirSync('./node_modules', {
-							withFileTypes: true
-						})
-						.filter(dirent => dirent.isDirectory())
-						.map(dirent => dirent.name)
-					return user['username'] + ', my node_modules directory has ' +
-						getDirectories().length + ' modules PepeLaugh';
-				} catch (err) {
-					errorLog(err)
-					return user['username'] + err + ' FeelsDankMan !!!';
-				}
-			}
-		},
-
-		{
 			name: prefix + "dank",
 			aliases: null,
-			description: `kb dank [input] - dank other person (use input) or yourself (without input) FeelsDankMan -- cooldown 2s`,
+			description: `kb dank [input] - dank other person (use input) or 
+			yourself (without input) FeelsDankMan -- cooldown 2s`,
 			cooldown: 4000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.split(" ").splice(2);
-					if (!msg.join(' ').replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')) {
-						return user['username'] + ", FeelsDankMan oh zoinks, you just got flippin' danked " +
-							"by yourself FeelsDankMan FeelsDankMan FeelsDankMan";
+
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(" ")
+						.splice(2);
+
+					if (!msg.join(' ')) {
+						return `${user['username']}, FeelsDankMan oh zoinks, you just got flippin' 
+						danked by yourself FeelsDankMan FeelsDankMan FeelsDankMan`;
 					}
 
 					// check if user exists in the database
-					const checkIfUserExists = await doQuery(`SELECT * FROM user_list WHERE username="${msg[0]}"`);
+					const checkIfUserExists = await doQuery(`
+						SELECT * 
+						FROM user_list 
+						WHERE username="${msg[0]}"
+						`);
+
 					if (checkIfUserExists.length === 0) {
 						return `${user['username']}, this user does not exist in my user list logs.`;
 					}
-					return user['username'] + ", you just danked " + msg.join(' ') + " FeelsDankMan 👍";
+
+					return `${user['username']}, you just danked ${msg.join(' ')} FeelsDankMan 👍`;
+
 				} catch (err) {
 					errorLog(err)
-					return user['username'] + err + ' FeelsDankMan !!!';
+					return `${user['username']}, ${err} FeelsDankMan !!!`;
 				}
 			}
 		},
@@ -1427,36 +1581,48 @@ kb.on('connected', (adress, port) => {
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.toLowerCase().replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2).filter(Boolean);
+
+					const msg = message
+						.toLowerCase()
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(2)
+						.filter(Boolean);
 
 					// if there is no parameter given, return basic command message
 					if (!msg[0]) {
-						return user['username'] + ", kunszgbot is owned by KUNszg, sponsored by " +
-							"Sinris".replace(/^(.{2})/, "$1\u{E0000}") + ' and ' +
-							'Leppunen'.replace(/^(.{2})/, "$1\u{E0000}") + " , Node JS " + process.version +
-							", running on Ubuntu 19.10 GNU/" + process.platform + ' ' + process.arch +
-							", for commands list use 'kb commands'.";
+						return `${user['username']}, kunszgbot is owned by KUNszg, sponsored by 
+						${'Leppunen'.replace(/^(.{2})/, "$1\u{E0000}")}, Node JS ${process.version}, running on 
+						Ubuntu 19.10 GNU/${process.platform} ${process.arch}, for commands list use 'kb commands'.`;
+					} 
 
-					} else if (commands.filter(i => i.name.substring(3).toLowerCase() === msg[0])) {
+					if (commands.filter(i => i.name.substring(3).toLowerCase() === msg[0])) {
+						
 						// filter for command names matching the given parameter
 						if (commands.filter(i => i.name.substring(3).toLowerCase() === msg[0]) &&
 							commands.filter(i => i.name.substring(3).toLowerCase() === msg[0]).length != 0) {
-							// if there is a specified command and the description exists - respond
-							return user['username'] + ', ' + commands.filter((i =>
-								i.name.substring(3).toLowerCase() === msg[0])).map(i => i.description)[0];
-						} else if (commands.filter(i => i.name.substring(3).toLowerCase() === msg[0]) &&
+							
+								// if there is a specified command and the description exists - respond
+								return `${user['username']}, ${commands.filter((i => 
+									i.name.substring(3).toLowerCase() === msg[0])).map(i => i.description)[0]}`;
+							}
+
+						if (commands.filter(i => i.name.substring(3).toLowerCase() === msg[0]) &&
 							commands.filter(i => i.name.substring(3).toLowerCase() === msg[0]).length === 0) {
-							// if specified command does not exist, throw an error
-							throw 'command does not exist.';
-						} else if (!(commands.filter((i => i.name.substring(3).toLowerCase() === msg[0])).map(i =>
-								i.description))) {
-							// if specified command exists but there is no description for it, throw an error
-							throw 'description for that command does not exist.'
-						}
-					} else {
-						// if something else that is not handled happens, throw an error
-						throw 'internal error monkaS';
+								// if specified command does not exist, throw an error
+								throw 'command does not exist.';
+							}
+
+						if (!(commands.filter(
+							(i => i.name.substring(3).toLowerCase() === msg[0])).map(i => i.description))) {
+								// if specified command exists but there is no description for it, throw an error
+								throw 'description for that command does not exist.';
+							}
 					}
+				
+					// if something else that is not handled happens, throw an error
+					throw 'internal error monkaS';
+				
 				} catch (err) {
 					errorLog(err)
 					return user['username'] + ', ' + err + ' ';
@@ -1471,6 +1637,7 @@ kb.on('connected', (adress, port) => {
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
+
 					const fetchUrl = require("fetch").fetchUrl;
 					const joemama = await new Promise((resolve, reject) => {
 						fetchUrl(api.joemama, function(error, meta, body) {
@@ -1506,10 +1673,12 @@ kb.on('connected', (adress, port) => {
 					function lCase(string) {
 						return string.charAt(0).toLowerCase() + string.slice(1);
 					}
-					return user['username'] + ', ' + lCase(joemama.split('"')[3]) + emotesJoke;
+
+					return `${user['username']}, ${lCase(joemama.split('"')[3])} ${emotesJoke}`;
+
 				} catch (err) {
 					errorLog(err)
-					return user['username'] + err + ' FeelsDankMan !!!';
+					return `${user['username']}, ${err} FeelsDankMan !!!`;
 				}
 			}
 		},
@@ -1518,27 +1687,44 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "restart",
 			aliases: null,
 			permission: 'restricted',
-			description: `restart [logger] | logger - restarts the logger | no parameter - restarts the bot -- cooldown 10ms`,
+			description: `restart [logger] | logger - restarts the logger | 
+			no parameter - restarts the bot -- cooldown 10ms`,
 			cooldown: 10,
 			invocation: async (channel, user, message, args) => {
 				try {
+
 					const perms = allowEval.filter(
 						i => i.ID === user['user-id']
 					);
-					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
-					const shell = require('child_process');
-					const pullFromRepo = shell.execSync('sudo git pull').toString().replace(/-{2,}/g, "").replace(/\+{2,}/g, "");
 
+					const shell = require('child_process');
+					
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(2);
+
+					const pullFromRepo = shell
+						.execSync('sudo git pull')
+						.toString()
+						.replace(/-{2,}/g, "")
+						.replace(/\+{2,}/g, "");
+
+					// check if user has permissions to execute the command
 					if (!perms[0]) {
 						return "";
 					}
 					
 					// rapid restart flag
 					if (msg[1] === '-f') {
-						kb.say(channel, `restarting with -f flag and pulling from @master PogChamp 👉 ${await pullFromRepo}`);
+
+						kb.say(channel, `restarting with -f flag and pulling from @master 
+							PogChamp 👉 ${await pullFromRepo}`);
+
 						setTimeout(() => {
 							shell.execSync(`pm2 restart ${msg[0]}`);
 						}, 1000);
+
 						return '';
 					}
 
@@ -1629,9 +1815,10 @@ kb.on('connected', (adress, port) => {
 					} 
 
 					return 'imagine forgetting your own syntax OMEGALUL';
+
 				} catch (err) {
 					errorLog(err)
-					return user['username'] + ' ' + err + ' FeelsDankMan !!!';
+					return `${user['username']}, ${err} FeelsDankMan !!!`;
 				}
 			}
 		},
@@ -1643,8 +1830,10 @@ kb.on('connected', (adress, port) => {
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
+
 					const commits = await fetch('https://api.github.com/repos/KUNszg/kbot/commits')
 						.then(response => response.json());
+
 					const commitDate = new Date(commits[0].commit.committer.date);
 					const serverDate = new Date();
 					const diff = Math.abs(commitDate - serverDate)
@@ -1669,11 +1858,13 @@ kb.on('connected', (adress, port) => {
 							}
 						}
 					}
-					return user['username'] + ', my public repo Okayga 👉' +
-						' https://github.com/KUNszg/kbot last commit: ' + format(DifftoSeconds) + ' ago';
+
+					return `${user['username']}, my public repo Okayga 👉 https://github.com/KUNszg/kbot 
+					last commit: ${format(DifftoSeconds)} ago`;
+
 				} catch (err) {
 					errorLog(err)
-					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
+					return `${user['username']}, ${err} FeelsDankMan !!!`;
 				}
 			}
 		},
@@ -1685,112 +1876,45 @@ kb.on('connected', (adress, port) => {
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2)
+
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(2);
+
 					if (!msg[0]) {
 						return user['username'] + ', no message provided FeelsDankMan';
-					} else {
-						const checkRepeatedSql = 'SELECT message FROM suggestions WHERE message=?';							
-						const checkRepeatedInsert = [msg.join(' ')];
-						const query = await doQuery(mysql.format(checkRepeatedSql, checkRepeatedInsert));
-
-						if (!query[0]) {
-							const sql = 'INSERT INTO suggestions (username, message, created) VALUES (?, ?, CURRENT_TIMESTAMP)';
-							const insert = [user['username'], msg.join(' ')];
-							await doQuery(mysql.format(sql, insert));
-
-							const selectSql = 'SELECT ID FROM suggestions WHERE message=?';							
-							const selectInsert = [msg.join(' ')];
-							const suggestionID = await doQuery(mysql.format(selectSql, selectInsert));
-
-							return user['username'] + ', suggestion saved with ID ' + suggestionID[0].ID + ' PogChamp';
-						} else {
-							return user['username'] + ", duplicate suggestion.";
-						}
 					}
+
+					const checkRepeatedSql = 'SELECT message FROM suggestions WHERE message=?';							
+					const checkRepeatedInsert = [msg.join(' ')];
+					const query = await doQuery(mysql.format(checkRepeatedSql, checkRepeatedInsert));
+
+					if (!query[0]) {
+
+						const sql = `
+							INSERT INTO suggestions (username, message, created) 
+							VALUES (?, ?, CURRENT_TIMESTAMP)
+							`;
+
+						const insert = [user['username'], msg.join(' ')];
+						await doQuery(mysql.format(sql, insert));
+
+						const selectSql = `
+							SELECT ID 
+							FROM suggestions 
+							WHERE message=?
+							`;
+
+						const selectInsert = [msg.join(' ')];
+						const suggestionID = await doQuery(mysql.format(selectSql, selectInsert));
+
+						return `${user['username']}, suggestion saved with ID ${suggestionID[0].ID} PogChamp`;
+					}
+					return `${user['username']}, duplicate suggestion.`;
 				} catch (err) {
 					errorLog(err)
-					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
-				}
-			}
-		},
-
-		{
-			name: prefix + 'check',
-			aliases: null,
-			permission: 'restricted',
-			description: `check [id] - check for suggestion with specific ID -- cooldown 10ms`,
-			cooldown: 10,
-			invocation: async (channel, user, message, args) => {
-				try {
-					const msg = message.split(' ')[2];
-					const perms = allowEval.filter(
-						i => i.ID === user['user-id']
-					);
-					if (!perms[0]) {
-						return "";
-					}
-					const query = await new Promise((reject, resolve) => {
-						con.query('SELECT ID, message, username, status FROM suggestions WHERE ID="' + msg + '"',
-							function(error, results, fields) {
-								if (error) {
-									reject(user['username'] + ', error xD 👉 ' + error);
-								} else {
-									if (!results[0].ID) {
-										resolve(user['username'] + ', such ID does not exist FeelsDankMan');
-									} else if (results[0].ID === msg) {
-										resolve('from' + results[0].username + ': ' + results[0].message +
-											' | status: ' + results[0].status);
-									} else {
-										resolve('from ' + results[0].username + ': ' + results[0].message +
-											' | status: ' + results[0].status);
-									}
-								}
-							})
-					})
-					return query;
-				} catch (returnValue) {
-					return returnValue;
-				}
-			}
-		},
-
-		{
-			name: prefix + 'supee',
-			aliases: prefix + 'sp',
-			permission: `restricted`,
-			cooldown: 30000,
-			invocation: async (channel, user, message, args) => {
-				try {
-					if (channel != '#supinic') {
-						kb.say(channel, '');
-					} else {
-						const trichomp = new Promise((resolve, reject) => {
-							const sql = 'INSERT INTO supee_count (username, timestamp) VALUES (?, ?)';
-							const insert = [user['username'], new Date()]
-							con.query(mysql.format(sql, insert),
-								function(error, results, fields) {
-									if (error) {
-										kb.say(channel, user['username'] + 
-											", I don't have any logs from this channel :/");
-									} else {
-										resolve(results)
-									}
-								})
-						})
-						trichomp.then(function(value) {
-							con.query('SELECT COUNT(username) AS value FROM supee_count',
-								function(error, results, fields) {
-									if (error) {
-										kb.say(channel, user['username'] + ', ' + error + ' 4Head');
-									} else {
-										kb.say(channel, user['username'] + ', supi ditched us ' + results[0].value + ' times peepoSadLaptop');
-									}
-								})
-						})
-					}
-				} catch (err) {
-					errorLog(err)
-					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
+					return `${user['username']}, ${err} FeelsDankMan !!!`;
 				}
 			}
 		},
@@ -1798,33 +1922,58 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'cookie',
 			aliases: null,
-			description: `usage: kb cookie [register/unregister/status/whisper/silence] | register - register in database. | unregister - unregister from the database. | status - see your reminder status |
-				whisper - set the feedback message to appear in whispers. | silence - mute the feedback. -- cooldown 8s`,
+			description: `usage: kb cookie [register/unregister/status/whisper/silence] | register - register 
+			in database. | unregister - unregister from the database. | status - see your reminder status | 
+			whisper - set the feedback message to appear in whispers. | silence - mute the feedback. -- cooldown 8s`,
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(2);
+
 					const perms = allowModule.filter(
 						i => i.ID === user['user-id']
 					);
-					const resultsRegister = await doQuery(`SELECT * FROM cookie_reminders WHERE username="${user['username']}"`);
+
+					const resultsRegister = await doQuery(`
+						SELECT * 
+						FROM cookie_reminders 
+						WHERE username="${user['username']}"
+						`);
+
 					switch (msg[0]) {
+
 						case 'module':
 							if (!perms[0]) {
 								return '';
 							}
-							await doQuery(`UPDATE cookieModule SET reminders="${msg[1]}" WHERE type="cookie"`);
+
+							await doQuery(`
+								UPDATE cookieModule 
+								SET reminders="${msg[1]}" 
+								WHERE type="cookie"
+								`);
+
 							return `updated "cookie" module status to ${msg[1]}`;
 
 						case 'force':
 							const cookieApi = await fetch(`https://api.roaringiron.com/cooldown/${user['username']}`)
 								.then(response => response.json());
-							const regCheck = await doQuery(`SELECT * FROM cookie_reminders WHERE username="${user['username']}"`);
+
+							const regCheck = await doQuery(`
+								SELECT * 
+								FROM cookie_reminders 
+								WHERE username="${user['username']}"
+								`);
+
 							const now = new Date();
 
 							// check if user is registered
 							if (regCheck.length === 0) {
-								return `${user['username']}, you are not registered in the database, use "kb cookie register" to do so.`;
+								return `${user['username']}, you are not registered in the database, 
+								use "kb cookie register" to do so.`;
 							}
 
 							if (cookieApi.seconds_left === 0) {
@@ -1837,11 +1986,22 @@ kb.on('connected', (adress, port) => {
 							}
 
 							async function updateReminder(time) {
-								await doQuery(`UPDATE cookie_reminders SET channel="${channel.replace('#', '')}", 
-									fires="${now.addMinutes(time).toISOString().slice(0, 19).replace('T', ' ')}", status="scheduled" 
-									WHERE username="${user['username']}"`);
-								await doQuery(`UPDATE cookie_reminders SET cookie_count="${countCookie[0].cookie_count + 1}" 
-									WHERE username="${user['username']}"`)
+
+								await doQuery(`
+									UPDATE cookie_reminders 
+									SET (
+										channel="${channel.replace('#', '')}", 
+										fires="${now.addMinutes(time).toISOString().slice(0, 19).replace('T', ' ')}", 
+										status="scheduled"
+										) 
+									WHERE username="${user['username']}"
+									`);
+
+								await doQuery(`
+									UPDATE cookie_reminders 
+									SET cookie_count="${countCookie[0].cookie_count + 1}" 
+									WHERE username="${user['username']}"
+									`)
 							}
 
 							function format(seconds) {
@@ -1865,16 +2025,25 @@ kb.on('connected', (adress, port) => {
 							}
 
 							updateReminder(cookieApi.seconds_left.toFixed(0))
-							return `${user['username']}, I will remind you to eat the cookie in ${format(cookieApi.seconds_left.toFixed(0))} (forced reminder)`
+							return `${user['username']}, I will remind you to eat the cookie in 
+							${format(cookieApi.seconds_left.toFixed(0))} (forced reminder)`
 
 						case 'register':
-
 							// check if user is new and insert a new row in database
 							if (resultsRegister.length === 0) {
-								await doQuery(`INSERT INTO cookies (username, created) VALUES ("${user['username']}", CURRENT_TIMESTAMP)`);
-								await doQuery(`INSERT INTO cookie_reminders (username) VALUES ("${user['username']}")`);
-								return `${user['username']}, you have been successfully registered for a cookie reminder, 
-								see "kb help cookie" for exclusive commands PogChamp`;
+
+								await doQuery(`
+									INSERT INTO cookies (username, created) 
+									VALUES ("${user['username']}", CURRENT_TIMESTAMP)
+									`);
+
+								await doQuery(`
+									INSERT INTO cookie_reminders (username) 
+									VALUES ("${user['username']}")
+									`);
+
+								return `${user['username']}, you have been successfully registered for 
+								a cookie reminder, see "kb help cookie" for exclusive commands PogChamp`;
 							} 
 
 							// check if user is already registered
@@ -1886,74 +2055,128 @@ kb.on('connected', (adress, port) => {
 
 						case 'unregister':
 							// check if user is registered and delete rows from database
-							const resultsUnregister = await doQuery(`SELECT username FROM cookies WHERE username="${user['username']}"`);
+							const resultsUnregister = await doQuery(`
+								SELECT username 
+								FROM cookies 
+								WHERE username="${user['username']}"
+								`);
+
 							if (resultsUnregister != 0) {
-								await doQuery(`DELETE FROM cookies WHERE username="${user['username']}"`);
-								await doQuery(`DELETE FROM cookie_reminders WHERE username="${user['username']}"`);
+
+								await doQuery(`
+									DELETE FROM cookies 
+									WHERE username="${user['username']}"
+									`);
+
+								await doQuery(`
+									DELETE FROM cookie_reminders 
+									WHERE username="${user['username']}"
+									`);
+
 								return `${user['username']}, you are no longer registered for a cookie reminder.`;
 							}
 							return `${user['username']}, you are not registered for a 
-								cookie reminder, therefore you can't be unregistered FeelsDankMan`
+							cookie reminder, therefore you can't be unregistered FeelsDankMan`
 						
 						case 'whisper':
 							// check if user is registered
-							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
-								return `${user['username']}, you are not registered in my database, check out "kb help cookie" to do so.`;
- 							} 
+							if (resultsRegister.length === 0 || 
+								resultsRegister[0].username === 0) {
+									return `${user['username']}, you are not registered in my database, 
+									check out "kb help cookie" to do so.`;
+ 								} 
 
  							// when user uses command the first time (feedback in whispers)
- 							if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform === 'channel') {
- 								await doQuery(`UPDATE cookie_reminders SET initplatform="whisper" WHERE username="${user['username']}"`);
- 								return `${user['username']}, you have changed your feedback message to appear in whispers 
- 									(note that your reminders will still appear in the channel where you executed them). 
- 									Type this command again to undo it.`;
-							} 
+ 							if (resultsRegister[0].username === user['username'] && 
+ 								resultsRegister[0].initplatform === 'channel') {
+
+	 								await doQuery(`
+	 									UPDATE cookie_reminders 
+	 									SET initplatform="whisper" 
+	 									WHERE username="${user['username']}"
+	 									`);
+
+	 								return `${user['username']}, you have changed your feedback message to appear in 
+	 								whispers (note that your reminders will still appear in the channel where you 
+	 								executed them). Type this command again to undo it.`;
+								} 
 
 							// when user uses the command 2nd time (feedback as default in channel)
-							if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform === 'whisper') {
-								await doQuery(`UPDATE cookie_reminders SET initplatform="channel" WHERE username="${user['username']}"`);
- 								return `${user['username']}, you have changed your feedback message to appear in your own channel 
- 									(note that reminders are still going to fire in the channel where you executed them). 
- 									Type this command again to undo it.`;
- 							} 
+							if (resultsRegister[0].username === user['username'] && 
+								resultsRegister[0].initplatform === 'whisper') {
+
+									await doQuery(`
+										UPDATE cookie_reminders 
+										SET initplatform="channel" 
+										WHERE username="${user['username']}"
+										`);
+
+	 								return `${user['username']}, you have changed your feedback message to appear in 
+	 								your own channel (note that reminders are still going to fire in the channel where 
+	 								you executed them). Type this command again to undo it.`;
+ 								} 
 
  							// swap from silence to default feedback message
- 							if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform === "silence") {
- 								await doQuery(`UPDATE cookie_reminders SET initplatform="channel" WHERE username="${user['username']}"`);
- 								return `${user['username']}, you have changed your feedback message to appear in your own channel 
- 									(note that your reminders will still appear in the channel where you executed them). 
- 									Type this command again to set them to whispers.`;
-							}
+ 							if (resultsRegister[0].username === user['username'] && 
+ 								resultsRegister[0].initplatform === "silence") {
+
+	 								await doQuery(`
+	 									UPDATE cookie_reminders 
+	 									SET initplatform="channel" 
+	 									WHERE username="${user['username']}"
+	 									`);
+
+	 								return `${user['username']}, you have changed your feedback message to appear in 
+	 								your own channel (note that your reminders will still appear in the channel where
+ 								 	you executed them). Type this command again to set them to whispers.`;
+								}
 							return '';
 
 						case 'silence':
 							// check if user is registered
 							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
-								return `${user['username']}, you are not registered in my database, check out "kb help cookie" to do so.`;
+								return `${user['username']}, you are not registered in my database, 
+								check out "kb help cookie" to do so.`;
  							} 
 
  							// change the feedback message to silence if it's already not set
- 							if (resultsRegister[0].username === user['username'] && resultsRegister[0].initplatform != 'silence') {
- 								await doQuery(`UPDATE cookie_reminders SET initplatform="silence" WHERE username="${user['username']}"`);
- 								return `${user['username']}, you will no longer receive feedback from the cookie command.`;
- 							} 
+ 							if (resultsRegister[0].username === user['username'] && 
+ 								resultsRegister[0].initplatform != 'silence') {
+
+ 									await doQuery(`
+ 										UPDATE cookie_reminders 
+ 										SET initplatform="silence" 
+ 										WHERE username="${user['username']}"
+ 										`);
+
+ 									return `${user['username']}, you will no longer receive 
+ 									feedback from the cookie command.`;
+ 								} 
 							return `${user['username']}, you are already marked to not receive the feedback.`;
+
 						case 'status':
 							// check if user is registered
 							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
-								return `${user['username']}, you are not registered in my database, check out "kb help cookie" to do so.`;
+								return `${user['username']}, you are not registered in my database, 
+								check out "kb help cookie" to do so.`;
  							} 
- 							const getData = await doQuery(`SELECT * FROM cookie_reminders WHERE username="${user['username']}"`)
 
- 							return `${user['username']}, you have used cookie reminders ${getData[0].cookie_count} times | feedback message 
- 								is set to ${getData[0].initplatform} | your current reminder status - ${getData[0].status}`;
+ 							const getData = await doQuery(`
+ 								SELECT * FROM cookie_reminders
+ 								 WHERE username="${user['username']}"
+ 								 `)
+
+ 							return `${user['username']}, you have used cookie reminders ${getData[0].cookie_count} 
+ 							times | feedback message is set to ${getData[0].initplatform} | your current reminder 
+ 							status - ${getData[0].status}`;
+
 						default:
-							return user['username'] + ', invalid syntax. See "kb help cookie" for command help.';
+							return `${user['username']}, invalid syntax. See "kb help cookie" for command help.`;
 					}
 					return '';
 				} catch (err) {
 					errorLog(err)
-					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
+					return `${user['username']}, ${err} FeelsDankMan !!!`;
 				}
 			}
 		},
@@ -1961,59 +2184,94 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'ed',
 			aliases: null,
-			description: `after "kb ed" type register/unregister to register or unregister from the database -- cooldown 10s`,
+			description: `after "kb ed" type register/unregister to register or unregister from the database 
+			-- cooldown 10s`,
 			cooldown: 10000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(2);
+
 					const perms = allowModule.filter(
 						i => i.ID === user['user-id']
 					);
+
 					switch (msg[0]) {
+
 						case 'module':
 							if (!perms[0]) {
 								return '';
-							} else {
-								await doQuery('UPDATE cookieModule SET reminders="' + msg[1] + '" WHERE type="ed"');
-								kb.say(channel, 'updated "ed" module status to ' + msg[1])
-							}
-							break;
+							} 
+
+							await doQuery(`
+								UPDATE cookieModule 
+								SET reminders="${msg[1]}" 
+								WHERE type="ed"
+								`);
+
+							return`updated "ed" module status to ${msg[1]}`;
+
 						case 'register':
-							const resultsRegister = await doQuery('SELECT username FROM ed WHERE username="' + user['username'] + '"');
+							const resultsRegister = await doQuery(`
+								SELECT username 
+								FROM ed 
+								WHERE username="${user['username']}"
+								`);
+							
 							if (resultsRegister.length === 0 || resultsRegister[0].username === 0) {
-								kb.say(channel, user['username'] + ', you have been successfully registered for ' +
-									'a dungeon reminder, Your reminders will be whispered to you.');
-								await doQuery('INSERT INTO ed (username, created) VALUES ("' + user['username'] +
-									'", CURRENT_TIMESTAMP)');
-								await doQuery('INSERT INTO ed_reminders (username) VALUES ("' + user['username'] +
-									'")');
-							} else if (resultsRegister[0].username === user['username']) {
-								kb.say(channel, user['username'] + ', you are already registered for dungeon ' +
-									'reminders, type "kb help ed" for command syntax.');
-							} else {
-								return '';
+
+								await doQuery(`
+									INSERT INTO ed (username, created) 
+									VALUES ("${user['username']}", CURRENT_TIMESTAMP)
+									`);
+
+								await doQuery(`
+									INSERT INTO ed_reminders (username) 
+									VALUES ("${user['username']}")
+									`);
+
+								return `${user['username']}, you have been successfully registered for a dungeon 
+								reminder, Your reminders will be whispered to you.`;
+
+							} 
+
+							if (resultsRegister[0].username === user['username']) {
+								return `${user['username']}, you are already registered for dungeon reminders, 
+								type "kb help ed" for command syntax.`;
 							}
-							break;
+							return '';
+
 						case 'unregister':
-							const resultsUnregister = await doQuery('SELECT username FROM ed WHERE username="' + user['username'] + '"');
+							const resultsUnregister = await doQuery(`
+								SELECT username FROM ed 
+								WHERE username="${user['username']}"
+								`);
+
 							if (resultsUnregister != 0) {
-								await doQuery('DELETE FROM ed WHERE username="' + user['username'] + '"');
-								await doQuery('DELETE FROM ed_reminders WHERE username="' + user['username'] + '"');
-								kb.say(channel, user['username'] +
-									', you are no longer registered for a dungeon reminder.');
-							} else {
-								kb.say(channel, user['username'] +
-									", you are not registered for a dungeon reminder, therefore you can't be" +
-									" unregistered FeelsDankMan");
+								await doQuery(`
+									DELETE FROM ed 
+									WHERE username="${user['username']}"
+									`);
+
+								await doQuery(`
+									DELETE FROM ed_reminders 
+									WHERE username="${user['username']}"
+									`);
+
+								return `${user['username']}, you are no longer registered for a dungeon reminder.`;
 							}
-							break;
+							return `${user['username']}, you are not registered for a dungeon reminder, 
+							therefore you can't be unregistered FeelsDankMan`;
+
 						default:
-							return user['username'] + ', invalid syntax. See "kb help ed" for command help.';
+							return `${user['username']}, invalid syntax. See "kb help ed" for command help.`;
 					}
 					return '';
 				} catch (err) {
 					errorLog(err)
-					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
+					return `${user['username']}, ${err} FeelsDankMan !!!`;
 				}
 			}
 		},
@@ -2022,14 +2280,17 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + 'stats',
 			aliases: null,
-			description: `syntax: kb stats -channel / -bruh / [input] / @[user] | no parameter - information about your logs in my
-				database | -channel - information about the current channel | -bruh - amount of racists in the chat | 
-				[input] - provide a custom message | @[user] - searches for given user -- cooldown 8s`,
+			description: `syntax: kb stats -channel / -bruh / [input] / @[user] | no parameter - information about your 
+			logs in my database | -channel - information about the current channel | -bruh - amount of racists in the 
+			chat | [input] - provide a custom message | @[user] - searches for given user -- cooldown 8s`,
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msgRaw = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2);
-					const msg = msgRaw.filter(Boolean);
+					const msgRaw = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(2)
+						.filter(Boolean);
 
 					const channelParsed = channel.replace('#', '')
 					const fetch = require('node-fetch');
@@ -2037,7 +2298,8 @@ kb.on('connected', (adress, port) => {
 					const checkChannel = await doQuery(`SHOW TABLES LIKE "logs_${channel.replace('#', '')}"`)
 
 					if (checkChannel.length === 0) {
-						return `${user['username']}, I'm not logging this channel, therefore I can't display stats for it :/`;
+						return `${user['username']}, I'm not logging this channel, 
+						therefore I can't display stats for it :/`;
 					}
 
 					// if no parameters provided...
@@ -2047,7 +2309,11 @@ kb.on('connected', (adress, port) => {
 						if (msg.filter(i => i.startsWith('@')).toString().includes('@')) {
 
 							// check if user exists in the database
-							const checkIfUserExists = await doQuery(`SELECT * FROM user_list WHERE username="${msg.filter(i=>i.startsWith('@'))[0].replace('@', '')}"`);
+							const checkIfUserExists = await doQuery(`
+								SELECT * FROM user_list 
+								WHERE username="${msg.filter(i=>i.startsWith('@'))[0].replace('@', '')}"
+								`);
+
 							if (checkIfUserExists.length === 0) {
 								return `${user['username']}, this user does not exist in my user list logs.`;
 							}
@@ -2064,37 +2330,69 @@ kb.on('connected', (adress, port) => {
 							
 							// check if user provided any message to search for
 							if (!msg.filter(i => !i.startsWith('@'))) {
-								return `${user['username']}, no search query provided with the given flag, eg.: kb stats @kunszg nam`;
+								return `${user['username']}, no search query provided with the 
+								given flag, eg.: kb stats @kunszg nam`;
 							}
 							
 							// check for internal banphrases
 							const getInternalBans = await doQuery('SELECT * FROM internal_banphrases');
 							const checkIfBanned = getInternalBans.filter(i => msg.join(' ').includes(i.banphrase))
 							if (checkIfBanned.length != 0) {
-								return `${user['username']}, I cannot search with this query, it contains an internally banned phrase.`;
+								return `${user['username']}, I cannot search with this query, 
+								it contains an internally banned phrase.`;
 							}
 							
 							// get the message
-							const sql = 'SELECT message, username FROM ?? WHERE message LIKE ? AND username=? ORDER BY RAND() LIMIT 1;';
-							const inserts = [`logs_${channelParsed}`, '%'+msg.filter(i => !i.startsWith('@')).join(' ')+'%', msg.filter(i => i.startsWith('@'))[0].replace('@', '')];
+							const sql = `
+								SELECT message, username FROM ?? 
+								WHERE message LIKE ? AND username=? 
+								ORDER BY RAND() 
+								LIMIT 1;
+								`;
+
+							const inserts = [
+								`logs_${channelParsed}`, '%'+msg.filter(i => !i.startsWith('@')).join(' ')+'%', 
+								msg.filter(i => i.startsWith('@'))[0].replace('@', '')
+								];
 							
 							// get the occurence
-							const sql2 = 'SELECT message, COUNT(message) AS value_occurance FROM logs_' + channelParsed + ' WHERE message LIKE ? AND username=? GROUP BY message ORDER BY value_occurance DESC LIMIT 1;';
-							const inserts2 = ['%'+msg.filter(i => !i.startsWith('@')).join(' ')+'%', msg.filter(i => i.startsWith('@'))[0].replace('@', '')]
-							const compile = await Promise.all([doQuery(mysql.format(sql, inserts)), doQuery(mysql.format(sql2, inserts2))])
+							const sql2 = `
+								SELECT message, COUNT(message) AS value_occurance 
+								FROM logs_${channelParsed} 
+								WHERE message LIKE ? AND username=? 
+								GROUP BY message 
+								ORDER BY value_occurance 
+								DESC 
+								LIMIT 1;
+								`;
+
+							const inserts2 = [
+								'%'+msg.filter(i => !i.startsWith('@')).join(' ')+'%', 
+								msg.filter(i => i.startsWith('@'))[0].replace('@', '')
+								];
+
+							const compile = await Promise.all([
+								doQuery(mysql.format(sql, inserts)), 
+								doQuery(mysql.format(sql2, inserts2))
+								]);
 							
 							// check if there are any logs for specified user
 							if (compile[0].length === 0) {
-								return `${user['username']}, no message logs found for that query or related to that user.`;
+								return `${user['username']}, no message logs found for that query 
+								or related to that user.`;
 							}
 
 							function modifyOutput(modify) {
 								if (!modify) {
-									return `${user['username']}, messages similar to " ${compile[0][0].message.substr(0, 255)} " have been typed ${compile[1][0].value_occurance} times in this 
-									channel by user ${compile[0][0].username.replace(/^(.{2})/, "$1\u{E0000}")}.`;
+									return `${user['username']}, messages similar to 
+									" ${compile[0][0].message.substr(0, 255)} " have been typed 
+									${compile[1][0].value_occurance} times in this channel by user 
+									${compile[0][0].username.replace(/^(.{2})/, "$1\u{E0000}")}.`;
 								} else {
-									return `${user['username']}, messages similar to " ${compile[0][0].message.substr(0, modify)} " have been typed ${compile[1][0].value_occurance} times in this 
-									channel by user ${compile[0][0].username.replace(/^(.{2})/, "$1\u{E0000}")}.`;
+									return `${user['username']}, messages similar to 
+									" ${compile[0][0].message.substr(0, modify)} " have been typed
+									 ${compile[1][0].value_occurance} times in this channel by user 
+									 ${compile[0][0].username.replace(/^(.{2})/, "$1\u{E0000}")}.`;
 								}
 							}
 
@@ -2104,7 +2402,8 @@ kb.on('connected', (adress, port) => {
 								const getInternalBans = await doQuery('SELECT * FROM internal_banphrases');
 								const checkIfBanned = getInternalBans.filter(i => msg.join(' ').includes(i.banphrase))
 								if (checkIfBanned.length != 0) {
-									return `${user['username']}, I cannot search with this query, it contains an internally banned phrase.`;
+									return `${user['username']}, I cannot search with this query, 
+									it contains an internally banned phrase.`;
 								}
 							
 								if (compile[0][0].message.toString().length>50) {
@@ -2112,7 +2411,8 @@ kb.on('connected', (adress, port) => {
 									// check if response would cause timeout in the channel
 									if (await banphrasePass(modifyOutput()).banned === true) {
 										kb.whisper(`${user['username']}, ${modifyOutput()}`);
-										return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+										return `${user['username']}, the result is banphrased, 
+										I whispered it to you tho cmonBruh`;
 									}
 									return modifyOutput(50);
 								}
@@ -2120,7 +2420,8 @@ kb.on('connected', (adress, port) => {
 								// less than 50 characters
 								if (await banphrasePass(modifyOutput()).banned === true) {
 									kb.whisper(user['username'], modifyOutput());
-									return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+									return `${user['username']}, the result is banphrased, 
+									I whispered it to you tho cmonBruh`;
 								} 
 								return modifyOutput(50);
 							}
@@ -2129,7 +2430,8 @@ kb.on('connected', (adress, port) => {
 								// check if response would cause timeout in the channel
 								if (await banphrasePass(modifyOutput()).banned === true) {
 									kb.whisper(`${user['username']}, ${modifyOutput()}`);
-									return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+									return `${user['username']}, the result is banphrased, 
+									I whispered it to you tho cmonBruh`;
 								}
 								return modifyOutput();
 							}
@@ -2137,7 +2439,8 @@ kb.on('connected', (adress, port) => {
 							// less than 500 characters
 							if (await banphrasePass(modifyOutput()).banned === true) {
 								kb.whisper(user['username'], modifyOutput());
-								return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+								return `${user['username']}, the result is banphrased, 
+								I whispered it to you tho cmonBruh`;
 							} 
 							return modifyOutput();
 
@@ -2150,11 +2453,25 @@ kb.on('connected', (adress, port) => {
 							} 
 
 							// positional query
-							const sql = `SELECT message FROM ?? WHERE MATCH(message) AGAINST (?) ORDER BY RAND() LIMIT 1;`;
+							const sql = `
+								SELECT message FROM ?? 
+								WHERE MATCH(message) AGAINST (?) 
+								ORDER BY RAND() 
+								LIMIT 1;
+								`;
+
 							const inserts = [`logs_${channelParsed}`, `'"*${msg.join(' ')}*"'`]
-							const sql2 = `SELECT count(*) AS value_occurance FROM ?? WHERE MATCH(message) AGAINST (?);`;
+							const sql2 = `
+								SELECT count(*) AS value_occurance 
+								FROM ?? 
+								WHERE MATCH(message) AGAINST (?);
+								`;
+
 							const inserts2 = [`logs_${channelParsed}`, `'"*${msg.join(' ')}*"'`]
-							const occurence = await Promise.all([doQuery(mysql.format(sql, inserts)), doQuery(mysql.format(sql2, inserts2))])
+							const occurence = await Promise.all([
+								doQuery(mysql.format(sql, inserts)), 
+								doQuery(mysql.format(sql2, inserts2))
+								])
 
 							// check if there are any message logs for given query
 							if (occurence[0].length === 0) {
@@ -2163,34 +2480,46 @@ kb.on('connected', (adress, port) => {
 
 							function modifyOutput(modify) {
 								if (!modify) {
-									return `${user['username']}, messages similar to " ${occurence[0][0].message.substr(0, 255)}
-									" have been typed ${occurence[1][0].value_occurance} times in this channel.`;
+									return `${user['username']}, messages similar to 
+									" ${occurence[0][0].message.substr(0, 255)} " have been typed 
+									${occurence[1][0].value_occurance} times in this channel.`;
 								} else {
-									return `${user['username']}, messages similar to " ${occurence[0][0].message.substr(0, modify)}
-									" have been typed ${occurence[1][0].value_occurance} times in this channel.`;
+									return `${user['username']}, messages similar to 
+									" ${occurence[0][0].message.substr(0, modify)} " have been typed 
+									${occurence[1][0].value_occurance} times in this channel.`;
 								}
 							}
 
 							if (channel === '#nymn') {
 
 								// check for banphrases
-								const getInternalBans = await doQuery('SELECT * FROM internal_banphrases');
-								const checkIfBanned = getInternalBans.filter(i => msg.join(' ').includes(i.banphrase))
+								const getInternalBans = await doQuery(`
+									SELECT * 
+									FROM internal_banphrases
+									`);
+
+								const checkIfBanned = getInternalBans
+									.filter(i => msg.join(' ')
+									.includes(i.banphrase))
+
 								if (checkIfBanned.length != 0) {
-									return `${user['username']}, I cannot search with this query, it contains an internally banned phrase.`;
+									return `${user['username']}, I cannot search with this query, 
+									it contains an internally banned phrase.`;
 								}
 								// check if response exceeds 500 characters limit
 								if (occurence[0][0].message.toString().length>50) {
 									// check if response would cause timeout in the channel
 									if (await banphrasePass(modifyOutput()).banned === true) {
 										kb.whisper(user['username'], modifyOutput());
-										return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+										return `${user['username']}, the result is banphrased, 
+										I whispered it to you tho cmonBruh`;
 									}
 									return modifyOutput(50);
 								}
 								if (await banphrasePass(modifyOutput()).banned === true) {
 									kb.whisper(user['username'], modifyOutput());
-									return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+									return `${user['username']}, the result is banphrased, 
+									I whispered it to you tho cmonBruh`;
 								}
 								return modifyOutput(50);
 							}
@@ -2199,13 +2528,15 @@ kb.on('connected', (adress, port) => {
 								// check if response would cause timeout in the channel
 								if (await banphrasePass(modifyOutput()).banned === true) {
 									kb.whisper(user['username'], modifyOutput());
-									return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+									return `${user['username']}, the result is banphrased, 
+									I whispered it to you tho cmonBruh`;
 								}
 								return modifyOutput();
 							}
 							if (await banphrasePass(modifyOutput()).banned === true) {
 								kb.whisper(user['username'], modifyOutput());
-								return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+								return `${user['username']}, the result is banphrased, 
+								I whispered it to you tho cmonBruh`;
 							}
 							return modifyOutput();
 						}
@@ -2214,15 +2545,29 @@ kb.on('connected', (adress, port) => {
 						const values = await Promise.all([
 						
 							// amount of rows
-							doQuery(`SELECT COUNT(*) AS value FROM logs_${channelParsed}`),
+							doQuery(`
+								SELECT COUNT(*) AS value 
+								FROM logs_${channelParsed}
+								`),
 						 	
 							// table size
-						 	doQuery(`SELECT TABLE_NAME AS ` + '`' + 'Table' + '`' + `, (DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024 
-								AS size FROM information_schema.TABLES WHERE TABLE_NAME = "logs_${channelParsed}" 
-								ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;`),
+						 	doQuery(`
+						 		SELECT TABLE_NAME 
+						 			AS ` + '`' + 'Table' + '`' + `, (DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024 
+									AS size FROM information_schema.TABLES 
+								WHERE TABLE_NAME = "logs_${channelParsed}" 
+								ORDER BY (DATA_LENGTH + INDEX_LENGTH) 
+								DESC;
+								`),
 
 						 	// create time
-						 	doQuery(`SELECT date AS create_time FROM logs_${channelParsed} ORDER BY date ASC LIMIT 1`) 
+						 	doQuery(`
+						 		SELECT date AS create_time 
+						 		FROM logs_${channelParsed} 
+						 		ORDER BY date 
+						 		ASC 
+						 		LIMIT 1
+						 		`) 
 					 	])
 
 						// date formatting
@@ -2230,55 +2575,78 @@ kb.on('connected', (adress, port) => {
 						const serverDate = new Date();
 						const difference = Math.abs(serverDate - logsDate);
 						const differenceToSec = difference/1000;
+
 						return `${user['username']}, this channel has ${values[0][0].value}
-							lines logged, which is ${values[1][0].size.substring(0, 4)} MB total. Logs in this channel started 
-							${(differenceToSec/86400).toFixed(0)} days ago`;
+						lines logged, which is ${values[1][0].size.substring(0, 4)} MB total. 
+						Logs in this channel started ${(differenceToSec/86400).toFixed(0)} days ago`;
 					} else if (msg[0] === "-bruh") {
 
 						// kb stats -bruh
 						if (!msg[1]) {
 
 							// count the words in the channel
-							const channelValue = await doQuery(`SELECT COUNT(*) AS valueCount FROM logs_${channelParsed} 
-								WHERE message LIKE "%nigg%"`);
+							const channelValue = await doQuery(`
+								SELECT COUNT(*) AS valueCount 
+								FROM logs_${channelParsed} 
+								WHERE message LIKE "%nigg%"
+								`);
 
 							// count the words in the channel for sender
-							const userValue = await doQuery(`SELECT COUNT(*) AS value FROM logs_${channelParsed} 
-								WHERE (message LIKE "%nigg%") AND username="${user['username']}"`);
+							const userValue = await doQuery(`
+								SELECT COUNT(*) AS value 
+								FROM logs_${channelParsed} 
+								WHERE (message LIKE "%nigg%") AND username="${user['username']}"
+								`);
 
 							// channel specific responses
 							if (channel === '#haxk') {
 								if (userValue[0].value<2 && userValue[0].value != 1) {
-									return `${user['username']}, you have spelled it ${userValue[0].value} times, we coo TriHard - 
-										total of ${channelValue[0].valueCount} n bombs in this channel TriChomp TeaTime`;
+									return `${user['username']}, you have spelled it ${userValue[0].value} times, 
+									we coo TriHard - total of ${channelValue[0].valueCount} n bombs in this channel 
+									TriChomp TeaTime`;
 								} 
 								if (userValue[0].value===1) {
-									return `${user['username']}, you have spelled it ${userValue[0].value} time WideHard - total of
-										${channelValue[0].valueCount} n bombs in this channel TriChomp TeaTime`;
+									return `${user['username']}, you have spelled it ${userValue[0].value} time 
+									WideHard - total of ${channelValue[0].valueCount} n bombs in this channel 
+									TriChomp TeaTime`;
 								}
-								return `${user['username']}, you have spelled it ${userValue[0].value} times TriChomp Clap - 
-									total of ${channelValue[0].valueCount} n bombs in this channel TriChomp TeaTime`;
+								return `${user['username']}, you have spelled it ${userValue[0].value} 
+								times TriChomp Clap - total of ${channelValue[0].valueCount} n bombs in this channel 
+								TriChomp TeaTime`;
 							} else {
 								if (channelValue[0].valueCount === 0) {
 									return `${user['username']}, total of ${channelValue[0].valueCount} racists 
-										in this channel, we coo TriHard Clap`;
+									in this channel, we coo TriHard Clap`;
 								}
 								return `${user['username']}, total of ${channelValue[0].valueCount} racists 
-									in this channel cmonBruh`;
+								in this channel cmonBruh`;
 							}
 
 						// kb stats -bruh [user]
 						} else {
+
 							// check if user exists in the database
-							const checkIfUserExists = await doQuery(`SELECT * FROM user_list WHERE username="${msg[1]}"`);
+							const checkIfUserExists = await doQuery(`
+								SELECT * FROM user_list 
+								WHERE username="${msg[1]}"
+								`);
+
+							// check if channel exists in user_list logs
 							if (checkIfUserExists.length === 0) {
 								return `${user['username']}, this user does not exist in my user list logs.`;
 							}
 
-							const channelValue = await doQuery(`SELECT COUNT(*) AS valueCount FROM logs_${channelParsed} 
-								WHERE username="${msg[1]}" AND (message LIKE "%nigg%")`);
-							const userValue = await doQuery(`SELECT COUNT(*) AS value FROM logs_${channelParsed} 
-								WHERE (message LIKE "%nigg%") AND username="${msg[1]}"`);
+							const channelValue = await doQuery(`
+								SELECT COUNT(*) AS valueCount 
+								FROM logs_${channelParsed} 
+								WHERE username="${msg[1]}" AND (message LIKE "%nigg%")
+								`);
+
+							const userValue = await doQuery(`
+								SELECT COUNT(*) AS value 
+								FROM logs_${channelParsed} 
+								WHERE (message LIKE "%nigg%") AND username="${msg[1]}"
+								`);
 
 							if (msg[1].toLowerCase() === 'teodorv') {
 								return `${user['username']}, that user has opted out from this command.`; 
@@ -2290,48 +2658,71 @@ kb.on('connected', (adress, port) => {
 							if (channel === '#haxk') {
 								if (userValue[0].value<2 && userValue[0].value != 1) {
 									return `${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
-										times, we coo TriHard`;
+									times, we coo TriHard`;
 								}  
 								if (userValue[0].value===1){
 									return` ${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
-										time WideHard`;
+									time WideHard`;
 								}
 								return `${user['username']}, user ${userNoPing} has spelled it ${userValue[0].value} 
-									times TriChomp Clap`;
-							} else {
-								if (channelValue[0].valueCount === 0) {
-									return `${user['username']} total of ${channelValue[0].valueCount} racist activities by user
-										${userNoPing} we coo TriHard Clap`;
-								}
-								return `${user['username']} total of ${channelValue[0].valueCount} racist activities by user 
-									${userNoPing} in this channel cmonBruh bruh`
+								times TriChomp Clap`;
+							} 
+							
+							if (channelValue[0].valueCount === 0) {
+								return `${user['username']} total of ${channelValue[0].valueCount} racist activities 
+								by user ${userNoPing} we coo TriHard Clap`;
 							}
+							return `${user['username']} total of ${channelValue[0].valueCount} racist activities 
+							by user ${userNoPing} in this channel cmonBruh bruh`
 						}
 
 					// kb stats
 					} else {
 
 						// get amout lines of sender user in the current channel
-						const values = await doQuery(`SELECT COUNT(username) as value FROM logs_${channelParsed} 
-							WHERE username="${user['username']}"`)
+						const values = await doQuery(`
+							SELECT COUNT(username) as value 
+							FROM logs_${channelParsed} 
+							WHERE username="${user['username']}"
+							`)
 
 						// all lines in the channel
-						const occurence = await	 doQuery(`SELECT COUNT(username) as value FROM logs_${channelParsed}`)
+						const occurence = await	 doQuery(`
+							SELECT COUNT(username) as value 
+							FROM logs_${channelParsed}
+							`)
 
 						// channel lines occurence
-						const val = await doQuery(`SELECT message, COUNT(message) AS value_occurance FROM logs_${channelParsed} 
-							WHERE username="${user['username']}" AND (message NOT LIKE "?%" AND message NOT LIKE "+%" AND 
-							message NOT LIKE "kb%" AND message NOT LIKE "$%" AND message NOT LIKE "!%" AND message NOT LIKE "&%" AND message NOT LIKE "-%") GROUP BY message 
-							ORDER BY value_occurance DESC LIMIT 1;`)
+						const val = await doQuery(`
+							SELECT message, COUNT(message) AS value_occurance 
+							FROM logs_${channelParsed} 
+							WHERE username="${user['username']}" AND (
+								message NOT LIKE "?%" 
+								AND message NOT LIKE "+%" 
+								AND message NOT LIKE "kb%" 
+								AND message NOT LIKE "$%" 
+								AND message NOT LIKE "!%" 
+								AND message NOT LIKE "&%" 
+								AND message NOT LIKE "-%"
+								) 
+							GROUP BY message 
+							ORDER BY value_occurance 
+							DESC 
+							LIMIT 1;
+							`)
 
 						// manage the output message lengths
 						function modifyOutput(modify) {
 							if (!modify) {
-								return `${user['username']}, you have total of ${values[0].value} lines logged, that's ${((values[0].value / occurence[0].value) * 100).toFixed(2)}% 
-								of all lines in this channel, your most frequently typed message: " ${val[0].message.substr(0, 255)} " (${val[0].value_occurance} times)`;
+								return `${user['username']}, you have total of ${values[0].value} lines logged, 
+								that's ${((values[0].value / occurence[0].value) * 100).toFixed(2)}% 
+								of all lines in this channel, your most frequently typed message: " 
+								${val[0].message.substr(0, 255)} " (${val[0].value_occurance} times)`;
 							} else {
-								return `${user['username']}, you have total of ${values[0].value} lines logged, that's ${((values[0].value / occurence[0].value) * 100).toFixed(2)}% 
-								of all lines in this channel, your most frequently typed message: " ${val[0].message.substr(0, modify)} " (${val[0].value_occurance} times)`;
+								return `${user['username']}, you have total of ${values[0].value} lines logged, 
+								that's ${((values[0].value / occurence[0].value) * 100).toFixed(2)}% 
+								of all lines in this channel, your most frequently typed message: " 
+								${val[0].message.substr(0, modify)} " (${val[0].value_occurance} times)`;
 							}
 						}
 						if (channel === "#nymn") {
@@ -2339,13 +2730,15 @@ kb.on('connected', (adress, port) => {
 							if (val[0].message.toString().length>100) {
 								if (await banphrasePass(modifyOutput()).banned === true) {
 									kb.whisper(user['username'], modifyOutput());
-									return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+									return `${user['username']}, the result is banphrased, 
+									I whispered it to you tho cmonBruh`;
 								}
 								return modifyOutput(100);
 							}
 							if (await banphrasePass(modifyOutput()).banned === true) {
 								kb.whisper(user['username'], modifyOutput());
-								return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+								return `${user['username']}, the result is banphrased, 
+								I whispered it to you tho cmonBruh`;
 							}
 							return modifyOutput(100);
 						}
@@ -2353,20 +2746,22 @@ kb.on('connected', (adress, port) => {
 						if (val[0].message.toString().length>300) {
 							if (await banphrasePass(modifyOutput()).banned === true) {
 								kb.whisper(user['username'], modifyOutput());
-								return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+								return `${user['username']}, the result is banphrased, 
+								I whispered it to you tho cmonBruh`;
 							}
 							return modifyOutput(300);
 						}
 							
 						if (await banphrasePass(modifyOutput()).banned === true) {
 							kb.whisper(user['username'], modifyOutput());
-							return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;
+							return `${user['username']}, the result is banphrased, 
+							I whispered it to you tho cmonBruh`;
 						}
 						return modifyOutput(300);
 					}	
 				} catch (err) {
 					errorLog(err)
-					return user['username'] + ', ' + err + ' FeelsDankMan !!!';
+					return `${user['username']}, ${err} FeelsDankMan !!!`;
 				}
 			}
 		},
@@ -2379,25 +2774,31 @@ kb.on('connected', (adress, port) => {
 			invocation: async (channel, user, message, args) => {
 				try {
 					const randomNumberFromRange = Math.floor(Math.random() * 6237) + 1;
-					const quranApi = await fetch("http://api.alquran.cloud/ayah/" + randomNumberFromRange + 
-						"/editions/quran-uthmani,en.pickthall").then(response => response.json());
-					const output = quranApi.data[0].surah.englishName + ' - ' + 
-						quranApi.data[0].surah.englishNameTranslation + ': ' + quranApi.data[0].text.split(' ').reverse().join(' ')  + ' - ' + 
-						quranApi.data[1].text + ' ' + quranApi.data[0].page + ':' + quranApi.data[0].surah.numberOfAyahs;
+					const quranApi = await fetch(`
+						http://api.alquran.cloud/ayah/${randomNumberFromRange}/editions/quran-uthmani,en.pickthall`
+						)
+						.then(response => response.json());
+					const output = `
+						${quranApi.data[0].surah.englishName} - ${quranApi.data[0].surah.englishNameTranslation}: 
+						${quranApi.data[0].text.split(' ').reverse().join(' ')} - ${quranApi.data[1].text} 
+						${quranApi.data[0].page}:${quranApi.data[0].surah.numberOfAyahs}`;
 					if (channel === "#nymn") {
+
+						// if output contains banned phrases
 						if (await banphrasePass(output).banned === true) {
 							kb.whisper(user['username'], output);
-							return user['username'] +
-								', the result is banphrased, I whispered it to you tho cmonBruh';		
-						} else {
-							return user['username'] + ', ' + output;
-						}
-					} else {
-						return user['username'] + ', ' + output;
+							return `${user['username']}, the result is banphrased, I whispered it to you tho cmonBruh`;		
+						} 
+
+						// if output is fine, return full message
+						return `${user['username']}, ${output}`;
 					}
+					
+					// other channels
+					return `${user['username']}, ${output}`;
 				} catch (err) {
 					errorLog(err)
-					return user['username'] + ', error FeelsDankMan!!!'
+					return `user${['username']}, ${err} FeelsDankMan!!!`
 				}
 			}	
 		},
@@ -2409,30 +2810,39 @@ kb.on('connected', (adress, port) => {
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(1)
-					const msgRaw = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2)
-					const msg2 = msgRaw.filter(Boolean);
 
-					if (!msg2[0]) {
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(1)
+
+					const msgRaw = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(2)
+						.filter(Boolean);
+
+					if (!msgRaw[0]) {
 						return `${user['username']}, you should provide a user to hug/kiss, 
 							there is someone like that for sure FeelsOkayMan`;
 					}
+
 					if (msg[0] === "hug") {
 						if (channel === "#nymn") {
-							return `${user['username']} hugs ${msg2[0]} PeepoHappy FBCatch`;
+							return `${user['username']} hugs ${msgRaw[0]} PeepoHappy FBCatch`;
 						} 
 						if (channel === "#haxk") {
-							return `${user['username']} hugs ${msg2[0]} forsenHug`;
+							return `${user['username']} hugs ${msgRaw[0]} forsenHug`;
 						} 
-						return `${user['username']} hugs ${msg2[0]} 🤗 <3 ily`;
+						return `${user['username']} hugs ${msgRaw[0]} 🤗 <3 ily`;
 					}
 					if (channel === "#nymn") {
-						return `${user['username']} kisses ${msg2[0]} PeepoHappy 💋`;
+						return `${user['username']} kisses ${msgRaw[0]} PeepoHappy 💋`;
 					}
-					return `${user['username']} kisses ${msg2[0]} 😗 💋 `;
+					return `${user['username']} kisses ${msgRaw[0]} 😗 💋 `;
 				} catch (err) {
 					errorLog(err)
-					return user['username'] + ' ' + err + ' FeelsDankMan !!!';
+					return `${user['username']} ${err} FeelsDankMan !!!`;
 				}	
 			}
 		},
@@ -2447,7 +2857,7 @@ kb.on('connected', (adress, port) => {
 					return `${user['username']}, https://kunszg.xyz/`;
 				} catch (err) {
 					errorLog(err)
-					return user['username'] + ' ' + err + ' FeelsDankMan !!!';
+					return `${user['username']} ${err} FeelsDankMan !!!`;
 				}
 			}
 		},
@@ -2470,27 +2880,47 @@ kb.on('connected', (adress, port) => {
 					if (!perms[0]) {
 						return '';
 					}
-					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2).filter(Boolean);
-					const comment = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(3).filter(Boolean);
-					const userid = await fetch('https://api.ivr.fi/twitch/resolve/' + msg[0]).then(response => response.json());
+
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(2)
+						.filter(Boolean);
+
+					const comment = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(3)
+						.filter(Boolean);
+
+					const userid = await fetch(`https://api.ivr.fi/twitch/resolve/${msg[0]}`)
+						.then(response => response.json());
+
 					const checkRepeatedInsert = await doQuery(`SELECT * FROM ban_list WHERE user_id="${userid.id}"`);
+
 					if (checkRepeatedInsert.length != 0) {
 						return `${user['username']}, user with ID ${userid.id} is already banned.`;
 					}
+
 					if (comment.length != 0) {
 						if (!comment.join(' ').startsWith('//')) {
 							return `${user['username']}, syntax error, use // before comments.`;
 						}
 
 						// insert into the database to ban the user (if there is a comment)
-						await doQuery(`INSERT INTO ban_list (username, user_id, comment, date) VALUES ("${msg[0]}", "${userid.id}", "${comment.join(' ').replace('//', '')}", CURRENT_TIMESTAMP)`);
-						return `${user['username']}, user with ID ${userid.id} is now banned from the bot.`;
-					} else {
+						await doQuery(`INSERT INTO ban_list (username, user_id, comment, date) 
+							VALUES ("${msg[0]}", "${userid.id}", "${comment.join(' ').replace('//', '')}", 
+							CURRENT_TIMESTAMP)`);
 
-						// insert into the database to ban the user (if there is no comment)
-						await doQuery(`INSERT INTO ban_list (username, user_id, date) VALUES ("${msg[0]}", "${userid.id}", CURRENT_TIMESTAMP)`);
 						return `${user['username']}, user with ID ${userid.id} is now banned from the bot.`;
 					}
+
+					// insert into the database to ban the user (if there is no comment)
+					await doQuery(`INSERT INTO ban_list (username, user_id, date) 
+						VALUES ("${msg[0]}", "${userid.id}", CURRENT_TIMESTAMP)`);
+
+					return `${user['username']}, user with ID ${userid.id} is now banned from the bot.`;
+
 				} catch (err) {
 					errorLog(err)
 					return `${user['username']}, ${err} FeelsDankMan !!!`;
@@ -2516,10 +2946,24 @@ kb.on('connected', (adress, port) => {
 					if (!perms[0]) {
 						return '';
 					}
-					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2).filter(Boolean);
-					const comment = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(3).filter(Boolean);
-					const userid = await fetch('https://api.ivr.fi/twitch/resolve/' + msg[0]).then(response => response.json());
+
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(2)
+						.filter(Boolean);
+
+					const comment = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(3)
+						.filter(Boolean);
+
+					const userid = await fetch(`https://api.ivr.fi/twitch/resolve/${msg[0]}`)
+						.then(response => response.json());
+
 					const checkRepeatedInsert = await doQuery(`SELECT * FROM ban_list WHERE user_id="${userid.id}"`);
+
 					if (checkRepeatedInsert.length === 0) {
 						return `${user['username']}, no such user found in the database.`;
 					}
@@ -2528,7 +2972,9 @@ kb.on('connected', (adress, port) => {
 					await doQuery(`DELETE FROM ban_list WHERE username="${msg[0].toLowerCase()}"`);
 
 					// insert into a table to store previously banned users
-					await doQuery(`INSERT INTO unbanned_list (username, user_id, date) VALUES ("${msg[0]}", "${userid.id}", CURRENT_TIMESTAMP)`)
+					await doQuery(`INSERT INTO unbanned_list (username, user_id, date) 
+						VALUES ("${msg[0]}", "${userid.id}", CURRENT_TIMESTAMP)`)
+
 					return `${user['username']}, user with ID ${userid.id} has been unbanned from the bot`;	
 				} catch (err) {
 					errorLog(err)
@@ -2545,6 +2991,7 @@ kb.on('connected', (adress, port) => {
 			description: 'add or remove banphrase - (+, -, add, del) -- cooldown 10ms',
 			invocation: async (channel, user, message, args) => {
 				try {
+
 					// search for executer's permissions
 					const perms = allowEval.filter(
 						i => i.ID === user['user-id']
@@ -2556,7 +3003,12 @@ kb.on('connected', (adress, port) => {
 					}
 
 					// syntax check
-					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2).filter(Boolean);
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(2)
+						.filter(Boolean);
+
 					if (!msg[0]) {
 						return `${user['username']}, no parameter provided`;
 					}
@@ -2565,26 +3017,47 @@ kb.on('connected', (adress, port) => {
 					if (msg[0] === "add" || msg[0] === "+") { 
 						
 						// check for repeated inserts
-						const checkRepeated = await doQuery(`SELECT * FROM internal_banphrases WHERE banphrase="${msg[1]}"`);
+						const checkRepeated = await doQuery(`
+							SELECT * FROM internal_banphrases 
+							WHERE banphrase="${msg[1]}"
+							`);
+
 						if (checkRepeated.length != 0) {
 							return `${user['username']}, this banphrase already exists.`;
 						}
 
-						await doQuery(`INSERT INTO internal_banphrases (banphrase, date) VALUES ("${msg[1]}", CURRENT_TIMESTAMP)`);
-						const getID = await	doQuery(`SELECT * FROM internal_banphrases WHERE banphrase="${msg[1]}"`);
-						return `${user['username']}, successfully added a banphrase "${msg[1]}" with ID ${getID[0].ID}.`;
+						await doQuery(`
+							INSERT INTO internal_banphrases (banphrase, date) 
+							VALUES ("${msg[1]}", CURRENT_TIMESTAMP)
+							`);
+
+						const getID = await	doQuery(`
+							SELECT * FROM internal_banphrases 
+							WHERE banphrase="${msg[1]}"
+							`);
+
+						return `${user['username']}, successfully added a banphrase 
+						"${msg[1]}" with ID ${getID[0].ID}.`;
 					}
 
 					// remove banphrase
 					if (msg[0] === "del" || msg[0] === "-") {
 						
 						// check if banphrase exists
-						const checkRepeated = await doQuery(`SELECT * FROM internal_banphrases WHERE banphrase="${msg[1]}"`);
+						const checkRepeated = await doQuery(`
+							SELECT * FROM internal_banphrases 
+							WHERE banphrase="${msg[1]}"
+							`);
+
 						if (checkRepeated.length === 0) {
 							return `${user['username']}, this banphrase doesn't exist.`;
 						}
 
-						await doQuery(`DELETE FROM internal_banphrases WHERE banphrase="${msg[1]}"`)
+						await doQuery(`
+							DELETE FROM internal_banphrases 
+							WHERE banphrase="${msg[1]}"
+							`)
+
 						return `${user['username']}, successfully removed the banphrase.`;
 					}
 
@@ -2623,26 +3096,47 @@ kb.on('connected', (adress, port) => {
 							}
 						}
 					}
-					const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(2).filter(Boolean);
+
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(2)
+						.filter(Boolean);
 					
 					if (!msg[0]) {
-						const getSenderData = await doQuery(`SELECT * FROM user_list WHERE userId="${user['user-id']}"`);
+
+						// get data about sender user from database
+						const getSenderData = await doQuery(`
+							SELECT * FROM user_list 
+							WHERE userId="${user['user-id']}"
+							`);
+
+						// check if user exists in user_list
 						if (getSenderData.length === 0) {
 							return `${user['username']}, you are not being logged in my database.`;
 						}
+
 						const dateDiff = Math.abs((new Date()) - (new Date(getSenderData[0].added))) 
 						const dateToSec = (dateDiff/1000).toFixed(0)
 
 						// if user was seen more than 4 days ago
 						if (dateToSec>259200) {
-							return `${user['username']}, Your internal user ID is ${getSenderData[0].ID}, you were first seen by the bot ${((dateToSec/3600).toFixed(0)/24).toFixed(0)} ago.`;
+							return `${user['username']}, Your internal user ID is ${getSenderData[0].ID}, 
+							you were first seen by the bot ${((dateToSec/3600).toFixed(0)/24).toFixed(0)} ago.`;
 						}
 
 						// if user was seen less than 4 days ago
-						return `${user['username']}, Your internal user ID is ${getSenderData[0].ID}, you were first seen by the bot ${format(dateToSec)} ago.`;
+						return `${user['username']}, Your internal user ID is ${getSenderData[0].ID},
+						you were first seen by the bot ${format(dateToSec)} ago.`;
 					}
 
-					const getUserData = await doQuery(`SELECT * FROM user_list WHERE username="${msg[0]}"`);
+					// get of given user data if user was specified
+					const getUserData = await doQuery(`
+						SELECT * FROM user_list 
+						WHERE username="${msg[0]}"
+						`);
+
+					// check if user exists in user_list
 					if (getUserData.length === 0) {
 						return `${user['username']}, that user does not exist in my database.`;
 					}
@@ -2652,11 +3146,15 @@ kb.on('connected', (adress, port) => {
 
 					// if user was seen more than 4 days ago
 					if (dateToSec2>259200) {
-						return `${user['username']}, user ${getUserData[0].username.replace(/^(.{2})/, "$1\u{E0000}")} has internal ID ${getUserData[0].ID} and was first seen by the bot ${((dateToSec2/3600).toFixed(0)/24).toFixed(0)} days ago.`;
+						return `${user['username']}, user ${getUserData[0].username.replace(/^(.{2})/, "$1\u{E0000}")} 
+						has internal ID ${getUserData[0].ID} and was first seen by the bot 
+						${((dateToSec2/3600).toFixed(0)/24).toFixed(0)} days ago.`;
 					}
 
 					// if user was seen less than 4 days ago
-					return `${user['username']}, user ${getUserData[0].username.replace(/^(.{2})/, "$1\u{E0000}")} has internal ID ${getUserData[0].ID} and was first seen by the bot ${format(dateToSec2)} ago.`;
+					return `${user['username']}, user ${getUserData[0].username.replace(/^(.{2})/, "$1\u{E0000}")} 
+					has internal ID ${getUserData[0].ID} and was first seen by the bot ${format(dateToSec2)} ago.`;
+
 				} catch (err) {
 					errorLog(err)
 					return `${user['username']}, ${err} FeelsDankMan !!!`
@@ -2680,15 +3178,19 @@ kb.on('connected', (adress, port) => {
 
 		commands.forEach(async command => {
 			if (
-				((input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '').toLowerCase() === command.name) ||
-				(command.aliases && (input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '').toLowerCase() === command.aliases)
+				((input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '').toLowerCase() 
+					=== command.name) ||
+				(command.aliases && (input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '')
+					.toLowerCase() === command.aliases)
 			) {
 				let result = await command.invocation(channel, user, message);
 
 				// find the called command to check for cooldowns
 				const getCommandName = commands.filter(i => 
-					(i.name === (input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '').toLowerCase()) || 
-					(i.aliases && (input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '').toLowerCase() === i.aliases));
+					(i.name === (input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '')
+						.toLowerCase()) || 
+					(i.aliases && (input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '')
+						.toLowerCase() === i.aliases));
 
 				// check for global cooldown
 				if (user['username'] != "kunszg") {
@@ -2735,10 +3237,11 @@ kb.on('connected', (adress, port) => {
 								kb.say(channel, "");
 								return;
 							}
-							if (result.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '') === "undefined") {
-								kb.say(channel, 'Internal error monkaS')
-								return;
-							}
+							if (result.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '') === 
+								"undefined") {
+									kb.say(channel, 'Internal error monkaS')
+									return;
+								}
 							if (result.toLowerCase().startsWith(kb.getOptions().identity.password)) {
 								kb.say(channel, user['username'] + ', TriHard oauth key');
 								return;
@@ -2760,10 +3263,11 @@ kb.on('connected', (adress, port) => {
 								kb.say(channel, "");
 								return;
 							}
-							if (result.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '') === "undefined") {
-								kb.say(channel, 'Internal error monkaS')
-								return;
-							} 
+							if (result.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '') === 
+								"undefined") {
+									kb.say(channel, 'Internal error monkaS')
+									return;
+								} 
 							if (result.toLowerCase().startsWith(kb.getOptions().identity.password)) {
 								kb.say(channel, user['username'] + ', TriHard oauth key');
 								return;
@@ -2806,10 +3310,11 @@ kb.on('connected', (adress, port) => {
 								kb.say(channel, "");
 								return;
 							}
-							if (result.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '') === "undefined") {
-								kb.say(channel, 'Internal error monkaS')
-								return;
-							}
+							if (result.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '') === 
+								"undefined") {
+									kb.say(channel, 'Internal error monkaS')
+									return;
+								}
 							if (result.toLowerCase().startsWith(kb.getOptions().identity.password)) {
 								kb.say(channel, user['username'] + ', TriHard oauth key');
 								return;
@@ -2831,10 +3336,11 @@ kb.on('connected', (adress, port) => {
 								kb.say(channel, "");
 								return;
 							}
-							if (result.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '') === "undefined") {
-								kb.say(channel, 'Internal error monkaS')
-								return;
-							} 
+							if (result.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '') === 
+								"undefined") {
+									kb.say(channel, 'Internal error monkaS')
+									return;
+								} 
 							if (result.toLowerCase().startsWith(kb.getOptions().identity.password)) {
 								kb.say(channel, user['username'] + ', TriHard oauth key');
 								return;
@@ -2924,16 +3430,14 @@ kb.on('connected', (adress, port) => {
 			}
 		})
 	})
-	const pingAmount = [];
+
 	async function sendOnlineStatusOnLaunc() { 
-		pingAmount.push('ping')
 		await fetch(api.supinic, {
 			method: 'PUT',
 		}).then(response => response.json())
 	} 
 	setTimeout(() => { sendOnlineStatusOnLaunc() }, 5000);
 	async function sendOnlineStatus() {
-		pingAmount.push('ping')
 		const test = (await fetch(api.supinic, {
 			method: 'PUT',
 		}).then(response => response.json()))
@@ -2944,7 +3448,8 @@ kb.on('connected', (adress, port) => {
 
 	const dankPrefix = '?';
 	const talkedRecently2 = new Set();
-	const dankeval = [{
+	const dankeval = [
+		{
 			name: 'HONEYDETECTED',
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
@@ -2979,9 +3484,12 @@ kb.on('connected', (adress, port) => {
 					const cookieApi = await fetch(`https://api.roaringiron.com/cooldown/${user['user-id']}?id=true`)
 						.then(response => response.json());
 					const query = await doQuery(`SELECT username FROM cookies WHERE username="${user['username']}"`);
-					const updateCheck = await doQuery(`SELECT username, status FROM cookie_reminders WHERE username="${user['username']}"`)
-					const platformCheck = await doQuery(`SELECT initplatform, username FROM cookie_reminders WHERE username="${user['username']}"`)
-					const countCookie = await doQuery(`SELECT cookie_count FROM cookie_reminders WHERE username="${user['username']}"`)
+					const updateCheck = await doQuery(`SELECT username, status FROM cookie_reminders WHERE 
+						username="${user['username']}"`)
+					const platformCheck = await doQuery(`SELECT initplatform, username FROM cookie_reminders WHERE 
+						username="${user['username']}"`)
+					const countCookie = await doQuery(`SELECT cookie_count FROM cookie_reminders WHERE 
+						username="${user['username']}"`)
 					const userChannel = `#${user['username']}`;
 					const channelNoPing = channel.replace(/^(.{2})/, "$1\u{E0000}");
 					if (query.length === 0) {
@@ -3000,27 +3508,40 @@ kb.on('connected', (adress, port) => {
 							return '';
 						}
 						
-						kb.whisper(user['username'], `Your cookie is still on cooldown (${cookieApi.time_left_formatted}) with ${cookieApi.interval_formatted} intervals.`);
+						kb.whisper(user['username'], `Your cookie is still on cooldown 
+							(${cookieApi.time_left_formatted}) with ${cookieApi.interval_formatted} intervals.`);
 						return '';
 					} else {
 				
-						await doQuery(`UPDATE cookie_reminders SET cookie_count="${countCookie[0].cookie_count + 1}" WHERE username="${user['username']}"`)
+						await doQuery(`UPDATE cookie_reminders SET cookie_count="${countCookie[0].cookie_count + 1}" 
+							WHERE username="${user['username']}"`)
 						const now = new Date();
 						await doQuery(`UPDATE cookie_reminders 
-							SET channel="${channel.replace('#', '')}", fires="${now.addMinutes(`${cookieApi.interval_unformatted}`).toISOString().slice(0, 19).replace('T', ' ')}", status="scheduled" 
+							SET channel="${channel.replace('#', '')}", 
+							fires="${now
+								.addMinutes(`${cookieApi.interval_unformatted}`)
+								.toISOString()
+								.slice(0, 19)
+								.replace('T', ' ')}", status="scheduled" 
 							WHERE username="${user['username']}"`);
 
 						if (platformCheck[0].initplatform === "channel") {
 							if (updateCheck[0].status === "scheduled") {
-								kb.say(userChannel, `${user['username']}, updating your pending cookie reminder, I will remind you in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :D`);
+								kb.say(userChannel, `${user['username']}, updating your pending cookie reminder, 
+									I will remind you in ${cookieApi.interval_formatted} 
+									(channel ${channelNoPing}) :D`);
 							} else {
-								kb.say(userChannel, `${user['username']}, I will remind you to eat the cookie in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
+								kb.say(userChannel, `${user['username']}, I will remind you to eat the cookie in 
+									${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
 							}
 						} else if (platformCheck[0].initplatform === "whisper") {
 							if (updateCheck[0].status === "scheduled") {
-								kb.whisper(user['username'], `updating your pending cookie reminder, I will remind you in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :D`);
+								kb.whisper(user['username'], `updating your pending cookie reminder, 
+									I will remind you in ${cookieApi.interval_formatted} 
+									(channel ${channelNoPing}) :D`);
 							} else {
-								kb.whisper(user['username'], `I will remind you to eat the cookie in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
+								kb.whisper(user['username'], `I will remind you to eat the 
+									cookie in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
 							}
 						} else if (platformCheck[0].initplatform === "silence") {
 						 	return '';
@@ -3049,12 +3570,14 @@ kb.on('connected', (adress, port) => {
 				if (cookieModule[0].reminders === "false") {
 					return '';
 				} else {
-					const checkUsername = await doQuery('SELECT username FROM ed WHERE username="' + user['username'] + '"');
+					const checkUsername = await doQuery('SELECT username FROM ed WHERE username="' + 
+						user['username'] + '"');
 					if (checkUsername.length === 0) {
 						return '';
 				    } else {
 						commandsExecuted.push("1");
-						const value = await doQuery('SELECT status AS val FROM ed_reminders WHERE username="' + checkUsername[0].username + '"');
+						const value = await doQuery('SELECT status AS val FROM ed_reminders WHERE username="' + 
+							checkUsername[0].username + '"');
 						if (value[0].val === "scheduled") {
 							return '';
 						} else {
@@ -3064,9 +3587,10 @@ kb.on('connected', (adress, port) => {
 							}
 							const now = new Date();
 							kb.whisper(user['username'], 'I will remind you to enter the dungeon in 1h :)');
-							const update = await doQuery('UPDATE ed_reminders SET channel="' + channel.replace('#', '') + '", fires="' + 
-									now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + '", status="scheduled" ' + 
-									'WHERE username="' + user['username'] + '"');
+							const update = await doQuery('UPDATE ed_reminders SET channel="' + 
+								channel.replace('#', '') + '", fires="' + 
+								now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + 
+								'", status="scheduled" ' + 'WHERE username="' + user['username'] + '"');
 						}
 					}
 				}
@@ -3099,38 +3623,6 @@ kb.on('connected', (adress, port) => {
 		},
 
 		{
-			name: "AlienPls",
-			aliases: null,
-			invocation: async (channel, user, message, args) => {
-				try {
-					const allowedChannels = [{
-							ID: '#supinic'
-						},
-						{
-							ID: '#nymn'
-						},
-						{
-							ID: '#pajlada'
-						}
-					];
-					const checkChannels = allowedChannels.filter(
-						i => i.ID === channel
-					);
-					const checkChannelsMap = checkChannels.map(
-						i => i.ID
-					)
-					if (channel === checkChannelsMap[0] && user['user-id'] === "178087241") {
-						return "AlienPls";
-					} else {
-						return '';
-					}
-				} catch (err) {
-					return user['username'] + ', ' + err + 'FeelsDankMan !!!'
-				} 
-			}
-		},
-
-		{
 			name: dankPrefix + "deval",
 			aliases: null,
 			invocation: async (channel, user, message, args) => {
@@ -3154,10 +3646,10 @@ kb.on('connected', (adress, port) => {
 								}
 							}
 						}
-						const msg = message.split(" ");
-						const msg2 = msg.shift();
+						const msg = message.split(" ").splice(1);
 						const ev = await eval('(async () => {' +
-							msg.join(" ").replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '') + '})()');
+							msg.join(" ").replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '') + 
+							'})()');
 						console.log(ev);
 						return String(ev);
 					}
@@ -3232,10 +3724,17 @@ kb.on('connected', (adress, port) => {
 					}, 10);
 				}
 
-				const msgChannel = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').replace('`', '').split(' ')[0];
-				const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '').split(' ').splice(1).join(' ')
-				console.log(msgChannel)
-				console.log(msg)
+				const msgChannel = message
+					.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+					.replace('`', '')
+					.split(' ')[0];
+
+				const msg = message
+					.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+					.split(' ')
+					.splice(1)
+					.join(' ')
+					
 				if (!msg) {
 					kb.say(channel, `${user['username']}, no message provided.`);
 				}
@@ -3243,10 +3742,18 @@ kb.on('connected', (adress, port) => {
 			}
 			return;
 		})
+
 		//active commands
 		kb.on('chat', function(channel, user, message) {
 			if (channel === '#haxk' && message === "!xd") {
-				kb.say('haxk', "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠛⠛⠛⠛⠛⠛⠿⠿⣿⣿⣿⣿⣿ ⣿⣿⣯⡉⠉⠉⠙⢿⣿⠟⠉⠉⠉⣩⡇⠄⠄⢀⣀⣀⡀⠄⠄⠈⠹⣿⣿⣿ ⣿⣿⣿⣷⣄⠄⠄⠈⠁⠄⠄⣠⣾⣿⡇⠄⠄⢸⣿⣿⣿⣷⡀⠄⠄⠘⣿⣿ ⣿⣿⣿⣿⣿⣶⠄⠄⠄⠠⣾⣿⣿⣿⡇⠄⠄⢸⣿⣿⣿⣿⡇⠄⠄⠄⣿⣿ ⣿⣿⣿⣿⠟⠁⠄⠄⠄⠄⠙⢿⣿⣿⡇⠄⠄⠸⠿⠿⠿⠟⠄⠄⠄⣰⣿⣿ ⣿⡿⠟⠁⠄⢀⣰⣶⣄⠄⠄⠈⠻⣿⡇⠄⠄⠄⠄⠄⠄⠄⢀⣠⣾⣿⣿⣿ ⣿⣷⣶⣶⣶⣿⣿⣿⣿⣷⣶⣶⣶⣿⣷⣶⣶⣶⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿ ");
+				kb.say('haxk', "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠛⠛⠛⠛⠛⠛⠿⠿⣿⣿⣿⣿⣿" + 
+							  " ⣿⣿⣯⡉⠉⠉⠙⢿⣿⠟⠉⠉⠉⣩⡇⠄⠄⢀⣀⣀⡀⠄⠄⠈⠹⣿⣿⣿" + 
+							  " ⣿⣿⣿⣷⣄⠄⠄⠈⠁⠄⠄⣠⣾⣿⡇⠄⠄⢸⣿⣿⣿⣷⡀⠄⠄⠘⣿⣿" +
+							  " ⣿⣿⣿⣿⣿⣶⠄⠄⠄⠠⣾⣿⣿⣿⡇⠄⠄⢸⣿⣿⣿⣿⡇⠄⠄⠄⣿⣿" +
+							  " ⣿⣿⣿⣿⠟⠁⠄⠄⠄⠄⠙⢿⣿⣿⡇⠄⠄⠸⠿⠿⠿⠟⠄⠄⠄⣰⣿⣿" +
+							  " ⣿⡿⠟⠁⠄⢀⣰⣶⣄⠄⠄⠈⠻⣿⡇⠄⠄⠄⠄⠄⠄⠄⢀⣠⣾⣿⣿⣿" +
+							  " ⣿⣷⣶⣶⣶⣿⣿⣿⣿⣷⣶⣶⣶⣿⣷⣶⣶⣶⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿ "
+							  );
 			} else if (channel==="#supinic"&&message.includes("$ps sneeze")) {
 				if (talkedRecently.has(user['user-id'])) {
 					return;
@@ -3261,10 +3768,6 @@ kb.on('connected', (adress, port) => {
 			} else {
 				return; 
 			}
-		});
-		kb.on("resub", function(channel, username, months) {
-			if (channel != "#supinic") return;
-			kb.say("Supinic", username + " has resubscribed, welcome back in hackermans club HACKERMANS")
 		});
 
 		kb.on("timeout", function(channel, username, message, duration) {
@@ -3289,39 +3792,6 @@ kb.on('connected', (adress, port) => {
 			if (channel != "#supinic") return;
 			else
 				kb.say("Supinic", username + " hosted supinic with " + viewers + " viewers HACKERMANS ")
-		});
-
-		kb.on("subgift", (channel, username, streakMonths, recipient, userstate) => {
-			if (channel != "#supinic") return;
-			else
-				kb.say("Supinic", username + " has gifted a sub to " + recipient + " and it's their " +
-					streakMonths + " month/s resub! ppBounce ")
-		});
-
-		kb.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
-			if (channel != "#supinic") return;
-			else
-				kb.say("Supinic", username + " is giving away " + numbOfSubs + " and they have already gifted " +
-					userstate + " subs to Supinic peepoPooPoo ")
-			let senderCount = ~~userstate["msg-param-sender-count"];
-		});
-
-		kb.on("subscription", (channel, username) => {
-			if (channel != "#supinic") return;
-			else
-				kb.say("Supinic", username + " has subscribed! Welcome to the HACKERMANS 's club ")
-		});
-
-		kb.on("raided", (channel, username, viewers) => {
-			if (channel != "#supinic") return;
-			else
-				kb.say("Supinic", username + " raided supinic with " + viewers + " viewers PagChomp ")
-		});
-
-		kb.on("giftpaidupgrade", (channel, username, sender, userstate) => {
-			if (channel != "#supinic") return;
-			else
-				kb.say("Supinic", username + " is continuing the gifted sub they got from " + sender + " PagChomp ")
 		});
 	}
 })
