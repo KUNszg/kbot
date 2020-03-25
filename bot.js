@@ -2996,6 +2996,10 @@ kb.on('connected', (adress, port) => {
 					}
 
 					if (cookieApi.seconds_left<cookieApi.interval_unformatted-10 || cookieApi.seconds_left === 0) {
+						if (cookieApi.time_left_formatted === 0) {
+							return '';
+						}
+						
 						kb.whisper(user['username'], `Your cookie is still on cooldown (${cookieApi.time_left_formatted}) with ${cookieApi.interval_formatted} intervals.`);
 						return '';
 					} else {
