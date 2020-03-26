@@ -2998,7 +2998,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "banphrase",
 			aliases: prefix + "bp",
 			cooldown: 10,
-			permissions: 'restricted',
+			permission: 'restricted',
 			description: 'add or remove banphrase - (+, -, add, del) -- cooldown 10ms',
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -3177,7 +3177,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "query",
 			aliases: null,
 			cooldown: 10,
-			permissions: 'restricted',
+			permission: 'restricted',
 			invocation: async (channel, user, message, args) => {
 				try {
 
