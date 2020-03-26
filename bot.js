@@ -2286,12 +2286,12 @@ kb.on('connected', (adress, port) => {
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
-					const [msgRaw, msg] = message
+					const msgRaw = message
 						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
 						.split(' ')
 						.splice(2)
 						.filter(Boolean);
-
+					const msg = msgRaw
 
 
 					const channelParsed = channel.replace('#', '')
