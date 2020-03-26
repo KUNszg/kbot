@@ -3174,6 +3174,44 @@ kb.on('connected', (adress, port) => {
 		},
 
 		{
+			name: prefix + "query",
+			aliases: null,
+			cooldown: 10,
+			permissions: 'restricted',
+			invocation: async (channel, user, message, args) => {
+				try {
+
+					if (user['user-id'] != '178087241') {
+						return '';
+					}
+
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(2)
+						.filter(Boolean);
+
+					const queryResp = await doQuery(`${msg.join(' ')}`);
+					if ((msg.join(' ').toLowerCase().includes('insert') || 
+						msg.join(' ').toLowerCase().includes('update')) || 
+						msg.join(' ').toLowerCase().includes('delete')) {
+							return '';
+						}
+					
+					if (!msg.join(' ').includes('query')) {
+						return `${user['username']}, forgot to add "As query" to the string FeelsDankMan !!!`;
+					} 
+
+					return queryResp[0].query
+
+				} catch (err) {
+					errorLog(err);
+					kb.whisper('kunszg', error);
+				}
+			}
+		},
+
+		{
 			name: prefix + "commands",
 			aliases: null,
 			cooldown: 10000,
