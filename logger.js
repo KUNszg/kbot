@@ -78,10 +78,14 @@ kb.on('connected', (adress, port) => {
 	    });
 	});
 
+
 	setInterval(() => { 
-		await doQuery(`
-			UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="logger"
-			`)
+		async function kden() {
+			await doQuery(`
+				UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="logger"
+				`)
+		}
+		kden()
 	}, 15000)
 
 	kb.on('message', function(channel, user, message) {

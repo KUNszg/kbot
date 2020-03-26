@@ -134,9 +134,12 @@ async function diagramData() {
 diagramData().then(function(data) {apiDataColors(data)})
 
 setInterval(() => { 
-	await doQuery(`
-		UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="api"
-		`)
+	async function kden() {
+		await doQuery(`
+			UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="api"
+			`)
+	}
+	kden()
 }, 17000)
 
 const shell = require('child_process');
