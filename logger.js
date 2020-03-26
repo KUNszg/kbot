@@ -47,6 +47,7 @@ kb.on('connected', (adress, port) => {
 		password: api.db_pass,
 		database: "kbot",
 	});
+	
 	con.connect(function(err) {
 		if (err) {
 			kb.say('kunszg', '@kunszg, database connection error monkaS')
@@ -55,26 +56,34 @@ kb.on('connected', (adress, port) => {
 			console.log("Connected!");
 		}
 	});
-const doQuery = (query) => new Promise((resolve, reject) => {
-    con.query(query, (err, results, fields) => {
-        if (err) {
-        	const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
-			const insert = [JSON.stringify(err), new Date()];
-			con.query(mysql.format(sql, insert),
-				function(error, results, fields) {
-					if (error) {
-						reject(error)
-					} else {
-						resolve(results)
-					}
-				})
-            reject(err);
-        }
-        else {
-            resolve(results);
-        }      
-    });
-});
+	
+	const doQuery = (query) => new Promise((resolve, reject) => {
+	    con.query(query, (err, results, fields) => {
+	        if (err) {
+	        	const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+				const insert = [JSON.stringify(err), new Date()];
+				con.query(mysql.format(sql, insert),
+					function(error, results, fields) {
+						if (error) {
+							reject(error)
+						} else {
+							resolve(results)
+						}
+					})
+	            reject(err);
+	        }
+	        else {
+	            resolve(results);
+	        }      
+	    });
+	});
+
+	setInterval(() => { 
+		await doQuery(`
+			UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="logger"
+			`)
+	}, 15000)
+
 	kb.on('message', function(channel, user, message) {
 		const filterBots = ignoreList.filter(i => i === user['user-id'])
 		const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
@@ -98,6 +107,7 @@ const doQuery = (query) => new Promise((resolve, reject) => {
 			})
 		}
 	})
+
 	kb.on('message', function(channel, user, message) {
 		if (channel === '#xqcow') {
 			return;

@@ -203,7 +203,11 @@ kb.on('connected', (adress, port) => {
 						}
 					}
 					
-					const used = process.memoryUsage().heapUsed/1024/1024;
+					const getOtherModules = await doQuery(`
+						SELECT * FROM memory
+						`)
+					const used = getOtherModules[0].memory + getOtherModules[1].memory + getOtherModules[2].memory + (process.memoryUsage().heapUsed/1024/1024).toFixed(2);
+					console.log(used)
 					const uptime = process.uptime();
 					const os = require('os');
 					const serverUptimeHours = os.uptime()/3600;
@@ -229,14 +233,14 @@ kb.on('connected', (adress, port) => {
 					// if server is live for more than 72 hours and code uptime is less than 42h 
 					if (serverUptimeHours > 72 && uptime < 172800) {
 						return `${user['username']}, code is running for ${format(uptime)}, has ${lines} lines, 
-						memory usage: ${used.toFixed(2)} MB, host is up for ${serverUptimeDays.toFixed(2)} days, 
+						memory usage: ${used} MB, host is up for ${serverUptimeDays.toFixed(2)} days, 
 						commands used in this session ${commandsExecuted.length} FeelsDankMan`;
 					}
 					
 					// if code uptime is more than 42h and server is live for more than 72h
 					if (uptime > 172800 && serverUptimeHours > 72) {
 						return `${user['username']}, code is running for ${(uptime/86400).toFixed(1)} days, 
-						has ${lines} lines, memory usage: ${used.toFixed(2)} MB, host is up for 
+						has ${lines} lines, memory usage: ${used} MB, host is up for 
 						${serverUptimeHours.toFixed(1)}h (${serverUptimeDays.toFixed(2)} days), 
 						commands used in this session ${commandsExecuted.length} FeelsDankMan`;
 					} 
@@ -244,14 +248,14 @@ kb.on('connected', (adress, port) => {
 					// if code uptime is more than 42h and server is live for less than 72h
 					if (uptime > 172800 && serverUptimeHours < 72) {
 						return `${user['username']}, code is running for ${(uptime/86400).toFixed(1)} days, 
-						has ${lines} lines, memory usage: ${used.toFixed(2)} MB, host is up for 
+						has ${lines} lines, memory usage: ${used} MB, host is up for 
 						${serverUptimeHours.toFixed(1)}h, commands used in this session 
 						${commandsExecuted.length} FeelsDankMan`;
 					} 
 					
 					// default response
 					return `${user['username']}, code is running for ${format(uptime)}, has ${lines} lines, 
-					memory usage: ${(used).toFixed(2)} MB, host is up for ${serverUptimeHours.toFixed(1)}h 
+					memory usage: ${used} MB, host is up for ${serverUptimeHours.toFixed(1)}h 
 					(${serverUptimeDays.toFixed(2)} days), commands used in this session 
 					${commandsExecuted.length} FeelsDankMan`;
 
