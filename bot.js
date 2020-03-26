@@ -206,8 +206,13 @@ kb.on('connected', (adress, port) => {
 					const getOtherModules = await doQuery(`
 						SELECT * FROM memory
 						`)
-					const used = getOtherModules[0].memory + getOtherModules[1].memory + getOtherModules[2].memory + (process.memoryUsage().heapUsed/1024/1024).toFixed(2);
-					console.log(used)
+					const used = (
+						Number(getOtherModules[0].memory) + 
+						Number(getOtherModules[1].memory) + 
+						Number(getOtherModules[2].memory) + 
+						Number((process.memoryUsage().heapUsed/1024/1024).toFixed(2))
+						).toFixed(2);
+
 					const uptime = process.uptime();
 					const os = require('os');
 					const serverUptimeHours = os.uptime()/3600;
@@ -3800,4 +3805,4 @@ kb.on('connected', (adress, port) => {
 				kb.say("Supinic", username + " hosted supinic with " + viewers + " viewers HACKERMANS ")
 		});
 	}
-})
+}) 
