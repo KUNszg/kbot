@@ -133,15 +133,6 @@ async function diagramData() {
 }
 diagramData().then(function(data) {apiDataColors(data)})
 
-function apiDataPM2(data) {
-	app.get("/pm2", (req, res, next) => {
-	 	res.json(
-	 		data
-		);
-	});
-}
-apiDataPM2(shell.execSync('pm2 prettylist'))
-
 const shell = require('child_process');
 // restart process every 4h
 setInterval(()=>{shell.execSync('pm2 restart api')}, 7200000)
