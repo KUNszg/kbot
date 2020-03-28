@@ -3243,7 +3243,7 @@ kb.on('connected', (adress, port) => {
 						WHERE username="${msg[0]}";
 						`);
 
-					if (checkIfExists[0].length === 0) {
+					if (checkIfExists.length === 0) {
 						return `${user['username']}, this user does not exist in my database.`;
 					}
 
