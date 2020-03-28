@@ -133,14 +133,15 @@ async function diagramData() {
 }
 diagramData().then(function(data) {apiDataColors(data)})
 
+async function kden() {
+	await doQuery(`
+		UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="api"
+		`)
+}
+kden()
 setInterval(() => { 
-	async function kden() {
-		await doQuery(`
-			UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="api"
-			`)
-	}
 	kden()
-}, 17000)
+}, 602000)
 
 const shell = require('child_process');
 // restart process every 4h

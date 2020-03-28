@@ -3206,7 +3206,166 @@ kb.on('connected', (adress, port) => {
 
 				} catch (err) {
 					errorLog(err);
-					kb.whisper('kunszg', error);
+					kb.whisper('kunszg', err);
+				}
+			}
+		},
+
+		{
+			name: prefix + "trust",
+			aliases: null,
+			cooldown: 10,
+			permissions: 'restricted',
+			invocation: async (channel, user, message, args) => {
+				try {
+
+					if (user['user-id'] != '178087241') {
+						return '';
+					}
+
+					const msg = message
+						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+						.split(' ')
+						.splice(2)
+						.filter(Boolean);
+
+					if (!msg[0]) {
+						return `${user['username']}, no user provided.`;
+					}
+
+					if (!msg[1]) {
+						return `${user['username']}, no permission specified.`;
+					}
+
+					const checkIfExists = await doQuery(`
+						SELECT *
+						FROM user_list
+						WHERE username="${msg[0]}";
+						`);
+
+					if (checkIfExists[0].length === 0) {
+						return `${user['username']}, this user does not exist in my database.`;
+					}
+
+					const checkTrustedList = await doQuery(`
+						SELECT *
+						FROM trusted_users
+						WHERE username="${msg[0]}"
+						`)
+
+					if (msg[1] === "active") {
+						if (checkTrustedList.length === 0) {
+							return `${user['username']}, this user is not in the trusted users list.`;
+						}
+						if (checkTrustedList[0].status === "active") {
+							return `${user['username']}, this user is already set with that status.`
+						}
+						if (checkTrustedList[0].status === "inactive") {
+							await doQuery(`
+								UPDATE trusted_users 
+								SET status="active" 
+								WHERE username="${msg[0]}"
+								`)
+							return `${user['username']}, changed trusted user status of ${msg[0]} to active`;
+						}
+					}
+
+					if (msg[1] === "inactive") {
+						if (checkTrustedList.length === 0) {
+							return `${user['username']}, this user is not in the trusted users list.`;
+						}
+						if (checkTrustedList[0].status === "inactive") {
+							return `${user['username']}, this user is already set with that status.`
+						}
+						if (checkTrustedList[0].status === "active") {
+							await doQuery(`
+								UPDATE trusted_users 
+								SET status="inactive" 
+								WHERE username="${msg[0]}"
+								`)
+							return `${user['username']}, changed trusted user status of ${msg[0]} to inactive`;
+						}
+					}
+
+					switch (msg[1]) {
+
+						case 'superuser':
+							if (checkTrustedList.length === 0) {
+								await doQuery(`
+									INSERT INTO trusted_users (username, permissions, status, added)
+									VALUES ("${msg[0]}", "superuser", "active", CURRENT_TIMESTAMP)
+									`);
+							}
+							await doQuery(`
+								UPDATE trusted_users 
+								SET permissions="superuser" 
+								WHERE username="${msg[0]}"
+								`);
+							break;
+
+						case 'mod':
+							if (checkTrustedList.length === 0) {
+								await doQuery(`
+									INSERT INTO trusted_users (username, permissions, status, added)
+									VALUES ("${msg[0]}", "mod", "active", CURRENT_TIMESTAMP)
+									`);
+							}
+							await doQuery(`
+								UPDATE trusted_users 
+								SET permissions="mod" 
+								WHERE username="${msg[0]}"
+								`);
+							break;
+
+						case 'admin':
+							if (checkTrustedList.length === 0) {
+								await doQuery(`
+									INSERT INTO trusted_users (username, permissions, status, added)
+									VALUES ("${msg[0]}", "admin", "active", CURRENT_TIMESTAMP)
+									`);
+							}
+							await doQuery(`
+								UPDATE trusted_users 
+								SET permissions="admin" 
+								WHERE username="${msg[0]}"
+								`);
+							break;
+
+						case 'editor':
+							if (checkTrustedList.length === 0) {
+								await doQuery(`
+									INSERT INTO trusted_users (username, permissions, status, added)
+									VALUES ("${msg[0]}", "editor", "active", CURRENT_TIMESTAMP)
+									`);
+							}
+							await doQuery(`
+								UPDATE trusted_users 
+								SET permissions="editor" 
+								WHERE username="${msg[0]}"
+								`);
+							break;
+
+						case 'contributor':
+							if (checkTrustedList.length === 0) {
+								await doQuery(`
+									INSERT INTO trusted_users (username, permissions, status, added)
+									VALUES ("${msg[0]}", "contributor", "active", CURRENT_TIMESTAMP)
+									`);
+							}
+							await doQuery(`
+								UPDATE trusted_users 
+								SET permissions="contributor" 
+								WHERE username="${msg[0]}"
+								`);
+							break;
+
+						default:
+							return `${user['username']}, this permission type does not exist.`
+					}
+					return `${user['username']}, changed trusted user permissons for ${msg[0]} to ${msg[1]}.`;
+				} catch (err) {
+					errorLog(err);
+					kb.whisper('kunszg', err);
 				}
 			}
 		},

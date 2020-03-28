@@ -78,15 +78,15 @@ kb.on('connected', (adress, port) => {
 	    });
 	});
 
-
+	async function kden() {
+		await doQuery(`
+			UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="logger"
+			`)
+	}
+	kden()
 	setInterval(() => { 
-		async function kden() {
-			await doQuery(`
-				UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="logger"
-				`)
-		}
 		kden()
-	}, 15000)
+	}, 601000)
 
 	kb.on('message', function(channel, user, message) {
 		const filterBots = ignoreList.filter(i => i === user['user-id'])

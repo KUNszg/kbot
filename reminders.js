@@ -77,14 +77,15 @@ kb.on('connected', (adress, port) => {
 		await doQuery(mysql.format(sql, insert));
 	}
 
+	async function kden() {
+		await doQuery(`
+			UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="reminders"
+			`)
+	}
+	kden()
 	setInterval(() => { 
-		async function kden() {
-			await doQuery(`
-				UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="reminders"
-				`)
-		}
 		kden()
-	}, 16000)
+	}, 600000)
 
 	// unfire clogging reminders
 	async function unfireCookie() {
