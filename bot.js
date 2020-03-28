@@ -3216,6 +3216,8 @@ kb.on('connected', (adress, port) => {
 			aliases: null,
 			cooldown: 10,
 			permissions: 'restricted',
+			description: `usage: kb trust [user] [permission] | set permissions for user to allow him to use restricted
+			and unlisted commands. -- cooldown 10ms`,
 			invocation: async (channel, user, message, args) => {
 				try {
 
@@ -3285,6 +3287,10 @@ kb.on('connected', (adress, port) => {
 								`)
 							return `${user['username']}, changed trusted user status of ${msg[0]} to inactive`;
 						}
+					}
+
+					if (checkTrustedList.length != 0 && checkTrustedList[0].permissions === msg[1]) {
+						return `${user['username']}, this permission is already assigned to that user.`;
 					}
 
 					switch (msg[1]) {
