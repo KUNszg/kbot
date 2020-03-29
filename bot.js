@@ -95,37 +95,6 @@ kb.on('connected', (adress, port) => {
 	const SpacexApiWrapper = require("spacex-api-wrapper");
 	const fetch = require("node-fetch");
 
-	const allowFastramid = [{
-			ID: '178087241'
-		}, //kunszg
-		{
-			ID: '229225576'
-		}, //kunszgbot
-		{
-			ID: '62300805'
-		}, //nymn
-	];
-	const allowEval = [{
-			ID: '178087241'
-		}, //kunszg
-		{
-			ID: '229225576'
-		}, //kunszgbot
-		{
-			ID: '458101504'
-		}, //notkunszg
-		{
-			ID: '31400525'
-		} //supinic
-	];
-	const allowModule = [{
-			ID: '178087241'
-		}, //kunszg
-		{
-			ID: '229225576'
-		} //kunszgbot
-	]
-
 	const doQuery = (query) => new Promise((resolve, reject) => {
 	    con.query(query, (err, results, fields) => {
 	        if (err) {
@@ -141,12 +110,23 @@ kb.on('connected', (adress, port) => {
 						}
 					})
 	            reject(err);
-	        }
-	        else {
+	        } else {
 	            resolve(results);
 	        }      
 	    });
 	});
+
+	async function checkPermissions(username) {
+		const checkPermissionList = await doQuery(`
+			SELECT *
+			FROM trusted_users
+			WHERE username="${username}"
+			`);
+		if (checkPermissionList.length === 0) {
+			return 0;
+		}
+		return checkPermissionList[0].permissions.split(':')[0];
+	}
 
 	async function errorLog(err) {
 		console.log(err)
@@ -670,28 +650,31 @@ kb.on('connected', (adress, port) => {
 			cooldown: 10,
 			invocation: async (channel, user, message, args) => {
 				try {
+
 					const msg = message.split(" ").splice(2);
 					const ping = await kb.ping();
 					const women = {};
 					const pi = require('pi-number');
+
 					const rU = eval('"' + rUni({
 						min: 0,
 						max: 1114109
 					}).replace('u', 'u{') + '}"');
-					const perms = allowEval.filter(
-						i => i.ID === user['user-id']
-					);
+
 					const shell = require('child_process');
 
-					if (!perms[0]) {
-						return "";
+					if (await checkPermissions(user['username'])<5) { 
+						return '';
 					}
+
 					if (msg.join(" ").toLowerCase() === "return typeof supinic") {
 						return "hackerman"
 					}
+
 					if (msg.join(" ").toLowerCase().includes("api")) {
 						return user['username'] + ', api key :/'
 					}
+
 					function reverse(s) {
 						return s.split('').reverse().join('');
 					}
@@ -718,6 +701,7 @@ kb.on('connected', (adress, port) => {
 						msg.join(" ").replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '') + '})()');
 					console.log(ev)
 					return String(ev);
+
 				} catch (err) {
 					errorLog(err)
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
@@ -739,6 +723,7 @@ kb.on('connected', (adress, port) => {
 					const emote = message.replace(/[\u{E0000}|\u{206d}]/gu, "").split(" ").splice(5);
 					const msgP = message.replace(/[\u{E0000}|\u{206d}]/gu, "").split(" ").splice(4);
 					const emoteP = message.replace(/[\u{E0000}|\u{206d}]/gu, "").split(" ").splice(5);
+				
 					const patterns = [{
 							pattern: 'pyramid'
 						},
@@ -752,6 +737,7 @@ kb.on('connected', (adress, port) => {
 							pattern: 'triangle'
 						}
 					];
+
 					const cases = [{
 							case: 'slow'
 						},
@@ -759,14 +745,13 @@ kb.on('connected', (adress, port) => {
 							case: 'fast'
 						}
 					];
+
 					const caseChosen = cases.filter(
 						i => i.case === msg[0]
 					);
+
 					const patternChosen = patterns.filter(
 						i => i.pattern === msg[1]
-					);
-					const perms = allowFastramid.filter(
-						i => i.ID === user['user-id']
 					);
 
 					function hasNumber(myString) {
@@ -781,91 +766,101 @@ kb.on('connected', (adress, port) => {
 							}
 						}
 					}
-					if (!perms[0]) {
-						return "";
-					} else {
-						if (!msg[0]) {
-							return user['username'] + ', no parameters provided (fast, slow) [err#1]';
-						} else if (!caseChosen[0] || msg[0] != caseChosen[0].case) {
-							return user['username'] + ', invalid first parameter (fast, slow) [err#2]';
-						} else if (!patternChosen[0] || msg[1] != patternChosen[0].pattern) {
-							return user['username'] + ', invalid second parameter (' +
-								patterns.map(i => i.pattern).join(', ') + ') [err#3]';
-						} else if (!msg[2] || !hasNumber(msg[2])) {
-							return user['username'] + ', invalid third parameter (number) [err#4]';
-						} else if (!emote[0] || !emote.join(' ').match(/[a-z]/i)) {
-							return user['username'] + ', invalid fourth parameter (word) [err#5]';
-						} else if (user['user-id'] === '40379362' && msg[2] > 50) { //sinris user id
-							return user['username'] + ", i can't allow pyramids higher than 50 FeelsBadMan";
-						} else {
-							if (caseChosen[0].case === 'fast' && patternChosen[0].pattern === 'pyramid') {
-								function createPyramid(height) {
-									for (var i = 1; i <= height; i++) {
-										var row = '';
 
-										for (var j = 1; j <= i; j++)
-											row += " " + emoteP[Math.floor(Math.random() * emoteP.length)];
-										kb.say(channel, row);
-									}
-									for (var i = height - 1; i > 0; i--) {
-										var row = '';
-
-										for (var j = i; j > 0; j--)
-											row += " " + emoteP[Math.floor(Math.random() * emoteP.length)];
-										kb.say(channel, row);
-									}
-								}
-								createPyramid(msgP[0]);
-								return "";
-							} else if (caseChosen[0].case === 'slow' && patternChosen[0].pattern === 'pyramid') {
-								function createPyramid(height) {
-									for (var i = 1; i <= height; i++) {
-										var row = '';
-
-										for (var j = 1; j <= i; j++)
-											row += " " + emoteP[Math.floor(Math.random() * emoteP.length)];
-										kb.say(channel, row);
-										sleep(1500);
-									}
-									for (var i = height - 1; i > 0; i--) {
-										var row = '';
-
-										for (var j = i; j > 0; j--)
-											row += " " + emoteP[Math.floor(Math.random() * emoteP.length)];
-										kb.say(channel, row);
-										sleep(1500);
-									}
-								}
-								createPyramid(msgP[0]);
-								return "";
-							} else if (caseChosen[0].case === 'fast' && patternChosen[0].pattern === 'triangle') {
-								const randomE = emoteP[Math.floor(Math.random() * emoteP.length)];
-
-								function createTriangle(height) {
-									for (var i = 1; i <= height; i++) {
-										kb.say(channel, (' ' + randomE + ' ').repeat(i))
-									}
-								}
-								createTriangle(msgP[0]);
-								return '';
-							} else if (caseChosen[0].case === 'slow' && patternChosen[0].pattern === 'triangle') {
-								const randomE = emoteP[Math.floor(Math.random() * emoteP.length)];
-
-								function createTriangle(height) {
-									for (var i = 1; i <= height; i++) {
-										kb.say(channel, (' ' + randomE + ' ').repeat(i))
-										sleep(1300);
-									}
-								}
-								createTriangle(msgP[0]);
-								return '';
-							} else if (patternChosen[0].pattern != 'pyramid' && 
-								patternChosen[0].pattern != 'triangle') {
-									return user['username'] + ', currently supporting only pyramid/triangle.'
-								}
-						}
+					if (await checkPermissions(user['username'])<3) { 
+						return '';
 					}
 
+					if (!msg[0]) {
+						return user['username'] + ', no parameters provided (fast, slow) [err#1]';
+					} 
+
+					if (!caseChosen[0] || msg[0] != caseChosen[0].case) {
+						return user['username'] + ', invalid first parameter (fast, slow) [err#2]';
+					} 
+
+					if (!patternChosen[0] || msg[1] != patternChosen[0].pattern) {
+						return user['username'] + ', invalid second parameter (' +
+							patterns.map(i => i.pattern).join(', ') + ') [err#3]';
+					} 
+
+					if (!msg[2] || !hasNumber(msg[2])) {
+						return user['username'] + ', invalid third parameter (number) [err#4]';
+					} 
+
+					if (!emote[0] || !emote.join(' ').match(/[a-z]/i)) {
+						return user['username'] + ', invalid fourth parameter (word) [err#5]';
+					} 
+
+					if (user['user-id'] != '178087241' && msg[2] > 15) {
+						return user['username'] + ", i can't allow pyramids higher than 15 😬";
+					}
+
+					if (caseChosen[0].case === 'fast' && patternChosen[0].pattern === 'pyramid') {
+						function createPyramid(height) {
+							for (var i = 1; i <= height; i++) {
+								var row = '';
+
+								for (var j = 1; j <= i; j++)
+									row += " " + emoteP[Math.floor(Math.random() * emoteP.length)];
+								kb.say(channel, row);
+							}
+							for (var i = height - 1; i > 0; i--) {
+								var row = '';
+
+								for (var j = i; j > 0; j--)
+									row += " " + emoteP[Math.floor(Math.random() * emoteP.length)];
+								kb.say(channel, row);
+							}
+						}
+						createPyramid(msgP[0]);
+						return "";
+					} else if (caseChosen[0].case === 'slow' && patternChosen[0].pattern === 'pyramid') {
+						function createPyramid(height) {
+							for (var i = 1; i <= height; i++) {
+								var row = '';
+
+								for (var j = 1; j <= i; j++)
+									row += " " + emoteP[Math.floor(Math.random() * emoteP.length)];
+								kb.say(channel, row);
+								sleep(1500);
+							}
+							for (var i = height - 1; i > 0; i--) {
+								var row = '';
+
+								for (var j = i; j > 0; j--)
+									row += " " + emoteP[Math.floor(Math.random() * emoteP.length)];
+								kb.say(channel, row);
+								sleep(1500);
+							}
+						}
+						createPyramid(msgP[0]);
+						return "";
+					} else if (caseChosen[0].case === 'fast' && patternChosen[0].pattern === 'triangle') {
+						const randomE = emoteP[Math.floor(Math.random() * emoteP.length)];
+
+						function createTriangle(height) {
+							for (var i = 1; i <= height; i++) {
+								kb.say(channel, (' ' + randomE + ' ').repeat(i))
+							}
+						}
+						createTriangle(msgP[0]);
+						return '';
+					} else if (caseChosen[0].case === 'slow' && patternChosen[0].pattern === 'triangle') {
+						const randomE = emoteP[Math.floor(Math.random() * emoteP.length)];
+
+						function createTriangle(height) {
+							for (var i = 1; i <= height; i++) {
+								kb.say(channel, (' ' + randomE + ' ').repeat(i))
+								sleep(1300);
+							}
+						}
+						createTriangle(msgP[0]);
+						return '';
+					} else if (patternChosen[0].pattern != 'pyramid' && 
+						patternChosen[0].pattern != 'triangle') {
+							return user['username'] + ', currently supporting only pyramid/triangle.'
+						}
 				} catch (err) {
 					errorLog(err)
 					return user['username'] + ", " + err + " FeelsDankMan !!!";
@@ -1702,9 +1697,9 @@ kb.on('connected', (adress, port) => {
 			invocation: async (channel, user, message, args) => {
 				try {
 
-					const perms = allowEval.filter(
-						i => i.ID === user['user-id']
-					);
+					if (await checkPermissions(user['username'])<4) { 
+						return '';
+					}
 
 					const shell = require('child_process');
 					
@@ -1718,11 +1713,6 @@ kb.on('connected', (adress, port) => {
 						.toString()
 						.replace(/-{2,}/g, "")
 						.replace(/\+{2,}/g, "");
-
-					// check if user has permissions to execute the command
-					if (!perms[0]) {
-						return "";
-					}
 					
 					// rapid restart flag
 					if (msg[1] === '-f') {
@@ -1941,10 +1931,10 @@ kb.on('connected', (adress, port) => {
 						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
 						.split(' ')
 						.splice(2);
-
-					const perms = allowModule.filter(
-						i => i.ID === user['user-id']
-					);
+					
+					if (await checkPermissions(user['username'])<3) { 
+						return '';
+					}
 
 					const resultsRegister = await doQuery(`
 						SELECT * 
@@ -1955,10 +1945,9 @@ kb.on('connected', (adress, port) => {
 					switch (msg[0]) {
 
 						case 'module':
-							if (!perms[0]) {
+							if (await checkPermissions(user['username'])<3) { 
 								return '';
 							}
-
 							await doQuery(`
 								UPDATE cookieModule 
 								SET reminders="${msg[1]}" 
@@ -2203,17 +2192,12 @@ kb.on('connected', (adress, port) => {
 						.split(' ')
 						.splice(2);
 
-					const perms = allowModule.filter(
-						i => i.ID === user['user-id']
-					);
-
 					switch (msg[0]) {
 
 						case 'module':
-							if (!perms[0]) {
+							if (await checkPermissions(user['username'])<3) { 
 								return '';
-							} 
-
+							}
 							await doQuery(`
 								UPDATE cookieModule 
 								SET reminders="${msg[1]}" 
@@ -2882,13 +2866,8 @@ kb.on('connected', (adress, port) => {
 			invocation: async (channel, user, message, args) => {
 				try {
 
-					// search for executer's permissions
-					const perms = allowEval.filter(
-						i => i.ID === user['user-id']
-					);
-
-					// check for executer's permissions
-					if (!perms[0]) {
+					
+					if (await checkPermissions(user['username'])<3) { 
 						return '';
 					}
 
@@ -2948,13 +2927,7 @@ kb.on('connected', (adress, port) => {
 			invocation: async (channel, user, message, args) => {
 				try {
 
-					// search for executer's permissions
-					const perms = allowEval.filter(
-						i => i.ID === user['user-id']
-					);
-
-					// check for executer's permissions
-					if (!perms[0]) {
+					if (await checkPermissions(user['username'])<3) { 
 						return '';
 					}
 
@@ -3003,13 +2976,7 @@ kb.on('connected', (adress, port) => {
 			invocation: async (channel, user, message, args) => {
 				try {
 
-					// search for executer's permissions
-					const perms = allowEval.filter(
-						i => i.ID === user['user-id']
-					);
-
-					// check for executer's permissions
-					if (!perms[0]) {
+					if (await checkPermissions(user['username'])<3) { 
 						return '';
 					}
 
@@ -3215,13 +3182,12 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "trust",
 			aliases: null,
 			cooldown: 10,
-			permissions: 'restricted',
+			permission: 'restricted',
 			description: `usage: kb trust [user] [permission] | set permissions for user to allow him to use restricted
 			and unlisted commands. -- cooldown 10ms`,
 			invocation: async (channel, user, message, args) => {
 				try {
-
-					if (user['user-id'] != '178087241') {
+					if (await checkPermissions(user['username'])<5) { 
 						return '';
 					}
 
@@ -3295,80 +3261,85 @@ kb.on('connected', (adress, port) => {
 
 					switch (msg[1]) {
 
+						case '1':
 						case 'superuser':
 							if (checkTrustedList.length === 0) {
 								await doQuery(`
 									INSERT INTO trusted_users (username, permissions, status, added)
-									VALUES ("${msg[0]}", "superuser", "active", CURRENT_TIMESTAMP)
+									VALUES ("${msg[0]}", "1:superuser", "active", CURRENT_TIMESTAMP)
 									`);
 							}
 							await doQuery(`
 								UPDATE trusted_users 
-								SET permissions="superuser" 
+								SET permissions="1:superuser" 
 								WHERE username="${msg[0]}"
 								`);
-							break;
+							return `${user['username']}, changed trusted user permissons for ${msg[0]} to superuser.`;
 
+						case '2':
 						case 'mod':
 							if (checkTrustedList.length === 0) {
 								await doQuery(`
 									INSERT INTO trusted_users (username, permissions, status, added)
-									VALUES ("${msg[0]}", "mod", "active", CURRENT_TIMESTAMP)
+									VALUES ("${msg[0]}", "2:mod", "active", CURRENT_TIMESTAMP)
 									`);
 							}
 							await doQuery(`
 								UPDATE trusted_users 
-								SET permissions="mod" 
+								SET permissions="2:mod" 
 								WHERE username="${msg[0]}"
 								`);
-							break;
+							return `${user['username']}, changed trusted user permissons for ${msg[0]} to mod.`;
 
+						case '3':
 						case 'admin':
 							if (checkTrustedList.length === 0) {
 								await doQuery(`
 									INSERT INTO trusted_users (username, permissions, status, added)
-									VALUES ("${msg[0]}", "admin", "active", CURRENT_TIMESTAMP)
+									VALUES ("${msg[0]}", "3:admin", "active", CURRENT_TIMESTAMP)
 									`);
 							}
 							await doQuery(`
 								UPDATE trusted_users 
-								SET permissions="admin" 
+								SET permissions="3:admin" 
 								WHERE username="${msg[0]}"
 								`);
-							break;
+							return `${user['username']}, changed trusted user permissons for ${msg[0]} to admin.`;
 
+						case '4':
 						case 'editor':
 							if (checkTrustedList.length === 0) {
 								await doQuery(`
 									INSERT INTO trusted_users (username, permissions, status, added)
-									VALUES ("${msg[0]}", "editor", "active", CURRENT_TIMESTAMP)
+									VALUES ("${msg[0]}", "4:editor", "active", CURRENT_TIMESTAMP)
 									`);
 							}
 							await doQuery(`
 								UPDATE trusted_users 
-								SET permissions="editor" 
+								SET permissions="4:editor" 
 								WHERE username="${msg[0]}"
 								`);
-							break;
+							return `${user['username']}, changed trusted user permissons for ${msg[0]} to editor.`;
 
+						case '5':
 						case 'contributor':
 							if (checkTrustedList.length === 0) {
 								await doQuery(`
 									INSERT INTO trusted_users (username, permissions, status, added)
-									VALUES ("${msg[0]}", "contributor", "active", CURRENT_TIMESTAMP)
+									VALUES ("${msg[0]}", "5:contributor", "active", CURRENT_TIMESTAMP)
 									`);
 							}
 							await doQuery(`
 								UPDATE trusted_users 
-								SET permissions="contributor" 
+								SET permissions="5:contributor" 
 								WHERE username="${msg[0]}"
 								`);
-							break;
+							return `${user['username']}, changed trusted user permissons for ${msg[0]} to contributor.`;
 
 						default:
 							return `${user['username']}, this permission type does not exist.`
 					}
-					return `${user['username']}, changed trusted user permissons for ${msg[0]} to ${msg[1]}.`;
+					return `${user['username']}, [error] - eShrug something fucked up`;
 				} catch (err) {
 					errorLog(err);
 					kb.whisper('kunszg', err);
@@ -3919,23 +3890,11 @@ kb.on('connected', (adress, port) => {
 	});
 	
 	{
-		kb.on('chat', function(channels, user, message) {
+		kb.on('chat', async function(channels, user, message) {
 			if (message.startsWith('`')) {
-				const perms = allowEval.filter(
-					i => i.ID === user['user-id']
-				);
-
-				if (!perms[0]) {
-					return;
-				}
 				
-				if (talkedRecently.has(user['user-id'])) {
-					return;
-				} else {
-					talkedRecently.add(user['user-id']);
-					setTimeout(() => {
-						talkedRecently.delete(user['user-id']);
-					}, 10);
+				if (await checkPermissions(user['username'])<3) { 
+					return '';
 				}
 
 				const msgChannel = message
