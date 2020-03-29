@@ -1932,9 +1932,6 @@ kb.on('connected', (adress, port) => {
 						.split(' ')
 						.splice(2);
 					
-					if (await checkPermissions(user['username'])<3) { 
-						return '';
-					}
 
 					const resultsRegister = await doQuery(`
 						SELECT * 
