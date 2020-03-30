@@ -122,7 +122,7 @@ kb.on('connected', (adress, port) => {
 			FROM trusted_users
 			WHERE username="${username}"
 			`);
-		if (checkPermissionList.length === 0) {
+		if (checkPermissionList.length === 0 || checkPermissionList[0].status === "inactive") {
 			return 0;
 		}
 		return checkPermissionList[0].permissions.split(':')[0];
