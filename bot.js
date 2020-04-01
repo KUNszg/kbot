@@ -2285,8 +2285,8 @@ kb.on('connected', (adress, port) => {
 								}
 							}
 							const asd = edApi.next_entry.toFixed(0) - (Date.now(new Date())/1000)
-							return asd
 							updateReminder(asd)
+							kb.say(asd)
 							kb.whisper(user['username'], `I will remind you to enter dungeon in 
 								${format(edApi.next_entry.toFixed(0) - (Date.now(new Date())/1000))} (forced reminder)`);
 							break;
