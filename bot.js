@@ -3365,10 +3365,8 @@ kb.on('connected', (adress, port) => {
 				(command.aliases && (input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '')
 					.toLowerCase() === command.aliases)
 			) {
-				const shellx = require('child_process')
-				let result2 = await command.invocation(channel, user, message);
-				let result = shellx.execSync('randomcase ' + result2)
-				
+				let result = await command.invocation(channel, user, message);
+
 				// find the called command to check for cooldowns
 				const getCommandName = commands.filter(i => 
 					(i.name === (input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '')
