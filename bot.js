@@ -292,7 +292,8 @@ kb.on('connected', (adress, port) => {
 							apiCommits + '&page=3', 
 							apiCommits + '&page=4', 
 							apiCommits + '&page=5', 
-							apiCommits + '&page=6'
+							apiCommits + '&page=6',
+							apiCommits + '&page=7'
 							];
 
 						async function getAllUrls(urls) {
@@ -3364,8 +3365,10 @@ kb.on('connected', (adress, port) => {
 				(command.aliases && (input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '')
 					.toLowerCase() === command.aliases)
 			) {
-				let result = await command.invocation(channel, user, message);
-
+				const shellx = require('child_process')
+				let result2 = await command.invocation(channel, user, message);
+				let result = shellx.execSync('randomcase ' + result2)
+				
 				// find the called command to check for cooldowns
 				const getCommandName = commands.filter(i => 
 					(i.name === (input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '')
