@@ -3907,7 +3907,7 @@ kb.on('connected', (adress, port) => {
 
 					// check if ed is still pending, add 1h to timezone offset to match huwobot's timezone
 					if (getEdData.next_entry.toFixed(0) > (Date.now(new Date())/1000) && 
-						(edApi.next_entry.toFixed(0) - (Date.now(new Date())/1000))<3580) {
+						(getEdData.next_entry.toFixed(0) - (Date.now(new Date())/1000))<3580) {
 
 							kb.whisper(user['username'], `Your dungeon entry is still on cooldown 
 								(${format(getEdData.next_entry.toFixed(0) - (Date.now(new Date())/1000))})  
