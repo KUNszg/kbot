@@ -2243,7 +2243,7 @@ kb.on('connected', (adress, port) => {
 								use "kb ed register" to do so.`;
 							}
 
-							if (edApi.next_entry - ((Date.now(new Date())/1000) + 7200) === 0) {
+							if (edApi.next_entry.toFixed(0) - (Date.now(new Date())/1000) === 0) {
 								return `${user['username']}, you can enter the dungeon right now! (+ed)`;
 							}
 
@@ -2285,9 +2285,9 @@ kb.on('connected', (adress, port) => {
 								}
 							}
 
-							updateReminder(edApi.next_entry - ((Date.now(new Date())/1000) + 7200))
-							return `${user['username']}, I will remind you to enter dungeon in 
-							${format(edApi.next_entry - ((Date.now(new Date())/1000) + 7200))} (forced reminder)`;
+							updateReminder(edApi.next_entry.toFixed(0) - (Date.now(new Date())/1000))
+							kb.whispered(user['username'], `I will remind you to enter dungeon in 
+								${format(edApi.next_entry.toFixed(0) - (Date.now(new Date())/1000))} (forced reminder)`);
 
 						case 'register':
 							const resultsRegister = await doQuery(`
@@ -3909,9 +3909,9 @@ kb.on('connected', (adress, port) => {
 					const timeDiff = getEdData.next_entry - getEdData.last_entry;
 
 					// check if ed is still pending, add 1h to timezone offset to match huwobot's timezone
-					if (getEdData.next_entry > (Date.now(new Date())/1000) + 7200) {
+					if (getEdData.next_entry.toFixed(0) > (Date.now(new Date())/1000)) {
 						kb.whisper(user['username'], `Your dungeon entry is still on cooldown 
-							(${format((getEdData.next_entry - (Date.now(new Date())/1000) + 7200))})  
+							(${format(getEdData.next_entry.toFixed(0) - (Date.now(new Date())/1000))})  
 							to force-set your reminder use "kb ed force".`)
 						return '';
 					}
@@ -3922,7 +3922,7 @@ kb.on('connected', (adress, port) => {
 						UPDATE ed_reminders 
 						SET (
 							channel="${channel.replace('#', '')}", 
-							fires="${now.addMinutes(timeDiff).toISOString().slice(0, 19).replace('T', ' ')}", 
+							fires="${now.addMinutes(timeDiff.toFixed(0)).toISOString().slice(0, 19).replace('T', ' ')}", 
 							status="scheduled" 
 							)
 						WHERE username="${user['username']}"
