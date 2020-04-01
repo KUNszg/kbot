@@ -30,7 +30,7 @@ const repeatedMessages = {
 kb.connect();
 kb.on('connected', (adress, port) => {
 
-	kb.say('kunszg', 'reminders reconnected KKona')
+	kb.say('kunszg', spongeCase.spongeCase('reminders reconnected KKona'))
 	const fetch = require("node-fetch");
 	const mysql = require('mysql2');
 	const con = mysql.createConnection({
@@ -86,7 +86,7 @@ kb.on('connected', (adress, port) => {
 	setInterval(() => { 
 		kden()
 	}, 600000)
-
+const spongeCase = require('sponge-case')
 	// unfire clogging reminders
 	async function unfireCookie() {
 		
@@ -112,7 +112,8 @@ kb.on('connected', (adress, port) => {
 				} else {
 					const dateUnfiredUsers = new Date(selectUnfiredUsers[0].fires)
 					const unfiredDiff = (serverDate - dateUnfiredUsers)/1000/60
-					kb.say(selectUnfiredUsers[0].channel, selectUnfiredUsers[0].username + ', you had an unfired cookie reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and eat your cookie please :)');
+					const spongeCase = require('sponge-case')
+					kb.say(selectUnfiredUsers[0].channel, spongeCase.spongeCase(selectUnfiredUsers[0].username + ', you had an unfired cookie reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and eat your cookie please :)'));
 					await doQuery('UPDATE cookie_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
 				}
 			}
@@ -144,7 +145,7 @@ kb.on('connected', (adress, port) => {
 				} else {
 					const dateUnfiredUsers = new Date(selectUnfiredUsers[0].fires)
 					const unfiredDiff = (serverDate - dateUnfiredUsers)/1000/60
-					kb.whisper(selectUnfiredUsers[0].username, 'You had an unfired dungeon reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and enter the dungeon please :)');
+					kb.whisper(selectUnfiredUsers[0].username, spongeCase.spongeCase('You had an unfired dungeon reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and enter the dungeon please :)'));
 					await doQuery('UPDATE ed_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
 				}
 			}
@@ -179,7 +180,7 @@ kb.on('connected', (adress, port) => {
 					return;
 				} else {
 					limit.add(value[0].username)
-					kb.say(value[0].channel, '(cookie reminder) ' + value[0].username + ', eat cookie please :) 🍪')
+					kb.say(value[0].channel, spongeCase.spongeCase('(cookie reminder) ' + value[0].username + ', eat cookie please :) 🍪'))
 					setTimeout(() => {limit.delete(value[0].username)}, 10000)		
 				}
 
@@ -218,7 +219,7 @@ kb.on('connected', (adress, port) => {
 					return;
 				} else {
 					limit.add(value[0].username)
-					kb.whisper(value[0].username, '(ed reminder) enter dungeon please :) 🏰 ')
+					kb.whisper(value[0].username, spongeCase.spongeCase('(ed reminder) enter dungeon please :) 🏰 '))
 					setTimeout(() => {limit.delete(value[0].username)}, 10000)		
 				}
 

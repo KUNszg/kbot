@@ -3355,6 +3355,7 @@ kb.on('connected', (adress, port) => {
 	];
 
 	kb.on("chat", async (channel, user, message, self) => {
+		const spongeCase = require('sponge-case')
 		const input = message.split(' ')
 		if (self) return;
 
@@ -3365,7 +3366,8 @@ kb.on('connected', (adress, port) => {
 				(command.aliases && (input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '')
 					.toLowerCase() === command.aliases)
 			) {
-				let result = await command.invocation(channel, user, message);
+				let result2 = await command.invocation(channel, user, message);
+				let result = spongeCase.spongeCase(result2.toString())
 
 				// find the called command to check for cooldowns
 				const getCommandName = commands.filter(i => 
@@ -3598,7 +3600,8 @@ kb.on('connected', (adress, port) => {
 				(command.aliases && (input[0].replace('kbot', 'kb') + ' ' +
 					input[1]).replace(/,/, '').replace('@', '').toLowerCase() === command.aliases)
 			) {
-				let result = await command.invocation(channel, user, message);
+				let result2 = await command.invocation(channel, user, message);
+				let result = spongeCase.spongeCase(result2.toString()) 
 
 				// If a message would be duplicated in a row in a channel, add something to make it not duplicate
 				if (repeatedMessages[channel] === result) {
@@ -3860,7 +3863,8 @@ kb.on('connected', (adress, port) => {
 		dankeval.forEach(async smart => {
 			if ((message.split(' ')[0] === smart.name) ||
 				(smart.aliases && message.split(' ')[0] === smart.aliases)) {
-				let result = await smart.invocation(channel, user, message);
+				let result2 = await smart.invocation(channel, user, message);
+				let result = spongeCase.spongeCase(result2.toString())
 				if (!result) {
 					kb.say(channel, '');
 				}
