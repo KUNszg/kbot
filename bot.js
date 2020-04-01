@@ -2,7 +2,6 @@
 
 'use strict';
 
-const fs = require('fs');
 const api = require('./config.js');
 const mysql = require('mysql2');
 
