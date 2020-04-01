@@ -2286,7 +2286,7 @@ kb.on('connected', (adress, port) => {
 							}
 
 							updateReminder(edApi.next_entry.toFixed(0) - (Date.now(new Date())/1000))
-							kb.whispered(user['username'], `I will remind you to enter dungeon in 
+							kb.whisper(user['username'], `I will remind you to enter dungeon in 
 								${format(edApi.next_entry.toFixed(0) - (Date.now(new Date())/1000))} (forced reminder)`);
 
 						case 'register':
