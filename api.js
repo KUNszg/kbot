@@ -165,6 +165,4 @@ const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
         }
     };
 
-    const verifyWebhook = require('./verify-webhook');
-
     app.get('/webhook', verifyWebhook);
