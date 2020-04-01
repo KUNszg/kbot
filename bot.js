@@ -3375,6 +3375,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "commands",
 			aliases: null,
 			cooldown: 10000,
+			permission: 0,
 			invocation: async (channel, user, message, args) => {
 				return '';
 			}
@@ -3802,7 +3803,7 @@ kb.on('connected', (adress, port) => {
 						const value = await doQuery('SELECT status AS val FROM ed_reminders WHERE username="' + 
 							checkUsername[0].username + '"');
 						if (value[0].val === "scheduled") {
-							return '';say
+							return '';
 						} else {
 							Date.prototype.addMinutes = function(minutes) {
 								var copiedDate = new Date(this.getTime());
