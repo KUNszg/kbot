@@ -3906,11 +3906,13 @@ kb.on('connected', (adress, port) => {
 					const timeDiff = getEdData.next_entry - getEdData.last_entry;
 
 					// check if ed is still pending, add 1h to timezone offset to match huwobot's timezone
-					if (getEdData.next_entry.toFixed(0) > (Date.now(new Date())/1000)) {
-						kb.whisper(user['username'], `Your dungeon entry is still on cooldown 
-							(${format(getEdData.next_entry.toFixed(0) - (Date.now(new Date())/1000))})  
-							to force-set your reminder use "kb ed force".`)
-						return '';
+					if (getEdData.next_entry.toFixed(0) > (Date.now(new Date())/1000) && 
+						(edApi.next_entry.toFixed(0) - (Date.now(new Date())/1000))<3580) {
+
+							kb.whisper(user['username'], `Your dungeon entry is still on cooldown 
+								(${format(getEdData.next_entry.toFixed(0) - (Date.now(new Date())/1000))})  
+								to force-set your reminder use "kb ed force".`)
+							return '';
 					}
 
 					kb.whisper(user['username'], 'I will remind you to enter the dungeon in 1h :)');
