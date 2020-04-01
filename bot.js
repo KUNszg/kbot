@@ -1993,7 +1993,7 @@ kb.on('connected', (adress, port) => {
 							}
 
 							if (cookieApi.seconds_left === 0) {
-								return `${user['username']}, you can eat your cookie right now!`;
+								return `${user['username']}, you can eat your cookie right now! (?cookie)`;
 							}
 
 							Date.prototype.addMinutes = function(minutes) {
@@ -2042,7 +2042,7 @@ kb.on('connected', (adress, port) => {
 
 							updateReminder(cookieApi.seconds_left.toFixed(0))
 							return `${user['username']}, I will remind you to eat the cookie in 
-							${format(cookieApi.seconds_left.toFixed(0))} (forced reminder)`
+							${format(cookieApi.seconds_left.toFixed(0))} (forced reminder)`;
 
 						case 'register':
 							// check if user is new and insert a new row in database
@@ -2224,6 +2224,70 @@ kb.on('connected', (adress, port) => {
 								`);
 
 							return`updated "ed" module status to ${msg[1]}`;
+						case 'force':
+							sleepGlob(1500)
+							const edApi = await fetch(`https://huwobot.me/api/user?id=${user['user-id']}`)
+								.then(response => response.json());
+
+							const regCheck = await doQuery(`
+								SELECT * 
+								FROM ed_reminders 
+								WHERE username="${user['username']}"
+								`);
+
+							const now = new Date();
+
+							// check if user is registered
+							if (regCheck.length === 0) {
+								return `${user['username']}, you are not registered in the database, 
+								use "kb ed register" to do so.`;
+							}
+
+							if (edApi.next_entry - ((Date.now(new Date())/1000) + 3600) === 0) {
+								return `${user['username']}, you can enter the dungeon right now! (+ed)`;
+							}
+
+							Date.prototype.addMinutes = function(minutes) {
+								const copiedDate = new Date(this.getTime());
+								return new Date(copiedDate.getTime() + minutes * 1000);
+							}
+
+							async function updateReminder(time) {
+
+								await doQuery(`
+									UPDATE ed_reminders 
+									SET (
+										channel="${channel.replace('#', '')}", 
+										fires="${now.addMinutes(time).toISOString().slice(0, 19).replace('T', ' ')}", 
+										status="scheduled"
+										) 
+									WHERE username="${user['username']}"
+									`);
+							}
+
+							function format(seconds) {
+								function pad(s) {
+									return (s < 10 ? '0' : '') + s;
+								}
+								var hours = Math.floor(seconds / (60 * 60));
+								var minutes = Math.floor(seconds % (60 * 60) / 60);
+								var seconds = Math.floor(seconds % 60);
+								if (hours === 0 && minutes != 0) {
+									return minutes + 'm ' + seconds + "s";
+								} else {
+									if (minutes === 0 && hours === 0) {
+										return seconds + "s"
+									} else if (seconds === 0 || hours === 0 && minutes === 0) {
+										return 'few seconds'
+									} else {
+										return hours + 'h ' + minutes + 'm ' + seconds + "s";
+									}
+								}
+							}
+
+							updateReminder(edApi.next_entry - ((Date.now(new Date())/1000) + 3600))
+							return `${user['username']}, I will remind you to enter dungeon in 
+							${format(edApi.next_entry - ((Date.now(new Date())/1000) + 3600))} (forced reminder)`;
 
 						case 'register':
 							const resultsRegister = await doQuery(`
@@ -3782,43 +3846,91 @@ kb.on('connected', (adress, port) => {
 			name: "+ed",
 			aliases: "+enterdungeon",
 			invocation: async (channel, user, message, args) => {
-				if (talkedRecently2.has(user['user-id'])) { 
-					return '';
-				} else {
-					talkedRecently2.add(user['user-id']);
-					setTimeout(() => {
-						talkedRecently2.delete(user['user-id']);
-					}, 2000);
-				}
-				const cookieModule = await doQuery('SELECT reminders FROM cookieModule WHERE type="ed"');
-				if (cookieModule[0].reminders === "false") {
-					return '';
-				} else {
-					const checkUsername = await doQuery('SELECT username FROM ed WHERE username="' + 
-						user['username'] + '"');
-					if (checkUsername.length === 0) {
-						return '';
-				    } else {
-						commandsExecuted.push("1");
-						const value = await doQuery('SELECT status AS val FROM ed_reminders WHERE username="' + 
-							checkUsername[0].username + '"');
-						if (value[0].val === "scheduled") {
-							return '';
+				try{
+
+					function format(seconds) {
+						function pad(s) {
+							return (s < 10 ? '0' : '') + s;
+						}
+						var hours = Math.floor(seconds / (60 * 60));
+						var minutes = Math.floor(seconds % (60 * 60) / 60);
+						var seconds = Math.floor(seconds % 60);
+						if (hours === 0 && minutes != 0) {
+							return minutes + 'm ' + seconds + "s";
 						} else {
-							Date.prototype.addMinutes = function(minutes) {
-								var copiedDate = new Date(this.getTime());
-								return new Date(copiedDate.getTime() + minutes * 60000);
+							if (minutes === 0 && hours === 0) {
+								return seconds + "s"
+							} else if (seconds === 5 || hours === 0 && minutes === 0) {
+								return '0s'
+							} else {
+								return hours + 'h ' + minutes + 'm ' + seconds + "s";
 							}
-							const now = new Date();
-							kb.whisper(user['username'], 'I will remind you to enter the dungeon in 1h :)');
-							const update = await doQuery('UPDATE ed_reminders SET channel="' + 
-								channel.replace('#', '') + '", fires="' + 
-								now.addMinutes(60).toISOString().slice(0, 19).replace('T', ' ') + 
-								'", status="scheduled" ' + 'WHERE username="' + user['username'] + '"');
 						}
 					}
+					sleepGlob(1500)
+					if (talkedRecently2.has(user['user-id'])) { 
+						return '';
+					} else {
+						talkedRecently2.add(user['user-id']);
+						setTimeout(() => {
+							talkedRecently2.delete(user['user-id']);
+						}, 2000);
+					}
+					
+					const cookieModule = await doQuery(`
+						SELECT reminders 
+						FROM cookieModule 
+						WHERE type="ed"
+						`);
+					
+					if (cookieModule[0].reminders === "false") {
+						return '';
+					}
+				
+					const checkUsername = await doQuery(`
+						SELECT username 
+						FROM ed 
+						WHERE username="${user['username']}"`);
+				
+					if (checkUsername.length === 0) {
+						return '';
+				    }
+					
+					commandsExecuted.push("1");
+			
+					Date.prototype.addMinutes = function(minutes) {
+						var copiedDate = new Date(this.getTime());
+						return new Date(copiedDate.getTime() + minutes * 1000);
+					}
+
+					const getEdData = await fetch(`https://huwobot.me/api/user?id=${user['user-id']}`)
+						.then(response => response.json());
+					const now = new Date();
+					const timeDiff = getEdData.next_entry - getEdData.last_entry;
+
+					// check if ed is still pending, add 1h to timezone offset to match huwobot's timezone
+					if (getEdData.next_entry > (Date.now(new Date())/1000) + 3600) {
+						kb.whisper(user['username'], `Your dungeon entry is still on cooldown 
+							(${format((getEdData.next_entry - (Date.now(new Date())/1000) + 3600))})  
+							to force-set your reminder use "kb ed force".`)
+						return '';
+					}
+
+					kb.whisper(user['username'], 'I will remind you to enter the dungeon in 1h :)');
+
+					const update = await doQuery(`
+						UPDATE ed_reminders 
+						SET (
+							channel="${channel.replace('#', '')}", 
+							fires="${now.addMinutes(timeDiff).toISOString().slice(0, 19).replace('T', ' ')}", 
+							status="scheduled" 
+							)
+						WHERE username="${user['username']}"
+						`);
+					return '';
+				} catch (err) {
+					errorLog(err);
 				}
-				return '';
 			}
 		},
 
