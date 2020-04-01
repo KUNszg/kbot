@@ -3927,6 +3927,7 @@ kb.on('connected', (adress, port) => {
 						`);
 					return '';
 				} catch (err) {
+					kb.say(channel, '@kunszg, monkaS ' + err)
 					errorLog(err);
 				}
 			}
