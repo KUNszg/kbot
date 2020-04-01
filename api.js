@@ -151,66 +151,20 @@ const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
     console.log('app running on port', port);
 });
 
-'use strict';
+    const verifyWebhook = (req, res) => {
+      let VERIFY_TOKEN = 'pusher-bot';
 
-// Imports dependencies and set up http server
-const
-  bodyParser = require('body-parser'),
-  app2 = express().use(bodyParser.json()); // creates express http server
+      let mode = req.query['hub.mode'];
+      let token = req.query['hub.verify_token'];
+      let challenge = req.query['hub.challenge'];
 
-// Sets server port and logs message on success
-app2.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
+      if (mode && token === VERIFY_TOKEN) {
+        res.status(200).send(challenge);
+      } else {
+          res.sendStatus(403);
+        }
+    };
 
-// Creates the endpoint for our webhook 
-app2.post('/webhook', (req, res) => {  
- 
-  let body = req.body;
+    const verifyWebhook = require('./verify-webhook');
 
-  // Checks this is an event from a page subscription
-  if (body.object === 'page') {
-
-    // Iterates over each entry - there may be multiple if batched
-    body.entry.forEach(function(entry) {
-
-      // Gets the message. entry.messaging is an array, but 
-      // will only ever contain one message, so we get index 0
-      let webhook_event = entry.messaging[0];
-      console.log(webhook_event);
-    });
-
-    // Returns a '200 OK' response to all requests
-    res.status(200).send('EVENT_RECEIVED');
-  } else {
-    // Returns a '404 Not Found' if event is not from a page subscription
-    res.sendStatus(404);
-  }
-
-});
-
-// Adds support for GET requests to our webhook
-app2.get('/webhook', (req, res) => {
-
-  // Your verify token. Should be a random string.
-  let VERIFY_TOKEN = "7016b80483b57b6ddc658f7b3982e273"
-    
-  // Parse the query params
-  let mode = req.query['hub.mode'];
-  let token = req.query['hub.verify_token'];
-  let challenge = req.query['hub.challenge'];
-    
-  // Checks if a token and mode is in the query string of the request
-  if (mode && token) {
-  
-    // Checks the mode and token sent is correct
-    if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-      
-      // Responds with the challenge token from the request
-      console.log('WEBHOOK_VERIFIED');
-      res.status(200).send(challenge);
-    
-    } else {
-      // Responds with '403 Forbidden' if verify tokens do not match
-      res.sendStatus(403);      
-    }
-  }
-});
+    app.get('/webhook', verifyWebhook);
