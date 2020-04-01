@@ -1099,9 +1099,8 @@ kb.on('connected', (adress, port) => {
 					if (randomPs === 'programming') {
 						const joke = await fetch(api.joke1)
 							.then(response => response.json());
-						const spongeCase = require('sponge-case')
 						setTimeout(() => {
-							kb.say(channel, spongeCase.spongeCase(lCase(joke[0].punchline.replace(/\./g, '')) + ' 4HEad'))
+							kb.say(channel, lCase(joke[0].punchline.replace(/\./g, '')) + ' 4HEad')
 						}, 3000);
 						return user['username'] + ', ' + lCase(joke[0].setup);
 					} else if (randomPs === 'general') {
@@ -1109,7 +1108,7 @@ kb.on('connected', (adress, port) => {
 							.then(response => response.json());
 
 						setTimeout(() => {
-							kb.say(channel, spongeCase.spongeCase(lCase(jokeGeneral.punchline.replace(/\./g, '')) + ' 4HEad'))
+							kb.say(channel, lCase(jokeGeneral.punchline.replace(/\./g, '')) + ' 4HEad')
 						}, 3000);
 						return user['username'] + ', ' + lCase(jokeGeneral.setup);
 					}
@@ -2224,6 +2223,7 @@ kb.on('connected', (adress, port) => {
 								`);
 
 							return`updated "ed" module status to ${msg[1]}`;
+
 						case 'force':
 							sleepGlob(1500)
 							const edApi = await fetch(`https://huwobot.me/api/user?id=${user['user-id']}`)
@@ -2288,6 +2288,7 @@ kb.on('connected', (adress, port) => {
 							updateReminder(edApi.next_entry.toFixed(0) - (Date.now(new Date())/1000))
 							kb.whisper(user['username'], `I will remind you to enter dungeon in 
 								${format(edApi.next_entry.toFixed(0) - (Date.now(new Date())/1000))} (forced reminder)`);
+							break;
 
 						case 'register':
 							const resultsRegister = await doQuery(`
@@ -3447,7 +3448,6 @@ kb.on('connected', (adress, port) => {
 	];
 
 	kb.on("chat", async (channel, user, message, self) => {
-		const spongeCase = require('sponge-case')
 		const input = message.split(' ')
 		if (self) return;
 
@@ -3458,8 +3458,7 @@ kb.on('connected', (adress, port) => {
 				(command.aliases && (input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '')
 					.toLowerCase() === command.aliases)
 			) {
-				let result2 = await command.invocation(channel, user, message);
-				let result = spongeCase.spongeCase(result2.toString())
+				let result = await command.invocation(channel, user, message);
 
 				// find the called command to check for cooldowns
 				const getCommandName = commands.filter(i => 
@@ -3691,7 +3690,6 @@ kb.on('connected', (adress, port) => {
 
 	kb.on("chat", async (channel, user, message, self) => {
 		const input = message.split(' ')
-		const spongeCase = require('sponge-case')
 		if (user['user-id'] === "441611405") return;
 		if (user['user-id'] === "81613973") return;
 		if (user['user-id'] === "176481960") return; // boiiiann
@@ -3703,8 +3701,7 @@ kb.on('connected', (adress, port) => {
 				(command.aliases && (input[0].replace('kbot', 'kb') + ' ' +
 					input[1]).replace(/,/, '').replace('@', '').toLowerCase() === command.aliases)
 			) {
-				let result2 = await command.invocation(channel, user, message);
-				let result = spongeCase.spongeCase(result2.toString()) 
+				let result = await command.invocation(channel, user, message);
 
 				// If a message would be duplicated in a row in a channel, add something to make it not duplicate
 				if (repeatedMessages[channel] === result) {
@@ -3790,14 +3787,14 @@ kb.on('connected', (adress, port) => {
 						const copiedDate = new Date(this.getTime());
 						return new Date(copiedDate.getTime() + minutes * 1000);
 					}
-					const spongeCase = require('sponge-case')
+
 					if (cookieApi.seconds_left<cookieApi.interval_unformatted-10 || cookieApi.seconds_left === 0) {
 						if (cookieApi.time_left_formatted === 0) {
 							return '';
 						}
 						
-						kb.whisper(user['username'], spongeCase.spongeCase(`Your cookie is still on cooldown 
-							(${cookieApi.time_left_formatted}) with ${cookieApi.interval_formatted} intervals.`));
+						kb.whisper(user['username'], `Your cookie is still on cooldown 
+							(${cookieApi.time_left_formatted}) with ${cookieApi.interval_formatted} intervals.`);
 						return '';
 					} else {
 				
@@ -3815,21 +3812,21 @@ kb.on('connected', (adress, port) => {
 
 						if (platformCheck[0].initplatform === "channel") {
 							if (updateCheck[0].status === "scheduled") {
-								kb.say(userChannel, spongeCase.spongeCase(`${user['username']}, updating your pending cookie reminder, 
+								kb.say(userChannel, `${user['username']}, updating your pending cookie reminder, 
 									I will remind you in ${cookieApi.interval_formatted} 
-									(channel ${channelNoPing}) :D`));
+									(channel ${channelNoPing}) :D`);
 							} else {
-								kb.say(userChannel,	spongeCase.spongeCase(`${user['username']}, I will remind you to eat the cookie in 
-									${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`));
+								kb.say(userChannel,	`${user['username']}, I will remind you to eat the cookie in 
+									${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
 							}
 						} else if (platformCheck[0].initplatform === "whisper") {
 							if (updateCheck[0].status === "scheduled") {
-								kb.whisper(user['username'], spongeCase.spongeCase(`updating your pending cookie reminder, 
+								kb.whisper(user['username'], `updating your pending cookie reminder, 
 									I will remind you in ${cookieApi.interval_formatted} 
-									(channel ${channelNoPing}) :D`));
+									(channel ${channelNoPing}) :D`);
 							} else {
-								kb.whisper(user['username'], spongeCase.spongeCase(`I will remind you to eat the 
-									cookie in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`));
+								kb.whisper(user['username'], `I will remind you to eat the 
+									cookie in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
 							}
 						} else if (platformCheck[0].initplatform === "silence") {
 						 	return '';
@@ -4011,12 +4008,11 @@ kb.on('connected', (adress, port) => {
 
 	kb.on("chat", async (channel, user, message, self) => {
 		if (self) return;
-		const spongeCase = require('sponge-case')
 		dankeval.forEach(async smart => {
 			if ((message.split(' ')[0] === smart.name) ||
 				(smart.aliases && message.split(' ')[0] === smart.aliases)) {
-				let result2 = await smart.invocation(channel, user, message);
-				let result = spongeCase.spongeCase(result2.toString())
+				let result = await smart.invocation(channel, user, message);
+
 				if (!result) {
 					kb.say(channel, '');
 				}
