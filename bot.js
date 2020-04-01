@@ -2256,11 +2256,10 @@ kb.on('connected', (adress, port) => {
 
 								await doQuery(`
 									UPDATE ed_reminders 
-									SET (
+									SET 
 										channel="${channel.replace('#', '')}", 
 										fires="${now.addMinutes(time).toISOString().slice(0, 19).replace('T', ' ')}", 
 										status="scheduled"
-										) 
 									WHERE username="${user['username']}"
 									`);
 							}
@@ -2286,7 +2285,7 @@ kb.on('connected', (adress, port) => {
 							}
 							const asd = edApi.next_entry.toFixed(0) - (Date.now(new Date())/1000)
 							updateReminder(asd)
-							kb.say(asd)
+
 							kb.whisper(user['username'], `I will remind you to enter dungeon in 
 								${format(edApi.next_entry.toFixed(0) - (Date.now(new Date())/1000))} (forced reminder)`);
 							break;
@@ -3918,11 +3917,10 @@ kb.on('connected', (adress, port) => {
 
 					const update = await doQuery(`
 						UPDATE ed_reminders 
-						SET (
+						SET
 							channel="${channel.replace('#', '')}", 
 							fires="${now.addMinutes(timeDiff.toFixed(0)).toISOString().slice(0, 19).replace('T', ' ')}", 
 							status="scheduled" 
-							)
 						WHERE username="${user['username']}"
 						`);
 					return '';
