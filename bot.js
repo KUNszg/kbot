@@ -3589,6 +3589,7 @@ kb.on('connected', (adress, port) => {
 
 	kb.on("chat", async (channel, user, message, self) => {
 		const input = message.split(' ')
+		const spongeCase = require('sponge-case')
 		if (user['user-id'] === "441611405") return;
 		if (user['user-id'] === "81613973") return;
 		if (user['user-id'] === "176481960") return; // boiiiann
@@ -3709,24 +3710,24 @@ kb.on('connected', (adress, port) => {
 								.slice(0, 19)
 								.replace('T', ' ')}", status="scheduled" 
 							WHERE username="${user['username']}"`);
-
+						const spongeCase = require('sponge-case')
 						if (platformCheck[0].initplatform === "channel") {
 							if (updateCheck[0].status === "scheduled") {
-								kb.say(userChannel, `${user['username']}, updating your pending cookie reminder, 
+								kb.say(userChannel, spongeCase.spongeCase(`${user['username']}, updating your pending cookie reminder, 
 									I will remind you in ${cookieApi.interval_formatted} 
-									(channel ${channelNoPing}) :D`);
+									(channel ${channelNoPing}) :D`));
 							} else {
-								kb.say(userChannel, `${user['username']}, I will remind you to eat the cookie in 
-									${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
+								kb.say(userChannel,	spongeCase.spongeCase(`${user['username']}, I will remind you to eat the cookie in 
+									${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`));
 							}
 						} else if (platformCheck[0].initplatform === "whisper") {
 							if (updateCheck[0].status === "scheduled") {
-								kb.whisper(user['username'], `updating your pending cookie reminder, 
+								kb.whisper(user['username'], spongeCase.spongeCase(`updating your pending cookie reminder, 
 									I will remind you in ${cookieApi.interval_formatted} 
-									(channel ${channelNoPing}) :D`);
+									(channel ${channelNoPing}) :D`));
 							} else {
-								kb.whisper(user['username'], `I will remind you to eat the 
-									cookie in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`);
+								kb.whisper(user['username'], spongeCase.spongeCase(`I will remind you to eat the 
+									cookie in ${cookieApi.interval_formatted} (channel ${channelNoPing}) :)`));
 							}
 						} else if (platformCheck[0].initplatform === "silence") {
 						 	return '';
@@ -3764,7 +3765,7 @@ kb.on('connected', (adress, port) => {
 						const value = await doQuery('SELECT status AS val FROM ed_reminders WHERE username="' + 
 							checkUsername[0].username + '"');
 						if (value[0].val === "scheduled") {
-							return '';
+							return '';say
 						} else {
 							Date.prototype.addMinutes = function(minutes) {
 								var copiedDate = new Date(this.getTime());
@@ -3860,6 +3861,7 @@ kb.on('connected', (adress, port) => {
 
 	kb.on("chat", async (channel, user, message, self) => {
 		if (self) return;
+		const spongeCase = require('sponge-case')
 		dankeval.forEach(async smart => {
 			if ((message.split(' ')[0] === smart.name) ||
 				(smart.aliases && message.split(' ')[0] === smart.aliases)) {
