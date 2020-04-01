@@ -158,6 +158,7 @@ kb.on('connected', (adress, port) => {
 			aliases: null,
 			description: `displays informations about current runtime of the bot, lines, 
 			memory usage, host uptime and commands used in the current session -- cooldown 8s`,
+			permission: 0,
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -255,6 +256,7 @@ kb.on('connected', (adress, port) => {
 			aliases: null,
 			description: `syntax: kb ping [service] | no parameter - data about latest github activity |
 			service - checks if server/domain is alive -- cooldown 5s`,
+			permission: 0,
 			cooldown: 5000,
 			invocation: async (channel, user, message, args, err) => {
 				try {
@@ -355,6 +357,7 @@ kb.on('connected', (adress, port) => {
 			aliases: null,
 			description: `data from SpaceX about next launch rocket launch date, 
 			mission and launch site -- cooldown 15s`,
+			permission: 0,
 			cooldown: 15000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -408,6 +411,7 @@ kb.on('connected', (adress, port) => {
 			aliases: null,
 			description: `syntax: kb rt [ID] | no parameter - returns a link to the list of genres |
 			ID - search for the song in the specified genre (numeric ID) -- cooldown 5s`,
+			permission: 0,
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -464,6 +468,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "rf",
 			aliases: null,
 			description: `random fact. Provides facts about random stuff -- cooldown 5s`,
+			permission: 0,
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -484,7 +489,8 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "channels",
 			aliases: prefix + "chn",
 			description: `amount of channels the bot is currently in. | 
-				Permitted users syntax: kb chn [join-save/part-session/join-session] [channel] -- cooldown 5s`,
+			Permitted users syntax: kb chn [join-save/part-session/join-session] [channel] -- cooldown 5s`,
+			permission: 0,
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -586,7 +592,8 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "chat",
 			aliases: prefix + "ct",
 			description: `syntax: kb chat [message] | 
-				message - provide a message to chat with the AI bot, no parameter will return error -- cooldown 1s`,
+			message - provide a message to chat with the AI bot, no parameter will return error -- cooldown 1s`,
+			permission: 0,
 			cooldown: 4000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -645,8 +652,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "eval",
 			aliases: null,
-			permission: 'restricted',
 			description: `debugging command, permitted users only -- cooldown 10ms`,
+			permission: 5,
 			cooldown: 10,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -712,9 +719,9 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "pattern",
 			aliases: null,
-			permission: 'restricted',
 			description: `permitted users syntax: kb pattern [fast/slow] [pyramid/triangle] [height] [message] | 
-				Invalid or missing parameter will return an error -- cooldown 10ms`,
+			Invalid or missing parameter will return an error -- cooldown 10ms`,
+			permission: 3,
 			cooldown: 10,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -872,7 +879,8 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "locate",
 			aliases: prefix + "location",
 			description: `syntax: kb locate [IP/message] | IP - provide an IP adress to search for its location | 
-				message - provide a non-numeric message to search for its location -- cooldown 6s`,
+			message - provide a non-numeric message to search for its location -- cooldown 6s`,
+			permission: 0,
 			cooldown: 6000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -932,7 +940,8 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "twitter",
 			aliases: null,
 			description: `syntax: kb twitter [account] | no parameter - returns an error | 
-				account - returns latest tweet from specified user -- cooldown 8s`,
+			account - returns latest tweet from specified user -- cooldown 8s`,
+			permission: 0,
 			cooldown: 6000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -967,6 +976,7 @@ kb.on('connected', (adress, port) => {
 			aliases: null,
 			description: `kb hosts [input] - get users that are hosting a specified channel 
 			(in input), no input will return an error -- cooldown 8s`,
+			permission: 0,
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -1039,7 +1049,8 @@ kb.on('connected', (adress, port) => {
 			aliases: prefix + "randomplaysound",
 			permission: 'restricted',
 			description: `interaction command with Supibot's $ps command, 
-				sends a random playsound to appear on stream -- cooldown 5s`,
+			sends a random playsound to appear on stream -- cooldown 5s`,
+			permission: 0,
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -1064,6 +1075,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + '4Head',
 			aliases: prefix + '4head',
 			description: `says a random joke related to programming or other stuff -- cooldown 4s`,
+			permission: 0,
 			cooldown: 4000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -1113,7 +1125,8 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "fl",
 			aliases: prefix + "firstline",
 			description: `kb fl [input] - first line from database in current channel for given user, 
-				no input will return a first line of the executing user -- cooldown 2s`,
+			no input will return a first line of the executing user -- cooldown 2s`,
+			permission: 0,
 			cooldown: 4000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -1285,7 +1298,8 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "rl",
 			aliases: prefix + "randomline",
 			description: `kb rl [input] - random line from current chat, use input to get random line from a 
-				specified user, no input will return a random quote -- cooldown 2s`,
+			specified user, no input will return a random quote -- cooldown 2s`,
+			permission: 0,
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -1453,6 +1467,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + 'rq',
 			aliases: prefix + 'randomquote',
 			description: `Your random quote from the current chat -- cooldown 2s`,
+			permission: 0,
 			cooldown: 3000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -1543,6 +1558,7 @@ kb.on('connected', (adress, port) => {
 			aliases: null,
 			description: `kb dank [input] - dank other person (use input) or 
 			yourself (without input) FeelsDankMan -- cooldown 2s`,
+			permission: 0,
 			cooldown: 4000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -1581,7 +1597,8 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "help",
 			aliases: null,
 			description: `syntax: kb help [command] | no parameter - shows basic information about bot,
-				it's owner and host | command - shows description of a specified command -- cooldown 5s`,
+			it's owner and host | command - shows description of a specified command -- cooldown 5s`,
+			permission: 0,
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -1638,6 +1655,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "joemama",
 			aliases: prefix + "mama",
 			description: `random "your mom" joke -- cooldown 5s`,
+			permission: 0,
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -1690,9 +1708,9 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "restart",
 			aliases: null,
-			permission: 'restricted',
 			description: `restart [logger] | logger - restarts the logger | 
 			no parameter - restarts the bot -- cooldown 10ms`,
+			permission: 4,
 			cooldown: 10,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -1826,6 +1844,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + 'github',
 			aliases: prefix + 'git',
 			description: `link to my github repo and last commit timer -- cooldown 5s`,
+			permission: 0,
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -1872,6 +1891,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + 'suggest',
 			aliases: null,
 			description: `kb suggest [input] - suggest something for me to improve/change in my bot -- cooldown 8s`,
+			permission: 0,
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -1924,6 +1944,7 @@ kb.on('connected', (adress, port) => {
 			description: `usage: kb cookie [register/unregister/status/whisper/silence] | register - register 
 			in database. | unregister - unregister from the database. | status - see your reminder status | 
 			whisper - set the feedback message to appear in whispers. | silence - mute the feedback. -- cooldown 8s`,
+			permission: 0,
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -2181,6 +2202,7 @@ kb.on('connected', (adress, port) => {
 			aliases: null,
 			description: `after "kb ed" type register/unregister to register or unregister from the database 
 			-- cooldown 10s`,
+			permission: 0,
 			cooldown: 10000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -2273,6 +2295,7 @@ kb.on('connected', (adress, port) => {
 			description: `syntax: kb stats -channel / -bruh / [input] / @[user] | no parameter - information about your 
 			logs in my database | -channel - information about the current channel | -bruh - amount of racists in the 
 			chat | [input] - provide a custom message | @[user] - searches for given user -- cooldown 8s`,
+			permission: 0,
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -2762,6 +2785,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "surah",
 			aliases: prefix + "dailysurah",
 			description: `random verse from quran -- cooldown 8s`,
+			permission: 0,
 			cooldown: 8000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -2799,6 +2823,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "hug",
 			aliases: prefix + "kiss",
 			description: "kb [hug/kiss] [user] - hug or kiss a user to make their day better :) -- cooldown 5s",
+			permission: 0,
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -2843,6 +2868,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "website",
 			aliases: prefix + "site",
 			description: `link to my project's website`,
+			permission: 0,
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -2858,7 +2884,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "ban",
 			aliases: null,
 			description: `ban a user`,
-			permission: `restricted`,
+			permission: 3,
 			cooldown: 10,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -2919,7 +2945,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "unban",
 			aliases: null,
 			description: `unban a user`,
-			permission: `restricted`,
+			permission: 3,
 			cooldown: 10,
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -2968,7 +2994,7 @@ kb.on('connected', (adress, port) => {
 			name: prefix + "banphrase",
 			aliases: prefix + "bp",
 			cooldown: 10,
-			permission: 'restricted',
+			permission: 3,
 			description: 'add or remove banphrase - (+, -, add, del) -- cooldown 10ms',
 			invocation: async (channel, user, message, args) => {
 				try {
@@ -3047,9 +3073,10 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "id",
 			aliases: prefix + "ID",
-			cooldown: 5000,
 			description: `usage: kb id [user] | user - provide a user to see his ID and first seen timestamp | 
 			no parameter - shows your ID and first seen timestamp -- cooldown 5s`,
+			permission: 0,
+			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {	
 				try {
 					function format(seconds) {
@@ -3140,8 +3167,8 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "query",
 			aliases: null,
+			permission: 5,
 			cooldown: 10,
-			permission: 'restricted',
 			invocation: async (channel, user, message, args) => {
 				try {
 
@@ -3178,10 +3205,10 @@ kb.on('connected', (adress, port) => {
 		{
 			name: prefix + "trust",
 			aliases: null,
-			cooldown: 10,
-			permission: 'restricted',
 			description: `usage: kb trust [user] [permission] | set permissions for user to allow him to use restricted
 			and unlisted commands. -- cooldown 10ms`,
+			permission: 5,
+			cooldown: 10,
 			invocation: async (channel, user, message, args) => {
 				try {
 					if (await checkPermissions(user['username'])<5) { 
@@ -3552,14 +3579,18 @@ kb.on('connected', (adress, port) => {
 	const commandlist = [{
 		name: prefix + "commands",
 		aliases: null,
-		invocation: (channel, user, args) => {
+		invocation: async (channel, user, args) => {
 			try {
+
+				const perm = await checkPermissions(user['username'])
 				const trackObj = commands.filter(
-					i => i.name && i.permission != 'restricted'
+					i => i.name && i.permission <= perm
 				);
+
 				const xd = trackObj.map(
 					i => i.name
 				);
+
 				const xdd = ((xd.sort().toString().replace(/,/g, " | ").replace(/kb/g, '') + " |").split('|')).length;
 
 				if (talkedRecently3.has(user['user-id'])) { //if set has user id - ignore
@@ -3572,8 +3603,14 @@ kb.on('connected', (adress, port) => {
 					}, 10000);
 				}
 				const xddd = xdd - 1
-				return user['username'] + ", " + xddd + " active commands PogChamp 👉 (prefix: kb) | " +
+				
+				if (perm === 0) {
+					return user['username'] + ", " + xddd + " active commands PogChamp 👉 (prefix: kb) | " +
 					xd.sort().toString().replace(/,/g, " | ").replace(/kb/g, '') + " |".split(' | ')
+				}
+				const getPermNames =  await doQuery('SELECT * FROM trusted_users WHERE username="' + user['username'] + '"') 
+				return user['username'] + ", " + xddd + " active commands with your permissions PogChamp 👉 (" + getPermNames[0].permissions + ") | " +
+				xd.sort().toString().replace(/,/g, " | ").replace(/kb/g, '') + " |".split(' | ')
 
 			} catch (err) {
 				async function errorLog() {
