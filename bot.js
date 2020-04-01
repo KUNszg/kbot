@@ -1087,9 +1087,9 @@ kb.on('connected', (adress, port) => {
 					if (randomPs === 'programming') {
 						const joke = await fetch(api.joke1)
 							.then(response => response.json());
-
+						const spongeCase = require('sponge-case')
 						setTimeout(() => {
-							kb.say(channel, lCase(joke[0].punchline.replace(/\./g, '')) + ' 4HEad')
+							kb.say(channel, spongeCase.spongeCase(lCase(joke[0].punchline.replace(/\./g, '')) + ' 4HEad'))
 						}, 3000);
 						return user['username'] + ', ' + lCase(joke[0].setup);
 					} else if (randomPs === 'general') {
@@ -1097,7 +1097,7 @@ kb.on('connected', (adress, port) => {
 							.then(response => response.json());
 
 						setTimeout(() => {
-							kb.say(channel, lCase(jokeGeneral.punchline.replace(/\./g, '')) + ' 4HEad')
+							kb.say(channel, spongeCase.spongeCase(lCase(jokeGeneral.punchline.replace(/\./g, '')) + ' 4HEad'))
 						}, 3000);
 						return user['username'] + ', ' + lCase(jokeGeneral.setup);
 					}
