@@ -146,11 +146,6 @@ setInterval(() => {
 const shell = require('child_process');
 // restart process every 4h
 setInterval(()=>{shell.execSync('pm2 restart api')}, 7200000)
-const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
-    const port = server.address().port;
-    console.log('app running on port', port);
-});
-
     const verifyWebhook = (req, res) => {
       let VERIFY_TOKEN = 'pusher-bot';
 
@@ -166,3 +161,7 @@ const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
     };
 
     app.get('/webhook', verifyWebhook);
+const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
+    const port = server.address().port;
+    console.log('app running on port', port);
+});
