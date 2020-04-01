@@ -20,7 +20,7 @@ const options = {
 	},
 	channels: ['kunszg', 'kunszgbot'],
 };
-
+const spongeCase = require('sponge-case')
 const tmi = require('tmi.js');
 const kb = new tmi.client(options);
 const repeatedMessages = {
@@ -86,7 +86,7 @@ kb.on('connected', (adress, port) => {
 	setInterval(() => { 
 		kden()
 	}, 600000)
-const spongeCase = require('sponge-case')
+
 	// unfire clogging reminders
 	async function unfireCookie() {
 		
