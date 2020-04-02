@@ -11,7 +11,7 @@ const options = {
 		username: 'kunszgbot',
 		password: api.oauth,
 	},
-	channels: ['nymn', 'haxk', 'pokelawls', 'supinic', 'pajlada', 'forsen', 'xqcow', 'kunszg', 'itsgarosath', 'lulclip'],
+	channels: ['nymn', 'haxk', 'supinic', 'pajlada', 'forsen', 'xqcow', 'kunszg', 'itsgarosath', 'lulclip'],
 };
 
 const tmi = require('tmi.js');
@@ -99,14 +99,7 @@ kb.on('connected', (adress, port) => {
 			const inserts = ['logs_' + channel.replace('#', ''), collumns, user['username'], msg, new Date()];
 			con.query(mysql.format(sql, inserts), function(error, results, fields) {
 				if (error) {
-					const errorLog = "INSERT INTO ?? (??, ??) VALUES (?, ?)";
-					const errorLogCollumns = ['error_message', 'date'];
-					const insertsLog = ['error_logs', errorLogCollumns, error, new Date()];
-					con.query(mysql.format(errorLog, insertsLog), function(error, results, fields) {
-						if (error) {
-							throw error;
-						}
-					})
+					throw error
 				}
 			})
 		}
