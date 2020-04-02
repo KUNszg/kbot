@@ -1050,7 +1050,7 @@ kb.on('connected', (adress, port) => {
 			permission: 'restricted',
 			description: `interaction command with Supibot's $ps command, 
 			sends a random playsound to appear on stream -- cooldown 5s`,
-			permission: 0,
+			permission: 5,
 			cooldown: 5000,
 			invocation: async (channel, user, message, args) => {
 				try {
