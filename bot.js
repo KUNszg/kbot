@@ -3467,6 +3467,11 @@ kb.on('connected', (adress, port) => {
 					(i.aliases && (input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '')
 						.toLowerCase() === i.aliases));
 
+				const checkChannelStatus = await doQuery(`SELECT * FROM channels WHERE channel="${channel.replace('#', '')}"`)
+				if (checkChannelStatus[0].status === "live" && (checkChannelStatus[0].channel === "haxk" || checkChannelStatus[0].channel === "pajlada") ) {
+					return;
+				}
+
 				// check for global cooldown
 				if (user['username'] != "kunszg") {
 					if (globalCooldown.has(user['username'] && user['username'])) {
@@ -3703,6 +3708,10 @@ kb.on('connected', (adress, port) => {
 			) {
 				let result = await command.invocation(channel, user, message);
 
+				const checkChannelStatus = await doQuery(`SELECT * FROM channels WHERE channel="${channel.replace('#', '')}"`)
+				if (checkChannelStatus[0].status === "live" && (checkChannelStatus[0].channel === "nymn" || checkChannelStatus[0].channel === "pajlada") ) {
+					return;
+				}
 				// If a message would be duplicated in a row in a channel, add something to make it not duplicate
 				if (repeatedMessages[channel] === result) {
 					result += " \u{E0000}";
@@ -3715,6 +3724,48 @@ kb.on('connected', (adress, port) => {
 			}
 		})
 	})
+
+	const checkLiveStatus =  (output) => new Promise((resolve, reject) => {
+		const getasd = channelOptions.map(i => `&user_login=${i}`)
+		const getChannelData = (fetch('https://api.twitch.tv/helix/streams'+getasd.join('').replace('&', '?'), {
+			method: "GET",
+			url: "https://api.twitch.tv/helix/streams",
+			headers: {
+				'Client-ID': 'bd27naeqogivvvn6rfdagcpxp89ce7',
+				"Content-Type": "application/x-www-form-urlencoded"
+			},
+		}).then(response => response.json()))
+		resolve(getChannelData)
+	});
+
+	const checkLiveStatus2 = (output) => new Promise((resolve, reject) => {
+		async function test() {
+			const getChannelsLive = await checkLiveStatus()
+				.then(respo => respo.data.filter(i=>channelOptions.join('').replace(/,/g, ' ').includes(i.user_name.toLowerCase())))
+			resolve(getChannelsLive)
+		}
+		test()
+	})
+
+	async function sendChannelStatus() {
+		async function sendQuery(status, name) {
+			await doQuery(`UPDATE channels SET status="${status}" WHERE channel="${name.toLowerCase()}" AND status="offline"`)
+		} 
+
+		async function sendQueryOffline(name) {
+			console.log(name.toString().replace(/,/g, ' AND '))
+			await doQuery(`UPDATE channels SET status="offline" WHERE ${name.toString().replace(/,/g, ' AND ')}`)
+		}
+
+		const poggers = []
+		poggers.push(await checkLiveStatus2())
+		sleepGlob(1000)
+		poggers.forEach((element) => {
+			element.forEach(i => sendQuery(i.type, i.user_name));
+			sendQueryOffline(element.map(i => `channel!="${i.user_name.toLowerCase()}"`))
+		})
+	}
+	setInterval(()=>{sendChannelStatus()}, 60000)
 
 	async function sendOnlineStatusOnLaunc() { 
 		await fetch(api.supinic, {
@@ -4014,6 +4065,11 @@ kb.on('connected', (adress, port) => {
 			if ((message.split(' ')[0] === smart.name) ||
 				(smart.aliases && message.split(' ')[0] === smart.aliases)) {
 				let result = await smart.invocation(channel, user, message);
+
+				const checkChannelStatus = await doQuery(`SELECT * FROM channels WHERE channel="${channel.replace('#', '')}"`)
+				if (checkChannelStatus[0].status === "live" && (checkChannelStatus[0].channel === "nymn" || checkChannelStatus[0].channel === "pajlada") ) {
+					return;
+				}
 
 				if (!result) {
 					kb.say(channel, '');
