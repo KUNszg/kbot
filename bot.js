@@ -3468,7 +3468,7 @@ kb.on('connected', (adress, port) => {
 						.toLowerCase() === i.aliases));
 
 				const checkChannelStatus = await doQuery(`SELECT * FROM channels WHERE channel="${channel.replace('#', '')}"`)
-				if (checkChannelStatus[0].status === "live" && (checkChannelStatus[0].channel === "haxk" || checkChannelStatus[0].channel === "pajlada") ) {
+				if (checkChannelStatus[0].status === "live" && (checkChannelStatus[0].channel === "nymn" || checkChannelStatus[0].channel === "pajlada") ) {
 					return;
 				}
 
