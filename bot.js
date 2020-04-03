@@ -3731,7 +3731,7 @@ kb.on('connected', (adress, port) => {
 			method: "GET",
 			url: "https://api.twitch.tv/helix/streams",
 			headers: {
-				'Client-ID': 'bd27naeqogivvvn6rfdagcpxp89ce7',
+				'Client-ID': api.client_id,
 				"Content-Type": "application/x-www-form-urlencoded"
 			},
 		}).then(response => response.json()))
