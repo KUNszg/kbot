@@ -513,68 +513,91 @@ kb.on('connected', (adress, port) => {
 					if (msg[0] && !msg[1]) {
 						return `${user['username']}, invalid parameter or no channel provided`;
 					} 
+												// check if logger is in specified channel 
+					const checkRepeatedInsert = await doQuery(`
+						SELECT * 
+						FROM channels_logger 
+						WHERE channel="${msg[1]}"
+						`)
 
-					// join the channel only for current session, channel will be dismissed after process restarts
-					if (msg[0] === "join-session") {
-						kb.join(msg[1]);
-						return `successfully joined channel 
-						${msg[1].toLowerCase().replace(/^(.{2})/, "$1\u{E0000}")} :) 👍`;
-					} 
+					switch (msg[0]) {
 
-					// join the channel "permanently" by appending it to a file which is being imported after process restarts
-					if (msg[0] === "join-save") {
+						// join the channel only for current session, channel will be dismissed after process restarts
+						case 'join-session':
+							kb.join(msg[1]);
+							return `successfully joined channel ${msg[1].toLowerCase().replace(/^(.{2})/, "$1\u{E0000}")} :) 👍`;
+
+						// join the channel "permanently" by appending it to a file which is being imported after process restarts
+						case 'join-save':
+
+							if (checkRepeatedInsert.length != 0) {
+								return `${user['username']}, I'm already in this channel.`
+							}
+
+							// add the channel to the table
+							await doQuery(`
+								INSERT INTO channels (channel, added) 
+								VALUES ("${msg[1].toLowerCase()}", CURRENT_TIMESTAMP)
+								`);
+
+							kb.join(msg[1].toLowerCase());
+							return `successfully joined #${msg[1].toLowerCase().replace(/^(.{2})/, "$1\u{E0000}")} :) 👍`;
 						
-						// check if bot is already joined in a channel 
-						const checkRepeatedInsert = await doQuery(`
-							SELECT * 
-							FROM channels 
-							WHERE channel="${msg[1]}"
-							`)
+						// leave the channel for this session, if channel is saved in the file it will be rejoined after session restarts
+						case 'part-session':
+							kb.part(msg[1]);
+							return `parted the channel ${msg[1].replace(/^(.{2})/, "$1\u{E0000}")} for this session`;
 
-						if (checkRepeatedInsert.length != 0) {
-							return `${user['username']}, I'm already in this channel.`
-						}
+						// if nothing was provided by an admin, display a default message
+						case 'part-save':
 
-						// add the channel to the table
-						await doQuery(`
-							INSERT INTO channels (channel, added) 
-							VALUES ("${msg[1].toLowerCase()}", CURRENT_TIMESTAMP)
-							`);
+							if (checkRepeatedInsert.length === 0) {
+								return `${user['username']}, I'm not joined in that channel.`
+							}
 
-						kb.join(msg[1].toLowerCase());
-						return `successfully joined #${msg[1].toLowerCase().replace(/^(.{2})/, "$1\u{E0000}")} :) 👍`;
-					} 
+							// delete the row with provided channel
+							await doQuery(`
+								DELETE FROM channels 
+								WHERE channel="${msg[1]}"
+								`)
 
-					// leave the channel for this session, if channel is saved in the file it will be rejoined after session restarts
-					if (msg[0] === "part-session") {
-						kb.part(msg[1]);
-						return `parted the channel ${msg[1].replace(/^(.{2})/, "$1\u{E0000}")} for this session`;
-					} 
+							kb.part(msg[1]);
+							return `parted the channel ${msg[1].replace(/^(.{2})/, "$1\u{E0000}")} via database.`;
 
-					if (msg[0] === "part-save") {
+						// join channel to logger's channel database and restart to apply changes
+						case 'join-logger':
 
-						// check if bot is already joined in a channel 
-						const checkRepeatedInsert = await doQuery(`
-							SELECT * 
-							FROM channels 
-							WHERE channel="${msg[1]}"
-							`)
+							if (checkRepeatedInsert.length != 0) {
+								return `${user['username']}, I'm already in this channel.`
+							}
 
-						if (checkRepeatedInsert.length === 0) {
-							return `${user['username']}, I'm not joined in that channel.`
-						}
+							// add the channel to the database
+							await doQuery(`
+								INSERT INTO channels_logger (channel, added)
+								VALUES ("${msg[1].toLowerCase()}", CURRENT_TIMESTAMP)
+								`)
+							const shell = require('child_process')
+							shell.execSync('pm2 restart logger')
+							break;
 
-						// delete the row with provided channel
-						await doQuery(`
-							DELETE FROM channels 
-							WHERE channel="${msg[1]}"
-							`)
+						// part channel from logger's channel database and restart to apply changes
+						case 'part-logger':
 
-						kb.part(msg[1]);
-						return `parted the channel ${msg[1].replace(/^(.{2})/, "$1\u{E0000}")} via database.`;
+
+							if (checkRepeatedInsert.length === 0) {
+								return `${user['username']}, I'm not in that channel.`
+							}
+
+							// add the channel to the database
+							await doQuery(`
+								DELETE FROM channels_logger
+								WHERE channel="${msg[1]}""
+								`)
+
+							shell.execSync('pm2 restart logger')
+							break;
 					}
 
-					// if nothing was provided by an admin, display a default message
 					if (!msg[0] && !msg[1]) {
 						return `I'm active in ${length} channels, list of channels: https://kunszg.xyz/ 4Head`;
 					}
@@ -3753,7 +3776,6 @@ kb.on('connected', (adress, port) => {
 		} 
 
 		async function sendQueryOffline(name) {
-			console.log(name.toString().replace(/,/g, ' AND '))
 			await doQuery(`UPDATE channels SET status="offline" WHERE ${name.toString().replace(/,/g, ' AND ')}`)
 		}
 

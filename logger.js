@@ -1,5 +1,56 @@
+'use strict';
+
 const fs = require('fs');
 const api = require('./config.js');
+const mysql = require('mysql2');
+
+const con = mysql.createConnection({
+	host: "localhost",
+	user: "root",
+	password: api.db_pass,
+	database: "kbot"
+});
+
+const getChannels = () => new Promise((resolve, reject) => {
+    con.query('SELECT * FROM channels_logger', (err, results, fields) => {
+        if (err) {
+        	const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
+			const insert = [JSON.stringify(err), new Date()];
+			con.query(mysql.format(sql, insert),
+				function(error, results, fields) {
+					if (error) {
+						console.log(error)
+						reject(error)
+					} else {
+						resolve(results)
+					}
+				})
+            reject(err);
+        }
+        else {
+            resolve(results);
+        }      
+    });
+});
+
+const channelList = [];
+const channelOptions = []
+async function res() {
+	channelList.push(await getChannels());
+	await channelList[0].forEach(i => channelOptions.push(i.channel))
+}
+res()
+
+function sleepGlob(milliseconds) {
+	var start = new Date().getTime();
+	for (var i = 0; i < 1e7; i++) {
+		if ((new Date().getTime() - start) > milliseconds) {
+			break;
+		}
+	}
+}
+sleepGlob(1500)
+
 const options = {
 	options: {
 		debug: false,
@@ -11,7 +62,8 @@ const options = {
 		username: 'kunszgbot',
 		password: api.oauth,
 	},
-	channels: ['nymn', 'haxk', 'supinic', 'pajlada', 'forsen', 'xqcow', 'kunszg', 'itsgarosath', 'lulclip'],
+	channels: channelOptions,
+	//channels: ['nymn', 'haxk', 'supinic', 'pajlada', 'forsen', 'xqcow', 'kunszg', 'itsgarosath', 'lulclip'],
 };
 
 const tmi = require('tmi.js');
@@ -40,13 +92,6 @@ const ignoreList = [
 kb.connect();
 kb.on('connected', (adress, port) => {
 	kb.say('kunszg', 'logger reconnected KKona')
-	const mysql = require('mysql2');
-	const con = mysql.createConnection({
-		host: "localhost",
-		user: "root",
-		password: api.db_pass,
-		database: "kbot",
-	});
 	
 	con.connect(function(err) {
 		if (err) {
