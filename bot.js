@@ -576,13 +576,13 @@ kb.on('connected', (adress, port) => {
 								INSERT INTO channels_logger (channel, added)
 								VALUES ("${msg[1].toLowerCase()}", CURRENT_TIMESTAMP)
 								`)
+
 							const shell = require('child_process')
 							shell.execSync('pm2 restart logger')
-							break;
+							return `done :)`;
 
 						// part channel from logger's channel database and restart to apply changes
 						case 'part-logger':
-
 
 							if (checkRepeatedInsert.length === 0) {
 								return `${user['username']}, I'm not in that channel.`
@@ -595,7 +595,7 @@ kb.on('connected', (adress, port) => {
 								`)
 
 							shell.execSync('pm2 restart logger')
-							break;
+							return `done :)`;
 					}
 
 					if (!msg[0] && !msg[1]) {
