@@ -495,8 +495,6 @@ kb.on('connected', (adress, port) => {
 			invocation: async (channel, user, message, args) => {
 				try {
 
-					const length = kb.getChannels().length;
-
 					const msg = message
 						.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
 						.split(" ")
@@ -504,18 +502,35 @@ kb.on('connected', (adress, port) => {
 						.filter(Boolean);
 					
 					const shell = require('child_process')
+					
+					const getBotChannels = kb.getChannels().length;
+					
+					const getLoggerChannels = await doQuery(`
+						SELECT count(ID) As query 
+						FROM channels_logger
+						`)
+
+					const getDBSize = await doQuery(`
+						SELECT table_schema "kbot",
+        				ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) "size" 
+						FROM information_schema.tables
+						WHERE table_schema="kbot"
+						GROUP BY table_schema;
+						`)
 
 					// response for non-admin users
 					if (user['user-id'] != "178087241") {
-						return `I'm active in ${length} channels, list of channels: https://kunszg.xyz/ 4Head`;
+						return `Bot is active in ${getBotChannels} channels, logger is in ${getLoggerChannels[0].query} channels 
+						and has collected ${getDBSize[0].size}MB of data. List of channels: https://kunszg.xyz/ 4Head`;
 					}
-
+			
 					// parameters for admins
 					// check for wrong parameters
 					if (msg[0] && !msg[1]) {
 						return `${user['username']}, invalid parameter or no channel provided`;
 					} 
-												// check if logger is in specified channel 
+					
+					// check if logger is in specified channel 
 					const checkRepeatedInsert = await doQuery(`
 						SELECT * 
 						FROM channels_logger 
@@ -625,10 +640,12 @@ kb.on('connected', (adress, port) => {
 					}
 
 					if (!msg[0] && !msg[1]) {
-						return `I'm active in ${length} channels, list of channels: https://kunszg.xyz/ 4Head`;
+						return `Bot is active in ${getBotChannels} channels, logger is in ${getLoggerChannels[0].query} channels 
+						and has collected ${getDBSize[0].size}MB of data. List of channels: https://kunszg.xyz/ 4Head`;
 					}
 
-					return `I'm active in ${length} channels, list of channels: https://kunszg.xyz/ 4Head`;
+					return `Bot is active in ${getBotChannels} channels, logger is in ${getLoggerChannels[0].query} channels 
+					and has collected ${getDBSize[0].size}MB of data. List of channels: https://kunszg.xyz/ 4Head`;
 
 				} catch (err) {
 					errorLog(err)
@@ -4171,7 +4188,6 @@ kb.on('connected', (adress, port) => {
 			return;
 		})
 
-		//active commands
 		kb.on('chat', function(channel, user, message) {
 			if (channel === '#haxk' && message === "!xd") {
 				kb.say('haxk', "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠛⠛⠛⠛⠛⠛⠿⠿⣿⣿⣿⣿⣿" + 
