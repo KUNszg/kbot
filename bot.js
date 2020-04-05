@@ -2435,7 +2435,7 @@ kb.on('connected', (adress, port) => {
 			logs in my database | -channel - information about the current channel | -bruh - amount of racists in the 
 			chat | [input] - provide a custom message | @[user] - searches for given user -- cooldown 8s`,
 			permission: 0,
-			cooldown: 8000,
+			cooldown: 30000,
 			invocation: async (channel, user, message, args) => {
 				try {
 					const msgRaw = message
