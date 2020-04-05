@@ -502,6 +502,8 @@ kb.on('connected', (adress, port) => {
 						.split(" ")
 						.splice(2)
 						.filter(Boolean);
+					
+					const shell = require('child_process')
 
 					// response for non-admin users
 					if (user['user-id'] != "178087241") {
@@ -571,15 +573,34 @@ kb.on('connected', (adress, port) => {
 								return `${user['username']}, I'm already in this channel.`
 							}
 
+							// create table with logs for the specified channel
+							kb.say(channel, `${user['username']}, creating table "logs_${msg[1]}"`)
+                            await doQuery(
+                            	`CREATE TABLE logs_${msg[1]} (
+									ID INT(11) NOT NULL AUTO_INCREMENT,
+									username VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+									message LONGTEXT NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+									date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+									PRIMARY KEY (ID) USING BTREE,
+									FULLTEXT INDEX message (message)
+								)
+								COLLATE='utf8mb4_general_ci'
+								ENGINE=InnoDB
+								ROW_FORMAT=COMPACT
+								;
+								`)
+
 							// add the channel to the database
+                            sleepGlob(1500)
+                            kb.say(channel, `Success. Adding channel to the database...`)
 							await doQuery(`
 								INSERT INTO channels_logger (channel, added)
 								VALUES ("${msg[1].toLowerCase()}", CURRENT_TIMESTAMP)
 								`)
 
-							const shell = require('child_process')
 							shell.execSync('pm2 restart logger')
-							return `done :)`;
+							sleepGlob(700)
+							return `done SeemsGood`;
 
 						// part channel from logger's channel database and restart to apply changes
 						case 'part-logger':
@@ -591,11 +612,16 @@ kb.on('connected', (adress, port) => {
 							// add the channel to the database
 							await doQuery(`
 								DELETE FROM channels_logger
-								WHERE channel="${msg[1]}""
+								WHERE channel="${msg[1]}"
+								`)
+
+							// drop the logger's table in the channel
+							await doQuery(`
+								DROP TABLE logs_${msg[1]}; 
 								`)
 
 							shell.execSync('pm2 restart logger')
-							return `done :)`;
+							return `done SeemsGood`;
 					}
 
 					if (!msg[0] && !msg[1]) {

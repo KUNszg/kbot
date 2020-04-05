@@ -63,7 +63,6 @@ const options = {
 		password: api.oauth,
 	},
 	channels: channelOptions,
-	//channels: ['nymn', 'haxk', 'supinic', 'pajlada', 'forsen', 'xqcow', 'kunszg', 'itsgarosath', 'lulclip'],
 };
 
 const tmi = require('tmi.js');
