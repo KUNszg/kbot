@@ -520,7 +520,7 @@ kb.on('connected', (adress, port) => {
 
 					// response for non-admin users
 					if (user['user-id'] != "178087241") {
-						return `Bot is active in ${getBotChannels} channels, logger is in ${getLoggerChannels[0].query} channels 
+						return `${user['username']}, Bot is active in ${getBotChannels} channels, logger is in ${getLoggerChannels[0].query} channels 
 						and has collected ${getDBSize[0].size}MB of data. List of channels: https://kunszg.xyz/ 4Head`;
 					}
 			
@@ -640,11 +640,11 @@ kb.on('connected', (adress, port) => {
 					}
 
 					if (!msg[0] && !msg[1]) {
-						return `Bot is active in ${getBotChannels} channels, logger is in ${getLoggerChannels[0].query} channels 
+						return `${user['username']}, Bot is active in ${getBotChannels} channels, logger is in ${getLoggerChannels[0].query} channels 
 						and has collected ${getDBSize[0].size}MB of data. List of channels: https://kunszg.xyz/ 4Head`;
 					}
 
-					return `Bot is active in ${getBotChannels} channels, logger is in ${getLoggerChannels[0].query} channels 
+					return `${user['username']}, Bot is active in ${getBotChannels} channels, logger is in ${getLoggerChannels[0].query} channels 
 					and has collected ${getDBSize[0].size}MB of data. List of channels: https://kunszg.xyz/ 4Head`;
 
 				} catch (err) {
