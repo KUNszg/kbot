@@ -2314,7 +2314,7 @@ kb.on('connected', (adress, port) => {
 								use "kb ed register" to do so.`;
 							}
 
-							if (edApi.next_entry.toFixed(0) - (Date.now(new Date())/1000) === 0) {
+							if ((Date.now(new Date())/1000) - edApi.next_entry.toFixed(0) >= 0) {
 								return `${user['username']}, you can enter the dungeon right now! (+ed)`;
 							}
 
