@@ -520,8 +520,9 @@ kb.on('connected', (adress, port) => {
 
 					// response for non-admin users
 					if (user['user-id'] != "178087241") {
-						return `${user['username']}, Bot is active in ${getBotChannels} channels, logger is in ${getLoggerChannels[0].query} channels 
-						and has collected ${getDBSize[0].size}MB of data. List of channels: https://kunszg.xyz/ 4Head`;
+						return `${user['username']}, Bot is active in ${getBotChannels} channels, logger is in 
+						${getLoggerChannels[0].query} channels and has collected ${getDBSize[0].size}MB of data. 
+						List of channels: https://kunszg.xyz/ 4Head`;
 					}
 			
 					// parameters for admins
@@ -542,7 +543,7 @@ kb.on('connected', (adress, port) => {
 						// join the channel only for current session, channel will be dismissed after process restarts
 						case 'join-session':
 							kb.join(msg[1]);
-							return `successfully joined channel ${msg[1].toLowerCase().replace(/^(.{2})/, "$1\u{E0000}")} :) 👍`;
+							return `successfully joined ${msg[1].toLowerCase().replace(/^(.{2})/, "$1\u{E0000}")} :) 👍`;
 
 						// join the channel "permanently" by appending it to a file which is being imported after process restarts
 						case 'join-save':
@@ -558,7 +559,7 @@ kb.on('connected', (adress, port) => {
 								`);
 
 							kb.join(msg[1].toLowerCase());
-							return `successfully joined #${msg[1].toLowerCase().replace(/^(.{2})/, "$1\u{E0000}")} :) 👍`;
+							return `successfully joined ${msg[1].toLowerCase().replace(/^(.{2})/, "$1\u{E0000}")} :) 👍`;
 						
 						// leave the channel for this session, if channel is saved in the file it will be rejoined after session restarts
 						case 'part-session':
@@ -640,12 +641,14 @@ kb.on('connected', (adress, port) => {
 					}
 
 					if (!msg[0] && !msg[1]) {
-						return `${user['username']}, Bot is active in ${getBotChannels} channels, logger is in ${getLoggerChannels[0].query} channels 
-						and has collected ${getDBSize[0].size}MB of data. List of channels: https://kunszg.xyz/ 4Head`;
+						return `${user['username']}, Bot is active in ${getBotChannels} channels, logger is in 
+						${getLoggerChannels[0].query} channels and has collected ${getDBSize[0].size}MB of data. 
+						List of channels: https://kunszg.xyz/ 4Head`;
 					}
 
-					return `${user['username']}, Bot is active in ${getBotChannels} channels, logger is in ${getLoggerChannels[0].query} channels 
-					and has collected ${getDBSize[0].size}MB of data. List of channels: https://kunszg.xyz/ 4Head`;
+					return `${user['username']}, Bot is active in ${getBotChannels} channels, logger is in 
+					${getLoggerChannels[0].query} channels and has collected ${getDBSize[0].size}MB of data.
+					List of channels: https://kunszg.xyz/ 4Head`;
 
 				} catch (err) {
 					errorLog(err)
@@ -2142,22 +2145,24 @@ kb.on('connected', (adress, port) => {
 								WHERE username="${user['username']}"
 								`);
 
-							if (resultsUnregister != 0) {
-
-								await doQuery(`
-									DELETE FROM cookies 
-									WHERE username="${user['username']}"
-									`);
-
-								await doQuery(`
-									DELETE FROM cookie_reminders 
-									WHERE username="${user['username']}"
-									`);
-
-								return `${user['username']}, you are no longer registered for a cookie reminder.`;
+							if (resultsUnregister.length === 0) {
+								return `${user['username']}, you are not registered for a 
+								cookie reminder, therefore you can't be unregistered FeelsDankMan`;
 							}
-							return `${user['username']}, you are not registered for a 
-							cookie reminder, therefore you can't be unregistered FeelsDankMan`
+
+							await doQuery(`
+								INSERT INTO trash (username, channel, cmd, added)
+								VALUES ("${user['username']}", "${channel.replace('#', '')}", "cookie", CURRENT_TIMESTAMP)
+								`);
+							await doQuery(`
+								DELETE FROM cookies 
+								WHERE username="${user['username']}"
+								`);
+							await doQuery(`
+								DELETE FROM cookie_reminders 
+								WHERE username="${user['username']}"
+								`);
+							return `${user['username']}, you are no longer registered for a cookie reminder.`;
 						
 						case 'whisper':
 							// check if user is registered
@@ -2392,21 +2397,24 @@ kb.on('connected', (adress, port) => {
 								WHERE username="${user['username']}"
 								`);
 
-							if (resultsUnregister != 0) {
-								await doQuery(`
-									DELETE FROM ed 
-									WHERE username="${user['username']}"
-									`);
-
-								await doQuery(`
-									DELETE FROM ed_reminders 
-									WHERE username="${user['username']}"
-									`);
-
-								return `${user['username']}, you are no longer registered for a dungeon reminder.`;
+							if (resultsUnregister.length === 0) {
+								return `${user['username']}, you are not registered for a dungeon reminder, 
+								therefore you can't be unregistered FeelsDankMan`;
 							}
-							return `${user['username']}, you are not registered for a dungeon reminder, 
-							therefore you can't be unregistered FeelsDankMan`;
+
+							await doQuery(`
+								INSERT INTO trash (username, channel, cmd, added)
+								VALUES ("${user['username']}", "${channel.replace('#', '')}", "ed", CURRENT_TIMESTAMP)
+								`);
+							await doQuery(`
+								DELETE FROM ed 
+								WHERE username="${user['username']}"
+								`);
+							await doQuery(`
+								DELETE FROM ed_reminders 
+								WHERE username="${user['username']}"
+								`);
+							return `${user['username']}, you are no longer registered for a dungeon reminder.`;
 
 						default:
 							return `${user['username']}, invalid syntax. See "kb help ed" for command help.`;
@@ -3533,8 +3541,13 @@ kb.on('connected', (adress, port) => {
 					(i.aliases && (input[0].replace('kbot', 'kb') + ' ' + input[1]).replace(/,/, '').replace('@', '')
 						.toLowerCase() === i.aliases));
 
-				const checkChannelStatus = await doQuery(`SELECT * FROM channels WHERE channel="${channel.replace('#', '')}"`)
-				if (checkChannelStatus[0].status === "live" && (checkChannelStatus[0].channel === "nymn" || checkChannelStatus[0].channel === "pajlada") ) {
+				const checkChannelStatus = await doQuery(`
+					SELECT * FROM channels 
+					WHERE channel="${channel.replace('#', '')}"
+					`)
+
+				if (checkChannelStatus[0].status === "live" && 
+					(checkChannelStatus[0].channel === "nymn" || checkChannelStatus[0].channel === "pajlada") ) {
 					return;
 				}
 
@@ -3743,9 +3756,14 @@ kb.on('connected', (adress, port) => {
 					return user['username'] + ", " + xddd + " active commands PogChamp 👉 (prefix: kb) | " +
 					xd.sort().toString().replace(/,/g, " | ").replace(/kb/g, '') + " |".split(' | ')
 				}
-				const getPermNames =  await doQuery('SELECT * FROM trusted_users WHERE username="' + user['username'] + '"') 
-				return user['username'] + ", " + xddd + " active commands with your permissions PogChamp 👉 (" + getPermNames[0].permissions + ") | " +
-				xd.sort().toString().replace(/,/g, " | ").replace(/kb/g, '') + " |".split(' | ')
+				const getPermNames =  await doQuery(`
+					SELECT * 
+					FROM trusted_users 
+					WHERE username="${user['username']}"
+					`) 
+				return `${user['username']}, ${xddd} active commands with your permissions PogChamp 👉 
+				(${getPermNames[0].permissions}) | 
+				${xd.sort().toString().replace(/,/g, " | ").replace(/kb/g, '') + " |".split(' | ')}`
 
 			} catch (err) {
 				async function errorLog() {
