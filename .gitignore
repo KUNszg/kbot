@@ -1,1 +1,2 @@
-config.js
+lib/credentials/config.js
+node_modules
