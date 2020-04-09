@@ -27,6 +27,15 @@ const repeatedMessages = {
 	supinic: null
 };
 
+function sleepGlob(milliseconds) {
+	var start = new Date().getTime();
+	for (var i = 0; i < 1e7; i++) {
+		if ((new Date().getTime() - start) > milliseconds) {
+			break;
+		}
+	}
+}
+
 kb.connect();
 kb.on('connected', (adress, port) => {
 
@@ -117,10 +126,10 @@ kb.on('connected', (adress, port) => {
 				return;
 			}
 
+			await doQuery('UPDATE cookie_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
 			const dateUnfiredUsers = new Date(selectUnfiredUsers[0].fires)
 			const unfiredDiff = (serverDate - dateUnfiredUsers)/1000/60
 			kb.say(selectUnfiredUsers[0].channel, selectUnfiredUsers[0].username + ', you had an unfired cookie reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and eat your cookie please :)');
-			await doQuery('UPDATE cookie_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
 		}
 	}
 	setInterval(() => {
@@ -148,10 +157,10 @@ kb.on('connected', (adress, port) => {
 				return;
 			} 
 
+			await doQuery('UPDATE ed_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
 			const dateUnfiredUsers = new Date(selectUnfiredUsers[0].fires)
 			const unfiredDiff = (serverDate - dateUnfiredUsers)/1000/60
 			kb.whisper(selectUnfiredUsers[0].username, 'You had an unfired dungeon reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and enter the dungeon please :)');
-			await doQuery('UPDATE ed_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
 		}
 	}
 	setInterval(() => {
@@ -187,19 +196,19 @@ kb.on('connected', (adress, port) => {
 			const checkChannelStatus = await doQuery(`SELECT * FROM channels WHERE channel="${value[0].channel}"`)
 			if (checkChannelStatus[0].status === "live") {
 				limit.add(value[0].username)
-				kb.whisper(value[0].username, `cookie reminder - eat cookie please :) 🍪 (this reminder fired in a channel that is live [${value[0].channel}], so I had to send it via whisper)`)
 				await doQuery('UPDATE cookie_reminders SET status="fired" WHERE username="' + value[0].username + '" AND status="scheduled"');
+				kb.whisper(value[0].username, `cookie reminder - eat cookie please :) 🍪 (this reminder fired in a channel that is live [${value[0].channel}], so I had to send it via whisper)`)
 				setTimeout(() => {limit.delete(value[0].username)}, 10000);
 				return;
 			}
 
-			limit.add(value[0].username)
-			kb.say(value[0].channel, '(cookie reminder) ' + value[0].username + ', eat cookie please :) 🍪')
-			setTimeout(() => {limit.delete(value[0].username)}, 10000)		
+			limit.add(value[0].username);
 
 			// update the database with fired reminder
-			await doQuery('UPDATE cookie_reminders SET status="fired" WHERE username="' + 
-				value[0].username + '" AND status="scheduled"');
+			await doQuery('UPDATE cookie_reminders SET status="fired" WHERE username="' + value[0].username + '" AND status="scheduled"');
+			sleepGlob(500);
+			kb.say(value[0].channel, '(cookie reminder) ' + value[0].username + ', eat cookie please :) 🍪');
+			setTimeout(() => {limit.delete(value[0].username)}, 10000);	
 		}
 	}
 
@@ -231,13 +240,13 @@ kb.on('connected', (adress, port) => {
 					return;
 				}
 
-				limit.add(value[0].username)
-				kb.whisper(value[0].username, '(ed reminder) enter dungeon please :) 🏰 ')
-				setTimeout(() => {limit.delete(value[0].username)}, 10000)		
+				limit.add(value[0].username);
 
 				// update the database with fired reminder
-				await doQuery('UPDATE ed_reminders SET status="fired" WHERE username="' + 
-					value[0].username + '" AND status="scheduled"');
+				await doQuery('UPDATE ed_reminders SET status="fired" WHERE username="' + value[0].username + '" AND status="scheduled"');
+				sleepGlob(500);
+				kb.whisper(value[0].username, '(ed reminder) enter dungeon please :) 🏰 ');
+				setTimeout(() => {limit.delete(value[0].username)}, 10000);		
 			}
 		}
 	}
