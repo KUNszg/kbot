@@ -150,11 +150,11 @@ kb.on('connected', (adress, port) => {
 	})
 
 	kb.on('message', function(channel, user, message) {
-		/*		
+			
 		if (channel === '#xqcow') {
 			return;
 		}
-		*/
+		
 		async function checkUser() {
 
 			const checkIfExists = await doQuery(`SELECT username FROM user_list WHERE username="${user['username']}"`);
