@@ -106,7 +106,6 @@ async function diagramData() {
 		return info[0].data
 	}
 	const getData = await Promise.all([
-		{"color": 'Gray', 'amount': await dataInsert('gray')},
 		{"color": 'Red', 'amount': await dataInsert('#FF0000')}, 
 		{"color": 'SpringGreen', 'amount': await dataInsert('#00FF7F')},
 	 	{"color": 'DodgerBlue', 'amount': await dataInsert('#1E90FF')}, 
