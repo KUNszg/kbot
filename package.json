@@ -1,7 +1,7 @@
 {
   "name": "kunszgbot",
-  "version": "1.0.0",
-  "description": "NaM",
+  "version": "2.0.0",
+  "description": "Utility and entertainment bot providing commands with a goal to have more fun in offline chats.",
   "main": "init.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
