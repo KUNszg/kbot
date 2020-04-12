@@ -214,7 +214,7 @@ kb.on('connected', (adress, port) => {
 
 	setInterval(() => {
 		reminder()
-	}, 1000)
+	}, 2000)
 
 	async function reminder2() {
 		const value = await doQuery('SELECT username, channel, fires, status FROM ed_reminders WHERE status!="fired" ORDER BY fires ASC');
@@ -252,5 +252,5 @@ kb.on('connected', (adress, port) => {
 	}
 	setInterval(() => {
 		reminder2()
-	}, 1000)
+	}, 2000)
 })
