@@ -158,7 +158,7 @@ kb.on('connected', (adress, port) => {
 
 			const checkIfExists = await doQuery(`SELECT * FROM user_list WHERE username="${user['username']}"`);
 			if (checkIfExists.length != 0) {
-				if (checkIfExists.username != user['username']) {
+				if (checkIfExists[0].username != user['username']) {
 					await doQuery(`
 						UPDATE user_list 
 						SET username="${user['username']}" 
