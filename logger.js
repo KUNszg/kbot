@@ -156,7 +156,7 @@ kb.on('connected', (adress, port) => {
 		
 		async function checkUser() {
 
-			const checkIfExists = await doQuery(`SELECT username FROM user_list WHERE userId="${user['user-id']}"`);
+			const checkIfExists = await doQuery(`SELECT * FROM user_list WHERE username="${user['username']}"`);
 			if (checkIfExists.length != 0) {
 				if (checkIfExists.username != user['username']) {
 					await doQuery(`
@@ -171,19 +171,7 @@ kb.on('connected', (adress, port) => {
 
 			const sqlUser = "INSERT INTO user_list (username, userId, channel_first_appeared, color, added) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)"
 			const insertsUser = [user['username'], user['user-id'], channel.replace('#', ''), user['color']]
-			con.query(mysql.format(sqlUser, insertsUser), function(error, results, fields) {
-				if (error) {
-					const errorLog = "INSERT INTO ?? (??, ??) VALUES (?, ?)";
-					const errorLogCollumns = ['error_message', 'date'];
-					const insertsLog = ['error_logs', errorLogCollumns, error, new Date()];
-					con.query(mysql.format(errorLog, insertsLog), function(error, results, fields) {
-						if (error) {
-							throw error;
-						}
-					})
-				}
-			})
-			
+			await doQuery(mysql.format(sqlUser, insertsUser))
 		}
 		checkUser()
 	})

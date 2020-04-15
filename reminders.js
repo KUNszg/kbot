@@ -140,7 +140,7 @@ kb.on('connected', (adress, port) => {
 	async function unfireEd() {
 
 		// ed
-		const unfire = await doQuery('SELECT username, channel, fires, status FROM ed_reminders WHERE status!="fired" ORDER BY fires ASC');
+		const unfire = await doQuery('SELECT * FROM ed_reminders WHERE status!="fired" ORDER BY fires ASC');
 		if (!unfire[0]) {
 			return;
 		}
@@ -157,10 +157,11 @@ kb.on('connected', (adress, port) => {
 				return;
 			} 
 
+			const getUsername = await doQuery(`SELECT * FROM user_list WHERE ID="${unfire[0].user_alias}"`)
 			await doQuery('UPDATE ed_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
 			const dateUnfiredUsers = new Date(selectUnfiredUsers[0].fires)
 			const unfiredDiff = (serverDate - dateUnfiredUsers)/1000/60
-			kb.whisper(selectUnfiredUsers[0].username, 'You had an unfired dungeon reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and enter the dungeon please :)');
+			kb.whisper(getUsername[0].username, 'You had an unfired dungeon reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and enter the dungeon please :)');
 		}
 	}
 	setInterval(() => {
@@ -217,16 +218,16 @@ kb.on('connected', (adress, port) => {
 	}, 5000)
 
 	async function reminder2() {
-		const value = await doQuery('SELECT username, channel, fires, status FROM ed_reminders WHERE status!="fired" ORDER BY fires ASC');
+		const userData = await doQuery('SELECT * FROM ed_reminders WHERE status!="fired" ORDER BY fires ASC');
 
 		// if there is no "fired" argument, ignore
-		if (!value[0]) {
+		if (!userData[0]) {
 			return;
 		}
 
 		// some KKona shit going out there
 		const serverDate = new Date();
-		const fires = new Date(value[0].fires);
+		const fires = new Date(userData[0].fires);
 		const diff = serverDate - fires
 		const differenceToSec = diff/1000;
 
@@ -236,17 +237,18 @@ kb.on('connected', (adress, port) => {
 
 			// make sure not to repeat the same reminder by adding a unique username
 			// to the Set Object and delete it after 10s 
-			if (limit.has(value[0].username)) {
+			if (limit.has(userData[0].username)) {
 				return;
 			}
 
-			limit.add(value[0].username);
+			limit.add(userData[0].username);
 
 			// update the database with fired reminder
-			await doQuery('UPDATE ed_reminders SET status="fired" WHERE username="' + value[0].username + '" AND status="scheduled"');
+			const getUsername = await doQuery(`SELECT * FROM user_list WHERE ID="${userData[0].user_alias}"`);
+			await doQuery(`UPDATE ed_reminders SET status="fired" WHERE user_alias="${userData[0].user_alias}" AND status="scheduled"`);
 			sleepGlob(500);
-			kb.whisper(value[0].username, '(ed reminder) enter dungeon please :) 🏰 ');
-			setTimeout(() => {limit.delete(value[0].username)}, 10000);		
+			kb.whisper(userData[0].username, '(ed reminder) enter dungeon please :) 🏰 ');
+			setTimeout(() => {limit.delete(userData[0].username)}, 10000);		
 		}
 	}
 	setInterval(() => {
