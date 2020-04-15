@@ -137,15 +137,15 @@ kb.on('connected', (adress, port) => {
 		const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
 		if (filterBots.length != 0 || msg === '') {
 			return;
-		} else {
-			const sql = "INSERT INTO ?? (username, message, date) VALUES (?, ?, ?)";
-			const inserts = ['logs_' + channel.replace('#', ''), user['username'], msg, new Date()];
-			con.query(mysql.format(sql, inserts), function(error, results, fields) {
-				if (error) {
-					throw error
-				}
-			})
 		}
+		
+		const sql = "INSERT INTO ?? (username, message, date) VALUES (?, ?, ?)";
+		const inserts = ['logs_' + channel.replace('#', ''), user['username'], msg, new Date()];
+		con.query(mysql.format(sql, inserts), function(error, results, fields) {
+			if (error) {
+				throw error
+			}
+		})
 	})
 
 	kb.on('message', function(channel, user, message) {
