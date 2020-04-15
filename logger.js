@@ -156,7 +156,7 @@ kb.on('connected', (adress, port) => {
 		
 		async function checkUser() {
 
-			const checkIfExists = await doQuery(`SELECT username FROM user_list WHERE username="${user['username']}"`);
+			const checkIfExists = await doQuery(`SELECT username FROM user_list WHERE userId="${user['user-id']}"`);
 			if (checkIfExists.length != 0) {
 				return;
 			}

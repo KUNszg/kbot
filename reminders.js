@@ -112,7 +112,7 @@ kb.on('connected', (adress, port) => {
 		const diff = serverDate - fires
 		const differenceToSec = diff/1000;
 
-		if (differenceToSec>15) {
+		if (differenceToSec>20) {
 
 			// update the database with fired reminder
 			const selectUnfiredUsers = await doQuery('SELECT * FROM cookie_reminders WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
@@ -122,11 +122,11 @@ kb.on('connected', (adress, port) => {
 
 			const checkChannelStatus = await doQuery(`SELECT * FROM channels WHERE channel="${selectUnfiredUsers[0].channel}"`)
 			if (checkChannelStatus[0].status === "live") {
-				await doQuery('UPDATE cookie_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
+				await doQuery('UPDATE cookie_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
 				return;
 			}
 
-			await doQuery('UPDATE cookie_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
+			await doQuery('UPDATE cookie_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
 			const dateUnfiredUsers = new Date(selectUnfiredUsers[0].fires)
 			const unfiredDiff = (serverDate - dateUnfiredUsers)/1000/60
 			kb.say(selectUnfiredUsers[0].channel, selectUnfiredUsers[0].username + ', you had an unfired cookie reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and eat your cookie please :)');
@@ -134,7 +134,7 @@ kb.on('connected', (adress, port) => {
 	}
 	setInterval(() => {
 		unfireCookie()
-	}, 10000)
+	}, 20000)
 
 	// unfire clogging reminders
 	async function unfireEd() {
@@ -149,15 +149,15 @@ kb.on('connected', (adress, port) => {
 		const diff = serverDate - fires
 		const differenceToSec = diff/1000;
 
-		if (differenceToSec>15) {
+		if (differenceToSec>20) {
 
 			// update the database with fired reminder
-			const selectUnfiredUsers = await doQuery('SELECT * FROM ed_reminders WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
+			const selectUnfiredUsers = await doQuery('SELECT * FROM ed_reminders WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
 			if (!selectUnfiredUsers[0]) {
 				return;
 			} 
 
-			await doQuery('UPDATE ed_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
+			await doQuery('UPDATE ed_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
 			const dateUnfiredUsers = new Date(selectUnfiredUsers[0].fires)
 			const unfiredDiff = (serverDate - dateUnfiredUsers)/1000/60
 			kb.whisper(selectUnfiredUsers[0].username, 'You had an unfired dungeon reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and enter the dungeon please :)');
@@ -165,12 +165,60 @@ kb.on('connected', (adress, port) => {
 	}
 	setInterval(() => {
 		unfireEd()
-	}, 10000)
+	}, 20000)
 
 	// check and send reminders - cookie
 	async function reminder() {	
-		const value = await doQuery('SELECT username, channel, fires, status FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC');
+		const userData = await doQuery('SELECT * FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC');
 		
+		// if there is no "fired" argument, ignore
+		if (!userData[0]) {
+			return;
+		}
+
+		// some KKona shit going out there
+		const serverDate = new Date();
+		const fires = new Date(userData[0].fires);
+		const diff = serverDate - fires
+		const differenceToSec = diff/1000;
+
+		// consider only cases where reminder is apart from current date by 7 seconds
+		if ((differenceToSec<=15) && !(differenceToSec<0)) {
+			const limit = new Set();
+
+			// make sure not to repeat the same reminder by adding a unique user_alias
+			// to the Set Object and delete it after 10s 
+			if (limit.has(userData[0].user_alias)) {
+				return;
+			}
+			
+
+			const checkChannelStatus = await doQuery(`SELECT * FROM channels WHERE channel="${userData[0].channel}"`)
+			if (checkChannelStatus[0].status === "live") {
+				limit.add(userData[0].user_alias)
+				await doQuery(`UPDATE cookie_reminders SET status="fired" WHERE user_alias="${userData[0].user_alias}" AND status="scheduled"`);
+				kb.whisper(userData[0].username, `cookie reminder - eat cookie please :) 🍪 (this reminder fired in a channel that is live [${userData[0].channel}], so I had to send it via whisper)`)
+				setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
+				return;
+			}
+
+			limit.add(userData[0].user_alias);
+
+			// update the database with fired reminder
+			await doQuery(`UPDATE cookie_reminders SET status="fired" WHERE user_alias="${userData[0].user_alias}" AND status="scheduled"`);
+			sleepGlob(500);
+			kb.say(userData[0].channel, '(cookie reminder) ' + userData[0].username + ', eat cookie please :) 🍪');
+			setTimeout(() => {limit.delete(userData[0].username)}, 10000);	
+		}
+	}
+
+	setInterval(() => {
+		reminder()
+	}, 5000)
+
+	async function reminder2() {
+		const value = await doQuery('SELECT username, channel, fires, status FROM ed_reminders WHERE status!="fired" ORDER BY fires ASC');
+
 		// if there is no "fired" argument, ignore
 		if (!value[0]) {
 			return;
@@ -183,7 +231,7 @@ kb.on('connected', (adress, port) => {
 		const differenceToSec = diff/1000;
 
 		// consider only cases where reminder is apart from current date by 7 seconds
-		if ((differenceToSec<=7) && !(differenceToSec<0)) {
+		if ((differenceToSec<=15) && !(differenceToSec<0)) {
 			const limit = new Set();
 
 			// make sure not to repeat the same reminder by adding a unique username
@@ -191,66 +239,17 @@ kb.on('connected', (adress, port) => {
 			if (limit.has(value[0].username)) {
 				return;
 			}
-			
-
-			const checkChannelStatus = await doQuery(`SELECT * FROM channels WHERE channel="${value[0].channel}"`)
-			if (checkChannelStatus[0].status === "live") {
-				limit.add(value[0].username)
-				await doQuery('UPDATE cookie_reminders SET status="fired" WHERE username="' + value[0].username + '" AND status="scheduled"');
-				kb.whisper(value[0].username, `cookie reminder - eat cookie please :) 🍪 (this reminder fired in a channel that is live [${value[0].channel}], so I had to send it via whisper)`)
-				setTimeout(() => {limit.delete(value[0].username)}, 10000);
-				return;
-			}
 
 			limit.add(value[0].username);
 
 			// update the database with fired reminder
-			await doQuery('UPDATE cookie_reminders SET status="fired" WHERE username="' + value[0].username + '" AND status="scheduled"');
+			await doQuery('UPDATE ed_reminders SET status="fired" WHERE username="' + value[0].username + '" AND status="scheduled"');
 			sleepGlob(500);
-			kb.say(value[0].channel, '(cookie reminder) ' + value[0].username + ', eat cookie please :) 🍪');
-			setTimeout(() => {limit.delete(value[0].username)}, 10000);	
-		}
-	}
-
-	setInterval(() => {
-		reminder()
-	}, 2000)
-
-	async function reminder2() {
-		const value = await doQuery('SELECT username, channel, fires, status FROM ed_reminders WHERE status!="fired" ORDER BY fires ASC');
-
-		// if there is no "fired" argument, ignore
-		if (!value[0]) {
-			return;
-		} else {
-
-			// some KKona shit going out there
-			const serverDate = new Date();
-			const fires = new Date(value[0].fires);
-			const diff = serverDate - fires
-			const differenceToSec = diff/1000;
-
-			// consider only cases where reminder is apart from current date by 7 seconds
-			if ((differenceToSec<=7) && !(differenceToSec<0)) {
-				const limit = new Set();
-
-				// make sure not to repeat the same reminder by adding a unique username
-				// to the Set Object and delete it after 10s 
-				if (limit.has(value[0].username)) {
-					return;
-				}
-
-				limit.add(value[0].username);
-
-				// update the database with fired reminder
-				await doQuery('UPDATE ed_reminders SET status="fired" WHERE username="' + value[0].username + '" AND status="scheduled"');
-				sleepGlob(500);
-				kb.whisper(value[0].username, '(ed reminder) enter dungeon please :) 🏰 ');
-				setTimeout(() => {limit.delete(value[0].username)}, 10000);		
-			}
+			kb.whisper(value[0].username, '(ed reminder) enter dungeon please :) 🏰 ');
+			setTimeout(() => {limit.delete(value[0].username)}, 10000);		
 		}
 	}
 	setInterval(() => {
 		reminder2()
-	}, 2000)
+	}, 5000)
 })
