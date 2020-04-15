@@ -192,12 +192,12 @@ kb.on('connected', (adress, port) => {
 				return;
 			}
 			
-
+			const getUsername = await doQuery(`SELECT * FROM user_list WHERE ID="${userData[0].user_alias}"`)
 			const checkChannelStatus = await doQuery(`SELECT * FROM channels WHERE channel="${userData[0].channel}"`)
 			if (checkChannelStatus[0].status === "live") {
 				limit.add(userData[0].user_alias)
 				await doQuery(`UPDATE cookie_reminders SET status="fired" WHERE user_alias="${userData[0].user_alias}" AND status="scheduled"`);
-				kb.whisper(userData[0].username, `cookie reminder - eat cookie please :) 🍪 (this reminder fired in a channel that is live [${userData[0].channel}], so I had to send it via whisper)`)
+				kb.whisper(getUsername[0].username, `cookie reminder - eat cookie please :) 🍪 (this reminder fired in a channel that is live [${userData[0].channel}], so I had to send it via whisper)`)
 				setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
 				return;
 			}
@@ -207,8 +207,8 @@ kb.on('connected', (adress, port) => {
 			// update the database with fired reminder
 			await doQuery(`UPDATE cookie_reminders SET status="fired" WHERE user_alias="${userData[0].user_alias}" AND status="scheduled"`);
 			sleepGlob(500);
-			kb.say(userData[0].channel, '(cookie reminder) ' + userData[0].username + ', eat cookie please :) 🍪');
-			setTimeout(() => {limit.delete(userData[0].username)}, 10000);	
+			kb.say(userData[0].channel, '(cookie reminder) ' + getUsername[0].username + ', eat cookie please :) 🍪');
+			setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);	
 		}
 	}
 

@@ -158,8 +158,17 @@ kb.on('connected', (adress, port) => {
 
 			const checkIfExists = await doQuery(`SELECT username FROM user_list WHERE userId="${user['user-id']}"`);
 			if (checkIfExists.length != 0) {
+				if (checkIfExists.username != user['username']) {
+					await doQuery(`
+						UPDATE user_list 
+						SET username="${user['username']}" 
+						WHERE userId="${user['user-id']}"
+						`);
+					return;
+				}
 				return;
 			}
+
 			const sqlUser = "INSERT INTO user_list (username, userId, channel_first_appeared, color, added) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)"
 			const insertsUser = [user['username'], user['user-id'], channel.replace('#', ''), user['color']]
 			con.query(mysql.format(sqlUser, insertsUser), function(error, results, fields) {
@@ -169,7 +178,6 @@ kb.on('connected', (adress, port) => {
 					const insertsLog = ['error_logs', errorLogCollumns, error, new Date()];
 					con.query(mysql.format(errorLog, insertsLog), function(error, results, fields) {
 						if (error) {
-							console.log(error);
 							throw error;
 						}
 					})
