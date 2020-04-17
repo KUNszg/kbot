@@ -33,8 +33,8 @@ const getChannels = () => new Promise((resolve, reject) => {
     });
 });
 
-const channelList = [];
-const channelOptions = []
+let channelList = [];
+let channelOptions = []
 async function res() {
 	channelList.push(await getChannels());
 	await channelList[0].forEach(i => channelOptions.push(i.channel))
@@ -67,6 +67,8 @@ const options = {
 
 const tmi = require('tmi.js');
 const kb = new tmi.client(options);
+channelList = [];
+channelOptions = [];
 const ignoreList = [
 	'268612479', // titlechange_bot 
 	'68136884', // Supibot 
@@ -139,8 +141,8 @@ kb.on('connected', (adress, port) => {
 			return;
 		}
 		
-		const sql = "INSERT INTO ?? (username, message, date) VALUES (?, ?, ?)";
-		const inserts = ['logs_' + channel.replace('#', ''), user['username'], msg, new Date()];
+		const sql = "INSERT INTO logs_"+channel.replace('#', '')+" (username, message, date) VALUES (?, ?, ?)";
+		const inserts = [user['username'], msg, new Date()];
 		con.query(mysql.format(sql, inserts), function(error, results, fields) {
 			if (error) {
 				throw error
