@@ -67,8 +67,6 @@ const options = {
 
 const tmi = require('tmi.js');
 const kb = new tmi.client(options);
-channelList = [];
-channelOptions = [];
 const ignoreList = [
 	'268612479', // titlechange_bot 
 	'68136884', // Supibot 
