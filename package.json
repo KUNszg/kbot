@@ -45,6 +45,7 @@
     "nedb": "^1.8.0",
     "node-fetch": "^2.6.0",
     "node-http-ping": "^0.3.1",
+    "node-oom-heapdump": "^1.2.0",
     "node-red-contrib-cpu": "0.0.4",
     "opentdb-api": "^1.0.0",
     "os": "^0.1.1",
