@@ -132,21 +132,43 @@ kb.on('connected', (adress, port) => {
 		kden()
 	}, 601000)
 
+	const cache = [];
 	kb.on('message', function(channel, user, message) {
 		const filterBots = ignoreList.filter(i => i === user['user-id'])
 		const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+		const channelParsed = channel.replace('#', '');
 		if (filterBots.length != 0 || msg === '') {
 			return;
 		}
-		
-		const sql = "INSERT INTO logs_"+channel.replace('#', '')+" (username, message, date) VALUES (?, ?, ?)";
-		const inserts = [user['username'], msg, new Date()];
-		con.query(mysql.format(sql, inserts), function(error, results, fields) {
-			if (error) {
-				throw error
-			}
-		})
+	
+		// caching messages from Twitch chat
+		cache.push({
+			'channel': channelParsed, 
+			'username': user['username'], 
+			'message': msg, 
+			'date': new Date() 
+		});
 	})
+
+	// inserting cached rows every interval to database instead of real-time logging
+	function loopLogs() {
+		cache.forEach(data => {
+			const sql = "INSERT INTO logs_"+data['channel']+" (username, message, date) VALUES (?, ?, ?)";
+			const inserts = [data['username'], data['message'], data['date']];
+			con.query(mysql.format(sql, inserts), function(error, results, fields) {
+				if (error) {
+					throw error
+				}
+			})
+		})
+	}
+
+	setInterval(()=>{
+		if (cache.length>200) {
+			loopLogs(); 
+			cache.length = 0;
+		} 
+	}, 15000);
 
 	kb.on('message', function(channel, user, message) {
 			
