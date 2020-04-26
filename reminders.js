@@ -120,7 +120,10 @@ kb.on('connected', (adress, port) => {
 				return;
 			}
 
-			const checkChannelStatus = await doQuery(`SELECT * FROM channels WHERE channel="${selectUnfiredUsers[0].channel}"`)
+			const checkChannelStatus = await doQuery(`SELECT * FROM channels WHERE channel="${selectUnfiredUsers[0].channel}"`);
+			if (checkChannelStatus.length === 0) {
+				kb.whisper('kunszg', 'error at '+ selectUnfiredUsers[0].channel)
+			}
 			if (checkChannelStatus[0].status === "live") {
 				await doQuery('UPDATE cookie_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
 				return;
