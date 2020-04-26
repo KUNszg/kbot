@@ -1,6 +1,5 @@
 'use strict';
 require('./lib/static/interval_calls.js');
-require('./lib/static/message_stats.js');
 const fs = require('fs');
 const api = require('./config.js');
 const mysql = require('mysql2');
