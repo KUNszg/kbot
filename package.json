@@ -43,7 +43,7 @@
     "nasa-neows": "^2.0.1",
     "nasa-sdk": "^1.1.10",
     "nedb": "^1.8.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "2.6.0",
     "node-http-ping": "^0.3.1",
     "node-oom-heapdump": "^1.2.0",
     "node-red-contrib-cpu": "0.0.4",
