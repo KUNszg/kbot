@@ -120,9 +120,6 @@ kb.on('connected', (adress, port) => {
 				return;
 			}
 
-			if (selectUnfiredUsers[0].channel === "forsen") {
-				return;
-			}
 			const checkChannelStatus = await doQuery(`SELECT * FROM channels WHERE channel="${selectUnfiredUsers[0].channel}"`);
 			if (checkChannelStatus[0].status === "live") {
 				await doQuery('UPDATE cookie_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
@@ -196,9 +193,6 @@ kb.on('connected', (adress, port) => {
 				return;
 			}
 			
-			if (userData[0].channel === "forsen") {
-				return;
-			}
 			const getUsername = await doQuery(`SELECT * FROM user_list WHERE ID="${userData[0].user_alias}"`)
 			const checkChannelStatus = await doQuery(`SELECT * FROM channels WHERE channel="${userData[0].channel}"`)
 			if (checkChannelStatus[0].status === "live") {
