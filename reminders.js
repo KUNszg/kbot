@@ -129,7 +129,11 @@ kb.on('connected', (adress, port) => {
 			await doQuery('UPDATE cookie_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
 			const dateUnfiredUsers = new Date(selectUnfiredUsers[0].fires)
 			const unfiredDiff = (serverDate - dateUnfiredUsers)/1000/60
-			kb.say(selectUnfiredUsers[0].channel, selectUnfiredUsers[0].username + ', you had an unfired cookie reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and eat your cookie please :)');
+			if (selectUnfiredUsers[0].channel === "forsen") {
+				kb.whisper(selectUnfiredUsers[0].username, ' you had an unfired cookie reminder ' + unfiredDiff.toFixed(0) + ' minutes ago in channel "forsen", sorry about that and eat your cookie please :)');
+			} else {
+				kb.say(selectUnfiredUsers[0].channel, selectUnfiredUsers[0].username + ', you had an unfired cookie reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and eat your cookie please :)');
+			}
 		}
 	}
 	setInterval(() => {
@@ -208,8 +212,13 @@ kb.on('connected', (adress, port) => {
 			// update the database with fired reminder
 			await doQuery(`UPDATE cookie_reminders SET status="fired" WHERE user_alias="${userData[0].user_alias}" AND status="scheduled"`);
 			sleepGlob(500);
-			kb.say(userData[0].channel, '(cookie reminder) ' + getUsername[0].username + ', eat cookie please :) 🍪');
-			setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);	
+			if (userData[0].channel === "forsen") {
+				kb.whisper(userData[0].username, '(cookie reminder from forsens channel) eat cookie please :) 🍪');
+				setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
+			} else {
+				kb.say(userData[0].channel, '(cookie reminder) ' + getUsername[0].username + ', eat cookie please :) 🍪');
+				setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
+			}	
 		}
 	}
 
