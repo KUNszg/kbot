@@ -149,3 +149,13 @@ const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
     const port = server.address().port;
     console.log('app running on port', port);
 });
+
+async function statusCheck() {
+		await doQuery(`
+			UPDATE stats
+			SET date="${new Date().toISOString().slice(0, 19).replace('T', ' ')}"
+			WHERE type="module" AND sha="api"
+			`)
+	}
+statusCheck();
+setInterval(()=>{statusCheck()}, 30000);

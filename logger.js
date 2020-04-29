@@ -190,4 +190,14 @@ kb.on('connected', (adress, port) => {
 	setInterval(async() => {
 		await doQuery('UPDATE user_list SET color="gray" WHERE color IS null;')
 	}, 1800000);
+
+	async function statusCheck() {
+		await doQuery(`
+			UPDATE stats
+			SET date="${new Date().toISOString().slice(0, 19).replace('T', ' ')}"
+			WHERE type="module" AND sha="logger"
+			`)
+	}
+	statusCheck();
+	setInterval(()=>{statusCheck()}, 600000);
 })

@@ -263,4 +263,15 @@ kb.on('connected', (adress, port) => {
 	setInterval(() => {
 		reminder2()
 	}, 5000)
+
+	async function statusCheck() {
+		await doQuery(`
+			UPDATE stats
+			SET date="${new Date().toISOString().slice(0, 19).replace('T', ' ')}"
+			WHERE type="module" AND sha="reminders"
+			`)
+	}
+	statusCheck();
+	setInterval(()=>{statusCheck()}, 600000);
 })
+
