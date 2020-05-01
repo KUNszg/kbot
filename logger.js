@@ -10,7 +10,7 @@ const con = mysql.createConnection({
 	password: api.db_pass,
 	database: "kbot"
 });
-
+con.on('error', function(err) {console.log(err)});
 const getChannels = () => new Promise((resolve, reject) => {
     con.query('SELECT * FROM channels_logger', (err, results, fields) => {
         if (err) {

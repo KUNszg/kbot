@@ -9,7 +9,7 @@ const con = mysql.createConnection({
 	password: api.db_pass,
 	database: "kbot"
 });
-
+con.on('error', function(err) {console.log(err)});
 con.connect(function(err) {
 	if (err) {
 		console.log('Database connection error in express!')

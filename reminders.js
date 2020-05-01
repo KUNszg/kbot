@@ -48,6 +48,7 @@ kb.on('connected', (adress, port) => {
 		password: api.db_pass,
 		database: "kbot"
 	});
+	con.on('error', function(err) {console.log(err)});
 	con.connect(function(err) {
 		if (err) {
 			kb.say('supinic', '@kunszg, database connection error monkaS')
