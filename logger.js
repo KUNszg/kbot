@@ -104,7 +104,6 @@ kb.on('connected', (adress, port) => {
 	const doQuery = (query) => new Promise((resolve, reject) => {
 	    con.query(query, (err, results, fields) => {
 	        if (err) {
-	        	reject(err);
 	        	return;
 	        } else {
 	            resolve(results);
@@ -161,7 +160,7 @@ kb.on('connected', (adress, port) => {
 	}, 7000);
 
 	kb.on('message', function(channel, user, message) {
-		
+
 		async function checkUser() {
 			const checkIfExists = await doQuery(`SELECT * FROM user_list WHERE userId="${user['user-id']}"`);
 			if (checkIfExists.length != 0) {
