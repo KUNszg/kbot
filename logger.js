@@ -158,7 +158,7 @@ kb.on('connected', (adress, port) => {
 			loopLogs(); 
 			cache.length = 0;
 		} 
-	}, 15000);
+	}, 7000);
 
 	kb.on('message', function(channel, user, message) {
 			
