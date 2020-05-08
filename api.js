@@ -36,7 +36,7 @@ const doQuery = (query) => new Promise((resolve, reject) => {
         }
         else {
             resolve(results);
-        }      
+        }
     });
 });
 
@@ -58,12 +58,41 @@ const getChannels = () => new Promise((resolve, reject) => {
         }
         else {
             resolve(results);
-        }      
+        }
     });
 });
 
 const channelList = [];
-const channelOptions = []
+const channelOptions = [];
+
+function sleep(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+        if ((new Date().getTime() - start) > milliseconds) {
+            break;
+        }
+    }
+}
+sleep(500)
+
+const options = {
+    options: {
+        debug: false,
+    },
+    connection: {
+        cluster: 'aws',
+    },
+    identity: {
+        username: 'kunszgbot',
+        password: api.oauth,
+    },
+    channels: ['supinic', 'xqcow', 'forsen', 'nymn', 'haxk'],
+};
+
+const tmi = require('tmi.js');
+const kb = new tmi.client(options);
+kb.connect();
+
 async function res() {
 	channelList.push(await getChannels());
 	await channelList[0].forEach(i => channelOptions.push(i.channel))
@@ -80,6 +109,30 @@ function sleepGlob(milliseconds) {
 	}
 }
 sleepGlob(1000)
+
+const msgCount = [];
+kb.on('chat', function(channel, message) {
+    msgCount.push({'channel':channel.replace('#', ''), 'message':'add'})
+})
+
+// kunszg.xyz/api/messages
+function apiDataMessages(data) {
+    app.get("/messages", (req, res, next) => {
+       res.send({
+            data: {
+                'forsen': msgCount.filter(i=>i.channel==='forsen').length,
+                'nymn': msgCount.filter(i=>i.channel==='nymn').length,
+                'supinic': msgCount.filter(i=>i.channel==='supinic').length,
+                'xqcow': msgCount.filter(i=>i.channel==='xqcow').length,
+                'haxk': msgCount.filter(i=>i.channel==='haxk').length
+            }
+        });
+       msgCount.length = 0
+    });
+}
+setInterval(()=>{
+    apiDataMessages()
+}, 1000)
 
 // kunszg.xyz/api/channels
 function apiDataChannels(data) {
@@ -106,19 +159,19 @@ async function diagramData() {
 		return info[0].data
 	}
 	const getData = await Promise.all([
-		{"color": 'Red', 'amount': await dataInsert('#FF0000')}, 
+		{"color": 'Red', 'amount': await dataInsert('#FF0000')},
 		{"color": 'SpringGreen', 'amount': await dataInsert('#00FF7F')},
-	 	{"color": 'DodgerBlue', 'amount': await dataInsert('#1E90FF')}, 
-	 	{"color": 'BlueViolet', 'amount': await dataInsert('#8A2BE2')}, 
-	 	{"color": 'OrangeRed', 'amount': await dataInsert('#FF4500')}, 
-		{"color": 'GoldenRod', 'amount': await dataInsert('#DAA520')}, 
-		{"color": 'Blue', 'amount': await dataInsert('#0000FF')}, 
-		{"color": 'HotPink', 'amount': await dataInsert('#FF69B4')}, 
-		{"color": 'Green', 'amount': await dataInsert('#008000')}, 
-		{"color": 'YellowGreen', 'amount': await dataInsert('#9ACD32')}, 
+	 	{"color": 'DodgerBlue', 'amount': await dataInsert('#1E90FF')},
+	 	{"color": 'BlueViolet', 'amount': await dataInsert('#8A2BE2')},
+	 	{"color": 'OrangeRed', 'amount': await dataInsert('#FF4500')},
+		{"color": 'GoldenRod', 'amount': await dataInsert('#DAA520')},
+		{"color": 'Blue', 'amount': await dataInsert('#0000FF')},
+		{"color": 'HotPink', 'amount': await dataInsert('#FF69B4')},
+		{"color": 'Green', 'amount': await dataInsert('#008000')},
+		{"color": 'YellowGreen', 'amount': await dataInsert('#9ACD32')},
 		{"color": 'FireBrick', 'amount': await dataInsert('#B22222')},
-		{"color": 'White', 'amount': await dataInsert('#FFFFFF')}, 
-		{"color": 'SeaGreen', 'amount':await  dataInsert('#2E8B57')}, 
+		{"color": 'White', 'amount': await dataInsert('#FFFFFF')},
+		{"color": 'SeaGreen', 'amount':await  dataInsert('#2E8B57')},
 		{"color": 'Yellow', 'amount': await dataInsert('#FFFF00')},
 		{"color": 'CadetBlue', 'amount': await dataInsert('#5F9EA0')},
 		{"color": 'Coral', 'amount': await dataInsert('#FF7F50')},
@@ -138,7 +191,7 @@ async function kden() {
 		`)
 }
 kden()
-setInterval(() => { 
+setInterval(() => {
 	kden()
 }, 602000)
 
