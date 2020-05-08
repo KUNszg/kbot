@@ -130,9 +130,11 @@ function apiDataMessages(data) {
     });
 }
 setInterval(()=>{
-    msgCount.length = 0; apiDataMessages()
-}, 550)
-
+    apiDataMessages()
+}, 500)
+setInterval(()=>{
+    msgCount.length = 0;
+}, 1000)
 // kunszg.xyz/api/channels
 function apiDataChannels(data) {
 	app.get("/channels", (req, res, next) => {
