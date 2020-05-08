@@ -127,11 +127,10 @@ function apiDataMessages(data) {
                 'haxk': msgCount.filter(i=>i.channel==='haxk').length
             }
         });
-       msgCount.length = 0
     });
 }
 setInterval(()=>{
-    apiDataMessages()
+    apiDataMessages(); msgCount.length = 0
 }, 1000)
 
 // kunszg.xyz/api/channels
