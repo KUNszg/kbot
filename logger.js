@@ -29,7 +29,7 @@ const getChannels = () => new Promise((resolve, reject) => {
         }
         else {
             resolve(results);
-        }      
+        }
     });
 });
 
@@ -68,30 +68,33 @@ const options = {
 const tmi = require('tmi.js');
 const kb = new tmi.client(options);
 const ignoreList = [
-	'268612479', // titlechange_bot 
-	'68136884', // Supibot 
+	'268612479', // titlechange_bot
+	'68136884', // Supibot
 	'229225576', // kunszgbot
-	'100135110', // StreamElements 
-	'122770725', // Scriptorex 
-	'442600612', // Mm_sUtilityBot 
-	'465732747', // charlestonbieber 
-	'469718952', // wayt00dank 
-	'64313471', // HuwoBot 
-	'425363834', // ThePositiveBot 
+	'100135110', // StreamElements
+	'122770725', // Scriptorex
+	'442600612', // Mm_sUtilityBot
+	'465732747', // charlestonbieber
+	'469718952', // wayt00dank
+	'64313471', // HuwoBot
+	'425363834', // ThePositiveBot
 	'97661864', // botnextdoor
-	'413480192', // futuregadget8 
+	'413480192', // futuregadget8
 	'132134724', // gazatu2
 	'62541963', // snusbot
 	'82008718', // pajbot
 	'27574018', // magicbot321
 	'264879410', // schnozebot
-	'237719657' // fossabot
+	'237719657', // fossabot
+    '500670723', // VJBotardo
+    '452276558', // spergbot02
+    '500384894' // botder423
 ];
 
 kb.connect();
 kb.on('connected', (adress, port) => {
 	kb.say('kunszg', 'logger reconnected KKona')
-	
+
 	con.connect(function(err) {
 		if (err) {
 			kb.say('kunszg', '@kunszg, database connection error monkaS')
@@ -100,14 +103,14 @@ kb.on('connected', (adress, port) => {
 			console.log("Connected!");
 		}
 	});
-	
+
 	const doQuery = (query) => new Promise((resolve, reject) => {
 	    con.query(query, (err, results, fields) => {
 	        if (err) {
 	        	return;
 	        } else {
 	            resolve(results);
-	        }      
+	        }
 	    });
 	});
 
@@ -117,7 +120,7 @@ kb.on('connected', (adress, port) => {
 			`)
 	}
 	kden()
-	setInterval(() => { 
+	setInterval(() => {
 		kden()
 	}, 601000)
 
@@ -129,13 +132,13 @@ kb.on('connected', (adress, port) => {
 		if (filterBots.length != 0 || msg === '') {
 			return;
 		}
-	
+
 		// caching messages from Twitch chat
 		cache.push({
-			'channel': channelParsed, 
-			'username': user['username'], 
-			'message': msg, 
-			'date': new Date() 
+			'channel': channelParsed,
+			'username': user['username'],
+			'message': msg,
+			'date': new Date()
 		});
 	})
 
@@ -154,9 +157,9 @@ kb.on('connected', (adress, port) => {
 
 	setInterval(()=>{
 		if (cache.length>200) {
-			loopLogs(); 
+			loopLogs();
 			cache.length = 0;
-		} 
+		}
 	}, 7000);
 
 	kb.on('message', function(channel, user, message) {
@@ -166,8 +169,8 @@ kb.on('connected', (adress, port) => {
 			if (checkIfExists.length != 0) {
 				if (checkIfExists[0].username != user['username']) {
 					await doQuery(`
-						UPDATE user_list 
-						SET username="${user['username']}" 
+						UPDATE user_list
+						SET username="${user['username']}"
 						WHERE userId="${user['user-id']}"
 						`);
 					return;
