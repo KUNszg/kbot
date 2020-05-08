@@ -131,7 +131,7 @@ function apiDataMessages(data) {
 }
 setInterval(()=>{
     apiDataMessages(); msgCount.length = 0
-}, 1000)
+}, 700)
 
 // kunszg.xyz/api/channels
 function apiDataChannels(data) {
