@@ -4,7 +4,7 @@
 
 const api = require('./config.js');
 
-// parse the channel list 
+// parse the channel list
 // check for empty items in an array
 
 const options = {
@@ -76,7 +76,7 @@ kb.on('connected', (adress, port) => {
 	        }
 	        else {
 	            resolve(results);
-	        }      
+	        }
 	    });
 	});
 
@@ -93,13 +93,13 @@ kb.on('connected', (adress, port) => {
 			`)
 	}
 	kden()
-	setInterval(() => { 
+	setInterval(() => {
 		kden()
 	}, 600000)
 
 	// unfire clogging reminders
 	async function unfireCookie() {
-		
+
 		// cookies
 		const unfire = await doQuery('SELECT username, channel, fires, status FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC');
 
@@ -160,7 +160,7 @@ kb.on('connected', (adress, port) => {
 			const selectUnfiredUsers = await doQuery('SELECT * FROM ed_reminders WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
 			if (!selectUnfiredUsers[0]) {
 				return;
-			} 
+			}
 
 			const getUsername = await doQuery(`SELECT * FROM user_list WHERE ID="${unfire[0].user_alias}"`)
 			await doQuery('UPDATE ed_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
@@ -174,9 +174,9 @@ kb.on('connected', (adress, port) => {
 	}, 20000)
 
 	// check and send reminders - cookie
-	async function reminder() {	
+	async function reminder() {
 		const userData = await doQuery('SELECT * FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC');
-		
+
 		// if there is no "fired" argument, ignore
 		if (!userData[0]) {
 			return;
@@ -193,11 +193,11 @@ kb.on('connected', (adress, port) => {
 			const limit = new Set();
 
 			// make sure not to repeat the same reminder by adding a unique user_alias
-			// to the Set Object and delete it after 10s 
+			// to the Set Object and delete it after 10s
 			if (limit.has(userData[0].user_alias)) {
 				return;
 			}
-			
+
 			const getUsername = await doQuery(`SELECT * FROM user_list WHERE ID="${userData[0].user_alias}"`)
 			const checkChannelStatus = await doQuery(`SELECT * FROM channels WHERE channel="${userData[0].channel}"`)
 			if (checkChannelStatus[0].status === "live") {
@@ -219,13 +219,13 @@ kb.on('connected', (adress, port) => {
 			} else {
 				kb.say(userData[0].channel, '(cookie reminder) ' + getUsername[0].username + ', eat cookie please :) 🍪');
 				setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
-			}	
+			}
 		}
 	}
 
 	setInterval(() => {
 		reminder()
-	}, 5000)
+	}, 3500)
 
 	async function reminder2() {
 		const userData = await doQuery('SELECT * FROM ed_reminders WHERE status!="fired" ORDER BY fires ASC');
@@ -246,7 +246,7 @@ kb.on('connected', (adress, port) => {
 			const limit = new Set();
 
 			// make sure not to repeat the same reminder by adding a unique username
-			// to the Set Object and delete it after 10s 
+			// to the Set Object and delete it after 10s
 			if (limit.has(userData[0].username)) {
 				return;
 			}
@@ -258,12 +258,12 @@ kb.on('connected', (adress, port) => {
 			await doQuery(`UPDATE ed_reminders SET status="fired" WHERE user_alias="${userData[0].user_alias}" AND status="scheduled"`);
 			sleepGlob(500);
 			kb.whisper(userData[0].username, '(ed reminder) enter dungeon please :) 🏰 ');
-			setTimeout(() => {limit.delete(userData[0].username)}, 10000);		
+			setTimeout(() => {limit.delete(userData[0].username)}, 10000);
 		}
 	}
 	setInterval(() => {
 		reminder2()
-	}, 5000)
+	}, 3500)
 
 	async function statusCheck() {
 		await doQuery(`
