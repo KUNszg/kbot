@@ -212,6 +212,11 @@ kb.on('connected', (adress, port) => {
 
 			// update the database with fired reminder
 			await doQuery(`UPDATE cookie_reminders SET status="fired" WHERE user_alias="${userData[0].user_alias}" AND status="scheduled"`);
+            await custom.doQuery(`
+                UPDATE user_list t1, cookie_reminders t2
+                SET t2.username=t1.username
+                WHERE t1.ID="${userData[0].user_alias}"
+            `);
 			sleepGlob(500);
 			if (userData[0].channel === "forsen") {
 				kb.whisper(userData[0].username, '(cookie reminder from forsens channel) eat cookie please :) 🍪');
@@ -247,18 +252,23 @@ kb.on('connected', (adress, port) => {
 
 			// make sure not to repeat the same reminder by adding a unique username
 			// to the Set Object and delete it after 10s
-			if (limit.has(userData[0].username)) {
+			if (limit.has(userData[0].user_alias)) {
 				return;
 			}
 
-			limit.add(userData[0].username);
+			limit.add(userData[0].user_alias);
 
 			// update the database with fired reminder
 			const getUsername = await doQuery(`SELECT * FROM user_list WHERE ID="${userData[0].user_alias}"`);
 			await doQuery(`UPDATE ed_reminders SET status="fired" WHERE user_alias="${userData[0].user_alias}" AND status="scheduled"`);
+            await custom.doQuery(`
+                UPDATE user_list t1, ed_reminders t2
+                SET t2.username=t1.username
+                WHERE t1.ID="${userData[0].user_alias}"
+            `);
 			sleepGlob(500);
-			kb.whisper(userData[0].username, '(ed reminder) enter dungeon please :) 🏰 ');
-			setTimeout(() => {limit.delete(userData[0].username)}, 10000);
+			kb.whisper(userData[0].user_alias, '(ed reminder) enter dungeon please :) 🏰 ');
+			setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
 		}
 	}
 	setInterval(() => {
