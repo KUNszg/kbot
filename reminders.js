@@ -212,7 +212,7 @@ kb.on('connected', (adress, port) => {
 
 			// update the database with fired reminder
 			await doQuery(`UPDATE cookie_reminders SET status="fired" WHERE user_alias="${userData[0].user_alias}" AND status="scheduled"`);
-            await custom.doQuery(`
+            await doQuery(`
                 UPDATE user_list t1, cookie_reminders t2
                 SET t2.username=t1.username
                 WHERE t1.ID="${userData[0].user_alias}"
@@ -222,7 +222,7 @@ kb.on('connected', (adress, port) => {
 				kb.whisper(userData[0].username, '(cookie reminder from forsens channel) eat cookie please :) 🍪');
 				setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
 			} else {
-				kb.say(userData[0].channel, '(cookie reminder) ' + userData[0].username + ', eat cookie please :) 🍪');
+				kb.say(userData[0].channel, '(cookie reminder) ' + getUsername[0].username + ', eat cookie please :) 🍪');
 				setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
 			}
 		}
@@ -261,7 +261,7 @@ kb.on('connected', (adress, port) => {
 			// update the database with fired reminder
 			const getUsername = await doQuery(`SELECT * FROM user_list WHERE ID="${userData[0].user_alias}"`);
 			await doQuery(`UPDATE ed_reminders SET status="fired" WHERE user_alias="${userData[0].user_alias}" AND status="scheduled"`);
-            await custom.doQuery(`
+            await doQuery(`
                 UPDATE user_list t1, ed_reminders t2
                 SET t2.username=t1.username
                 WHERE t1.ID="${userData[0].user_alias}"
