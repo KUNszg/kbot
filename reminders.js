@@ -222,7 +222,7 @@ kb.on('connected', (adress, port) => {
 				kb.whisper(userData[0].username, '(cookie reminder from forsens channel) eat cookie please :) 🍪');
 				setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
 			} else {
-				kb.say(userData[0].channel, '(cookie reminder) ' + getUsername[0].username + ', eat cookie please :) 🍪');
+				kb.say(userData[0].channel, '(cookie reminder) ' + userData[0].username + ', eat cookie please :) 🍪');
 				setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
 			}
 		}
@@ -267,7 +267,7 @@ kb.on('connected', (adress, port) => {
                 WHERE t1.ID="${userData[0].user_alias}"
             `);
 			sleepGlob(500);
-			kb.whisper(userData[0].user_alias, '(ed reminder) enter dungeon please :) 🏰 ');
+			kb.whisper(userData[0].username, '(ed reminder) enter dungeon please :) 🏰 ');
 			setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
 		}
 	}
