@@ -222,8 +222,13 @@ kb.on('connected', (adress, port) => {
 				kb.whisper(userData[0].username, `(cookie reminder from channel ${userData[0].channel}) eat cookie please :) 🍪`);
 				setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
 			} else {
-				kb.say(userData[0].channel, '(cookie reminder) ' + getUsername[0].username + ', eat cookie please :) 🍪');
-				setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
+                if (userData[0].initplatform === "whisper") {
+				    kb.whisper(userData[0].username, '(cookie reminder) eat cookie please :) 🍪');
+				    setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
+                } else {
+                    kb.say(userData[0].channel, '(cookie reminder) ' + getUsername[0].username + ', eat cookie please :) 🍪');
+                    setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
+                }
 			}
 		}
 	}
