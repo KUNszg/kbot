@@ -215,7 +215,7 @@ kb.on('connected', (adress, port) => {
             await doQuery(`
                 UPDATE user_list t1, cookie_reminders t2
                 SET t2.username=t1.username
-                WHERE t1.ID="${userData[0].user_alias}"
+                WHERE t1.ID="${userData[0].user_alias}" AND t2.user_alias="${userData[0].user_alias}"
             `);
 			sleepGlob(500);
 			if (userData[0].channel === "forsen" || userData[0].channel === "nymn") {
@@ -264,7 +264,7 @@ kb.on('connected', (adress, port) => {
             await doQuery(`
                 UPDATE user_list t1, ed_reminders t2
                 SET t2.username=t1.username
-                WHERE t1.ID="${userData[0].user_alias}"
+                WHERE t1.ID="${userData[0].user_alias}" AND t2.user_alias="${userData[0].user_alias}"
             `);
 			sleepGlob(500);
 			kb.whisper(userData[0].username, '(ed reminder) enter dungeon please :) 🏰 ');
