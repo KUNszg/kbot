@@ -144,6 +144,7 @@ function apiDataChannels() {
 		})
 	});
 }
+apiDataChannels()
 setInterval(()=>{apiDataChannels()}, 600000)
 
 // kunszg.xyz/api/colors
@@ -183,6 +184,7 @@ function apiDataColors() {
         });
 	});
 }
+apiDataColors()
 setInterval(()=>{apiDataColors()}, 3600000);
 
 async function kden() {
