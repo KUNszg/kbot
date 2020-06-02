@@ -116,7 +116,7 @@ kb.on('chat', function(channel, message) {
 })
 
 // kunszg.xyz/api/messages
-function apiDataMessages(data) {
+function apiDataMessages() {
     app.get("/messages", (req, res, next) => {
        res.send({
             data: {
@@ -135,56 +135,55 @@ setInterval(()=>{
 setInterval(()=>{
     msgCount.length = 0;
 }, 1000)
+
 // kunszg.xyz/api/channels
-function apiDataChannels(data) {
+function apiDataChannels() {
 	app.get("/channels", (req, res, next) => {
-	 	res.json(
-	 		data
-		);
+	 	res.send({
+	 		data: channelOptions
+		})
 	});
 }
-apiDataChannels({data: channelOptions})
+setInterval(()=>{apiDataChannels()}, 600000)
 
 // kunszg.xyz/api/colors
-function apiDataColors(data) {
+function apiDataColors() {
 	app.get("/colors", (req, res, next) => {
-	 	res.json(
-	 		data
-		);
+        async function dataInsert(data) {
+            const info = await doQuery(`SELECT count(*) As data FROM user_list WHERE color="${data}"`);
+            return info[0].data
+        }
+        const getData = await Promise.all([
+            {"color": 'Red', 'amount': await dataInsert('#FF0000')},
+            {"color": 'SpringGreen', 'amount': await dataInsert('#00FF7F')},
+            {"color": 'DodgerBlue', 'amount': await dataInsert('#1E90FF')},
+            {"color": 'BlueViolet', 'amount': await dataInsert('#8A2BE2')},
+            {"color": 'OrangeRed', 'amount': await dataInsert('#FF4500')},
+            {"color": 'GoldenRod', 'amount': await dataInsert('#DAA520')},
+            {"color": 'Blue', 'amount': await dataInsert('#0000FF')},
+            {"color": 'HotPink', 'amount': await dataInsert('#FF69B4')},
+            {"color": 'Green', 'amount': await dataInsert('#008000')},
+            {"color": 'YellowGreen', 'amount': await dataInsert('#9ACD32')},
+            {"color": 'FireBrick', 'amount': await dataInsert('#B22222')},
+            {"color": 'White', 'amount': await dataInsert('#FFFFFF')},
+            {"color": 'SeaGreen', 'amount':await  dataInsert('#2E8B57')},
+            {"color": 'Yellow', 'amount': await dataInsert('#FFFF00')},
+            {"color": 'CadetBlue', 'amount': await dataInsert('#5F9EA0')},
+            {"color": 'Coral', 'amount': await dataInsert('#FF7F50')},
+            {"color": 'Chocolate', 'amount': await dataInsert('#D2691E')},
+            {"color": 'Black', 'amount': await dataInsert('#000000')}
+        ])
+        const cache = [];
+        const check = await getData.forEach(i=>cache.push(i.amount))
+        const reduce = cache.reduce((a, b) => a + b, 0)
+
+	 	res.send({
+            'users': reduce,
+            'data': await getData.sort()
+        });
 	});
 }
-
-async function diagramData() {
-	async function dataInsert(data) {
-		const info = await doQuery(`SELECT count(*) As data FROM user_list WHERE color="${data}"`);
-		return info[0].data
-	}
-	const getData = await Promise.all([
-		{"color": 'Red', 'amount': await dataInsert('#FF0000')},
-		{"color": 'SpringGreen', 'amount': await dataInsert('#00FF7F')},
-	 	{"color": 'DodgerBlue', 'amount': await dataInsert('#1E90FF')},
-	 	{"color": 'BlueViolet', 'amount': await dataInsert('#8A2BE2')},
-	 	{"color": 'OrangeRed', 'amount': await dataInsert('#FF4500')},
-		{"color": 'GoldenRod', 'amount': await dataInsert('#DAA520')},
-		{"color": 'Blue', 'amount': await dataInsert('#0000FF')},
-		{"color": 'HotPink', 'amount': await dataInsert('#FF69B4')},
-		{"color": 'Green', 'amount': await dataInsert('#008000')},
-		{"color": 'YellowGreen', 'amount': await dataInsert('#9ACD32')},
-		{"color": 'FireBrick', 'amount': await dataInsert('#B22222')},
-		{"color": 'White', 'amount': await dataInsert('#FFFFFF')},
-		{"color": 'SeaGreen', 'amount':await  dataInsert('#2E8B57')},
-		{"color": 'Yellow', 'amount': await dataInsert('#FFFF00')},
-		{"color": 'CadetBlue', 'amount': await dataInsert('#5F9EA0')},
-		{"color": 'Coral', 'amount': await dataInsert('#FF7F50')},
-		{"color": 'Chocolate', 'amount': await dataInsert('#D2691E')},
-		{"color": 'Black', 'amount': await dataInsert('#000000')}
-	])
-	const cache = [];
-	const check = await getData.forEach(i=>cache.push(i.amount))
-	const reduce = cache.reduce((a, b) => a + b, 0)
-	return {'users': reduce, 'data': await getData.sort()}
-}
-diagramData().then(function(data) {apiDataColors(data)})
+setInterval(()=>{apiDataColors()}, 3600000);
 
 async function kden() {
 	await doQuery(`
