@@ -1,6 +1,6 @@
 const fs = require('fs')
-const isStream = require('is-stream')
-const split2 = require('split2')
+const isStream = require('./stream')
+const split = require('./split')
 
 module.exports = function(filename, cb) {
   let count = 0
@@ -8,7 +8,7 @@ module.exports = function(filename, cb) {
 
   stream
     .once('error', cb)
-    .pipe(split2())
+    .pipe(split())
     .on('data', function () {
       count++
     })
