@@ -186,7 +186,7 @@ async function diagramData() {
 	const reduce = cache.reduce((a, b) => a + b, 0)
 	return {'users': reduce, 'data': await getData.sort()}
 }
-setInterval(()=>{diagramData().then(function(data) {apiDataColors(data)})}, 10000)
+sdiagramData().then(function(data) {setInterval(()=>{apiDataColors(data)})})
 
 async function kden() {
 	await doQuery(`
