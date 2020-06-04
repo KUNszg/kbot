@@ -26,8 +26,7 @@ const getChannels = () => new Promise((resolve, reject) => {
 					}
 				})
             reject(err);
-        }
-        else {
+        } else {
             resolve(results);
         }
     });
@@ -94,6 +93,7 @@ const ignoreList = [
 kb.connect();
 kb.on('connected', (adress, port) => {
 	kb.say('kunszg', 'logger reconnected KKona')
+})
 
 	con.connect(function(err) {
 		if (err) {
@@ -197,4 +197,10 @@ kb.on('connected', (adress, port) => {
 	}
 	statusCheck();
 	setInterval(()=>{statusCheck()}, 600000);
-})
+
+// https://github.com/tmijs/docs/blob/gh-pages/_posts/v1.4.2/2019-03-03-Events.md#anongiftpaidupgrade
+// https://github.com/tmijs/docs/blob/gh-pages/_posts/v1.4.2/2019-03-03-Events.md#giftpaidupgrade
+// https://github.com/tmijs/docs/blob/gh-pages/_posts/v1.4.2/2019-03-03-Events.md#submysterygift
+// https://github.com/tmijs/docs/blob/gh-pages/_posts/v1.4.2/2019-03-03-Events.md#subgift
+// https://github.com/tmijs/docs/blob/gh-pages/_posts/v1.4.2/2019-03-03-Events.md#resub
+// https://github.com/tmijs/docs/blob/gh-pages/_posts/v1.4.2/2019-03-03-Events.md
