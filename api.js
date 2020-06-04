@@ -187,7 +187,7 @@ function apiDataColors() {
         );
     });
 }
-setInterval(()=>{apiDataColors()})
+setInterval(()=>{apiDataColors()}, 10000)
 
 async function kden() {
 	await doQuery(`
