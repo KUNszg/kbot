@@ -116,7 +116,7 @@ kb.on('chat', function(channel, message) {
 })
 
 // kunszg.xyz/api/messages
-function apiDataMessages(data) {
+function apiDataMessages() {
     app.get("/messages", (req, res, next) => {
        res.send({
             data: {
@@ -135,15 +135,17 @@ setInterval(()=>{
 setInterval(()=>{
     msgCount.length = 0;
 }, 1000)
+
 // kunszg.xyz/api/channels
-function apiDataChannels(data) {
+function apiDataChannels() {
 	app.get("/channels", (req, res, next) => {
-	 	res.json(
-	 		data
-		);
+	 	res.send({
+	 		data: channelOptions
+        });
 	});
 }
-apiDataChannels({data: channelOptions})
+apiDataChannels();
+setInterval(()=>{apiDataChannels()}, 600000)
 
 // kunszg.xyz/api/colors
 function apiDataColors(data) {
