@@ -148,6 +148,14 @@ apiDataChannels();
 setInterval(()=>{apiDataChannels()}, 600000)
 
 // kunszg.xyz/api/colors
+function apiDataColors(data) {
+	app.get("/colors", (req, res, next) => {
+	 	res.json(
+	 		data
+		);
+	});
+}
+
 async function diagramData() {
 	async function dataInsert(data) {
 		const info = await doQuery(`SELECT count(*) As data FROM user_list WHERE color="${data}"`);
@@ -178,16 +186,7 @@ async function diagramData() {
 	const reduce = cache.reduce((a, b) => a + b, 0)
 	return {'users': reduce, 'data': await getData.sort()}
 }
-
-
-function apiDataColors() {
-    app.get("/colors", (req, res, next) => {
-        res.send(
-            diagramData().then(function(data) {data})
-        );
-    });
-}
-setInterval(()=>{apiDataColors()}, 10000)
+diagramData().then(function(data) {apiDataColors(data)})
 
 async function kden() {
 	await doQuery(`
