@@ -201,10 +201,26 @@ kb.on("subscription", async (channel, username, method, message, userstate) => {
 });
 
 kb.on("subgift", async (channel, username, streakMonths, recipient, methods, userstate) => {
-    let senderCount = ~~userstate["msg-param-sender-count"];
+    let cumulative = ~~userstate["msg-param-cumulative-months"];
 
     const sqlUser = "INSERT INTO subs (gifter, channel, months, username, type, date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
-    const insertsUser = [username, channel.replace('#', ''), streakMonths, recipient, "subgift"];
+    const insertsUser = [username, channel.replace('#', ''), cumulative, recipient, "subgift"];
+    await doQuery(mysql.format(sqlUser, insertsUser));
+});
+
+kb.on("resub", async (channel, username, months, message, userstate, methods) => {
+    let cumulativeMonths = ~~userstate["msg-param-cumulative-months"];
+
+    const sqlUser = "INSERT INTO subs (username, channel, months, subMessage, type, date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
+    const insertsUser = [username, channel.replace('#', ''), cumulativeMonths, message, "resub"];
+    await doQuery(mysql.format(sqlUser, insertsUser));
+});
+
+kb.on("giftpaidupgrade", async (channel, username, sender, userstate) => {
+    let cumulativeMonths = ~~userstate["msg-param-cumulative-months"];
+
+    const sqlUser = "INSERT INTO subs (username, channel, gifter, type, date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
+    const insertsUser = [username, channel.replace('#', ''), sender, "giftpaidupgrade"];
     await doQuery(mysql.format(sqlUser, insertsUser));
 });
 
