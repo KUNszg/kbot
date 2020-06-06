@@ -1,13 +1,13 @@
 'use strict';
 require('./lib/static/interval_calls.js');
 const fs = require('fs');
-const api = require('./config.js');
+const creds = require('./lib/credentials/config.js');
 const mysql = require('mysql2');
 
 const con = mysql.createConnection({
 	host: "localhost",
 	user: "root",
-	password: api.db_pass,
+	password: creds.db_pass,
 	database: "kbot"
 });
 con.on('error', function(err) {console.log(err)});
@@ -59,7 +59,7 @@ const options = {
 	},
 	identity: {
 		username: 'kunszgbot',
-		password: api.oauth,
+		password: creds.oauth,
 	},
 	channels: channelOptions,
 };
@@ -95,108 +95,114 @@ kb.on('connected', (adress, port) => {
 	kb.say('kunszg', 'logger reconnected KKona')
 })
 
-	con.connect(function(err) {
-		if (err) {
-			kb.say('kunszg', '@kunszg, database connection error monkaS')
-			console.log(err)
-		} else {
-			console.log("Connected!");
-		}
-	});
-
-	const doQuery = (query) => new Promise((resolve, reject) => {
-	    con.query(query, (err, results, fields) => {
-	        if (err) {
-	        	return;
-	        } else {
-	            resolve(results);
-	        }
-	    });
-	});
-
-	async function kden() {
-		await doQuery(`
-			UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="logger"
-			`)
+con.connect(function(err) {
+	if (err) {
+		kb.say('kunszg', '@kunszg, database connection error monkaS')
+		console.log(err)
+	} else {
+		console.log("Connected!");
 	}
+});
+
+const doQuery = (query) => new Promise((resolve, reject) => {
+    con.query(query, (err, results, fields) => {
+        if (err) {
+        	return;
+        } else {
+            resolve(results);
+        }
+    });
+});
+
+async function kden() {
+	await doQuery(`
+		UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="logger"
+		`)
+}
+kden()
+setInterval(() => {
 	kden()
-	setInterval(() => {
-		kden()
-	}, 601000)
+}, 601000)
 
-	const cache = [];
-	kb.on('message', function(channel, user, message) {
-		const filterBots = ignoreList.filter(i => i === user['user-id'])
-		const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
-		const channelParsed = channel.replace('#', '');
-		if (filterBots.length != 0 || msg === '') {
-			return;
-		}
-
-		// caching messages from Twitch chat
-		cache.push({
-			'channel': channelParsed,
-			'username': user['username'],
-			'message': msg,
-			'date': new Date()
-		});
-	})
-
-	// inserting cached rows every interval to database instead of real-time logging
-	function loopLogs() {
-		cache.forEach(data => {
-			const sql = "INSERT INTO logs_"+data['channel']+" (username, message, date) VALUES (?, ?, ?)";
-			const inserts = [data['username'], data['message'], data['date']];
-			con.query(mysql.format(sql, inserts), function(error, results, fields) {
-				if (error) {
-					throw error
-				}
-			})
-		})
+const cache = [];
+kb.on('message', function(channel, user, message) {
+	const filterBots = ignoreList.filter(i => i === user['user-id'])
+	const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+	const channelParsed = channel.replace('#', '');
+	if (filterBots.length != 0 || msg === '') {
+		return;
 	}
 
-	setInterval(()=>{
-		if (cache.length>200) {
-			loopLogs();
-			cache.length = 0;
-		}
-	}, 7000);
+	// caching messages from Twitch chat
+	cache.push({
+		'channel': channelParsed,
+		'username': user['username'],
+		'message': msg,
+		'date': new Date()
+	});
+})
 
-	kb.on('message', function(channel, user, message) {
-
-		async function checkUser() {
-			const checkIfExists = await doQuery(`SELECT * FROM user_list WHERE userId="${user['user-id']}"`);
-			if (checkIfExists.length != 0) {
-				if (checkIfExists[0].username != user['username']) {
-					await doQuery(`
-						UPDATE user_list
-						SET username="${user['username']}"
-						WHERE userId="${user['user-id']}"
-						`);
-					return;
-				}
-				return;
-			} else {
-				const sqlUser = "INSERT INTO user_list (username, userId, channel_first_appeared, color, added) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)"
-				const insertsUser = [user['username'], user['user-id'], channel.replace('#', ''), user['color']]
-				await doQuery(mysql.format(sqlUser, insertsUser))
+// inserting cached rows every interval to database instead of real-time logging
+function loopLogs() {
+	cache.forEach(data => {
+		const sql = "INSERT INTO logs_"+data['channel']+" (username, message, date) VALUES (?, ?, ?)";
+		const inserts = [data['username'], data['message'], data['date']];
+		con.query(mysql.format(sql, inserts), function(error, results, fields) {
+			if (error) {
+				throw error
 			}
-		}
-		checkUser()
+		})
 	})
-	setInterval(async() => {
-		await doQuery('UPDATE user_list SET color="gray" WHERE color IS null;')
-	}, 1800000);
+}
 
-	async function statusCheck() {
-		await doQuery(`
-			UPDATE stats
-			SET date="${new Date().toISOString().slice(0, 19).replace('T', ' ')}"
-			WHERE type="module" AND sha="logger"
-			`)
+setInterval(()=>{
+	if (cache.length>200) {
+		loopLogs();
+		cache.length = 0;
 	}
-	statusCheck();
-	setInterval(()=>{statusCheck()}, 600000);
+}, 7000);
+
+kb.on('message', function(channel, user, message) {
+
+	async function checkUser() {
+		const checkIfExists = await doQuery(`SELECT * FROM user_list WHERE userId="${user['user-id']}"`);
+		if (checkIfExists.length != 0) {
+			if (checkIfExists[0].username != user['username']) {
+				await doQuery(`
+					UPDATE user_list
+					SET username="${user['username']}"
+					WHERE userId="${user['user-id']}"
+					`);
+				return;
+			}
+			return;
+		} else {
+			const sqlUser = "INSERT INTO user_list (username, userId, channel_first_appeared, color, added) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)"
+			const insertsUser = [user['username'], user['user-id'], channel.replace('#', ''), user['color']]
+			await doQuery(mysql.format(sqlUser, insertsUser))
+		}
+	}
+	checkUser()
+})
+setInterval(async() => {
+	await doQuery('UPDATE user_list SET color="gray" WHERE color IS null;')
+}, 1800000);
+
+async function statusCheck() {
+	await doQuery(`
+		UPDATE stats
+		SET date="${new Date().toISOString().slice(0, 19).replace('T', ' ')}"
+		WHERE type="module" AND sha="logger"
+		`)
+}
+statusCheck();
+setInterval(()=>{statusCheck()}, 600000);
+
+kb.on("subscription", (channel, username, method, message, userstate) => {
+    const sqlUser = "INSERT INTO subs (username, channel, months, subMessage, type, date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
+    const insertsUser = [user['username'], channel.replace('#', ''), "1", message, "subscription"];
+    await doQuery(mysql.format(sqlUser, insertsUser));
+});
 
 // https://github.com/tmijs/docs/blob/gh-pages/_posts/v1.4.2/2019-03-03-Events.md#anongiftpaidupgrade
 // https://github.com/tmijs/docs/blob/gh-pages/_posts/v1.4.2/2019-03-03-Events.md#giftpaidupgrade
