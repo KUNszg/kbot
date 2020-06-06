@@ -198,7 +198,7 @@ async function statusCheck() {
 statusCheck();
 setInterval(()=>{statusCheck()}, 600000);
 
-kb.on("subscription", (channel, username, method, message, userstate) => {
+kb.on("subscription", async (channel, username, method, message, userstate) => {
     const sqlUser = "INSERT INTO subs (username, channel, months, subMessage, type, date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
     const insertsUser = [user['username'], channel.replace('#', ''), "1", message, "subscription"];
     await doQuery(mysql.format(sqlUser, insertsUser));
