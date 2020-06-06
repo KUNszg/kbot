@@ -200,7 +200,7 @@ kb.on("subscription", async (channel, username, method, message, userstate) => {
     await doQuery(mysql.format(sqlUser, insertsUser));
 });
 
-client.on("subgift", (channel, username, streakMonths, recipient, methods, userstate) => {
+kb.on("subgift", (channel, username, streakMonths, recipient, methods, userstate) => {
     let senderCount = ~~userstate["msg-param-sender-count"];
 
     const sqlUser = "INSERT INTO subs (gifter, channel, months, username, type, date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
