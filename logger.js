@@ -162,27 +162,23 @@ setInterval(()=>{
 	}
 }, 7000);
 
-kb.on('message', function(channel, user, message) {
-
-	async function checkUser() {
-		const checkIfExists = await doQuery(`SELECT * FROM user_list WHERE userId="${user['user-id']}"`);
-		if (checkIfExists.length != 0) {
-			if (checkIfExists[0].username != user['username']) {
-				await doQuery(`
-					UPDATE user_list
-					SET username="${user['username']}"
-					WHERE userId="${user['user-id']}"
-					`);
-				return;
-			}
+kb.on('message', async (channel, user, message) => {
+	const checkIfExists = await doQuery(`SELECT * FROM user_list WHERE userId="${user['user-id']}"`);
+	if (checkIfExists.length != 0) {
+		if (checkIfExists[0].username != user['username']) {
+			await doQuery(`
+				UPDATE user_list
+				SET username="${user['username']}"
+				WHERE userId="${user['user-id']}"
+				`);
 			return;
-		} else {
-			const sqlUser = "INSERT INTO user_list (username, userId, channel_first_appeared, color, added) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)"
-			const insertsUser = [user['username'], user['user-id'], channel.replace('#', ''), user['color']]
-			await doQuery(mysql.format(sqlUser, insertsUser))
 		}
+		return;
+	} else {
+		const sqlUser = "INSERT INTO user_list (username, userId, channel_first_appeared, color, added) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)"
+		const insertsUser = [user['username'], user['user-id'], channel.replace('#', ''), user['color']]
+		await doQuery(mysql.format(sqlUser, insertsUser))
 	}
-	checkUser()
 })
 setInterval(async() => {
 	await doQuery('UPDATE user_list SET color="gray" WHERE color IS null;')
