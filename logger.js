@@ -217,16 +217,13 @@ kb.on("resub", async (channel, username, months, message, userstate, methods) =>
 });
 
 kb.on("giftpaidupgrade", async (channel, username, sender, userstate) => {
-    let cumulativeMonths = ~~userstate["msg-param-cumulative-months"];
-
-    const sqlUser = "INSERT INTO subs (username, channel, gifter, type, date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
+    const sqlUser = "INSERT INTO subs (username, channel, gifter, type, date) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)";
     const insertsUser = [username, channel.replace('#', ''), sender, "giftpaidupgrade"];
     await doQuery(mysql.format(sqlUser, insertsUser));
 });
 
-// https://github.com/tmijs/docs/blob/gh-pages/_posts/v1.4.2/2019-03-03-Events.md#anongiftpaidupgrade
-// https://github.com/tmijs/docs/blob/gh-pages/_posts/v1.4.2/2019-03-03-Events.md#giftpaidupgrade
-// https://github.com/tmijs/docs/blob/gh-pages/_posts/v1.4.2/2019-03-03-Events.md#submysterygift
-// https://github.com/tmijs/docs/blob/gh-pages/_posts/v1.4.2/2019-03-03-Events.md#subgift
-// https://github.com/tmijs/docs/blob/gh-pages/_posts/v1.4.2/2019-03-03-Events.md#resub
-// https://github.com/tmijs/docs/blob/gh-pages/_posts/v1.4.2/2019-03-03-Events.md
+kb.on("anongiftpaidupgrade", async (channel, username, userstate) => {
+    const sqlUser = "INSERT INTO subs (username, channel, type, date) VALUES (?, ?, ?, CURRENT_TIMESTAMP)";
+    const insertsUser = [username, channel.replace('#', ''), "anongiftpaidupgrade"];
+    await doQuery(mysql.format(sqlUser, insertsUser));
+});
