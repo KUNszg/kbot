@@ -196,7 +196,15 @@ setInterval(()=>{statusCheck()}, 600000);
 
 kb.on("subscription", async (channel, username, method, message, userstate) => {
     const sqlUser = "INSERT INTO subs (username, channel, months, subMessage, type, date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
-    const insertsUser = [user['username'], channel.replace('#', ''), "1", message, "subscription"];
+    const insertsUser = [username, channel.replace('#', ''), "1", message, "subscription"];
+    await doQuery(mysql.format(sqlUser, insertsUser));
+});
+
+client.on("subgift", (channel, username, streakMonths, recipient, methods, userstate) => {
+    let senderCount = ~~userstate["msg-param-sender-count"];
+
+    const sqlUser = "INSERT INTO subs (gifter, channel, months, username, type, date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
+    const insertsUser = [username, channel.replace('#', ''), streakMonths, recipient, "subgift"];
     await doQuery(mysql.format(sqlUser, insertsUser));
 });
 
