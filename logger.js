@@ -1,5 +1,8 @@
 'use strict';
+
 require('./lib/static/interval_calls.js');
+require('./lib/static/channel_status.js');
+
 const fs = require('fs');
 const creds = require('./lib/credentials/config.js');
 const mysql = require('mysql2');
@@ -33,7 +36,7 @@ const getChannels = () => new Promise((resolve, reject) => {
 });
 
 let channelList = [];
-let channelOptions = []
+let channelOptions = [];
 async function res() {
 	channelList.push(await getChannels());
 	await channelList[0].forEach(i => channelOptions.push(i.channel))
@@ -48,7 +51,7 @@ function sleepGlob(milliseconds) {
 		}
 	}
 }
-sleepGlob(1500)
+sleepGlob(1500);
 
 const options = {
 	options: {
@@ -143,7 +146,7 @@ kb.on('message', function(channel, user, message) {
 })
 
 // inserting cached rows every interval to database instead of real-time logging
-function loopLogs() {
+function updateLogs() {
 	cache.forEach(data => {
 		const sql = "INSERT INTO logs_"+data['channel']+" (username, message, date) VALUES (?, ?, ?)";
 		const inserts = [data['username'], data['message'], data['date']];
@@ -156,8 +159,11 @@ function loopLogs() {
 }
 
 setInterval(()=>{
+    if (cache.length>800) {
+        kb.say('kunszg', `${cache.length} messages in cache peepoSadDank`);
+    }
 	if (cache.length>200) {
-		loopLogs();
+		updateLogs();
 		cache.length = 0;
 	}
 }, 7000);
