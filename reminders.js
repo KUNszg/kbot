@@ -4,9 +4,28 @@
 
 const api = require('./config.js');
 const custom = require('./lib/utils/functions.js');
-const kb = require('./lib/handler.js').kb;
 const fetch = require("node-fetch");
 const mysql = require('mysql2');
+
+const options = {
+    options: {
+        debug: false,
+    },
+    connection: {
+        cluster: 'aws',
+    },
+    identity: {
+        username: 'kunszgbot',
+        password: api.oauth,
+    },
+    channels: ['kunszg', 'kunszgbot'],
+};
+
+const tmi = require('tmi.js');
+const kb = new tmi.client(options);
+const repeatedMessages = {
+    supinic: null
+};
 
 kb.say('kunszg', 'reminders reconnected KKona');
 
