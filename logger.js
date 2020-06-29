@@ -209,7 +209,7 @@ kb.on("subscription", async (channel, username, method, message, userstate) => {
 kb.on("subgift", async (channel, username, streakMonths, recipient, methods, userstate) => {
     let cumulative = ~~userstate["msg-param-cumulative-months"];
 
-    if (username.toLowerCase()===="teodorv") {
+    if (username.toLowerCase()==="teodorv") {
         for (let i=0; i<10; i++) {
             kb.whisper('kunszg', "teo just got a sub gift in " + channel);
         }
