@@ -1039,7 +1039,4 @@ Yo mama's aging with such grace and beauty that she could be featured on the cov
 Yo mama's like a puppy... everybody wants to give her a hug.
 Yo mama's so smart that an employee from Wikipedia calls her when they need to verify facts about 18th century political figures`
 
-const result = data.split('\n');
-const random = result[Math.floor(Math.random() * result.length)];
-
-module.exports = { random }
+module.exports = { data }
