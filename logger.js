@@ -175,7 +175,15 @@ kb.on('message', async (channel, user, message) => {
 	await doQuery(mysql.format(sqlUser, insertsUser))
 })
 setInterval(async() => {
-	await doQuery('UPDATE user_list SET color="gray" WHERE color IS null;')
+	await doQuery(`
+		UPDATE user_list 
+		SET color="gray" 
+		WHERE color IS null
+		`);
+	await doQuery(`
+		DELETE FROM user_list 
+		WHERE username IS null
+		`);
 }, 1800000);
 
 async function statusCheck() {
@@ -198,7 +206,7 @@ kb.on("subgift", async (channel, username, streakMonths, recipient, methods, use
     let cumulative = ~~userstate["msg-param-cumulative-months"];
 
     if (username.toLowerCase()==="teodorv") {
-        for (let i=0; i<10; i++) {
+        for (let i=0; i<3; i++) {
             kb.whisper('kunszg', "teo just got a sub gift in " + channel);
         }
     }
