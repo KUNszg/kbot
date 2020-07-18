@@ -40,7 +40,6 @@ kb.connect();
 kb.on('connected', (adress, port) => {
 
     kb.say('kunszg', 'reminders reconnected KKona')
-    const fetch = require("node-fetch");
     const mysql = require('mysql2');
     const con = mysql.createConnection({
         host: "localhost",

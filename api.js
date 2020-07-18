@@ -26,7 +26,6 @@ const doQuery = (query) => new Promise((resolve, reject) => {
 			con.query(mysql.format(sql, insert),
 				function(error, results, fields) {
 					if (error) {
-						console.log(error)
 						reject(error)
 					} else {
 						resolve(results)
