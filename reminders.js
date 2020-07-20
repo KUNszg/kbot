@@ -129,7 +129,7 @@ kb.on('connected', (adress, port) => {
             await doQuery('UPDATE cookie_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
             const dateUnfiredUsers = new Date(selectUnfiredUsers[0].fires)
             const unfiredDiff = (serverDate - dateUnfiredUsers)/1000/60
-            kb.whisper(selectUnfiredUsers[0].channel, selectUnfiredUsers[0].username + ', you had an unfired cookie reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and eat your cookie please :)');
+            kb.whisper(selectUnfiredUsers[0].username, ' you had an unfired cookie reminder ' + unfiredDiff.toFixed(0) + ' minutes ago, sorry about that and eat your cookie please :)');
         }
     }
     setInterval(() => {
