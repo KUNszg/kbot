@@ -183,7 +183,7 @@ kb.on('connected', (adress, port) => {
         const diff = serverDate - fires
         const differenceToSec = diff/1000;
 
-        // consider only cases where reminder is apart from current date by 7 seconds
+        // consider only cases where reminder is apart from current date by 15 seconds
         if ((differenceToSec<=15) && !(differenceToSec<0)) {
             const limit = new Set();
 
