@@ -149,8 +149,8 @@ setInterval(()=>{apiDataChannels()}, 600000)
 // kunszg.xyz/api/colors
 function apiDataColors(data) {
 	app.get("/colors", (req, res, next) => {
-	 	res.send(
-	 		'<h1> AAAAAAAA xD </h1>'
+	 	res.json(
+	 		data
 		);
 	});
 }
