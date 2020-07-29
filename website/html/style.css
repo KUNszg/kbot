@@ -1,0 +1,463 @@
+
+/* main page background color */
+.bd {
+	background-color: #1a1a1a;
+}
+
+.inner {
+	font-family: Georgia;
+	font-size: 40px;
+	color: #ffffff;
+	margin-left: 20px;
+	text-indent: 10px;
+	height: 100%;
+}
+
+.button {
+	background-color: #4CAF50; /* Green */
+	border: none;
+	color: white;
+	padding: 14px 28px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 20px;
+	margin: 4px 2px;
+	transition-duration: 0.3s;
+	cursor: pointer;
+}
+
+.gist-data { 
+	background-color: #272727 !important 
+} 
+
+.str { color: #cccc00 !important;}
+.kwd { color: #f92672 !important; }
+.com { color: #A1A1A1 !important; }
+.typ { color: #BD0874 !important; }
+.lit { color: #ae81ff !important; }
+.pun { color: #ae81ff !important; }
+.pln { color: #ffffff !important; }
+.tag { color: #008 !important; }
+.atn { color: #606 !important; }
+.atv { color: #080 !important; }
+.dec { color: #606 !important; }
+
+.button1 {
+	color: white; 
+}
+
+.button1:hover {
+	transform: scale(1.11);
+	transition-duration: 0.3s;
+}
+
+.github:link, .github:visited {
+	text-decoration: none;
+}
+
+.commands:link, .commands:visited {
+	text-decoration: none;
+}
+
+
+.api {
+	margin-left: 70px;
+	color: white;
+	border-left: solid dimgray 1px;
+	border-right: solid dimgray 1px;
+	border-bottom: solid dimgray 1px; 
+	font-family: 'Source Sans Pro', 'sans-serif'
+}
+
+.bot {
+	color: #ffffff;
+	margin-left: 35px;
+}
+
+.row-header {
+	color: #e3e3e3;
+}
+
+/* Fixed sidenav, full height */
+.sidenav {
+	height: 100%;
+	width: 200px;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	background-color: #111;
+	padding-top: 20px;
+}
+
+/* Style the sidenav links and the dropdown button */
+.sidenav a, .dropdown-btn {
+	padding: 6px 8px 6px 16px;
+	text-decoration: none;
+	font-size: 15px;
+	color: #818181;
+	display: block;
+	border: all;
+	border-width: 1px;
+	background: none;
+	width:100%;
+	text-align: left;
+	cursor: pointer;
+	outline: none;
+}
+
+/* On mouse-over */
+.sidenav a:hover, .dropdown-btn:hover {
+	color: #f1f1f1;
+}
+
+/* Main content */
+.main {
+	margin-left: 200px; /* Same as the width of the sidenav */
+	font-size: 20px; /* Increased text to enable scrolling */
+	padding: 0px 10px;
+}
+
+/* Add an active class to the active dropdown button */
+.active {
+  	background-color: green;
+  	color: white;
+}
+
+/* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
+.dropdown-container {
+	display: none;
+	background-color: #262626;
+	padding-left: 8px;
+}
+
+/* Optional: Style the caret down icon */
+.fa-caret-down {
+	float: right;
+	padding-right: 8px;
+} 
+
+/* arrow used in showing bot responses */
+.commentArrow {
+	color: green; 
+	font-size: 25px;
+}
+
+/* disable text underline on hover */
+.commentArrow:hover {
+	text-decoration: none;
+}
+
+ul.nav-pills {
+	font-size: 20px;
+	line-height: 8px;				
+	border-left: 1px solid dimgray;
+	margin-top: 21px;
+	margin-left: 50px;
+}
+div.col-sm-9 div {
+	font-size: 19px;
+}
+#fourhead, #ban, #channels, #commands, #cookie_opt, #dank, #ed, #fl, #github, #banphrase, #help, #hosts {
+	color: #fff; 
+	background-color: #272727;
+}
+
+#fourhead-usage, #fourhead-code, #ban-usage, #ban-code, #cookie_opt-usage, #cookie_opt-code, #dank-usage, #dank-code, 
+#fl-code, #fl-usage, #channels-usage, #channels-code, #github-code, #github-usage, #banphrase-usage, #banphrase-code, #help-code, #help-usage,
+#hosts-code, #hosts-usage {
+	color: #fff; 
+	background-color: #272727;
+	position: relative;
+	transition-duration: 0.2s;
+}
+
+.comment {
+	font-size: 14px;
+	color: gray;
+}
+
+.comment.text {
+	font-size: 20px; 
+	font-weight: 300; 
+	vertical-align: middle; 
+	text-align: center;
+}
+
+.apiDiv {
+	font-family: 'Source Sans Pro', Helvetica, sans-serif; 
+	font-size: 50px; 
+	margin-left: 100px; 
+	text-align: left; 
+	margin-top: 100px; 
+	color: white;
+}
+
+.noHighlight {
+	text-decoration: none;
+}
+
+
+.expandable {
+  background: #fff;
+  overflow: hidden;
+
+  transition: all .5s ease-in-out;
+  line-height: 0;
+  padding: 0 1em;
+  color: transparent;
+}
+ 
+.expandable:target {
+  line-height: 1.5;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  color: black;
+}
+
+/* page loader */
+#loader {
+  position: fixed;
+  left: 49%;
+  top: 300px;
+  z-index: 1;
+  width: 150px;
+  height: 150px;
+  margin: -75px 0 0 -75px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Add animation to "page content" */
+.animate-bottom {
+  position: relative;
+  -webkit-animation-name: animatebottom;
+  -webkit-animation-duration: 1s;
+  animation-name: animatebottom;
+  animation-duration: 1s
+}
+
+@-webkit-keyframes animatebottom {
+  from { bottom:-100px; opacity:0 } 
+  to { bottom:0px; opacity:1 }
+}
+
+@keyframes animatebottom { 
+  from{ bottom:-100px; opacity:0 } 
+  to{ bottom:0; opacity:1 }
+}
+
+#myDiv {
+  display: none;
+  text-align: center;
+}
+
+/* TOP NAV BAR */
+/* Add a black background color to the top navigation */
+.topnav {
+  background-color: #333;
+  overflow: hidden;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+  background-color: #ddd;
+  transition-duration: 0.3s;
+  text-decoration: underline;
+  color: black;
+}
+
+/* Add a color to the active/current link */
+.topnav a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+/* Gists modifications */
+body .gist .gist-meta {
+    display: none;
+}
+
+body {
+	position: relative;
+}
+
+body .gist .highlight {
+    background: #272822;
+}
+body .gist .blob-num,
+body .gist .blob-code-inner,
+body .gist .pl-s2,
+body .gist .pl-stj {
+    color: #f8f8f2;
+}
+body .gist .pl-c1 {
+    color: #ae81ff;
+}
+body .gist .pl-enti {
+    color: #a6e22e;
+    font-weight: 700;
+}
+body .gist .pl-st {
+    color: #66d9ef;
+}
+body .gist .pl-mdr {
+    color: #66d9ef;
+    font-weight: 400;
+}
+body .gist .pl-ms1 {
+    background: #fd971f;
+}
+body .gist .pl-c,
+body .gist .pl-c span,
+body .gist .pl-pdc {
+    color: #75715e;
+    font-style: italic;
+}
+body .gist .pl-cce,
+body .gist .pl-cn,
+body .gist .pl-coc,
+body .gist .pl-enc,
+body .gist .pl-ens,
+body .gist .pl-kos,
+body .gist .pl-kou,
+body .gist .pl-mh .pl-pdh,
+body .gist .pl-mp,
+body .gist .pl-mp1 .pl-sf,
+body .gist .pl-mq,
+body .gist .pl-pde,
+body .gist .pl-pse,
+body .gist .pl-pse .pl-s2,
+body .gist .pl-mp .pl-s3,
+body .gist .pl-smi,
+body .gist .pl-stp,
+body .gist .pl-sv,
+body .gist .pl-v,
+body .gist .pl-vi,
+body .gist .pl-vpf,
+body .gist .pl-mri,
+body .gist .pl-va,
+body .gist .pl-vpu {
+    color: #66d9ef;
+}
+body .gist .pl-cos,
+body .gist .pl-ml,
+body .gist .pl-pds,
+body .gist .pl-s,
+body .gist .pl-s1,
+body .gist .pl-sol {
+    color: #e6db74;
+}
+body .gist .pl-e,
+body .gist .pl-ef,
+body .gist .pl-en,
+body .gist .pl-enf,
+body .gist .pl-enm,
+body .gist .pl-entc,
+body .gist .pl-entm,
+body .gist .pl-eoac,
+body .gist .pl-eoac .pl-pde,
+body .gist .pl-eoi,
+body .gist .pl-mai .pl-sf,
+body .gist .pl-mm,
+body .gist .pl-pdv,
+body .gist .pl-som,
+body .gist .pl-sr,
+body .gist .pl-vo {
+    color: #a6e22e;
+}
+body .gist .pl-ent,
+body .gist .pl-eoa,
+body .gist .pl-eoai,
+body .gist .pl-eoai .pl-pde,
+body .gist .pl-k,
+body .gist .pl-ko,
+body .gist .pl-kolp,
+body .gist .pl-mc,
+body .gist .pl-mr,
+body .gist .pl-ms,
+body .gist .pl-s3,
+body .gist .pl-smc,
+body .gist .pl-smp,
+body .gist .pl-sok,
+body .gist .pl-sra,
+body .gist .pl-src,
+body .gist .pl-sre {
+    color: #f92672;
+}
+body .gist .pl-mb,
+body .gist .pl-pdb {
+    color: #e6db74;
+    font-weight: 700;
+}
+body .gist .pl-mi,
+body .gist .pl-pdi {
+    color: #f92672;
+    font-style: italic;
+}
+body .gist .pl-pdc1,
+body .gist .pl-scp {
+    color: #ae81ff;
+}
+body .gist .pl-sc,
+body .gist .pl-sf,
+body .gist .pl-mo,
+body .gist .pl-entl {
+    color: #fd971f;
+}
+body .gist .pl-mi1,
+body .gist .pl-mdht {
+    color: #a6e22e;
+    background: rgba(0, 64, 0, .5);
+}
+body .gist .pl-md,
+body .gist .pl-mdhf {
+    color: #f92672;
+    background: rgba(64, 0, 0, .5);
+}
+body .gist .pl-mdh,
+body .gist .pl-mdi {
+    color: #a6e22e;
+    font-weight: 400;
+}
+body .gist .pl-ib,
+body .gist .pl-id,
+body .gist .pl-ii,
+body .gist .pl-iu {
+    background: #a6e22e;
+    color: #272822;
+}
+
+@media screen and (max-width: 810px) {
+	#fourhead, #ban, #channels, #commands, #cookie_opt, #dank, #ed, #fl, #github, #banphrase, #help, #hosts,
+	#fourhead-usage, #fourhead-code, #ban-usage, #ban-code, #cookie_opt-usage, #cookie_opt-code, #dank-usage, #dank-code, #fl-code, 
+	#fl-usage, #channels-usage, #channels-code, #github-code, #github-usage, #banphrase-usage, #banphrase-code, #help-usage, #help-code, 
+	#hosts-code, #hosts-usage {
+		margin-left: 150px;
+	}
+}

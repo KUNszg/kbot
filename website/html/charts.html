@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-158909830-3"></script>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+
+			gtag('config', 'UA-158909830-3');
+		</script>
+		<link rel="icon" type="image/png" href="img/3x.gif"/>
+	</head>
+	<meta charset="utf-8">
+	<title>Chat statistics</title>
+	<body class="bd">
+		<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+		<div id="chartContainer" style="height: 500px; width: 100%; display: inline-block;"></div><iframe align="right" src="https://nightdev.com/hosted/obschat/?theme=bttv_dark&channel=xqcow&fade=1&bot_activity=true&prevent_clipping=false" height="420px"></iframe>
+		<div id="chartContainer2" style="height: 100%; width: 83%; display: inline-block;"></div>
+		<script>
+			async function asaf() {
+					const rows = await fetch('https://kunszg.xyz/api/colors')
+		      			.then(response => response.json())
+		      			.then(rows => rows)
+
+				function compareDataPointYDescend(dataPoint1, dataPoint2) {
+					return dataPoint2.y - dataPoint1.y;
+				}
+
+				const chart1 = new CanvasJS.Chart("chartContainer", {
+					animationEnabled: true,
+					theme: "dark1", // "light1", "light2", "dark1", "dark2"
+					backgroundColor: "#1a1a1a",
+					title:{
+						fontSize: 30,
+						fontFamily: "tahoma",
+						text: "Most commonly used name colors on Twitch"
+					},
+			      	axisY:{        
+				        labelFontSize: 12,
+				        gridColor: "dimgrey",
+				        title: `Users (${rows.users} total)`,
+			      	},
+			      	legend: {
+			      		horizontalAlign: "left"
+			      	},
+			      	axisX: {
+			      		title: "Nickname colors",
+			      		interval: 1,
+			      		labelFontSize: 12
+			      	},
+					data: [{        
+						type: "bar",  
+						showInLegend: true, 
+						legendMarkerColor: "grey",
+						legendText: "Data refreshes every 2h from my database",
+						dataPoints: [      
+							{ y: rows.data.filter(i=>i.color === 'Red')[0].amount, label: "Red", color: "red", indexLabel: '#FF0000', indexLabelFontColor: "white", indexLabelPlacement: 'inside', indexLabelFontSize: 11 },
+							{ y: rows.data.filter(i=>i.color === 'SpringGreen')[0].amount,  label: "Spring Green", color: "SpringGreen", indexLabel: '#00FF7F', indexLabelFontColor: "dimgray", indexLabelPlacement: 'inside', indexLabelFontSize: 11 },
+							{ y: rows.data.filter(i=>i.color === 'DodgerBlue')[0].amount,  label: "Dodger Blue", color: "DodgerBlue", indexLabel: '#1E90FF', indexLabelFontColor: "white", indexLabelPlacement: 'inside', indexLabelFontSize: 11 },
+							{ y: rows.data.filter(i=>i.color === 'BlueViolet')[0].amount,  label: "Blue Violet", color: "BlueViolet", indexLabel: '#8A2BE2', indexLabelFontColor: "white", indexLabelPlacement: 'inside', indexLabelFontSize: 11 },
+							{ y: rows.data.filter(i=>i.color === 'OrangeRed')[0].amount,  label: "Orange Red", color: "OrangeRed", indexLabel: '#FF4500', indexLabelFontColor: "dimgray", indexLabelPlacement: 'inside', indexLabelFontSize: 11 },
+							{ y: rows.data.filter(i=>i.color === 'GoldenRod')[0].amount, label: "Golden Rod", color: "GoldenRod", indexLabel: '#DAA520', indexLabelFontColor: "dimgray", indexLabelPlacement: 'inside', indexLabelFontSize: 11 },
+							{ y: rows.data.filter(i=>i.color === 'Blue')[0].amount,  label: "Blue", color: "Blue", indexLabel: '#0000FF', indexLabelFontColor: "dimgray", indexLabelPlacement: 'inside', indexLabelFontSize: 11 },
+							{ y: rows.data.filter(i=>i.color === 'Green')[0].amount,  label: "Green", color: "Green", indexLabel: '#008000', indexLabelFontColor: "dimgray", indexLabelPlacement: 'inside', indexLabelFontSize: 11 },
+							{ y: rows.data.filter(i=>i.color === 'HotPink')[0].amount,  label: "Hot Pink", color: "HotPink", indexLabel: '#FF69B4', indexLabelFontColor: "dimgray", indexLabelPlacement: 'inside', indexLabelFontSize: 11 },
+							{ y: rows.data.filter(i=>i.color === 'YellowGreen')[0].amount,  label: "Yellow Green", color: "YellowGreen", indexLabel: '#9ACD32', indexLabelFontColor: "dimgray", indexLabelPlacement: 'inside', indexLabelFontSize: 11 },
+							{ y: rows.data.filter(i=>i.color === 'FireBrick')[0].amount,  label: "Fire Brick", color: "FireBrick", indexLabel: '#B22222', indexLabelFontColor: "dimgray", indexLabelPlacement: 'inside', indexLabelFontSize: 11 },
+							{ y: rows.data.filter(i=>i.color === 'White')[0].amount,  label: "White", color: "White", indexLabel: '#FFFFFF', indexLabelFontColor: "dimgray", indexLabelPlacement: 'inside', indexLabelFontSize: 11 },
+							{ y: rows.data.filter(i=>i.color === 'SeaGreen')[0].amount,  label: "Sea Green", color: "SeaGreen", indexLabel: '#2E8B57', indexLabelFontColor: "dimgray", indexLabelPlacement: 'inside', indexLabelFontSize: 11 },
+							{ y: rows.data.filter(i=>i.color === 'Yellow')[0].amount,  label: "Yellow", color: "Yellow", indexLabel: '#FFFF00', indexLabelFontColor: "dimgray", indexLabelPlacement: 'inside', indexLabelFontSize: 11 },
+							{ y: rows.data.filter(i=>i.color === 'CadetBlue')[0].amount,  label: "Cadet Blue", color: "CadetBlue", indexLabel: '#5F9EA0', indexLabelFontColor: "dimgray", indexLabelPlacement: 'inside', indexLabelFontSize: 11 },
+							{ y: rows.data.filter(i=>i.color === 'Coral')[0].amount,  label: "Coral", color: "Coral", indexLabel: '#FF7F50', indexLabelFontColor: "dimgray", indexLabelPlacement: 'inside', indexLabelFontSize: 11 },
+							{ y: rows.data.filter(i=>i.color === 'Chocolate')[0].amount,  label: "Chocolate", color: "Chocolate", indexLabel: '#D2691E', indexLabelFontColor: "dimgray", indexLabelPlacement: 'inside', indexLabelFontSize: 11 },
+							{ y: rows.data.filter(i=>i.color === 'Black')[0].amount,  label: "Black", color: "Black", indexLabel: '#000000', indexLabelFontColor: "dimgray", indexLabelPlacement: 'inside', indexLabelFontSize: 11 }
+						]
+					}]
+				});
+				chart1.options.data[0].dataPoints.sort(compareDataPointYDescend);
+				chart1.render();
+				chart1 = {};
+
+				}
+			asaf()
+
+				var dps = []; // dataPoints
+				var chart2 = new CanvasJS.Chart("chartContainer2", {
+					backgroundColor: "#1a1a1a",
+					theme: "dark1",
+					title :{
+						text: "Messages per second: xQcOW"
+					},
+					axisY: {
+						title: "messages",
+						includeZero: false,
+						gridColor: "dimgray"
+					}, 
+					axisX: {
+						title: "seconds"
+					},     
+					data: [{
+						type: "spline",
+						dataPoints: dps
+					}]
+				});
+				var updateInterval = 500;
+				var xVal = 0
+				var dataLength = 500; // number of dataPoints visible at any point
+
+				var updateChart = async (count) => {
+
+					const messages = await fetch('https://kunszg.xyz/api/messages')
+	      				.then(response => response.json())
+	      				.then(messages => messages)
+	      			if (messages.data['xqcow']===0) {
+	      				return;
+	      			}
+					count = count || 1;
+					for (var j = 0; j < count; j++) {
+
+						dps.push({
+							x: xVal,
+							y: messages.data['xqcow']
+						});
+						xVal++;
+					}
+
+					if (dps.length > dataLength) {
+						dps.shift();
+					}
+
+					chart2.render();
+				};
+				updateChart(dataLength);
+				setInterval(function(){updateChart()}, updateInterval);
+				
+			</script>
+	</body>
+</html>
