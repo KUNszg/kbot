@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-158909830-3"></script>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+
+			gtag('config', 'UA-158909830-3');
+		</script>
+		<script src="../modules/tablebuilder.js"></script>
+		<link rel="icon" type="image/png" href="img/3x.gif"/>
+		<title>COMMANDS</title>
+	</head>
+	<meta charset="utf-8">
+	<body class="bd">
+		<script>
+			const data = [
+			  { "name":"Larry Wall", "age":57, "link": "<a href='http://www.wall.org/~larry/'>www.wall.org/~larry/</a>" },
+			  { "name":"Bill Gates", "age":56, "link": "<a href='http://www.microsoft.com'>www.microsoft.com</a>" },
+			  { "name":"Daffy Duck", "age":75, "link": "" }
+			];
+ 
+ 			const headers = { "name" : "User name", "age": "User age", "link": "Homepage" };
+			 
+			const Table = require('table-builder');
+			console.log(
+			  (new Table({'class': 'some-table'}))
+			    .setHeaders(headers) 
+			    .setData(data)
+			    .render()
+			);
+		</script>
+	</body>
+</html>
