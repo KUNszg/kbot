@@ -26,7 +26,6 @@
     "pi-number": "^1.0.0",
     "querystring": "^0.2.0",
     "random-facts": "^1.0.6",
-    "random-unicodes": "^1.0.3",
     "regex": "^0.1.1",
     "request-promise": "^4.2.5",
     "require-dir": "^1.2.0",
