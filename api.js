@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const api = require('./lib/credentials/config.js');
+const api = require('./config.js');
 const mysql = require('mysql2');
 
 const con = mysql.createConnection({
