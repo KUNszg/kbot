@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const api = require('./config.js');
+const api = require('./lib/credentials/config.js');
 const mysql = require('mysql2');
 
 const con = mysql.createConnection({
@@ -9,8 +9,8 @@ const con = mysql.createConnection({
 	password: api.db_pass,
 	database: "kbot"
 });
-con.on('error', function(err) {console.log(err)});
-con.connect(function(err) {
+con.on('error', (err) => {console.log(err)});
+con.connect((err) => {
 	if (err) {
 		console.log('Database connection error in express!')
 	} else {
@@ -24,7 +24,7 @@ const doQuery = (query) => new Promise((resolve, reject) => {
         	const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
 			const insert = [JSON.stringify(err), new Date()];
 			con.query(mysql.format(sql, insert),
-				function(error, results, fields) {
+				(error, results, fields) => {
 					if (error) {
 						reject(error)
 					} else {
@@ -45,7 +45,7 @@ const getChannels = () => new Promise((resolve, reject) => {
         	const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
 			const insert = [JSON.stringify(err), new Date()];
 			con.query(mysql.format(sql, insert),
-				function(error, results, fields) {
+				(error, results, fields) => {
 					if (error) {
 						console.log(error)
 						reject(error)
@@ -64,7 +64,7 @@ const getChannels = () => new Promise((resolve, reject) => {
 const channelList = [];
 const channelOptions = [];
 
-function sleep(milliseconds) {
+const sleep = (milliseconds) => {
     var start = new Date().getTime();
     for (var i = 0; i < 1e7; i++) {
         if ((new Date().getTime() - start) > milliseconds) {
@@ -92,14 +92,14 @@ const tmi = require('tmi.js');
 const kb = new tmi.client(options);
 kb.connect();
 
-async function res() {
+const res = async() => {
 	channelList.push(await getChannels());
 	await channelList[0].forEach(i => channelOptions.push(i.channel))
 }
 res();
 // setInterval(()=>{channelList.length = 0; channelOptions.length = 0; res();}, 3600000)
 
-function sleepGlob(milliseconds) {
+const sleepGlob = (milliseconds) => {
 	var start = new Date().getTime();
 	for (var i = 0; i < 1e7; i++) {
 		if ((new Date().getTime() - start) > milliseconds) {
@@ -110,12 +110,48 @@ function sleepGlob(milliseconds) {
 sleepGlob(1000)
 
 const msgCount = [];
-kb.on('chat', function(channel, message) {
-    msgCount.push({'channel':channel.replace('#', ''), 'message':'add'})
+kb.on('chat', (channel, message) => {
+    msgCount.push({'channel': channel.replace('#', ''), 'message':'add'})
 })
 
+// test
+const requireDir = require('require-dir');
+const commands = requireDir('./lib/commands');
+const commandNames = Object.keys(commands);
+
+const tableData = [];
+commandNames.map(i => tableData.push({'command': commands[i].name.replace('kb ', ''), 'cooldown': commands[i].cooldown/1000+'sec'}));
+
+const headers = { "command": "command", "cooldown": "cooldown"};
+ 
+const Table = require('table-builder');
+
+const send = () => {
+    app.get("/test", (req, res, next) => {
+       res.send(
+           `<!doctype html>
+          	<html>
+          		<head>
+	          		<title>commands</title>
+	          		<link rel="stylesheet" type="text/css" href="./style.css">
+					<meta name="viewport" content="width=device-width, initial-scale=1">
+					<link rel="icon" type="image/png" href="./website/html/img/3x.gif"/>
+          		</head>
+          		<body class="bd">
+	          		${(new Table({'class': 'command-table'}))
+					    .setHeaders(headers) 
+					    .setData(tableData) 
+					    .render()}
+				</body>
+			</html>
+		    `
+        );
+    });
+}
+send()
+
 // kunszg.xyz/api/messages
-function apiDataMessages() {
+const apiDataMessages = () => {
     app.get("/messages", (req, res, next) => {
        res.send({
             data: {
@@ -136,7 +172,7 @@ setInterval(()=>{
 }, 1000)
 
 // kunszg.xyz/api/channels
-function apiDataChannels() {
+const apiDataChannels = () => {
 	app.get("/channels", (req, res, next) => {
 	 	res.send({
 	 		data: channelOptions
@@ -147,7 +183,7 @@ apiDataChannels();
 setInterval(()=>{apiDataChannels()}, 600000)
 
 // kunszg.xyz/api/colors
-function apiDataColors(data) {
+const apiDataColors = (data) => {
 	app.get("/colors", (req, res, next) => {
 	 	res.json(
 	 		data
@@ -155,8 +191,8 @@ function apiDataColors(data) {
 	});
 }
 
-async function diagramData() {
-	async function dataInsert(data) {
+const diagramData = async() => {
+	const dataInsert = async(data) => {
 		const info = await doQuery(`SELECT count(*) As data FROM user_list WHERE color="${data}"`);
 		return info[0].data
 	}
@@ -178,23 +214,23 @@ async function diagramData() {
 		{"color": 'CadetBlue', 'amount': await dataInsert('#5F9EA0')},
 		{"color": 'Coral', 'amount': await dataInsert('#FF7F50')},
 		{"color": 'Chocolate', 'amount': await dataInsert('#D2691E')},
-		{"color": 'Black', 'amount': await dataInsert('#000000')}
+		{"color": 'Black', 'amount': await dataInsert('#000000')},
 	])
 	const cache = [];
-	const check = await getData.forEach(i=>cache.push(i.amount))
+	const check = await getData.forEach(i => cache.push(i.amount))
 	const reduce = cache.reduce((a, b) => a + b, 0)
 	return {'users': reduce, 'data': await getData.sort()}
 }
-diagramData().then(function(data) {apiDataColors(data)})
+diagramData().then((data) => {apiDataColors(data)})
 
-async function kden() {
+const updateMem = async() => {
 	await doQuery(`
 		UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="api"
 		`)
 }
-kden()
+updateMem()
 setInterval(() => {
-	kden()
+	updateMem()
 }, 602000)
 
 const shell = require('child_process');
@@ -205,7 +241,7 @@ const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
     console.log('app running on port', port);
 });
 
-async function statusCheck() {
+const statusCheck = async() => {
 		await doQuery(`
 			UPDATE stats
 			SET date="${new Date().toISOString().slice(0, 19).replace('T', ' ')}"
