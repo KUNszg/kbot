@@ -113,7 +113,7 @@ const msgCount = [];
 kb.on('chat', (channel, message) => {
     msgCount.push({'channel': channel.replace('#', ''), 'message':'add'})
 })
-/*
+
 // test
 const requireDir = require('require-dir');
 const commands = requireDir('./lib/commands');
@@ -148,7 +148,7 @@ const send = () => {
         );
     });
 }
-send()*/
+send()
 
 // kunszg.xyz/api/messages
 const apiDataMessages = () => {
