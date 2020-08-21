@@ -13,14 +13,15 @@ const con = mysql.createConnection({
 	password: creds.db_pass,
 	database: "kbot"
 });
-con.on('error', function(err) {console.log(err)});
+
+con.on('error', (err) => {console.log(err)});
 const getChannels = () => new Promise((resolve, reject) => {
     con.query('SELECT * FROM channels_logger', (err, results, fields) => {
         if (err) {
         	const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
 			const insert = [JSON.stringify(err), new Date()];
 			con.query(mysql.format(sql, insert),
-				function(error, results, fields) {
+				(error, results, fields) => {
 					if (error) {
 						console.log(error)
 						reject(error)
@@ -37,13 +38,12 @@ const getChannels = () => new Promise((resolve, reject) => {
 
 let channelList = [];
 let channelOptions = [];
-async function res() {
+(async() => {
 	channelList.push(await getChannels());
 	await channelList[0].forEach(i => channelOptions.push(i.channel))
-}
-res()
+})()
 
-function sleepGlob(milliseconds) {
+const sleepGlob = (milliseconds) => {
 	var start = new Date().getTime();
 	for (var i = 0; i < 1e7; i++) {
 		if ((new Date().getTime() - start) > milliseconds) {
@@ -98,7 +98,7 @@ kb.on('connected', (adress, port) => {
 	kb.say('kunszg', 'logger reconnected KKona')
 })
 
-con.connect(function(err) {
+con.connect((err) => {
 	if (err) {
 		kb.say('kunszg', '@kunszg, database connection error monkaS')
 		console.log(err)
@@ -117,7 +117,7 @@ const doQuery = (query) => new Promise((resolve, reject) => {
     });
 });
 
-async function kden() {
+const kden = async() => {
 	await doQuery(`
 		UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="logger"
 		`)
@@ -128,7 +128,7 @@ setInterval(() => {
 }, 601000)
 
 const cache = [];
-kb.on('message', function(channel, user, message) {
+kb.on('message', (channel, user, message) => {
 	const filterBots = ignoreList.filter(i => i === user['user-id'])
 	const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
 	const channelParsed = channel.replace('#', '');
@@ -146,11 +146,11 @@ kb.on('message', function(channel, user, message) {
 })
 
 // inserting cached rows every interval to database instead of real-time logging
-function updateLogs() {
+const updateLogs = () => {
 	cache.forEach(data => {
 		const sql = "INSERT INTO logs_" + data['channel'] + " (username, message, date) VALUES (?, ?, ?)";
 		const inserts = [data['username'], data['message'], data['date']];
-		con.query(mysql.format(sql, inserts), function(error, results, fields) {
+		con.query(mysql.format(sql, inserts), (error, results, fields) => {
 			if (error) {
 				custom.errorLog(error);
 				return;
@@ -173,20 +173,34 @@ kb.on('message', async (channel, user, message) => {
 	const sqlUser = "INSERT INTO user_list (username, userId, channel_first_appeared, color, added) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)"
 	const insertsUser = [user['username'], user['user-id'], channel.replace('#', ''), user['color']]
 	await doQuery(mysql.format(sqlUser, insertsUser))
+
+    const compareColors = await doQuery(`
+        SELECT *
+        FROM user_list
+        WHERE userId="${user['user-id']}"
+        `);
+
+    if (compareColors[0].color != user['color']) {
+        await doQuery(`
+            UPDATE user_list
+            SET color="${user['color']}"
+            WHER userId="${user['user-id']}"
+            `);
+    }
 })
 setInterval(async() => {
 	await doQuery(`
-		UPDATE user_list 
-		SET color="gray" 
+		UPDATE user_list
+		SET color="gray"
 		WHERE color IS null
 		`);
 	await doQuery(`
-		DELETE FROM user_list 
+		DELETE FROM user_list
 		WHERE username IS null
 		`);
 }, 1800000);
 
-async function statusCheck() {
+const statusCheck = async() => {
 	await doQuery(`
 		UPDATE stats
 		SET date="${new Date().toISOString().slice(0, 19).replace('T', ' ')}"
