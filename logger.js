@@ -174,6 +174,7 @@ kb.on('message', async (channel, user, message) => {
 	const insertsUser = [user['username'], user['user-id'], channel.replace('#', ''), user['color']]
 	await doQuery(mysql.format(sqlUser, insertsUser))
 
+    /*
     const compareColors = await doQuery(`
         SELECT *
         FROM user_list
@@ -187,6 +188,7 @@ kb.on('message', async (channel, user, message) => {
             WHER userId="${user['user-id']}"
             `);
     }
+    */
 })
 setInterval(async() => {
 	await doQuery(`
