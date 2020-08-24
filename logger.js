@@ -6,6 +6,7 @@ require('./lib/static/channel_status.js');
 const fs = require('fs');
 const creds = require('./lib/credentials/config.js');
 const mysql = require('mysql2');
+const custom = require('./lib/utils/functions');
 
 const con = mysql.createConnection({
 	host: "localhost",
