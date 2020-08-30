@@ -121,7 +121,7 @@ kb.on('connected', (adress, port) => {
             }
 
             const checkChannelStatus = await doQuery(`SELECT * FROM channels WHERE channel="${selectUnfiredUsers[0].channel}"`);
-            if (typeof checkChannelStatus[0] === "undefined" || checkChannelStatus[0].status === "live") {
+            if (typeof checkChannelStatus[0] != "undefined" || checkChannelStatus[0].status === "live") {
                 await doQuery('UPDATE cookie_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
                 return;
             }
@@ -195,7 +195,7 @@ kb.on('connected', (adress, port) => {
 
             const getUsername = await doQuery(`SELECT * FROM user_list WHERE ID="${userData[0].user_alias}"`)
             const checkChannelStatus = await doQuery(`SELECT * FROM channels WHERE channel="${userData[0].channel}"`)
-            if (typeof checkChannelStatus[0] === "undefined" || checkChannelStatus[0].status === "live") {
+            if (typeof checkChannelStatus[0] != "undefined" || checkChannelStatus[0].status === "live") {
                 limit.add(userData[0].user_alias)
                 await doQuery(`UPDATE cookie_reminders SET status="fired" WHERE user_alias="${userData[0].user_alias}" AND status="scheduled"`);
                 kb.whisper(getUsername[0].username, `cookie reminder - eat cookie please :) 🍪 (this reminder fired in a channel that is live [${userData[0].channel}])`)
