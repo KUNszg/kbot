@@ -148,7 +148,7 @@ kb.on('message', (channel, user, message) => {
 
 // inserting cached rows every interval to database instead of real-time logging
 const updateLogs = () => {
-	cache.forEach(data => {
+	cache.forEach(async(data) => {
 		await custom.doQuery(`INSERT INTO logs_${data['channel']} (username, message, date) VALUES ("${data['username']}", "${data['message']}", "${data['date']}")`);
 	})
 }
