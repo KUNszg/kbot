@@ -149,21 +149,10 @@ kb.on('message', (channel, user, message) => {
 // inserting cached rows every interval to database instead of real-time logging
 const updateLogs = () => {
 	cache.forEach(data => {
-		const sql = "INSERT INTO logs_" + data['channel'] + " (username, message, date) VALUES (?, ?, ?)";
-		const inserts = [data['username'], data['message'], data['date']];
-		con.query(mysql.format(sql, inserts), (error, results, fields) => {
-			if (error) {
-				custom.errorLog(error);
-				return;
-			}
-		})
+		await custom.doQuery(`INSERT INTO logs_${data['channel']} (username, message, date) VALUES ("${data['username']}", "${data['message']}", "${data['date']}")`);
 	})
 }
-
 setInterval(()=>{
-    if (cache.length>800) {
-        kb.say('kunszg', `${cache.length} messages in cache peepoSadDank`);
-    }
 	if (cache.length>200) {
 		updateLogs();
 		cache.length = 0;
