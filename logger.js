@@ -146,12 +146,23 @@ kb.on('message', (channel, user, message) => {
 	});
 })
 
+
+
 // inserting cached rows every interval to database instead of real-time logging
 const updateLogs = () => {
 	cache.forEach(async(data) => {
 		const sql = `INSERT INTO logs_${data['channel']} (username, message, date) VALUES (?, ?, ?)`;
         const inserts = [data['username'], data['message'], data['date']];
         await doQuery(mysql.format(sql, inserts))
+
+        // matching bad words
+        const badWord = data['message'].match(/(?:(?:\b(?<![-=\.])|monka)(?:[Nnñ]|[Ii7]V)|[\/|]\\[\/|])[\s\.]*?[liI1y!j\/|]+[\s\.]*?(?:[GgbB6934Q🅱qğĜƃ၅5\*][\s\.]*?){2,}(?!arcS|l|Ktlw|ylul|ie217|64|\d? ?times)/);
+
+        if (badWord) {
+            const sqlBruh = `INSERT INTO bruh (username, channel, message, date) VALUES (?, ?, ?, CURRENT_TIMESTAMP)`;
+            const insertsBruh = [data['username'], data['channel'], data['message']];
+            await doQuery(mysql.format(sqlBruh, insertsBruh))
+        }
 	})
 }
 setInterval(()=>{
