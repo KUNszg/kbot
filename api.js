@@ -191,10 +191,11 @@ const generateRandomString = (length) => {
       return text;
 }
 
-const sha = generateRandomString(15);
 
 // kunszg.xyz/resolved
 app.get("/resolved", async (req, res) => {
+    const sha = generateRandomString(15);
+
     const fetch = require('node-fetch')
     const creds = require('./lib/credentials/config.js');
     const custom = require('./lib/utils/functions.js');
