@@ -243,8 +243,7 @@ app.get("/resolved", async (req, res) => {
             VALUES ("${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${sha}")
             `);
 
-        res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private')
-        return;
+        res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private');
     }
 
     const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${req.query.code}&redirect_uri=https://kunszg.xyz/integration`
@@ -278,6 +277,8 @@ app.get("/resolved", async (req, res) => {
         SET access_token="${tokenSpotify.access_token}", refresh_token="${code.refresh_token}", scopes="${tokenSpotify.scope}", premium="${(checkPremium.product === "open") ? "N" : "Y"}"
         WHERE sha="${sha}"
         `);
+
+    res.redirect('/integration')
 });
 
 
