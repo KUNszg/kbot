@@ -197,11 +197,11 @@ app.get("/resolved", async (req, res) => {
     const creds = require('./lib/credentials/config.js');
     const custom = require('./lib/utils/functions.js');
 
-    if (typeof req.query.access_token === 'undefined' && typeof req.query.code === 'undefined') {
+    if (typeof req.query.code === 'undefined' && typeof req.query.code === 'undefined') {
         res.redirect('/error')
     }
 
-    const api = `https://id.twitch.tv/oauth2/token?grant_type=refresh_token&client_id=${creds.client_id}&client_secret=${creds.client_secret}&refresh_token=${req.query.access_token}`;
+    const api = `https://id.twitch.tv/oauth2/token?grant_type=refresh_token&client_id=${creds.client_id}&client_secret=${creds.client_secret}&refresh_token=${req.query.code}`;
     const refresh_token = await fetch(api, {
         method: "POST",
         url: api,
@@ -209,15 +209,6 @@ app.get("/resolved", async (req, res) => {
             "Content-Type": "application/x-www-form-urlencoded"
         },
     }).then(response => response.json());
-
-    const token = await fetch(`https://id.twitch.tv/oauth2/token?client_secret=${creds.client_secret}&grant_type=refresh_token&refresh_token=${refresh_token.refresh_token}`, {
-        method: "POST",
-        url: "https://id.twitch.tv/oauth2/token",
-        headers: {
-            "Client-ID": creds.client_id,
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-    }).then(response => response.json())
 
     const userData = await fetch(`https://api.twitch.tv/helix/users?client_secret=${creds.client_secret}`, {
         method: "GET",
