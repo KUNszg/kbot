@@ -196,7 +196,6 @@ const shaCache = [];
 // kunszg.xyz/resolved
 app.get("/resolved", async (req, res) => {
     const sha = generateRandomString(15);
-    shaCache.push(sha)
 
     const fetch = require('node-fetch')
     const creds = require('./lib/credentials/config.js');
@@ -239,50 +238,42 @@ app.get("/resolved", async (req, res) => {
         res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private');
     }
 
-    const getSha2 = await custom.doQuery(`
-        SELECT *
-        FROM access_token
+    const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${req.query.code}&redirect_uri=https://kunszg.xyz/resolved`
+    const code = await fetch(api, {
+        method: "POST",
+        url: api,
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+    }).then(response => response.json());
+
+    const tokenSpotify = await fetch(`https://accounts.spotify.com/api/token?grant_type=refresh_token&refresh_token=${code.refresh_token}&client_secret=${creds.client_secret_spotify}&client_id=${creds.client_id_spotify}`, {
+        method: "POST",
+        url: `https://accounts.spotify.com/api/token`,
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+    }).then(response => response.json())
+
+    const checkPremium = await fetch("https://api.spotify.com/v1/me", {
+        method: "GET",
+        url: "https://api.spotify.com/v1/me",
+        headers: {
+            "Authorization": `Bearer ${tokenSpotify.access_token}`,
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+    }).then(response => response.json());
+
+    await custom.doQuery(`
+        UPDATE access_token
+        SET access_token="${tokenSpotify.access_token}", refresh_token="${code.refresh_token}", scopes="${tokenSpotify.scope}", premium="${(checkPremium.product === "open") ? "N" : "Y"}"
+        WHERE sha="${sha}"
         `);
 
-    const findSha = shaCache.map(a => {getSha2.filter(i => i.sha.includes(a))})
+    res.redirect('/integration');
+    shaCache.length = 0;
+    return;
 
-    if (findSha.length) {
-        const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${req.query.code}&redirect_uri=https://kunszg.xyz/resolved`
-        const code = await fetch(api, {
-            method: "POST",
-            url: api,
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-        }).then(response => response.json());
-
-        const tokenSpotify = await fetch(`https://accounts.spotify.com/api/token?grant_type=refresh_token&refresh_token=${code.refresh_token}&client_secret=${creds.client_secret_spotify}&client_id=${creds.client_id_spotify}`, {
-            method: "POST",
-            url: `https://accounts.spotify.com/api/token`,
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-        }).then(response => response.json())
-
-        const checkPremium = await fetch("https://api.spotify.com/v1/me", {
-            method: "GET",
-            url: "https://api.spotify.com/v1/me",
-            headers: {
-                "Authorization": `Bearer ${tokenSpotify.access_token}`,
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-        }).then(response => response.json());
-
-        await custom.doQuery(`
-            UPDATE access_token
-            SET access_token="${tokenSpotify.access_token}", refresh_token="${code.refresh_token}", scopes="${tokenSpotify.scope}", premium="${(checkPremium.product === "open") ? "N" : "Y"}"
-            WHERE sha="${sha}"
-            `);
-
-        res.redirect('/integration');
-        shaCache.length = 0;
-        return;
-    }
 });
 
 
