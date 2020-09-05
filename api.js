@@ -224,7 +224,7 @@ app.get("/resolved", async (req, res) => {
         url: "https://id.twitch.tv/oauth2/token",
         headers: {
             "Client-ID": creds.client_id,
-            "Authorization": "Bearer 1zv1fiz5sid2ebaupy17blrkjt7f9z",
+            "Authorization": `Bearer ${token.access_token}`,
             "Content-Type": "application/x-www-form-urlencoded"
         },
     }).then(response => response.json())
