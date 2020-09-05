@@ -220,14 +220,15 @@ app.get("/resolved", async (req, res) => {
     }).then(response => response.json())
 
     res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/spotify_resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private');
+    res.finished = true
 });
 
 app.get('/spotify_resolved', async (req, res) => {
-    res.redirect('/spotify')
     if (typeof req.query.code === 'undefined') {
         res.redirect('/error')
     }
-
+    res.redirect('/spotify')
+    res.finished = true
     const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${req.query.code}&redirect_uri=https://kunszg.xyz/integration`
     const code = await fetch(api, {
         method: "POST",
