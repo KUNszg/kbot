@@ -209,12 +209,14 @@ app.get("/resolved", async (req, res) => {
         },
     }).then(response => response.json());
 
+    console.log(refresh_token)
+
     const userData = await fetch(`https://api.twitch.tv/helix/users?client_secret=${creds.client_secret}`, {
         method: "GET",
         url: "https://id.twitch.tv/oauth2/token",
         headers: {
             "Client-ID": creds.client_id,
-            "Authorization": `Bearer ${token.access_token}`,
+            "Authorization": `Bearer ${refresh_token.access_token}`,
             "Content-Type": "application/x-www-form-urlencoded"
         },
     }).then(response => response.json())
