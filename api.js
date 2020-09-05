@@ -197,7 +197,7 @@ app.get("/resolved", async (req, res) => {
     const creds = require('./lib/credentials/config.js');
     const custom = require('./lib/utils/functions.js');
 
-    const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${req.query.code}&redirect_uri=http://localhost`
+    const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${req.query.code}`
     const song = await fetch(api, {
         method: "POST",
         url: api,
