@@ -219,9 +219,6 @@ app.get("/resolved", async (req, res) => {
         },
     }).then(response => response.json())
 
-    console.log(token)
-    console.log(refresh_token)
-
     const userData = await fetch(`https://api.twitch.tv/helix/users?client_secret=${creds.client_secret}`, {
         method: "GET",
         url: "https://id.twitch.tv/oauth2/token",
@@ -232,7 +229,7 @@ app.get("/resolved", async (req, res) => {
         },
     }).then(response => response.json())
 
-    await res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private')
+    res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private')
 
     if (typeof req.query.code != 'undefined') {
         const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${req.query.code}&redirect_uri=https://kunszg.xyz/resolved`
