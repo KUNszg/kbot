@@ -234,8 +234,10 @@ app.get("/resolved", async (req, res) => {
 
     app.get("/spotify_resolved", async (request, resolve) => {
         if (typeof request.query.code === 'undefined') {
-            resolve.redirect('/error')
+            res.redirect('/error')
         }
+
+        res.redirect('/integration');
 
         const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${request.query.code}&redirect_uri=https://kunszg.xyz/integration`
         const code = await fetch(api, {
@@ -267,8 +269,6 @@ app.get("/resolved", async (req, res) => {
             INSERT INTO access_token (access_token, refresh_token, scopes, userName, platform, user, premium)
             VALUES ("${tokenSpotify.access_token}", "${tokenSpotify.refresh_token}", "${tokenSpotify.scope}", "${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${(checkPremium.product === "open") ? "N" : "Y"}")
             `);
-
-        res.redirect('/integration');
     })
 
 });
