@@ -197,7 +197,7 @@ app.get("/resolved", async (req, res) => {
     const creds = require('./lib/credentials/config.js');
     const custom = require('./lib/utils/functions.js');
 
-    if (typeof req.query.code === 'undefined' && typeof req.query.code === 'undefined') {
+    if (typeof req.query.code === 'undefined') {
         res.redirect('/error')
     }
 
@@ -218,6 +218,8 @@ app.get("/resolved", async (req, res) => {
             "Content-Type": "application/x-www-form-urlencoded"
         },
     }).then(response => response.json())
+    console.log(userData)
+    console.log(refresh_token)
 
     res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private')
 
