@@ -201,6 +201,8 @@ app.get("/resolved", async (req, res) => {
         res.redirect('/error')
     }
 
+    res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/spotify_resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private');
+
     const refresh_token = await fetch(`https://id.twitch.tv/oauth2/token?client_id=${creds.client_id}&client_secret=${creds.client_secret}&code=${req.query.code}&grant_type=authorization_code&redirect_uri=https://kunszg.xyz/resolved`, {
         method: "POST",
         url: `https://id.twitch.tv/oauth2/token?client_id=${creds.client_id}&client_secret=${creds.client_secret}&code=${req.query.code}&grant_type=authorization_code&redirect_uri=https://kunszg.xyz/resolved`,
@@ -256,8 +258,6 @@ app.get("/resolved", async (req, res) => {
             VALUES ("${tokenSpotify.access_token}", "${code.refresh_token}", "${tokenSpotify.scope}", "${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${(checkPremium.product === "open") ? "N" : "Y"}")
             `);
     })
-
-    res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/spotify_resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private');
 
 });
 
