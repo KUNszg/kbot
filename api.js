@@ -198,7 +198,7 @@ app.get("/resolved", async (req, res) => {
     const custom = require('./lib/utils/functions.js');
 
     if (typeof req.query.code === 'undefined') {
-        res.redirect('/error')
+        return;
     }
 
     const refresh_token = await fetch(`https://id.twitch.tv/oauth2/token?client_id=${creds.client_id}&client_secret=${creds.client_secret}&code=${req.query.code}&grant_type=authorization_code&redirect_uri=https://kunszg.xyz/resolved`, {
@@ -227,8 +227,7 @@ app.get('/spotify_resolved', async (req, res) => {
     if (typeof req.query.code === 'undefined') {
         res.redirect('/error')
     }
-    res.redirect('/spotify')
-    res.finished = true
+
     const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${req.query.code}&redirect_uri=https://kunszg.xyz/integration`
     const code = await fetch(api, {
         method: "POST",
