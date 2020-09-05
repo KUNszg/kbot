@@ -181,22 +181,29 @@ const apiDataColors = (data) => {
 	});
 }
 
-const generateRandomString = (length) => {
-      let text = "";
-      const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+const sha = () => {
+    const shaCache = [];
+    const generateRandomString = (length) => {
+          let text = "";
+          const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-      for (let i = 0; i < length; i++) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-      }
-      return text;
+          for (let i = 0; i < length; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+          }
+          return text;
+    }
+    let sha = generateRandomString(15);
+    shaCache.push(sha)
+
+    if (shaCache.length === 3) {
+        shaCache.length = 0
+    }
+
+    return shaCache[0]
 }
-
-const shaCache = [];
 
 // kunszg.xyz/resolved
 app.get("/resolved", async (req, res) => {
-    const sha = generateRandomString(15);
-
     const fetch = require('node-fetch')
     const creds = require('./lib/credentials/config.js');
     const custom = require('./lib/utils/functions.js');
@@ -204,7 +211,7 @@ app.get("/resolved", async (req, res) => {
     const getSha = await custom.doQuery(`
         SELECT *
         FROM access_token
-        WHERE sha="${sha}"
+        WHERE sha="${sha()}"
         `);
 
     if (!getSha.length) {
@@ -232,7 +239,7 @@ app.get("/resolved", async (req, res) => {
 
         await doQuery(`
             INSERT INTO access_token (userName, platform, user, sha)
-            VALUES ("${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${sha}")
+            VALUES ("${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${sha()}")
             `);
 
         res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private');
@@ -267,11 +274,10 @@ app.get("/resolved", async (req, res) => {
     await custom.doQuery(`
         UPDATE access_token
         SET access_token="${tokenSpotify.access_token}", refresh_token="${code.refresh_token}", scopes="${tokenSpotify.scope}", premium="${(checkPremium.product === "open") ? "N" : "Y"}"
-        WHERE sha="${sha}"
+        WHERE sha="${sha()}"
         `);
 
     res.redirect('/integration');
-    shaCache.length = 0;
     return;
 
 });
