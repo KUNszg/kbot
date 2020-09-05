@@ -254,7 +254,7 @@ app.get("/resolved", async (req, res) => {
 
         await custom.doQuery(`
             INSERT INTO access_token (access_token, refresh_token, scopes, userName, platform, user, premium)
-            VALUES ("${tokenSpotify.access_token}", "${code.refresh_token}", "${tokenSpotify.scope}", "${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${(spotify().product === "open") ? "N" : "Y"}")
+            VALUES ("${tokenSpotify.access_token}", "${code.refresh_token}", "${tokenSpotify.scope}", "${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${(checkPremium.product === "open") ? "N" : "Y"}")
             `);
 
         resolve.redirect('/integration');
