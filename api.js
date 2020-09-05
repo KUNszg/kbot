@@ -206,11 +206,11 @@ app.get("/resolved", async (req, res) => {
         },
     }).then(response => response.json());
     await custom.doQuery(`
-        INSERT INTO error_logs (error_message, date)
+        INSERT INTO refresh_tokens (token, date)
         VALUES ("${code.refresh_token}", CURRENT_TIMESTAMP)
         `);
 
-    kb.whisper('kunszg', 'new refresh token in error_logs');
+    kb.whisper('kunszg', 'new refresh token in refresh_tokens');
     res.redirect('/integration')
 });
 
