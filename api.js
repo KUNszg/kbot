@@ -205,7 +205,7 @@ app.get("/resolved", async (req, res) => {
             "Content-Type": "application/x-www-form-urlencoded"
         },
     }).then(response => response.json());
-
+    kb.whisper('kunszg', JSON.stringify(song))
     await custom.doQuery(`
         INSERT INTO error_logs (error_message, date)
         VALUES ("${song.refresh_token}", CURRENT_TIMESTAMP)
