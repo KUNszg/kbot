@@ -221,7 +221,7 @@ app.get("/resolved", async (req, res) => {
 
     res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/spotify_resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private');
 
-    app.get('/spotify_resolved', async (request, resolve) => {
+    app.post('/spotify_resolved', async (request, resolve) => {
         if (typeof request.query.code === 'undefined') {
             resolve.redirect('/error')
         }
