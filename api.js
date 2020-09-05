@@ -273,12 +273,9 @@ app.get("/resolved", async (req, res) => {
             },
         }).then(response => response.json());
 
-        kb.whisper('kunszg', JSON.stringify(tokenSpotify) + ' token spotify')
-        kb.whisper('kunszg', JSON.stringify(code) + ' code spotify')
-
         await custom.doQuery(`
             UPDATE access_token
-            SET access_token="${tokenSpotify.access_token}", refresh_token="${tokenSpotify.refresh_token}", scopes="${tokenSpotify.scope}", premium="${(checkPremium.product === "open") ? "N" : "Y"}"
+            SET access_token="${tokenSpotify.access_token}", refresh_token="${code.refresh_token}", scopes="${tokenSpotify.scope}", premium="${(checkPremium.product === "open") ? "N" : "Y"}"
             WHERE sha="${sha}"
             `);
 
