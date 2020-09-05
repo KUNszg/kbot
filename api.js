@@ -225,19 +225,16 @@ app.get("/resolved", async (req, res) => {
         WHERE user="${userData.data[0].id}"
         `);
 
-    if (!checkIfUserExists.length) {
-        res.redirect('https://kunszg.xyz/spotify');
-        return
-    }
-
     res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/spotify_resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private')
+
+    setTimeout(() => {
+        res.redirect('/integration');
+    }, 1500);
 
     app.get("/spotify_resolved", async (request, resolve) => {
         if (typeof request.query.code === 'undefined') {
             res.redirect('/error')
         }
-
-        res.redirect('https://kunszg.xyz/integration');
 
         const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${request.query.code}&redirect_uri=https://kunszg.xyz/integration`
         const code = await fetch(api, {
