@@ -234,7 +234,7 @@ app.get("/resolved", async (req, res) => {
     }).then(response => response.json())
 
     await custom.doQuery(`
-        INSERT INTO (userName, platform, user, sha)
+        INSERT INTO access_token (userName, platform, user, sha)
         VALUES ("${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${sha}")
         `);
 
