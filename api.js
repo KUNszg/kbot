@@ -246,42 +246,44 @@ app.get("/resolved", async (req, res) => {
         res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private');
     }
 
-    const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${req.query.code}&redirect_uri=https://kunszg.xyz/integration`
-    const code = await fetch(api, {
-        method: "POST",
-        url: api,
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-    }).then(response => response.json());
+    if (getSha.length) {
+        const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${req.query.code}&redirect_uri=https://kunszg.xyz/integration`
+        const code = await fetch(api, {
+            method: "POST",
+            url: api,
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+        }).then(response => response.json());
 
-    const tokenSpotify = await fetch(`https://accounts.spotify.com/api/token?grant_type=refresh_token&refresh_token=${code.refresh_token}&client_secret=${creds.client_secret_spotify}&client_id=${creds.client_id_spotify}`, {
-        method: "POST",
-        url: `https://accounts.spotify.com/api/token`,
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-    }).then(response => response.json())
+        const tokenSpotify = await fetch(`https://accounts.spotify.com/api/token?grant_type=refresh_token&refresh_token=${code.refresh_token}&client_secret=${creds.client_secret_spotify}&client_id=${creds.client_id_spotify}`, {
+            method: "POST",
+            url: `https://accounts.spotify.com/api/token`,
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+        }).then(response => response.json())
 
-    const checkPremium = await fetch("https://api.spotify.com/v1/me", {
-        method: "GET",
-        url: "https://api.spotify.com/v1/me",
-        headers: {
-            "Authorization": `Bearer ${tokenSpotify.access_token}`,
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-    }).then(response => response.json());
+        const checkPremium = await fetch("https://api.spotify.com/v1/me", {
+            method: "GET",
+            url: "https://api.spotify.com/v1/me",
+            headers: {
+                "Authorization": `Bearer ${tokenSpotify.access_token}`,
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+        }).then(response => response.json());
 
-    kb.whisper('kunszg', JSON.stringify(tokenSpotify))
-    kb.whisper('kunszg', JSON.stringify(code))
+        kb.whisper('kunszg', JSON.stringify(tokenSpotify) + ' token spotify')
+        kb.whisper('kunszg', JSON.stringify(code) + ' code spotify')
 
-    await custom.doQuery(`
-        UPDATE access_token
-        SET access_token="${tokenSpotify.access_token}", refresh_token="${tokenSpotify.refresh_token}", scopes="${tokenSpotify.scope}", premium="${(checkPremium.product === "open") ? "N" : "Y"}"
-        WHERE sha="${sha}"
-        `);
+        await custom.doQuery(`
+            UPDATE access_token
+            SET access_token="${tokenSpotify.access_token}", refresh_token="${tokenSpotify.refresh_token}", scopes="${tokenSpotify.scope}", premium="${(checkPremium.product === "open") ? "N" : "Y"}"
+            WHERE sha="${sha}"
+            `);
 
-    res.redirect('/integration')
+        res.redirect('/integration')
+    }
 });
 
 
