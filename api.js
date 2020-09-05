@@ -21,19 +21,8 @@ con.connect((err) => {
 const doQuery = (query) => new Promise((resolve, reject) => {
     con.query(query, (err, results, fields) => {
         if (err) {
-        	const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
-			const insert = [JSON.stringify(err), new Date()];
-			con.query(mysql.format(sql, insert),
-				(error, results, fields) => {
-					if (error) {
-						reject(error)
-					} else {
-						resolve(results)
-					}
-				})
-            reject(err);
-        }
-        else {
+        	return;
+        } else {
             resolve(results);
         }
     });
@@ -238,18 +227,7 @@ app.get("/resolved", async (req, res) => {
             },
         }).then(response => response.json())
 
-        const checkUser = await custom.doQuery(`
-            SELECT *
-            FROM access_token
-            WHERE user="${userData.data[0].id}"
-            `);
-
-        if (!checkUser.length) {
-            res.redirect('/integration');
-            return;
-        }
-
-        await custom.doQuery(`
+        await doQuery(`
             INSERT INTO access_token (userName, platform, user, sha)
             VALUES ("${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${sha}")
             `);
