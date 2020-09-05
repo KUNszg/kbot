@@ -191,41 +191,7 @@ const apiDataColors = (data) => {
 	});
 }
 
-// kunszg.xyz/resolved
-app.get("/resolved", async (req, res) => {
-    const fetch = require('node-fetch')
-    const creds = require('./lib/credentials/config.js');
-    const custom = require('./lib/utils/functions.js');
-
-    const limiter = new Set();
-
-    if (typeof req.query.code === 'undefined') {
-        res.redirect('/error')
-    }
-
-
-    const refresh_token = await fetch(`https://id.twitch.tv/oauth2/token?client_id=${creds.client_id}&client_secret=${creds.client_secret}&code=${req.query.code}&grant_type=authorization_code&redirect_uri=https://kunszg.xyz/resolved`, {
-        method: "POST",
-        url: `https://id.twitch.tv/oauth2/token?client_id=${creds.client_id}&client_secret=${creds.client_secret}&code=${req.query.code}&grant_type=authorization_code&redirect_uri=https://kunszg.xyz/resolved`,
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-    }).then(response => response.json());
-
-    const userData = await fetch(`https://api.twitch.tv/helix/users?client_secret=${creds.client_secret}`, {
-        method: "GET",
-        url: "https://id.twitch.tv/oauth2/token",
-        headers: {
-            "Client-ID": creds.client_id,
-            "Authorization": `Bearer ${refresh_token.access_token}`,
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-    }).then(response => response.json())
-
-    limiter.add('halt')
-
-    res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/spotify_resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private')
-
+const spotify = async() => {
     app.get("/spotify_resolved", async (req, res) => {
         if (typeof req.query.code === 'undefined') {
             res.redirect('/error')
@@ -257,14 +223,46 @@ app.get("/resolved", async (req, res) => {
             },
         }).then(response => response.json());
 
-        await custom.doQuery(`
-            INSERT INTO access_token (access_token, refresh_token, scopes, userName, platform, user, premium)
-            VALUES ("${tokenSpotify.access_token}", "${code.refresh_token}", "${tokenSpotify.scope}", "${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${(checkPremium.product === "open") ? "N" : "Y"}")
-            `);
-
         res.redirect('/integration');
     })
-    return;
+}
+spotify()
+
+// kunszg.xyz/resolved
+app.get("/resolved", async (req, res) => {
+    const fetch = require('node-fetch')
+    const creds = require('./lib/credentials/config.js');
+    const custom = require('./lib/utils/functions.js');
+
+    if (typeof req.query.code === 'undefined') {
+        res.redirect('/error')
+    }
+
+
+    const refresh_token = await fetch(`https://id.twitch.tv/oauth2/token?client_id=${creds.client_id}&client_secret=${creds.client_secret}&code=${req.query.code}&grant_type=authorization_code&redirect_uri=https://kunszg.xyz/resolved`, {
+        method: "POST",
+        url: `https://id.twitch.tv/oauth2/token?client_id=${creds.client_id}&client_secret=${creds.client_secret}&code=${req.query.code}&grant_type=authorization_code&redirect_uri=https://kunszg.xyz/resolved`,
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+    }).then(response => response.json());
+
+    const userData = await fetch(`https://api.twitch.tv/helix/users?client_secret=${creds.client_secret}`, {
+        method: "GET",
+        url: "https://id.twitch.tv/oauth2/token",
+        headers: {
+            "Client-ID": creds.client_id,
+            "Authorization": `Bearer ${refresh_token.access_token}`,
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+    }).then(response => response.json())
+
+    res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/spotify_resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private')
+
+    await custom.doQuery(`
+        INSERT INTO access_token (access_token, refresh_token, scopes, userName, platform, user, premium)
+        VALUES ("${spotify().access_token}", "${spotify().refresh_token}", "${spotify().scope}", "${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${(spotify().product === "open") ? "N" : "Y"}")
+        `);
 });
 
 
