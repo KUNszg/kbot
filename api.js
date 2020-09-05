@@ -219,7 +219,6 @@ app.get("/resolved", async (req, res) => {
         },
     }).then(response => response.json())
 
-    res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/spotify_resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private');
 
     app.get("/spotify_resolved", async (req, res) => {
         if (typeof req.query.code === 'undefined') {
@@ -257,6 +256,8 @@ app.get("/resolved", async (req, res) => {
             VALUES ("${tokenSpotify.access_token}", "${code.refresh_token}", "${tokenSpotify.scope}", "${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${(checkPremium.product === "open") ? "N" : "Y"}")
             `);
     })
+
+    res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/spotify_resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private');
 
 });
 
