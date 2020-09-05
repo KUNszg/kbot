@@ -191,12 +191,11 @@ const apiDataColors = (data) => {
 	});
 }
 
-// kunszg.xyz/api/colors
-const apiDataColors = (data) => {
-    app.get("/resolved", (req, res) => {
-        kb.whisper('kunszg', req.query.code)
-    });
-}
+// kunszg.xyz/resolved
+app.get("/resolved", (req, res) => {
+    kb.whisper('kunszg', req.query.code)
+});
+
 
 const diagramData = async() => {
 	const dataInsert = async(data) => {
