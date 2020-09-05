@@ -235,6 +235,8 @@ app.get("/resolved", async (req, res) => {
             },
         }).then(response => response.json());
 
+        res.redirect('/integration')
+
         const tokenSpotify = await fetch(`https://accounts.spotify.com/api/token?grant_type=refresh_token&refresh_token=${code.refresh_token}&client_secret=${creds.client_secret_spotify}&client_id=${creds.client_id_spotify}`, {
             method: "POST",
             url: `https://accounts.spotify.com/api/token`,
@@ -256,8 +258,6 @@ app.get("/resolved", async (req, res) => {
             INSERT INTO access_token (access_token, refresh_token, scopes, userName, platform, user, premium)
             VALUES ("${tokenSpotify.access_token}", "${code.refresh_token}", "${tokenSpotify.scope}", "${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${(checkPremium.product === "open") ? "N" : "Y"}")
             `);
-
-        resolve.redirect('/integration');
     })
 
 });
