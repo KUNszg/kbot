@@ -276,9 +276,7 @@ app.get("/resolved", async (req, res) => {
         WHERE sha="${sha()}"
         `);
 
-    res.redirect('/integration');
     return;
-
 });
 
 
