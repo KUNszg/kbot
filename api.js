@@ -218,8 +218,6 @@ app.get("/resolved", async (req, res) => {
             "Content-Type": "application/x-www-form-urlencoded"
         },
     }).then(response => response.json())
-    console.log(userData)
-    console.log(refresh_token)
 
     res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private')
 
@@ -259,10 +257,6 @@ app.get("/resolved", async (req, res) => {
     return;
 });
 
-        await custom.doQuery(`
-            INSERT INTO refresh_tokens (token, date)
-            VALUES ("${code.refresh_token}", CURRENT_TIMESTAMP)
-            `);
 const diagramData = async() => {
 	const dataInsert = async(data) => {
 		const info = await doQuery(`SELECT count(*) As data FROM user_list WHERE color="${data}"`);
