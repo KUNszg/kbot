@@ -123,7 +123,7 @@ const tableData = [];
 commandNames.map(i => tableData.push({'command': commands[i].name.replace('kb ', ''), 'cooldown': commands[i].cooldown/1000+'sec'}));
 
 const headers = { "command": "command", "cooldown": "cooldown"};
- 
+
 const Table = require('table-builder');
 
 const send = () => {
@@ -139,8 +139,8 @@ const send = () => {
           		</head>
           		<body class="bd">
 	          		${(new Table({'class': 'command-table'}))
-					    .setHeaders(headers) 
-					    .setData(tableData) 
+					    .setHeaders(headers)
+					    .setData(tableData)
 					    .render()}
 				</body>
 			</html>
@@ -189,6 +189,13 @@ const apiDataColors = (data) => {
 	 		data
 		);
 	});
+}
+
+// kunszg.xyz/api/colors
+const apiDataColors = (data) => {
+    app.get("/resolved", (req, res) => {
+        kb.whisper('kunszg', req.query.code)
+    });
 }
 
 const diagramData = async() => {
