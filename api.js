@@ -219,21 +219,11 @@ app.get("/resolved", async (req, res) => {
         },
     }).then(response => response.json())
 
-    const checkIfUserExists = await custom.doQuery(`
-        SELECT *
-        FROM access_token
-        WHERE user="${userData.data[0].id}"
-        `);
-
     res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/spotify_resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private')
-
-    setTimeout(() => {
-        res.redirect('/integration');
-    }, 1500);
 
     app.get("/spotify_resolved", async (request, resolve) => {
         if (typeof request.query.code === 'undefined') {
-            res.redirect('/error')
+            resolve.redirect('/error')
         }
 
         const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${request.query.code}&redirect_uri=https://kunszg.xyz/integration`
@@ -253,6 +243,8 @@ app.get("/resolved", async (req, res) => {
             },
         }).then(response => response.json())
 
+        kb.whisper('kunszg', JSON.stringify(tokenSpotify))
+
         const checkPremium = await fetch("https://api.spotify.com/v1/me", {
             method: "GET",
             url: "https://api.spotify.com/v1/me",
@@ -264,8 +256,10 @@ app.get("/resolved", async (req, res) => {
 
         await custom.doQuery(`
             INSERT INTO access_token (access_token, refresh_token, scopes, userName, platform, user, premium)
-            VALUES ("${tokenSpotify.access_token}", "${tokenSpotify.refresh_token}", "${tokenSpotify.scope}", "${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${(checkPremium.product === "open") ? "N" : "Y"}")
+            VALUES ("${tokenSpotify.access_token}", "${tokenSpotify.refresh_token}", "${tokenSpotify.scope}", "${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${(spotify().product === "open") ? "N" : "Y"}")
             `);
+
+        resolve.redirect('/integration');
     })
 
 });
