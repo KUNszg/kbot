@@ -247,7 +247,7 @@ app.get("/resolved", async (req, res) => {
     }
 
     if (getSha.length) {
-        const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${req.query.code}&redirect_uri=https://kunszg.xyz/integration`
+        const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${req.query.code}&redirect_uri=https://kunszg.xyz/spotify_resolved`
         const code = await fetch(api, {
             method: "POST",
             url: api,
