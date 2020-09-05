@@ -21,7 +21,6 @@ con.connect((err) => {
 const doQuery = (query) => new Promise((resolve, reject) => {
     con.query(query, (err, results, fields) => {
         if (err) {
-            console.log(err)
         	return;
         } else {
             resolve(results);
