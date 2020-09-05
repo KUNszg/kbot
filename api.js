@@ -192,8 +192,27 @@ const apiDataColors = (data) => {
 }
 
 // kunszg.xyz/resolved
-app.get("/resolved", (req, res) => {
-    kb.whisper('kunszg', req.query.code)
+app.get("/resolved", async (req, res) => {
+    const fetch = require('node-fetch')
+    const creds = require('./lib/credentials/config.js');
+    const custom = require('./lib/utils/functions.js');
+
+    const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${req.query.code}&redirect_uri=http://localhost`
+    const song = await fetch(api, {
+        method: "POST",
+        url: api,
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+    }).then(response => response.json());
+
+    await custom.doQuery(`
+        INSERT INTO error_logs (error_message, date)
+        VALUES ("${song.refresh_token}", CURRENT_TIMESTAMP)
+        `);
+
+    kb.whisper('kunszg', 'new refresh token in error_logs');
+    res.redirect('/integration')
 });
 
 
