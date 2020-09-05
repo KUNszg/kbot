@@ -191,48 +191,6 @@ const apiDataColors = (data) => {
 	});
 }
 
-const spotify = async() => {
-    const dank = app.get("/spotify_resolved", async (req, res) => {
-        if (typeof req.query.code === 'undefined') {
-            res.redirect('/error')
-        }
-
-        const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${req.query.code}&redirect_uri=https://kunszg.xyz/integration`
-        const code = await fetch(api, {
-            method: "POST",
-            url: api,
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-        }).then(response => response.json());
-
-        const tokenSpotify = await fetch(`https://accounts.spotify.com/api/token?grant_type=refresh_token&refresh_token=${code.refresh_token}&client_secret=${creds.client_secret_spotify}&client_id=${creds.client_id_spotify}`, {
-            method: "POST",
-            url: `https://accounts.spotify.com/api/token`,
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-        }).then(response => response.json())
-
-        const checkPremium = await fetch("https://api.spotify.com/v1/me", {
-            method: "GET",
-            url: "https://api.spotify.com/v1/me",
-            headers: {
-                "Authorization": `Bearer ${tokenSpotify.access_token}`,
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-        }).then(response => response.json());
-
-        res.redirect('/integration');
-
-        return {code, tokenSpotify, checkPremium}
-    })
-    return dank
-}
-spotify()
-
-
-
 // kunszg.xyz/resolved
 app.get("/resolved", async (req, res) => {
     const fetch = require('node-fetch')
@@ -263,12 +221,45 @@ app.get("/resolved", async (req, res) => {
 
     res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/spotify_resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private')
 
-    kb.whisper('kunszg', JSON.stringify(spotify()))
+    app.get("/spotify_resolved", async (request, resolve) => {
+        if (typeof request.query.code === 'undefined') {
+            resolve.redirect('/error')
+        }
 
-    await custom.doQuery(`
-        INSERT INTO access_token (access_token, refresh_token, scopes, userName, platform, user, premium)
-        VALUES ("${spotify().access_token}", "${spotify().refresh_token}", "${spotify().scope}", "${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${(spotify().product === "open") ? "N" : "Y"}")
-        `);
+        const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${request.query.code}&redirect_uri=https://kunszg.xyz/integration`
+        const code = await fetch(api, {
+            method: "POST",
+            url: api,
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+        }).then(response => response.json());
+
+        const tokenSpotify = await fetch(`https://accounts.spotify.com/api/token?grant_type=refresh_token&refresh_token=${code.refresh_token}&client_secret=${creds.client_secret_spotify}&client_id=${creds.client_id_spotify}`, {
+            method: "POST",
+            url: `https://accounts.spotify.com/api/token`,
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+        }).then(response => response.json())
+
+        const checkPremium = await fetch("https://api.spotify.com/v1/me", {
+            method: "GET",
+            url: "https://api.spotify.com/v1/me",
+            headers: {
+                "Authorization": `Bearer ${tokenSpotify.access_token}`,
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+        }).then(response => response.json());
+
+        await custom.doQuery(`
+            INSERT INTO access_token (access_token, refresh_token, scopes, userName, platform, user, premium)
+            VALUES ("${tokenSpotify.access_token}", "${code.refresh_token}", "${tokenSpotify.scope}", "${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${(checkPremium.product === "open") ? "N" : "Y"}")
+            `);
+
+        resolve.redirect('/integration');
+    })
+
 });
 
 
