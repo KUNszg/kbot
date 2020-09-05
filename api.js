@@ -238,6 +238,17 @@ app.get("/resolved", async (req, res) => {
             },
         }).then(response => response.json())
 
+        const checkUser = await custom.doQuery(`
+            SELECT *
+            FROM access_token
+            WHERE user="${userData.data[0].id}"
+            `);
+
+        if (!checkUser.length) {
+            res.redirect('/integration');
+            return;
+        }
+
         await custom.doQuery(`
             INSERT INTO access_token (userName, platform, user, sha)
             VALUES ("${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${sha}")
