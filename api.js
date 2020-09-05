@@ -198,17 +198,16 @@ app.get("/resolved", async (req, res) => {
     const custom = require('./lib/utils/functions.js');
 
     const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=${creds.client_id_spotify}&client_secret=${creds.client_secret_spotify}&code=${req.query.code}&redirect_uri=https://kunszg.xyz/resolved`
-    const song = await fetch(api, {
+    const code = await fetch(api, {
         method: "POST",
         url: api,
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
     }).then(response => response.json());
-    kb.whisper('kunszg', JSON.stringify(song))
     await custom.doQuery(`
         INSERT INTO error_logs (error_message, date)
-        VALUES ("${song.refresh_token}", CURRENT_TIMESTAMP)
+        VALUES ("${code.refresh_token}", CURRENT_TIMESTAMP)
         `);
 
     kb.whisper('kunszg', 'new refresh token in error_logs');
