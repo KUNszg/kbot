@@ -192,7 +192,7 @@ const apiDataColors = (data) => {
 }
 
 const spotify = async() => {
-    app.get("/spotify_resolved", async (req, res) => {
+    const dank = app.get("/spotify_resolved", async (req, res) => {
         if (typeof req.query.code === 'undefined') {
             res.redirect('/error')
         }
@@ -224,9 +224,14 @@ const spotify = async() => {
         }).then(response => response.json());
 
         res.redirect('/integration');
+
+        return {code, tokenSpotify, checkPremium}
     })
+    return dank
 }
 spotify()
+
+
 
 // kunszg.xyz/resolved
 app.get("/resolved", async (req, res) => {
@@ -258,7 +263,7 @@ app.get("/resolved", async (req, res) => {
     }).then(response => response.json())
 
     res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/spotify_resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private')
-
+    console.log(spotify())
     await custom.doQuery(`
         INSERT INTO access_token (access_token, refresh_token, scopes, userName, platform, user, premium)
         VALUES ("${spotify().access_token}", "${spotify().refresh_token}", "${spotify().scope}", "${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${(spotify().product === "open") ? "N" : "Y"}")
