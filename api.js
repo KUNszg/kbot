@@ -219,6 +219,17 @@ app.get("/resolved", async (req, res) => {
         },
     }).then(response => response.json())
 
+    const checkIfUserExists = await custom.doQuery(`
+        SELECT *
+        FROM access_token
+        WHERE user="${userData.data[0].id}"
+        `);
+
+    if (!checkIfUserExists.length) {
+        res.redirect('/spotify');
+        res.render('view', { errormessage: 'You are already registered in the database for the Spotify command.' });
+    }
+
     res.redirect('https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/spotify_resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private')
 
     app.get("/spotify_resolved", async (request, resolve) => {
@@ -254,10 +265,10 @@ app.get("/resolved", async (req, res) => {
 
         await custom.doQuery(`
             INSERT INTO access_token (access_token, refresh_token, scopes, userName, platform, user, premium)
-            VALUES ("${tokenSpotify.access_token}", "${code.refresh_token}", "${tokenSpotify.scope}", "${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${(checkPremium.product === "open") ? "N" : "Y"}")
+            VALUES ("${tokenSpotify.access_token}", "${tokenSpotify.refresh_token}", "${tokenSpotify.scope}", "${userData.data[0].login}", "spotify", "${userData.data[0].id}", "${(checkPremium.product === "open") ? "N" : "Y"}")
             `);
 
-        resolve.redirect('/integration');
+        res.redirect('/integration');
     })
 
 });
