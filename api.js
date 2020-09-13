@@ -112,14 +112,15 @@ kb.on('chat', (channel, message) => {
     const tableData = [];
     for (let i=0; i<commands.length; i++) {
         tableData.push({
-                "command": commands[i].command,
-                "cooldown": `${commands[i].cooldown/1000}s`,
-                "opt-outable": `${(commands[i].optoutable === "Y") ? "YES" : "NO"}`,
+                "ID": `${i+1} 󠀀 󠀀 `,
+                "command": `<div style="text-align: center;">${commands[i].command} 󠀀 󠀀 </div>`,
+                "cooldown": `<div style="text-align: center;">${commands[i].cooldown/1000}s 󠀀 󠀀 </div>`,
+                "opt-outable": `<div style="text-align: center;">${(commands[i].optoutable === "Y") ? "yes" : "no"}  󠀀 󠀀 </div>`,
                 "description": `${commands[i].description}`
             })
     }
 
-    const headers = { "command": "command", "cooldown": "cooldown", "opt-outable": "opt-outable", "description": "description"};
+    const headers = {"ID": "ID 󠀀 󠀀 ", "command": "command 󠀀 󠀀 ", "cooldown": "cooldown 󠀀 󠀀  ", "opt-outable": "opt-outable 󠀀 󠀀 ", "description": "description"};
 
     const Table = require('table-builder');
 
@@ -130,14 +131,17 @@ kb.on('chat', (channel, message) => {
               		<head>
     	          		<title>commands</title>
     					<meta name="viewport" content="width=device-width, initial-scale=1">
-    					<link type="image/png" href="/website/html/img/3x.gif"/>
+    					<link rel="icon" type="image/png" href="/home/kunszg/kbot/website/img/3x.gif"/>
                         <style>
+                            tr {
+                                line-height: 30px;
+                            }
                             tr:nth-child(even) {background-color: #2c2c2c;}
                         </style>
               		</head>
               		<body style="background-color: #1a1a1a">
                         <div style="color: lightgray;">
-        	          		${(new Table({'style': 'line-height: 20px; border-spacing: 10px;'}))
+        	          		${(new Table({'class': 'yepcock'}))
         					    .setHeaders(headers)
         					    .setData(tableData)
         					    .render()}
