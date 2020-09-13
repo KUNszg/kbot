@@ -131,7 +131,7 @@ kb.on('chat', (channel, message) => {
               		<head>
     	          		<title>commands</title>
     					<meta name="viewport" content="width=device-width, initial-scale=1">
-    					<link rel="icon" type="image/png" href="/home/kunszg/kbot/website/img/3x.gif"/>
+    					<link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
                         <style>
                             tr {
                                 line-height: 30px;
