@@ -101,43 +101,57 @@ sleepGlob(1000)
 const msgCount = [];
 kb.on('chat', (channel, message) => {
     msgCount.push({'channel': channel.replace('#', ''), 'message':'add'})
-})
-/*
-// test
-const requireDir = require('require-dir');
-const commands = requireDir('./lib/commands');
-const commandNames = Object.keys(commands);
+});
 
-const tableData = [];
-commandNames.map(i => tableData.push({'command': commands[i].name.replace('kb ', ''), 'cooldown': commands[i].cooldown/1000+'sec'}));
+(async () => {
+    const commands = await doQuery(`
+        SELECT *
+        FROM commands
+        `);
 
-const headers = { "command": "command", "cooldown": "cooldown"};
+    const tableData = [];
+    for (let i=0; i<commands.length; i++) {
+        tableData.push({
+                "ID": `<div style="text-align: center;">${i+1}</div>`,
+                "command": `<div style="text-align: center;">${commands[i].command} 󠀀 󠀀 </div>`,
+                "cooldown": `<div style="text-align: center;">${commands[i].cooldown/1000}s 󠀀 󠀀 </div>`,
+                "opt-outable": `<div style="text-align: center;">${(commands[i].optoutable === "Y") ? "yes" : "no"}  󠀀 󠀀 </div>`,
+                "description": `${commands[i].description}`
+            })
+    }
 
-const Table = require('table-builder');
+    const headers = {"ID": "ID 󠀀 󠀀 ", "command": "command 󠀀 󠀀 ", "cooldown": "cooldown 󠀀 󠀀  ", "opt-outable": "opt-outable 󠀀 󠀀 ", "description": "description"};
 
-const send = () => {
-    app.get("/test", (req, res, next) => {
-       res.send(
-           `<!doctype html>
-          	<html>
-          		<head>
-	          		<title>commands</title>
-	          		<link rel="stylesheet" type="text/css" href="./style.css">
-					<meta name="viewport" content="width=device-width, initial-scale=1">
-					<link rel="icon" type="image/png" href="./website/html/img/3x.gif"/>
-          		</head>
-          		<body class="bd">
-	          		${(new Table({'class': 'command-table'}))
-					    .setHeaders(headers)
-					    .setData(tableData)
-					    .render()}
-				</body>
-			</html>
-		    `
-        );
-    });
-}
-send()*/
+    const Table = require('table-builder');
+
+        app.get("/commands", (req, res, next) => {
+           res.send(
+               `<!doctype html>
+              	<html>
+              		<head>
+    	          		<title>commands</title>
+    					<meta name="viewport" content="width=device-width, initial-scale=1">
+    					<link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
+                        <style>
+                            tr {
+                                line-height: 30px;
+                            }
+                            tr:nth-child(even) {background-color: #2c2c2c;}
+                        </style>
+              		</head>
+              		<body style="background-color: #1a1a1a">
+                        <div style="color: lightgray;">
+        	          		${(new Table({'class': 'yepcock'}))
+        					    .setHeaders(headers)
+        					    .setData(tableData)
+        					    .render()}
+                        </div>
+    				</body>
+    			</html>
+    		    `
+            );
+        });
+})();
 
 // kunszg.xyz/api/messages
 const apiDataMessages = () => {

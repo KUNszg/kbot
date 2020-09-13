@@ -27,9 +27,9 @@
 	cursor: pointer;
 }
 
-.gist-data { 
-	background-color: #272727 !important 
-} 
+.gist-data {
+	background-color: #272727 !important
+}
 
 .str { color: #cccc00 !important;}
 .kwd { color: #f92672 !important; }
@@ -44,7 +44,7 @@
 .dec { color: #606 !important; }
 
 .button1 {
-	color: white; 
+	color: white;
 }
 
 .button1:hover {
@@ -66,7 +66,7 @@
 	color: white;
 	border-left: solid dimgray 1px;
 	border-right: solid dimgray 1px;
-	border-bottom: solid dimgray 1px; 
+	border-bottom: solid dimgray 1px;
 	font-family: 'Source Sans Pro', 'sans-serif'
 }
 
@@ -135,11 +135,11 @@
 .fa-caret-down {
 	float: right;
 	padding-right: 8px;
-} 
+}
 
 /* arrow used in showing bot responses */
 .commentArrow {
-	color: green; 
+	color: green;
 	font-size: 25px;
 }
 
@@ -150,7 +150,7 @@
 
 ul.nav-pills {
 	font-size: 20px;
-	line-height: 8px;				
+	line-height: 8px;
 	border-left: 1px solid dimgray;
 	margin-top: 21px;
 	margin-left: 50px;
@@ -159,14 +159,14 @@ div.col-sm-9 div {
 	font-size: 19px;
 }
 #fourhead, #ban, #channels, #commands, #cookie_opt, #dank, #ed, #fl, #github, #banphrase, #help, #hosts {
-	color: #fff; 
+	color: #fff;
 	background-color: #272727;
 }
 
-#fourhead-usage, #fourhead-code, #ban-usage, #ban-code, #cookie_opt-usage, #cookie_opt-code, #dank-usage, #dank-code, 
+#fourhead-usage, #fourhead-code, #ban-usage, #ban-code, #cookie_opt-usage, #cookie_opt-code, #dank-usage, #dank-code,
 #fl-code, #fl-usage, #channels-usage, #channels-code, #github-code, #github-usage, #banphrase-usage, #banphrase-code, #help-code, #help-usage,
 #hosts-code, #hosts-usage {
-	color: #fff; 
+	color: #fff;
 	background-color: #272727;
 	position: relative;
 	transition-duration: 0.2s;
@@ -178,18 +178,18 @@ div.col-sm-9 div {
 }
 
 .comment.text {
-	font-size: 20px; 
-	font-weight: 300; 
-	vertical-align: middle; 
+	font-size: 20px;
+	font-weight: 300;
+	vertical-align: middle;
 	text-align: center;
 }
 
 .apiDiv {
-	font-family: 'Source Sans Pro', Helvetica, sans-serif; 
-	font-size: 50px; 
-	margin-left: 100px; 
-	text-align: left; 
-	margin-top: 100px; 
+	font-family: 'Source Sans Pro', Helvetica, sans-serif;
+	font-size: 50px;
+	margin-left: 100px;
+	text-align: left;
+	margin-top: 100px;
 	color: white;
 }
 
@@ -207,7 +207,7 @@ div.col-sm-9 div {
   padding: 0 1em;
   color: transparent;
 }
- 
+
 .expandable:target {
   line-height: 1.5;
   padding-top: 1em;
@@ -253,12 +253,12 @@ div.col-sm-9 div {
 }
 
 @-webkit-keyframes animatebottom {
-  from { bottom:-100px; opacity:0 } 
+  from { bottom:-100px; opacity:0 }
   to { bottom:0px; opacity:1 }
 }
 
-@keyframes animatebottom { 
-  from{ bottom:-100px; opacity:0 } 
+@keyframes animatebottom {
+  from{ bottom:-100px; opacity:0 }
   to{ bottom:0; opacity:1 }
 }
 
@@ -455,8 +455,8 @@ body .gist .pl-iu {
 
 @media screen and (max-width: 810px) {
 	#fourhead, #ban, #channels, #commands, #cookie_opt, #dank, #ed, #fl, #github, #banphrase, #help, #hosts,
-	#fourhead-usage, #fourhead-code, #ban-usage, #ban-code, #cookie_opt-usage, #cookie_opt-code, #dank-usage, #dank-code, #fl-code, 
-	#fl-usage, #channels-usage, #channels-code, #github-code, #github-usage, #banphrase-usage, #banphrase-code, #help-usage, #help-code, 
+	#fourhead-usage, #fourhead-code, #ban-usage, #ban-code, #cookie_opt-usage, #cookie_opt-code, #dank-usage, #dank-code, #fl-code,
+	#fl-usage, #channels-usage, #channels-code, #github-code, #github-usage, #banphrase-usage, #banphrase-code, #help-usage, #help-code,
 	#hosts-code, #hosts-usage {
 		margin-left: 150px;
 	}
