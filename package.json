@@ -20,7 +20,7 @@
     "mimic": "^2.0.9",
     "morgan": "^1.10.0",
     "mysql2": "^2.1.0",
-    "node-fetch": "2.6.0",
+    "node-fetch": ">=2.6.1",
     "opentdb-api": "^1.0.0",
     "os": "^0.1.1",
     "pi-number": "^1.0.0",
