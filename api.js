@@ -101,43 +101,50 @@ sleepGlob(1000)
 const msgCount = [];
 kb.on('chat', (channel, message) => {
     msgCount.push({'channel': channel.replace('#', ''), 'message':'add'})
-})
-/*
-// test
-const requireDir = require('require-dir');
-const commands = requireDir('./lib/commands');
-const commandNames = Object.keys(commands);
+});
 
-const tableData = [];
-commandNames.map(i => tableData.push({'command': commands[i].name.replace('kb ', ''), 'cooldown': commands[i].cooldown/1000+'sec'}));
+(async () => {
+    const commands = await doQuery(`
+        SELECT *
+        FROM commands
+        `);
 
-const headers = { "command": "command", "cooldown": "cooldown"};
+    const tableData = [];
+    for (let i=0; i<commands.length; i++) {
+        tableData.push({
+                "command": commands[i].command,
+                "cooldown": `󠀀  󠀀  󠀀  󠀀  󠀀 ${commands[i].cooldown/1000}s`,
+                "description": `󠀀  󠀀  󠀀  󠀀  󠀀 ${commands[i].description}`,
+                "opt-outable": ` 󠀀  󠀀  󠀀  󠀀  󠀀  󠀀  󠀀   󠀀  󠀀  󠀀  ${(commands[i].optoutable === "Y") ? "YES" : "NO"}`
+            })
+    }
 
-const Table = require('table-builder');
+    const headers = { "command": "command", "cooldown": "󠀀  󠀀  󠀀  󠀀  󠀀 cooldown", "description": "󠀀  󠀀  󠀀  󠀀  󠀀 description", "opt-outable": " 󠀀  󠀀  󠀀  󠀀  󠀀  󠀀  󠀀   󠀀  󠀀  󠀀 opt-outable"};
 
-const send = () => {
-    app.get("/test", (req, res, next) => {
-       res.send(
-           `<!doctype html>
-          	<html>
-          		<head>
-	          		<title>commands</title>
-	          		<link rel="stylesheet" type="text/css" href="./style.css">
-					<meta name="viewport" content="width=device-width, initial-scale=1">
-					<link rel="icon" type="image/png" href="./website/html/img/3x.gif"/>
-          		</head>
-          		<body class="bd">
-	          		${(new Table({'class': 'command-table'}))
-					    .setHeaders(headers)
-					    .setData(tableData)
-					    .render()}
-				</body>
-			</html>
-		    `
-        );
-    });
-}
-send()*/
+    const Table = require('table-builder');
+
+        app.get("/commands", (req, res, next) => {
+           res.send(
+               `<!doctype html>
+              	<html>
+              		<head>
+    	          		<title>commands</title>
+    					<meta name="viewport" content="width=device-width, initial-scale=1">
+    					<link type="image/png" href="/website/html/img/3x.gif"/>
+              		</head>
+              		<body style="background-color: #1a1a1a">
+                        <div style="color: lightgray;">
+        	          		${(new Table({'style': 'line-height: 20px; border-spacing: 10px;'}))
+        					    .setHeaders(headers)
+        					    .setData(tableData)
+        					    .render()}
+                        </div>
+    				</body>
+    			</html>
+    		    `
+            );
+        });
+})();
 
 // kunszg.xyz/api/messages
 const apiDataMessages = () => {
