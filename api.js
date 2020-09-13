@@ -114,12 +114,12 @@ kb.on('chat', (channel, message) => {
         tableData.push({
                 "command": commands[i].command,
                 "cooldown": `󠀀  󠀀  󠀀  󠀀  󠀀 ${commands[i].cooldown/1000}s`,
-                "opt-outable": ` 󠀀  󠀀  󠀀  󠀀  󠀀  󠀀  󠀀   󠀀  󠀀  󠀀  ${(commands[i].optoutable === "Y") ? "YES" : "NO"}`,
+                "opt-outable": ` 󠀀  󠀀  󠀀  󠀀  󠀀 ${(commands[i].optoutable === "Y") ? "YES" : "NO"}`,
                 "description": `󠀀  󠀀  󠀀  󠀀  󠀀 ${commands[i].description}`
             })
     }
 
-    const headers = { "command": "command", "cooldown": "󠀀  󠀀  󠀀  󠀀  󠀀 cooldown", "opt-outable": " 󠀀  󠀀  󠀀  󠀀  󠀀  󠀀  󠀀   󠀀  󠀀  󠀀 opt-outable", "description": "󠀀  󠀀  󠀀  󠀀  󠀀 description"};
+    const headers = { "command": "command", "cooldown": "󠀀  󠀀  󠀀  󠀀  󠀀 cooldown", "opt-outable": " 󠀀  󠀀  󠀀  󠀀  󠀀opt-outable", "description": "󠀀  󠀀  󠀀  󠀀  󠀀 description"};
 
     const Table = require('table-builder');
 
