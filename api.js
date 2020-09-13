@@ -113,14 +113,14 @@ kb.on('chat', (channel, message) => {
     for (let i=0; i<commands.length; i++) {
         tableData.push({
                 "ID": `<div style="text-align: center;">${i+1}</div>`,
-                "command": `<div style="text-align: center;">${commands[i].command} 󠀀 󠀀 </div>`,
-                "cooldown": `<div style="text-align: center;">${commands[i].cooldown/1000}s 󠀀 󠀀 </div>`,
-                "opt-outable": `<div style="text-align: center;">${(commands[i].optoutable === "Y") ? "yes" : "no"}  󠀀 󠀀 </div>`,
-                "description": `${commands[i].description}`
+                "command": `<div style="text-align: center;">󠀀 ${commands[i].command} 󠀀</div>`,
+                "cooldown": `<div style="text-align: center;">󠀀 ${commands[i].cooldown/1000}s 󠀀</div>`,
+                "opt-outable": `<div style="text-align: center;">󠀀 ${(commands[i].optoutable === "Y") ? "yes" : "no"} 󠀀</div>`,
+                "description": `󠀀 ${commands[i].description} 󠀀`
             })
     }
 
-    const headers = {"ID": "ID 󠀀 󠀀 ", "command": "command 󠀀 󠀀 ", "cooldown": "cooldown 󠀀 󠀀  ", "opt-outable": "opt-outable 󠀀 󠀀 ", "description": "description"};
+    const headers = {"ID": "󠀀 ID 󠀀", "command": "󠀀 command 󠀀", "cooldown": "󠀀 cooldown 󠀀", "opt-outable": "󠀀 opt-outable 󠀀", "description": "description"};
 
     const Table = require('table-builder');
 
