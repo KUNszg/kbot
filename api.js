@@ -150,6 +150,11 @@ kb.on('chat', (channel, message) => {
                                 border-bottom: solid white 1px;
                             }
 
+                            .yepcock {
+                                width: 100%;
+                                height: 100%;
+                            }
+
                             tr {
                                 line-height: 30px;
                             }
