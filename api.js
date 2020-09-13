@@ -107,7 +107,6 @@ kb.on('chat', (channel, message) => {
     const commands = await doQuery(`
         SELECT *
         FROM commands
-        WHERE permissions!="5"
         `);
 
     const tableData = [];
