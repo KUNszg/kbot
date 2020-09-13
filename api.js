@@ -113,13 +113,13 @@ kb.on('chat', (channel, message) => {
     for (let i=0; i<commands.length; i++) {
         tableData.push({
                 "command": commands[i].command,
-                "cooldown": `󠀀  󠀀  󠀀  󠀀  󠀀 ${commands[i].cooldown/1000}s`,
-                "opt-outable": ` 󠀀  󠀀  󠀀  󠀀  󠀀 ${(commands[i].optoutable === "Y") ? "YES" : "NO"}`,
-                "description": `󠀀  󠀀  󠀀  󠀀  󠀀 ${commands[i].description}`
+                "cooldown": `${commands[i].cooldown/1000}s`,
+                "opt-outable": `${(commands[i].optoutable === "Y") ? "YES" : "NO"}`,
+                "description": `${commands[i].description}`
             })
     }
 
-    const headers = { "command": "command", "cooldown": "󠀀  󠀀  󠀀  󠀀  󠀀 cooldown", "opt-outable": " 󠀀  󠀀  󠀀  󠀀  󠀀opt-outable", "description": "󠀀  󠀀  󠀀  󠀀  󠀀 description"};
+    const headers = { "command": "command", "cooldown": "cooldown", "opt-outable": "opt-outable", "description": "description"};
 
     const Table = require('table-builder');
 
@@ -131,6 +131,9 @@ kb.on('chat', (channel, message) => {
     	          		<title>commands</title>
     					<meta name="viewport" content="width=device-width, initial-scale=1">
     					<link type="image/png" href="/website/html/img/3x.gif"/>
+                        <style>
+                            tr:nth-child(even) {background-color: #2c2c2c;}
+                        </style>
               		</head>
               		<body style="background-color: #1a1a1a">
                         <div style="color: lightgray;">
