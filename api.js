@@ -112,15 +112,21 @@ kb.on('chat', (channel, message) => {
     const tableData = [];
     for (let i=0; i<commands.length; i++) {
         tableData.push({
-                "ID": `<div style="text-align: center;">${i+1}</div>`,
-                "command": `<div style="text-align: center;">󠀀 ${commands[i].command} 󠀀</div>`,
-                "cooldown": `<div style="text-align: center;">󠀀 ${commands[i].cooldown/1000}s 󠀀</div>`,
-                "opt-outable": `<div style="text-align: center;">󠀀 ${(commands[i].optoutable === "Y") ? "yes" : "no"} 󠀀</div>`,
-                "description": `󠀀 ${commands[i].description} 󠀀`
+                "ID": `<div class="table-contents" style="text-align: center;">${i+1}</div>`,
+                "command": `<div class="table-contents" style="text-align: center;">${commands[i].command}</div>`,
+                "cooldown": `<div class="table-contents" style="text-align: center;">${commands[i].cooldown/1000}s</div>`,
+                "opt-outable": `<div class="table-contents" style="text-align: center;">${(commands[i].optoutable === "Y") ? "yes" : "no"}</div>`,
+                "description": `<div class="table-contents" style="margin-right: 50px; margin-left: 5px;">${commands[i].description}</div>`
             })
     }
 
-    const headers = {"ID": "󠀀 ID 󠀀", "command": "󠀀 command 󠀀", "cooldown": "󠀀 cooldown 󠀀", "opt-outable": "󠀀 opt-outable 󠀀", "description": "description"};
+    const headers = {
+        "ID": " <div class='table-headers'>ID</div> ",
+        "command": " <div class='table-headers'>command</div> ",
+        "cooldown": " <div class='table-headers'>cooldown</div> ",
+        "opt-outable": " <div class='table-headers'>opt-outable</div> ",
+        "description": " <div class='table-headers'>description</div> "
+    };
 
     const Table = require('table-builder');
 
@@ -133,9 +139,21 @@ kb.on('chat', (channel, message) => {
     					<meta name="viewport" content="width=device-width, initial-scale=1">
     					<link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
                         <style>
+                            .table-contents {
+                                margin-right: 15px;
+                                margin-left: 15px;
+                            }
+
+                            .table-headers {
+                                margin-left: 5px;
+                                margin-right: 5px;
+                                border-bottom: solid white 1px;
+                            }
+
                             tr {
                                 line-height: 30px;
                             }
+                            tr:nth-child(odd) {background-color: #202020;}
                             tr:nth-child(even) {background-color: #2c2c2c;}
                         </style>
               		</head>
