@@ -107,6 +107,8 @@ kb.on('chat', (channel, message) => {
     const commands = await doQuery(`
         SELECT *
         FROM commands
+        ORDER BY command
+        ASC
         `);
 
     const tableData = [];
