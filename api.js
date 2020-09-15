@@ -152,6 +152,7 @@ kb.on('chat', (channel, message) => {
                                 margin-left: 5px;
                                 margin-right: 5px;
                                 border-bottom: solid white 1px;
+                                font-family: 'Noto Sans', sans-serif;
                                 font-size: 14px;
                             }
 
