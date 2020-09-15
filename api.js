@@ -142,17 +142,20 @@ kb.on('chat', (channel, message) => {
     					<link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
                         <style>
                             .table-contents {
-                                margin-right: 15px;
-                                margin-left: 15px;
+                                margin-right: 5px;
+                                margin-left: 5px;
+                                font-family: 'Noto Sans', sans-serif;
+                                font-size: 13px;
                             }
 
                             .table-headers {
                                 margin-left: 5px;
                                 margin-right: 5px;
                                 border-bottom: solid white 1px;
+                                font-size: 14px;
                             }
 
-                            .yepcock {
+                            .table-context {
                                 width: 100%;
                                 height: 100%;
                             }
@@ -160,13 +163,19 @@ kb.on('chat', (channel, message) => {
                             tr {
                                 line-height: 30px;
                             }
-                            tr:nth-child(odd) {background-color: #202020;}
-                            tr:nth-child(even) {background-color: #2c2c2c;}
+
+                            tr:nth-child(odd) {
+                                background-color: #202020;
+                            }
+
+                            tr:nth-child(even) {
+                                background-color: #2c2c2c;
+                            }
                         </style>
               		</head>
               		<body style="background-color: #1a1a1a">
                         <div style="color: lightgray;">
-        	          		${(new Table({'class': 'yepcock'}))
+        	          		${(new Table({'class': 'table-context'}))
         					    .setHeaders(headers)
         					    .setData(tableData)
         					    .render()}
