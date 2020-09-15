@@ -117,7 +117,7 @@ kb.on('chat', (channel, message) => {
                 "ID": `<div class="table-contents" style="text-align: center;">${i+1}</div>`,
                 "command": `<div class="table-contents" style="text-align: center;">${commands[i].command}</div>`,
                 "cooldown": `<div class="table-contents" style="text-align: center;">${commands[i].cooldown/1000}s</div>`,
-                "opt-outable": `<div class="table-contents" style="text-align: center;">${(commands[i].optoutable === "Y") ? "yes" : "no"}</div>`,
+                "opt-out": `<div class="table-contents" style="text-align: center;">${(commands[i].optoutable === "Y") ? "yes" : "no"}</div>`,
                 "description": `<div class="table-contents" style="margin-right: 50px; margin-left: 5px;">${commands[i].description}</div>`
             })
     }
@@ -126,7 +126,7 @@ kb.on('chat', (channel, message) => {
         "ID": " <div class='table-headers'>ID</div> ",
         "command": " <div class='table-headers'>command</div> ",
         "cooldown": " <div class='table-headers'>cooldown</div> ",
-        "opt-outable": " <div class='table-headers'>opt-outable</div> ",
+        "opt-out": " <div class='table-headers'>opt-out</div> ",
         "description": " <div class='table-headers'>description</div> "
     };
 
