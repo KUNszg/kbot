@@ -161,6 +161,10 @@ kb.on('chat', (channel, message) => {
                                 height: 100%;
                             }
 
+                            td, th {
+                                white-space: nowrap;
+                            }
+
                             tr {
                                 line-height: 30px;
                             }
