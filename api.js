@@ -256,6 +256,7 @@ app.get("/emotes", async (req, res, next) => {
 
                     /* Style the search field */
                     form.example input[type=text] {
+                        text-transform: lowercase;
                       padding: 10px;
                       font-size: 15px;
                       border: 1px solid grey;
@@ -325,7 +326,7 @@ app.get("/emotes", async (req, res, next) => {
             </head>
             <body style="background-color: #1a1a1a">
                 <br><br><br><br><br><br>
-                <form class="example" action="emotes" style="text-transform: lowercase;">
+                <form class="example" action="emotes">
                     <input type="text" placeholder="Search for channel.." name="search">
                     <button type="submit"></button>
                 </form>
