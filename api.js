@@ -286,7 +286,6 @@ app.get("/emotes", async (req, res, next) => {
 
                     /* Clear floats */
                     form.example::after {
-                        text-transform: lowercase;
                         content: "";
                         clear: both;
                         display: table;
@@ -328,7 +327,7 @@ app.get("/emotes", async (req, res, next) => {
                 <br><br><br><br><br><br>
                 <form class="example" action="emotes">
                     <input type="text" placeholder="Search for channel.." name="search">
-                    <button type="submit"></button>
+                    <button type="submit" style="text-transform: lowercase;"></button>
                 </form>
                 <br>
                 <strong style="color: lightgray;">* - emote added before my logs</strong>
