@@ -326,8 +326,8 @@ app.get("/emotes", async (req, res, next) => {
             <body style="background-color: #1a1a1a">
                 <br><br><br><br><br><br>
                 <form class="example" action="emotes">
-                    <input type="text" placeholder="Search for channel.." name="search">
-                    <button type="submit" style="text-transform: lowercase;"></button>
+                    <input type="text" placeholder="Search for channel.." name="search" style="text-transform: lowercase;">
+                    <button type="submit"></button>
                 </form>
                 <br>
                 <strong style="color: lightgray;">* - emote added before my logs</strong>
