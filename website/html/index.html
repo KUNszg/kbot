@@ -1,221 +1,221 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<!-- Global site tag (gtag.js) - Google Analytics -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-158909830-3"></script>
-		<link rel="stylesheet" type="text/css" href="style.css">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="icon" type="image/png" href="img/3x.gif"/>
-		<script>
-			window.dataLayer = window.dataLayer || [];
-			function gtag(){dataLayer.push(arguments);}
-			gtag('js', new Date());
+    <head>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-158909830-3"></script>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" type="image/png" href="img/3x.gif"/>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
 
-			gtag('config', 'UA-158909830-3');
-		</script>
-		<style type="text/css">
-		/* Center the loader */
-		#loader {
-		  position: absolute;
-		  left: 49%;
-		  top: 300px;
-		  z-index: 1;
-		  width: 150px;
-		  height: 150px;
-		  margin: -75px 0 0 -75px;
-		  border: 16px solid #f3f3f3;
-		  border-radius: 50%;
-		  border-top: 16px solid #3498db;
-		  width: 120px;
-		  height: 120px;
-		  -webkit-animation: spin 1s linear infinite;
-		  animation: spin 1s linear infinite;
-		}
+            gtag('config', 'UA-158909830-3');
+        </script>
+        <style type="text/css">
+        /* Center the loader */
+        #loader {
+          position: absolute;
+          left: 49%;
+          top: 300px;
+          z-index: 1;
+          width: 150px;
+          height: 150px;
+          margin: -75px 0 0 -75px;
+          border: 16px solid #f3f3f3;
+          border-radius: 50%;
+          border-top: 16px solid #3498db;
+          width: 120px;
+          height: 120px;
+          -webkit-animation: spin 1s linear infinite;
+          animation: spin 1s linear infinite;
+        }
 
-		@-webkit-keyframes spin {
-		  0% { -webkit-transform: rotate(0deg); }
-		  100% { -webkit-transform: rotate(360deg); }
-		}
+        @-webkit-keyframes spin {
+          0% { -webkit-transform: rotate(0deg); }
+          100% { -webkit-transform: rotate(360deg); }
+        }
 
-		@keyframes spin {
-		  0% { transform: rotate(0deg); }
-		  100% { transform: rotate(360deg); }
-		}
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
 
-		/* Add animation to "page content" */
-		.animate-bottom {
-		  position: relative;
-		  -webkit-animation-name: animatebottom;
-		  -webkit-animation-duration: 1s;
-		  animation-name: animatebottom;
-		  animation-duration: 1s
-		}
+        /* Add animation to "page content" */
+        .animate-bottom {
+          position: relative;
+          -webkit-animation-name: animatebottom;
+          -webkit-animation-duration: 1s;
+          animation-name: animatebottom;
+          animation-duration: 1s
+        }
 
-		@-webkit-keyframes animatebottom {
-		  from { bottom:-100px; opacity:0 } 
-		  to { bottom:0px; opacity:1 }
-		}
+        @-webkit-keyframes animatebottom {
+          from { bottom:-100px; opacity:0 }
+          to { bottom:0px; opacity:1 }
+        }
 
-		@keyframes animatebottom { 
-		  from{ bottom:-100px; opacity:0 } 
-		  to{ bottom:0; opacity:1 }
-		}
+        @keyframes animatebottom {
+          from{ bottom:-100px; opacity:0 }
+          to{ bottom:0; opacity:1 }
+        }
 
-		body {
-		  font-family: "Lato", sans-serif;
-		}
+        body {
+          font-family: "Lato", sans-serif;
+        }
 
-		.sidenav {
-		  height: 100%;
-		  width: 0;
-		  position: fixed;
-		  z-index: 1;
-		  top: 0;
-		  left: 0;
-		  background-color: #111;
-		  overflow-x: hidden;
-		  transition: 0.5s;
-		  padding-top: 50px;
-		}
+        .sidenav {
+          height: 100%;
+          width: 0;
+          position: fixed;
+          z-index: 1;
+          top: 0;
+          left: 0;
+          background-color: #111;
+          overflow-x: hidden;
+          transition: 0.5s;
+          padding-top: 50px;
+        }
 
-		.sidenav a {
-		  padding: 4px 12px 4px 15px;
-		  text-decoration: none;
-		  font-size: 25px;
-		  color: #818181;
-		  display: block;
-		  transition: 0.1s;
-		}
+        .sidenav a {
+          padding: 4px 12px 4px 15px;
+          text-decoration: none;
+          font-size: 25px;
+          color: #818181;
+          display: block;
+          transition: 0.1s;
+        }
 
-		.sidenav a:hover {
-		  color: #f1f1f1;
-		}
+        .sidenav a:hover {
+          color: #f1f1f1;
+        }
 
-		.sidenav .closebtn {
-		  position: absolute;
-		  top: 0;
-		  margin-left: 165px
-		}
+        .sidenav .closebtn {
+          position: absolute;
+          top: 0;
+          margin-left: 165px
+        }
 
-		@media screen and (max-height: 10050px) {
-		  .sidenav {padding-top: 35px;}
-		  .sidenav a {font-size: 18px;}
-		}
-		</style>
-	</head>
-	<meta charset="utf-8">
-	<title>KUNszg</title>
-	<body onload="myFunction()" style="margin:0;" class="bd">
-		<div id="mySidenav" class="sidenav">
-		  <a href="javascript:void(0)" class="closebtn"  onclick="closeNav()">&times;</a>
-		  <div id="box" style="margin-left: 20px; text-align: center;"></div>
-		</div>
-		<br>
-		<span class="animate-bottom" style="font-size:20px; cursor:pointer; color:white; margin-left: 15px;" onclick="openNav()">&#9776; <a style="font-size: 20px;  font-family: 'Source Sans Pro', 'sans-serif';" >CHANNELS</a></span>
+        @media screen and (max-height: 10050px) {
+          .sidenav {padding-top: 35px;}
+          .sidenav a {font-size: 18px;}
+        }
+        </style>
+    </head>
+    <meta charset="utf-8">
+    <title>KUNszg</title>
+    <body onload="myFunction()" style="margin:0;" class="bd">
+        <div id="mySidenav" class="sidenav">
+          <a href="javascript:void(0)" class="closebtn"  onclick="closeNav()">&times;</a>
+          <div id="box" style="margin-left: 20px; text-align: center;"></div>
+        </div>
+        <br>
+        <span class="animate-bottom" style="font-size:20px; cursor:pointer; color:white; margin-left: 15px;" onclick="openNav()">&#9776; <a style="font-size: 20px;  font-family: 'Source Sans Pro', 'sans-serif';" >CHANNELS</a></span>
 
-		<script>
-		function openNav() {
-		  document.getElementById("mySidenav").style.width = "230px";
-		}
+        <script>
+        function openNav() {
+          document.getElementById("mySidenav").style.width = "230px";
+        }
 
-		function closeNav() {
-		  document.getElementById("mySidenav").style.width = "0";
-		}
-		</script>
-		<div id="loader"></div>
+        function closeNav() {
+          document.getElementById("mySidenav").style.width = "0";
+        }
+        </script>
+        <div id="loader"></div>
 
-		<div style="display:none;" id="myDiv" class="animate-bottom">
-			<script>
-				var myVar;
+        <div style="display:none;" id="myDiv" class="animate-bottom">
+            <script>
+                var myVar;
 
-				function myFunction() {
-				  	myVar = setTimeout(showPage, 1);
-				}
+                function myFunction() {
+                    myVar = setTimeout(showPage, 1);
+                }
 
-				function showPage() {
-				  document.getElementById("loader").style.display = "none";
-				  document.getElementById("myDiv").style.display = "block";
-				}
-		</script>
-		<div style="margin-top: 10%; margin-left: -60px">
-			<h1 class="inner" style="margin-left: -3px;">
-				<a href="https://www.twitch.tv/kunszg" style="text-decoration: none;" class="button1">KUNszg</a>
-			</h1>
-				<!-- displays "offline"
-					<div id="div1" class="bot"></div>
-						<script type="text/javascript">
-							fetch('https://supinic.com/api/bot/active')
-					  		.then(response => response.json())
-					  		.then(data => {
-					    		if((new Date() - new Date(data.data.filter(i => i.name === "kunszgbot")[0].lastSeenTimestamp))/1000<300) {
-									const para = document.createElement("p");
-									const node = document.createTextNode("kunszgbot is online ◉");
-									para.appendChild(node);
+                function showPage() {
+                  document.getElementById("loader").style.display = "none";
+                  document.getElementById("myDiv").style.display = "block";
+                }
+        </script>
+        <div style="margin-top: 10%; margin-left: -60px">
+            <h1 class="inner" style="margin-left: -3px;">
+                <a href="https://www.twitch.tv/kunszg" style="text-decoration: none;" class="button1">KUNszg</a>
+            </h1>
+                <!-- displays "offline"
+                    <div id="div1" class="bot"></div>
+                        <script type="text/javascript">
+                            fetch('https://supinic.com/api/bot/active')
+                            .then(response => response.json())
+                            .then(data => {
+                                if((new Date() - new Date(data.data.filter(i => i.name === "kunszgbot")[0].lastSeenTimestamp))/1000<300) {
+                                    const para = document.createElement("p");
+                                    const node = document.createTextNode("kunszgbot is online ◉");
+                                    para.appendChild(node);
 
-									const element = document.getElementById("div1");
-									element.appendChild(para);
-					    		} else {
-					    			const para = document.createElement("p");
-									const node = document.createTextNode("kunszgbot is offline 🔴");
-									para.appendChild(node);
+                                    const element = document.getElementById("div1");
+                                    element.appendChild(para);
+                                } else {
+                                    const para = document.createElement("p");
+                                    const node = document.createTextNode("kunszgbot is offline 🔴");
+                                    para.appendChild(node);
 
-									const element = document.getElementById("div1");
-									element.appendChild(para);
-					    		}
-					  		});
-						</script> 
-				-->
-				<div class="animate-bottom">	
-					<a class="github" href="https://github.com/KUNszg/kbot" target="_blank">
-						<button style="margin-left: 20px; border: none; background: none" class="button button1">
-							<div class="button1">
-								<pre style="margin-bottom:17px">GITHUB</pre>
-								<img src="img\logo.png" height="60px">
-							</div>
-						</button>
-					</a>
-					<a class="commands" href="commands" target="_self">
-						<button style="margin-left: -2px; border: none; background: none" class="button button1">
-							<div class="button1">
-								<pre style="margin-bottom:17px">COMMANDS</pre>
-								<img src="img\commands.png" height="60px">
-							</div>
-						</button>
-					</a>
-					<a class="commands" href="charts" target="_self">
-						<button style="margin-left: -2px; border: none; background: none" class="button button1">
-							<div class="button1">
-								<pre style="margin-bottom:17px;">CHARTS</pre>
-								<img src="img\chart.png" height="60px">
-							</div>
-						</button>
-					</a>
-					<a class="commands" href="api" target="_self">
-						<button style="margin-left: -2px; border: none; background: none" class="button button1">
-							<div class="button1">
-								<pre style="margin-bottom:17px">API</pre>
-								<img src="img\api.png" height="60px">
-							</div>
-						</button>
-					</a>
+                                    const element = document.getElementById("div1");
+                                    element.appendChild(para);
+                                }
+                            });
+                        </script>
+                -->
+                <div class="animate-bottom">
+                    <a class="github" href="https://github.com/KUNszg/kbot" target="_blank">
+                        <button style="margin-left: 20px; border: none; background: none" class="button button1">
+                            <div class="button1">
+                                <pre style="margin-bottom:17px">GITHUB</pre>
+                                <img src="img\logo.png" height="60px">
+                            </div>
+                        </button>
+                    </a>
+                    <a class="commands" href="commands" target="_self">
+                        <button style="margin-left: -2px; border: none; background: none" class="button button1">
+                            <div class="button1">
+                                <pre style="margin-bottom:17px">COMMANDS</pre>
+                                <img src="img\commands.png" height="60px">
+                            </div>
+                        </button>
+                    </a>
+                    <a class="commands" href="emotes" target="_self">
+                        <button style="margin-left: -2px; border: none; background: none" class="button button1">
+                            <div class="button1">
+                                <pre style="margin-bottom:17px;">EMOTES</pre>
+                                <img src="img\emotes.png" height="60px">
+                            </div>
+                        </button>
+                    </a>
+                    <a class="commands" href="api" target="_self">
+                        <button style="margin-left: -2px; border: none; background: none" class="button button1">
+                            <div class="button1">
+                                <pre style="margin-bottom:17px">API</pre>
+                                <img src="img\api.png" height="60px">
+                            </div>
+                        </button>
+                    </a>
 
-				</div>
-			</div>
-		</div>
-		<script type="text/javascript">
-		    fetch('https://kunszg.xyz/api/channels')
-		      .then(response => response.json())
-		      .then(rows => {
-			    var html = "<table><td style='color: green; border-bottom: solid dimgray 1px; font-weight: bold;'></td>";
-			    for (var i = 0; i < rows.data.length; i++) {
-			        html+="<tr>";
-			        html+="<td class='api'><a style='font-size: 15px;' href='https://twitch.tv/"+rows.data[i]+"'/>"+rows.data[i]+"</td>";
-			       
-			        html+="</tr>";
-			    }
-			    html+="</table><br><br><br><br>";
-				document.getElementById("box").innerHTML = html;
-			})
-		</script>
-	</body>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            fetch('https://kunszg.xyz/api/channels')
+              .then(response => response.json())
+              .then(rows => {
+                var html = "<table><td style='color: green; border-bottom: solid dimgray 1px; font-weight: bold;'></td>";
+                for (var i = 0; i < rows.data.length; i++) {
+                    html+="<tr>";
+                    html+="<td class='api'><a style='font-size: 15px;' href='https://twitch.tv/"+rows.data[i]+"'/>"+rows.data[i]+"</td>";
+
+                    html+="</tr>";
+                }
+                html+="</table><br><br><br><br>";
+                document.getElementById("box").innerHTML = html;
+            })
+        </script>
+    </body>
 </html>
