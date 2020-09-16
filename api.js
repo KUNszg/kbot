@@ -325,8 +325,8 @@ app.get("/emotes", async (req, res, next) => {
             </head>
             <body style="background-color: #1a1a1a">
                 <br><br><br><br><br><br>
-                <form class="example" action="emotes">
-                    <input type="text" placeholder="Search for channel.." name="search" style="text-transform: lowercase;">
+                <form class="example" action="emotes" style="text-transform: lowercase;">
+                    <input type="text" placeholder="Search for channel.." name="search">
                     <button type="submit"></button>
                 </form>
                 <br>
