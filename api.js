@@ -286,9 +286,10 @@ app.get("/emotes", async (req, res, next) => {
 
                     /* Clear floats */
                     form.example::after {
-                      content: "";
-                      clear: both;
-                      display: table;
+                        text-transform: lowercas;
+                        content: "";
+                        clear: both;
+                        display: table;
                     }
 
                                     <style>
