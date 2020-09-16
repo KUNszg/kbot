@@ -292,7 +292,6 @@ app.get("/emotes", async (req, res, next) => {
                         display: table;
                     }
 
-                                    <style>
                     .table-contents {
                         margin-right: 5px;
                         margin-left: 5px;
@@ -323,7 +322,6 @@ app.get("/emotes", async (req, res, next) => {
                     tr:nth-child(even) {
                         background-color: #2c2c2c;
                     }
-                </style>
                 </style>
             </head>
             <body style="background-color: #1a1a1a">
