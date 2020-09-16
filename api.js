@@ -256,7 +256,6 @@ app.get("/emotes", async (req, res, next) => {
 
                     /* Style the search field */
                     form.example input[type=text] {
-                        text-transform: lowercase;
                       padding: 10px;
                       font-size: 15px;
                       border: 1px solid grey;
@@ -265,7 +264,6 @@ app.get("/emotes", async (req, res, next) => {
                       height: 25px;
                       height: 5%
                       width: 20%
-
                     }
 
                     /* Style the submit button */
