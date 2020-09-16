@@ -205,7 +205,7 @@ app.get("/emotes", async (req, res, next) => {
         const emotes = await doQuery(`
             SELECT *
             FROM emotes
-            WHERE channel="${req.query.search.toLowerCase()}"
+            WHERE channel="${(typeof req.query.search === "undefined") ? req.query.search : req.query.search.toLowerCase()}"
             ORDER BY date
             DESC
             `);
