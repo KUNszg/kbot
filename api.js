@@ -234,7 +234,7 @@ app.get("/emotes", async (req, res, next) => {
                 tableData.push({
                     "ID": `<div class="table-contents" style="text-align: center;">${i+1}</div>`,
                     "name": `<div class="table-contents" style="text-align: center;">${emotes[i].emote}</div>`,
-                    "emote": `<div class="table-contents" style="text-align: center;"><a href="${(emotes[i].type === "bttv") ? emotes[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '') : `https://www.frankerfacez.com/emoticon/${emote[i].emoteId}-${emote[i].emote}`}"><span title="${emotes[i].emote}"><img src="${emotes[i].url}" alt="${emotes[i].emote}"></span></a></div>`,
+                    "emote": `<div class="table-contents" style="text-align: center;"><a href="${(emotes[i].type === "bttv") ? emotes[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '') : `https://www.frankerfacez.com/emoticon/${emotes[i].emoteId}-${emotes[i].emote}`}"><span title="${emotes[i].emote}"><img src="${emotes[i].url}" alt="${emotes[i].emote}"></span></a></div>`,
                     "type": `<div class="table-contents" style="text-align: center;">${emotes[i].type}</div>`,
                     "added": `<div class="table-contents" style="text-align: center;">${(Date.parse(emotes[i].date) < 1594764720000) ? "*" : formatDate(emotes[i].date)}</div>`
                     // direct emote picture link
