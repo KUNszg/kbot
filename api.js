@@ -195,6 +195,7 @@ app.get("/commands", async (req, res, next) => {
 app.get("/emotes", async (req, res, next) => {
     const Table = require('table-builder');
     const tableData = [];
+    const tableDataRemoved = [];
     const headers = {
         "ID": " <div class='table-headers'>ID</div> ",
         "name": `<div class='table-headers'>name</div>`,
@@ -202,10 +203,26 @@ app.get("/emotes", async (req, res, next) => {
         "type": " <div class='table-headers'>type</div> ",
         "added": " <div class='table-headers'>added</div> "
     };
+
+    const headersRemoved = {
+        "ID": " <div class='table-headers'>ID</div> ",
+        "name": `<div class='table-headers'>name</div>`,
+        "type": " <div class='table-headers'>type</div> ",
+        "removed": " <div class='table-headers'>removed</div> "
+    };
+
     if (typeof await req.query != "undefined") {
         const emotes = await doQuery(`
             SELECT *
             FROM emotes
+            WHERE channel="${(typeof req.query.search === "undefined") ? req.query.search : req.query.search.toLowerCase()}"
+            ORDER BY date
+            DESC
+            `);
+
+        const emotesRemoved = await doQuery(`
+            SELECT *
+            FROM emotes_removed
             WHERE channel="${(typeof req.query.search === "undefined") ? req.query.search : req.query.search.toLowerCase()}"
             ORDER BY date
             DESC
@@ -237,7 +254,35 @@ app.get("/emotes", async (req, res, next) => {
                     "emote": `<div class="table-contents" style="text-align: center;"><a target="_blank" href="${(emotes[i].type === "bttv") ? emotes[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '') : `https://www.frankerfacez.com/emoticon/${emotes[i].emoteId}-${emotes[i].emote}`}"><span title="${emotes[i].emote}"><img src="${emotes[i].url}" alt="${emotes[i].emote}"></span></a></div>`,
                     "type": `<div class="table-contents" style="text-align: center;">${emotes[i].type}</div>`,
                     "added": `<div class="table-contents" style="text-align: center;">${(Date.parse(emotes[i].date) < 1594764720000) ? "*" : formatDate(emotes[i].date)}</div>`
-                    // direct emote picture link
+                })
+            }
+        }
+
+        if (!emotesRemoved.length) {
+            tableDataRemoved.push({
+                "ID": `<div class="table-contents" style="text-align: center;">-</div>`,
+                "name": `<div class="table-contents" style="text-align: center;">-</div>`,
+                "emote": `<div class="table-contents" style="text-align: center;">-</div>`,
+                "type": `<div class="table-contents" style="text-align: center;">-</div>`,
+                "removed": `<div class="table-contents" style="text-align: center;">-</div>`
+            });
+        } else {
+            const formatDate = (timestamp) => {
+                const time = Date.now() - Date.parse(timestamp);
+                // convert to days
+                if(time > 172800000) {
+                    return `${custom.secondsToDhm(time/1000)} ago`;
+                }
+                // convert to hours
+                return `${custom.format(time/1000)} ago`
+            }
+
+            for (let i=0; i<emotesRemoved.length; i++) {
+                tableDataRemoved.push({
+                    "ID": `<div class="table-contents" style="text-align: center;">${i+1}</div>`,
+                    "name": `<div class="table-contents" style="text-align: center;">${emotesRemoved[i].emote}</div>`,
+                    "type": `<div class="table-contents" style="text-align: center;">${emotesRemoved[i].type}</div>`,
+                    "removed": `<div class="table-contents" style="text-align: center;">${(Date.parse(emotesRemoved[i].date) < 1594764720000) ? "*" : formatDate(emotesRemoved[i].date)}</div>`
                 })
             }
         }
@@ -308,8 +353,27 @@ app.get("/emotes", async (req, res, next) => {
                         font-size: 14px;
                     }
 
+                    .hidden {
+                        display: none;
+                    }
+
+                    .table-button {
+                        font-family: 'Noto Sans', sans-serif;
+                        font-size: 13px;
+                        color: gray;
+                        background-color: #2c2c2c;
+                        border: solid dimgray 1px;
+                        float: left;
+                        cursor: pointer;
+                        border-radius: 5px;
+                    }
+
                     td, th {
                         white-space: nowrap;
+                    }
+
+                    table {
+                        float: left;
                     }
 
                     tr {
@@ -326,7 +390,7 @@ app.get("/emotes", async (req, res, next) => {
                 </style>
             </head>
             <body style="background-color: #1a1a1a">
-                <br><br><br><br><br><br>
+                <br><br>
                 <form class="example" action="emotes">
                     <input type="text" placeholder="Search for channel.." name="search">
                     <button type="submit"></button>
@@ -335,11 +399,27 @@ app.get("/emotes", async (req, res, next) => {
                 <strong style="color: lightgray;">* - emote added before my logs</strong>
                 <br><br>
                 <div style="color: lightgray;">
-                    ${(new Table({'class': 'table-context'}))
+                    <button class="table-button" onClick="toggleTable2()">Added emotes</button>
+                    <button style="margin-left: 5px;" class="table-button" onClick="toggleTable()">Removed emotes</button>
+                    <br><br>
+                    ${(new Table({'class': 'table-context', 'id': "added-emotes-table"}))
                         .setHeaders(headers)
                         .setData(tableData)
                         .render()}
+                    ${(new Table({'class': 'hidden', 'id': "removed-emotes-table"}))
+                        .setHeaders(headersRemoved)
+                        .setData(tableDataRemoved)
+                        .render()}
                 </div>
+                <script>
+                    function toggleTable() {
+                        document.getElementById("removed-emotes-table").classList.toggle("hidden");
+                    }
+
+                    function toggleTable2() {
+                        document.getElementById("added-emotes-table").classList.toggle("hidden");
+                    }
+                </script>
             </body>
         </html>
         `
