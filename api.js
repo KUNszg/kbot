@@ -197,6 +197,7 @@ app.get("/emotes", async (req, res, next) => {
     const tableData = [];
     const headers = {
         "ID": " <div class='table-headers'>ID</div> ",
+        "name": `<div class='table-headers'>name</div>`,
         "emote": " <div class='table-headers'>emote</div> ",
         "type": " <div class='table-headers'>type</div> ",
         "added": " <div class='table-headers'>added</div> "
@@ -213,6 +214,7 @@ app.get("/emotes", async (req, res, next) => {
         if (!emotes.length) {
             tableData.push({
                 "ID": `<div class="table-contents" style="text-align: center;">-</div>`,
+                "name": `<div class="table-contents" style="text-align: center;">-</div>`,
                 "emote": `<div class="table-contents" style="text-align: center;">-</div>`,
                 "type": `<div class="table-contents" style="text-align: center;">-</div>`,
                 "added": `<div class="table-contents" style="text-align: center;">-</div>`
@@ -231,6 +233,7 @@ app.get("/emotes", async (req, res, next) => {
             for (let i=0; i<emotes.length; i++) {
                 tableData.push({
                     "ID": `<div class="table-contents" style="text-align: center;">${i+1}</div>`,
+                    "name": `<div class="table-contents" style="text-align: center;">${emotes[i].emote}</div>`,
                     "emote": `<div class="table-contents" style="text-align: center;"><a href="${(emotes[i].type === "bttv") ? emotes[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '') : emotes[i].url}"><span title="${emotes[i].emote}"><img src="${emotes[i].url}" alt="${emotes[i].emote}"></span></a></div>`,
                     "type": `<div class="table-contents" style="text-align: center;">${emotes[i].type}</div>`,
                     "added": `<div class="table-contents" style="text-align: center;">${(Date.parse(emotes[i].date) < 1594764720000) ? "*" : formatDate(emotes[i].date)}</div>`
