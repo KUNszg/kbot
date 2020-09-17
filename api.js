@@ -231,7 +231,7 @@ app.get("/emotes", async (req, res, next) => {
             for (let i=0; i<emotes.length; i++) {
                 tableData.push({
                     "ID": `<div class="table-contents" style="text-align: center;">${i+1}</div>`,
-                    "emote": `<div class="table-contents" style="text-align: center;">${emotes[i].emote}</div>`,
+                    "emote": `<div class="table-contents" style="text-align: center;"><img src="${emotes[i].url}"${emotes[i].emote}</div>`,
                     "type": `<div class="table-contents" style="text-align: center;">${emotes[i].type}</div>`,
                     "added": `<div class="table-contents" style="text-align: center;">${(Date.parse(emotes[i].date) < 1594764720000) ? "*" : formatDate(emotes[i].date)}</div>`
                     // direct emote picture link
