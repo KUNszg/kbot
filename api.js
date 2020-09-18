@@ -392,7 +392,7 @@ app.get("/emotes", async (req, res, next) => {
             <body style="background-color: #1a1a1a">
                 <br><br>
                 <form class="example" action="emotes">
-                    <input type="text" placeholder="Search for channel.." name="search">
+                    <input type="text" placeholder="${(typeof req.query.search === "undefined") ? "Search for channel.." : req.query.search}" name="search">
                     <button type="submit"></button>
                 </form>
                 <br>
