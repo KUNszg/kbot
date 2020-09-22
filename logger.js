@@ -219,6 +219,12 @@ kb.on("subscription", async (channel, username, method, message, userstate) => {
     const sqlUser = "INSERT INTO subs (username, channel, months, subMessage, type, date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
     const insertsUser = [username, channel.replace('#', ''), "1", message, "subscription"];
     await doQuery(mysql.format(sqlUser, insertsUser));
+
+    if (channel === "#kunszg") {
+        for (let i=0; i<11; i++) {
+                kb.say('kunszg', `${username} just subscribed` + ' PagChomp '.repeat(i+1) + ' !');
+        }
+    }
 });
 
 kb.on("subgift", async (channel, username, streakMonths, recipient, methods, userstate) => {
@@ -233,6 +239,12 @@ kb.on("subgift", async (channel, username, streakMonths, recipient, methods, use
     const sqlUser = "INSERT INTO subs (gifter, channel, months, username, type, date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
     const insertsUser = [username, channel.replace('#', ''), cumulative, recipient, "subgift"];
     await doQuery(mysql.format(sqlUser, insertsUser));
+
+    if (channel === "#kunszg") {
+        for (let i=0; i<11; i++) {
+                kb.say('kunszg', `${recipient} got gifted a sub from ${username}, it's their ${streakMonths} month` + ' PagChomp '.repeat(i+1) + ' !');
+        }
+    }
 });
 
 kb.on("resub", async (channel, username, months, message, userstate, methods) => {
@@ -241,16 +253,34 @@ kb.on("resub", async (channel, username, months, message, userstate, methods) =>
     const sqlUser = "INSERT INTO subs (username, channel, months, subMessage, type, date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
     const insertsUser = [username, channel.replace('#', ''), cumulativeMonths, message, "resub"];
     await doQuery(mysql.format(sqlUser, insertsUser));
+
+    if (channel === "#kunszg") {
+        for (let i=0; i<11; i++) {
+                kb.say('kunszg', `${username} just resubscribed for ${months} months` + ' PagChomp '.repeat(i+1) + ' !');
+        }
+    }
 });
 
 kb.on("giftpaidupgrade", async (channel, username, sender, userstate) => {
     const sqlUser = "INSERT INTO subs (username, channel, gifter, type, date) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)";
     const insertsUser = [username, channel.replace('#', ''), sender, "giftpaidupgrade"];
     await doQuery(mysql.format(sqlUser, insertsUser));
+
+    if (channel === "#kunszg") {
+        for (let i=0; i<11; i++) {
+                kb.say('kunszg', `${username} is continuing the gifted sub they got from ${sender}` + ' PagChomp '.repeat(i+1) + ' !');
+        }
+    }
 });
 
 kb.on("anongiftpaidupgrade", async (channel, username, userstate) => {
     const sqlUser = "INSERT INTO subs (username, channel, type, date) VALUES (?, ?, ?, CURRENT_TIMESTAMP)";
     const insertsUser = [username, channel.replace('#', ''), "anongiftpaidupgrade"];
     await doQuery(mysql.format(sqlUser, insertsUser));
+
+    if (channel === "#kunszg") {
+        for (let i=0; i<11; i++) {
+                kb.say('kunszg', `${username} is continuing the gifted sub they got from an anonymous user` + ' PagChomp '.repeat(i+1) + ' !');
+        }
+    }
 });
