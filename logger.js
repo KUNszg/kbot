@@ -242,12 +242,12 @@ kb.on("subgift", async (channel, username, streakMonths, recipient, methods, use
 
     if (channel === "#kunszg") {
         for (let i=0; i<11; i++) {
-                kb.say('kunszg', `${recipient} got gifted a sub from ${username}, it's their ${streakMonths} month` + ' PagChomp '.repeat(i+1) + ' !');
+                kb.say('kunszg', `${recipient} got gifted a sub from ${username}, it's their ${cumulative} month` + ' PagChomp '.repeat(i+1) + ' !');
         }
     }
 });
 
-kb.on("resub", async (channel, username, months, message, userstate, methods) => {
+kb.on("resub", async (channel, username, streakMonths, message, userstate, methods) => {
     let cumulativeMonths = ~~userstate["msg-param-cumulative-months"];
 
     const sqlUser = "INSERT INTO subs (username, channel, months, subMessage, type, date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
@@ -256,7 +256,7 @@ kb.on("resub", async (channel, username, months, message, userstate, methods) =>
 
     if (channel === "#kunszg") {
         for (let i=0; i<11; i++) {
-                kb.say('kunszg', `${username} just resubscribed for ${months} months` + ' PagChomp '.repeat(i+1) + ' !');
+                kb.say('kunszg', `${username} just resubscribed for ${cumulativeMonths} months` + ' PagChomp '.repeat(i+1) + ' !');
         }
     }
 });
