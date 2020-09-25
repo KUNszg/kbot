@@ -282,7 +282,7 @@ app.get("/emotes", async (req, res, next) => {
                     "ID": `<div class="table-contents" style="text-align: center;">${i+1}</div>`,
                     "name": `<div class="table-contents" style="text-align: center;">${emotesRemoved[i].emote}</div>`,
                     "type": `<div class="table-contents" style="text-align: center;">${emotesRemoved[i].type}</div>`,
-                    "removed": `<div class="table-contents" style="text-align: center;">${(Date.parse(emotesRemoved[i].date) < 1594764720000) ? "*" : formatDate(emotesRemoved[i].date)}</div>`
+                    "removed": `<div class="table-contents" style="text-align: center;">${formatDate(emotesRemoved[i].date)}</div>`
                 })
             }
         }
