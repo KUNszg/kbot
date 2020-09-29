@@ -13,114 +13,25 @@
 
             gtag('config', 'UA-158909830-3');
         </script>
-        <style type="text/css">
-        /* Center the loader */
-        #loader {
-          position: absolute;
-          left: 49%;
-          top: 300px;
-          z-index: 1;
-          width: 150px;
-          height: 150px;
-          margin: -75px 0 0 -75px;
-          border: 16px solid #f3f3f3;
-          border-radius: 50%;
-          border-top: 16px solid #3498db;
-          width: 120px;
-          height: 120px;
-          -webkit-animation: spin 1s linear infinite;
-          animation: spin 1s linear infinite;
-        }
-
-        @-webkit-keyframes spin {
-          0% { -webkit-transform: rotate(0deg); }
-          100% { -webkit-transform: rotate(360deg); }
-        }
-
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-
-        /* Add animation to "page content" */
-        .animate-bottom {
-          position: relative;
-          -webkit-animation-name: animatebottom;
-          -webkit-animation-duration: 1s;
-          animation-name: animatebottom;
-          animation-duration: 1s
-        }
-
-        @-webkit-keyframes animatebottom {
-          from { bottom:-100px; opacity:0 }
-          to { bottom:0px; opacity:1 }
-        }
-
-        @keyframes animatebottom {
-          from{ bottom:-100px; opacity:0 }
-          to{ bottom:0; opacity:1 }
-        }
-
-        body {
-          font-family: "Lato", sans-serif;
-        }
-
-        .sidenav {
-          height: 100%;
-          width: 0;
-          position: fixed;
-          z-index: 1;
-          top: 0;
-          left: 0;
-          background-color: #111;
-          overflow-x: hidden;
-          transition: 0.5s;
-          padding-top: 50px;
-        }
-
-        .sidenav a {
-          padding: 4px 12px 4px 15px;
-          text-decoration: none;
-          font-size: 25px;
-          color: #818181;
-          display: block;
-          transition: 0.1s;
-        }
-
-        .sidenav a:hover {
-          color: #f1f1f1;
-        }
-
-        .sidenav .closebtn {
-          position: absolute;
-          top: 0;
-          margin-left: 165px
-        }
-
-        @media screen and (max-height: 10050px) {
-          .sidenav {padding-top: 35px;}
-          .sidenav a {font-size: 18px;}
-        }
-        </style>
     </head>
     <meta charset="utf-8">
     <title>KUNszg</title>
-    <body onload="myFunction()" style="margin:0;" class="bd">
+    <body onload="myFunction()" class="bd">
         <div id="mySidenav" class="sidenav">
-          <a href="javascript:void(0)" class="closebtn"  onclick="closeNav()">&times;</a>
-          <div id="box" style="margin-left: 20px; text-align: center;"></div>
+            <a href="javascript:void(0)" class="closebtn"  onclick="closeNav()">&times;</a>
+            <div id="box" style="margin-left: 20px; text-align: center;"></div>
         </div>
         <br>
         <span class="animate-bottom" style="font-size:20px; cursor:pointer; color:white; margin-left: 15px;" onclick="openNav()">&#9776; <a style="font-size: 20px;  font-family: 'Source Sans Pro', 'sans-serif';" >CHANNELS</a></span>
 
         <script>
-        function openNav() {
-          document.getElementById("mySidenav").style.width = "230px";
-        }
+            const openNav = () => {
+                document.getElementById("mySidenav").style.width = "230px";
+            }
 
-        function closeNav() {
-          document.getElementById("mySidenav").style.width = "0";
-        }
+            const closeNav = () => {
+                document.getElementById("mySidenav").style.width = "0";
+            }
         </script>
         <div id="loader"></div>
 
@@ -128,81 +39,57 @@
             <script>
                 var myVar;
 
-                function myFunction() {
+                const myFunction = () => {
                     myVar = setTimeout(showPage, 1);
                 }
 
-                function showPage() {
-                  document.getElementById("loader").style.display = "none";
-                  document.getElementById("myDiv").style.display = "block";
+                const showPage = () => {
+                    document.getElementById("loader").style.display = "none";
+                    document.getElementById("myDiv").style.display = "block";
                 }
             </script>
-        <div style="margin-top: 10%; margin-left: -60px">
-            <h1 class="inner" style="margin-left: -3px;">
-                <a href="https://www.twitch.tv/kunszg" style="text-decoration: none;" class="button1">KUNszg</a>
-            </h1>
-                <!-- displays "offline"
-                    <div id="div1" class="bot"></div>
-                        <script type="text/javascript">
-                            fetch('https://supinic.com/api/bot/active')
-                            .then(response => response.json())
-                            .then(data => {
-                                if((new Date() - new Date(data.data.filter(i => i.name === "kunszgbot")[0].lastSeenTimestamp))/1000<300) {
-                                    const para = document.createElement("p");
-                                    const node = document.createTextNode("kunszgbot is online ◉");
-                                    para.appendChild(node);
-
-                                    const element = document.getElementById("div1");
-                                    element.appendChild(para);
-                                } else {
-                                    const para = document.createElement("p");
-                                    const node = document.createTextNode("kunszgbot is offline 🔴");
-                                    para.appendChild(node);
-
-                                    const element = document.getElementById("div1");
-                                    element.appendChild(para);
-                                }
-                            });
-                        </script>
-                -->
+            <div style="margin-top: 10%; vertical-align: middle; white-space: nowrap;">
+                <h1 class="inner" style="margin-left: -3px;">
+                    <a href="https://www.twitch.tv/kunszg" style="text-decoration: none;" class="button1">KUNszg</a>
+                </h1>
                 <div class="animate-bottom">
                     <a class="github" href="https://github.com/KUNszg/kbot" target="_blank">
-                        <button style="margin-left: 20px; border: none; background: none" class="button button1">
+                        <button style="margin-left: 20px;" class="button button1">
                             <div class="button1">
                                 <pre style="margin-bottom:17px">GITHUB</pre>
-                                <img src="img\logo.png" height="60px">
+                                <img class="res" src="img\logo.png">
                             </div>
                         </button>
                     </a>
                     <a class="commands" href="commands" target="_self">
-                        <button style="margin-left: -2px; border: none; background: none" class="button button1">
+                        <button class="button button1">
                             <div class="button1">
                                 <pre style="margin-bottom:17px">COMMANDS</pre>
-                                <img src="img\commands.png" height="60px">
+                                <img class="res" src="img\commands.png">
                             </div>
                         </button>
                     </a>
                     <a class="commands" href="emotes" target="_self">
-                        <button style="margin-left: -2px; border: none; background: none" class="button button1">
+                        <button class="button button1">
                             <div class="button1">
                                 <pre style="margin-bottom:17px;">EMOTES</pre>
-                                <img src="img\emotes.png" height="60px">
+                                <img class="res" src="img\emotes.png">
                             </div>
                         </button>
                     </a>
-                    <a class="commands" href="api" target="_self">
-                        <button style="margin-left: -2px; border: none; background: none" class="button button1">
+                    <a class="commands" href="api" target="_self" style="margin-left: 12px;">
+                        <button class="button button1">
                             <div class="button1">
                                 <pre style="margin-bottom:17px">API</pre>
-                                <img src="img\api.png" height="60px">
+                                <img class="res" src="img\api.png">
                             </div>
                         </button>
                     </a>
                     <a class="commands" href="spotify" target="_self">
-                        <button style="margin-left: -2px; border: none; background: none" class="button button1">
+                        <button class="button button1" style="margin-left: 12px;">
                             <div class="button1">
                                 <pre style="margin-bottom:17px">SPOTIFY</pre>
-                                <img src="https://i.imgur.com/WyFrUHi.png" height="60px">
+                                <img class="res" src="https://i.imgur.com/WyFrUHi.png">
                             </div>
                         </button>
                     </a>
