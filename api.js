@@ -226,12 +226,10 @@ app.get("/resolved", async (req, res, next) => {
             },
         }).json();
 
-        kb.say('kunszg', 'done')
-        await doQuery(`
+        await custom.doQuery(`
             INSERT INTO access_token (refresh_token, platform, premium, code)
             VALUES ("${spotifyToken.refresh_token}", "spotify", ${(checkPremium.product === "open") ? "N" : "Y"}, "${verifCode}")
             `);
-
 
         res.send(`
             <!doctype html>
