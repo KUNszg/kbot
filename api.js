@@ -228,8 +228,8 @@ app.get("/resolved", async (req, res, next) => {
             }).json();
 
             await custom.doQuery(`
-                INSERT INTO access_token (refresh_token, platform, premium, code)
-                VALUES ("${spotifyToken.refresh_token}", "spotify", "${(checkPremium.product === "open") ? "N" : "Y"}", "${verifCode}")
+                INSERT INTO access_token (access_token, refresh_token, platform, premium, code)
+                VALUES ("${spotifyToken.access_token}", "${spotifyToken.refresh_token}", "spotify", "${(checkPremium.product === "open") ? "N" : "Y"}", "${verifCode}")
                 `);
         })();
     } catch (err) {
@@ -242,9 +242,39 @@ app.get("/resolved", async (req, res, next) => {
         }
     }
 
-    kb.on("whisper", (from, userstate, message, self) => {
+    kb.on("whisper", async (from, userstate, message, self) => {
         if (self) return;
+        if (message.startsWith('verify-spotify')) {
+            const checkCode = await custom.doQuery(`
+                SELECT *
+                FROM access_token
+                WHERE code="${message}"
+                `);
 
+            if (!checkCode.length) {
+                kb.whisper(from, 'Provided code is invalid.');
+            }
+
+            const checkUser = await custom.doQuery(`
+                SELECT *
+                FROM access_token
+                WHERE user="${userstate['user-id']}"
+                `);
+
+            if (checkUser.length != 0) {
+                kb.whisper(from, 'You are already registered for this command.');
+            }
+
+            await custom.doQuery(`
+                UPDATE access_token
+                SET userName="${from.replace('#', '')}", user="${userstate['user-id']}", code="Resolved"
+                WHERE code="${message}"
+                `);
+
+            kb.whisper(from, `All done! You can now use the Spotify command. If you have Spotify premium,
+                check out command parameters under "kb help spotify", also note that you can use these parameters
+                like: "kb skip", "kb vol 10", "kb shuffle true" etc.`);
+        }
         return;
     });
 
