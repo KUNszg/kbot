@@ -258,7 +258,7 @@ app.get("/resolved", async (req, res, next) => {
             </head>
             <body style="background-color: #1a1a1a">
                 <div style="vertical-align: middle; text-align: center; margin-top: 10%;">
-                    <p style="lightgray; font-family: 'Noto Sans', sans-serif;">Copy the code below and whisper it to kunszgbot to finish the authentication.</p>
+                    <p style="color: lightgray; font-family: 'Noto Sans', sans-serif;">Copy the code below and whisper it to kunszgbot to finish the authentication.</p>
                     <input style="font-family: 'Noto Sans', sans-serif; text-align: center; background-color: lightgray; border: solid lightgray 4px;" size="35px" type="text" readonly="readonly" value="verify-spotify ${verifCode}" autofocus="autofocus" id="myInput">
                     <br>
                     <br>
