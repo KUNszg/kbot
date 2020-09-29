@@ -211,7 +211,6 @@ app.get("/resolved", async (req, res, next) => {
         (async () => {
             const got = require('got');
 
-            kb.whisper('kunszg', req.query.code)
             const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=0a53ae5438f24d0da272a2e663c615c3&client_secret=85c458f0cc4f4fb18b8e8ea843009890&code=${req.query.code}&redirect_uri=https://kunszg.xyz/resolved`
             const spotifyToken = await got(api, {
                 method: "POST",
@@ -220,9 +219,6 @@ app.get("/resolved", async (req, res, next) => {
                 },
             }).json();
 
-            kb.say('kunszg', 'xd');
-            kb.whisper('kunszg', JSON.stringify(spotifyToken))
-
             const checkPremium = await got(`https://api.spotify.com/v1/me`, {
                 method: "GET",
                 headers: {
@@ -230,17 +226,11 @@ app.get("/resolved", async (req, res, next) => {
                     "Content-Type": "application/x-www-form-urlencoded"
                 },
             }).json();
-
-            kb.say('kunszg', 'xd Clap');
-
-            kb.whisper('kunszg', JSON.stringify(checkPremium))
-
+            kb.whisper('kunszg', spotifyToken.access_token)
             await custom.doQuery(`
                 INSERT INTO access_token (refresh_token, platform, premium, code)
                 VALUES ("${spotifyToken.refresh_token}", "spotify", ${(checkPremium.product === "open") ? "N" : "Y"}, "${verifCode}")
                 `);
-
-            kb.say('kunszg', 'xdd');
         })();
     } catch (err) {
         if (err.message === "Response code 400 (Bad Request)") {
