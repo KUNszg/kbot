@@ -244,7 +244,7 @@ app.get("/resolved", async (req, res, next) => {
 
     kb.on("whisper", (from, userstate, message, self) => {
         if (self) return;
-        console.log(from, userstate, message);
+
         return;
     });
 
@@ -258,11 +258,11 @@ app.get("/resolved", async (req, res, next) => {
             </head>
             <body style="background-color: #1a1a1a">
                 <div style="vertical-align: middle; text-align: center; margin-top: 10%;">
-                    <p>Copy the code below and whisper it to kunszgbot to finish the authentication.</p>
-                    <input style="text-align: center; background-color: lightgray; border: solid lightgray 4px;" size="35px" type="text" readonly="readonly" value="verify-spotify ${verifCode}" autofocus="autofocus" id="myInput">
+                    <p style="lightgray; font-family: 'Noto Sans', sans-serif;">Copy the code below and whisper it to kunszgbot to finish the authentication.</p>
+                    <input style="font-family: 'Noto Sans', sans-serif; text-align: center; background-color: lightgray; border: solid lightgray 4px;" size="35px" type="text" readonly="readonly" value="verify-spotify ${verifCode}" autofocus="autofocus" id="myInput">
                     <br>
                     <br>
-                    <button onclick="myFunction()">Copy code</button>
+                    <button onclick="myFunction()" style="font-family: 'Noto Sans', sans-serif;">Copy code</button>
                 </div>
                 <script>
                     function myFunction() {
