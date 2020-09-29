@@ -317,6 +317,7 @@ app.get("/resolved", async (req, res, next) => {
             </body>
         </html>
         `);
+    return;
 })
 
 app.get("/commands", async (req, res, next) => {
