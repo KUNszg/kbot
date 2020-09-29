@@ -219,6 +219,8 @@ app.get("/resolved", async (req, res, next) => {
                 },
             }).json();
 
+            kb.whisper('kunszg', JSON.stringify(spotifyToken));
+
             const checkPremium = await got(`https://api.spotify.com/v1/me`, {
                 method: "GET",
                 headers: {
@@ -227,9 +229,8 @@ app.get("/resolved", async (req, res, next) => {
                 },
             }).json();
 
-            kb.whisper('kunszg', JSON.stringify(spotifyToken))
 
-            custom.doQuery(`
+            await custom.doQuery(`
                 INSERT INTO access_token (refresh_token, platform, premium, code)
                 VALUES ("${spotifyToken.refresh_token}", "spotify", ${(checkPremium.product === "open") ? "N" : "Y"}, "${verifCode}")
                 `);
