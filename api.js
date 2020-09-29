@@ -104,7 +104,183 @@ kb.on('chat', (channel, message) => {
     msgCount.push({'channel': channel.replace('#', ''), 'message':'add'})
 });
 
+app.get("/spotify", async (req, res, next) => {
+    res.send(`
+        <!doctype html>
+        <html>
+            <head>
+                <title>commands</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
+                <style>
+                    .button {
+                        background-color: #4CAF50; /* Green */
+                        border: none;
+                        color: white;
+                        padding: 14px 28px;
+                        text-align: center;
+                        text-decoration: none;
+                        display: inline-block;
+                        font-size: 20px;
+                        margin: 4px 2px;
+                        transition-duration: 0.3s;
+                        cursor: pointer;
+                    }
 
+                    .button1 {
+                        color: white;
+                    }
+
+                    .commands:link, .commands:visited {
+                        text-decoration: none;
+                    }
+
+                    .animate-bottom {
+                        vertical-align: middle;
+                        text-align: center;
+                        position: relative;
+                        -webkit-animation-name: animatebottom;
+                        -webkit-animation-duration: 1s;
+                        animation-name: animatebottom;
+                        animation-duration: 1s;
+                        margin-top: 10%;
+                    }
+
+                    @-webkit-keyframes animatebottom {
+                        from { bottom:-100px; opacity:0 }
+                        to { bottom:0px; opacity:1 }
+                    }
+
+                    @keyframes animatebottom {
+                        from{ bottom:-100px; opacity:0 }
+                        to{ bottom:0; opacity:1 }
+                    }
+
+                    .button1:hover {
+                        transform: scale(1.11, 1.11);
+                        transition-duration: 0.3s;
+                    }
+                </style>
+            </head>
+            <body style="background-color: #1a1a1a">
+                <div class="animate-bottom">
+                    <strong style="color: gray; font-family: 'Noto Sans', sans-serif;">Click the button below and log into your Spotify</strong>
+                    <a class="commands" href="https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private" target="_self">
+                        <br>
+                        <button style="border: none; background: none" class="button button1">
+                            <div class="button1">
+                                <pre style="margin-bottom:17px;">SPOTIFY-KUNSZGBOT<br>INTEGRATION</pre>
+                                <img src="https://i.imgur.com/WyFrUHi.png" height="60px">
+                            </div>
+                        </button>
+                    </a>
+                </div>
+            </body>
+        </html>
+        `);
+})
+
+app.get("/resolved", async (req, res, next) => {
+    if (typeof req.query.code === "undefined") {
+        res.send(`
+            <!doctype html>
+            <html>
+                <head>
+                    <title>Resolve error</title>
+                </head>
+                <body>
+                    <h3>
+                        An error #1 has occured, report this to kunszg FeelsDankMan
+                    </h3>
+                </body>
+            </html>
+            `);
+        return;
+    }
+
+    const genString = (length) => {
+       let result = '';
+       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+       const charactersLength = characters.length;
+       for (let i = 0; i < length; i++) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+       }
+       return result;
+    }
+
+    const verifCode = genString(15);
+
+    const accessToken = await doQuery(`
+        SELECT *
+        FROM access_token
+        WHERE code="verifCode"
+        `);
+
+    if (accessToken.length != 0) {
+        return;
+    }
+
+    try {
+        const got = require('got');
+
+        const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=0a53ae5438f24d0da272a2e663c615c3&client_secret=85c458f0cc4f4fb18b8e8ea843009890&code=${req.query.code}&redirect_uri=https://kunszg.xyz/resolved`
+        const spotifyToken = await got(api, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+        }).json();
+
+        const checkPremium = await got(`https://api.spotify.com/v1/me`, {
+            method: "GET",
+            headers: {
+                'Authorization': `Bearer ${spotifyToken.access_token}`,
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+        }).json();
+
+        await doQuery(`
+            INSERT INTO access_token (refresh_token, platform, premium, code)
+            VALUES (${spotifyToken.refresh_token}, "spotify", ${(checkPremium.product === "open") ? "N" : "Y"}, ${verifCode})
+            `);
+
+        res.send(`
+            <!doctype html>
+            <html>
+                <head>
+                    <meta name="viewport" content="width=device-width, initial-scale=1">
+                    <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
+                    <title>Successfully resolved</title>
+                </head>
+                <body style="background-color: #1a1a1a">
+                    <div style="vertical-align: middle; text-align: center; margin-top: 10%;">
+                        <input style="text-align: center; background-color: lightgray; border: solid lightgray 4px;" size="35px" type="text" readonly="readonly" value="verify-spotify ${verifCode}" autofocus="autofocus" id="myInput">
+                        <br>
+                        <br>
+                        <button onclick="myFunction()">Copy code</button>
+                    </div>
+                    <script>
+                        function myFunction() {
+                          /* Get the text field */
+                          var copyText = document.getElementById("myInput");
+
+                          /* Select the text field */
+                          copyText.select();
+                          copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+                          /* Copy the text inside the text field */
+                          document.execCommand("copy");
+                        }
+                    </script>
+                </body>
+            </html>
+            `);
+    } catch (err) {
+        if (err.message === "Response code 400 (Bad Request)") {
+            res.send('<body>Your code has expired, repeat the process.</body>');
+        }
+    }
+})
 
 app.get("/commands", async (req, res, next) => {
     const Table = require('table-builder');

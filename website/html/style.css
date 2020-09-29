@@ -32,7 +32,7 @@
 }
 
 .button1:hover {
-	transform: scale(1.11);
+	transform: scale(1.11, 1.11);
 	transition-duration: 0.3s;
 }
 
