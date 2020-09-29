@@ -242,49 +242,6 @@ app.get("/resolved", async (req, res, next) => {
         }
     }
 
-    kb.on("whisper", async (from, userstate, message, self) => {
-        if (self) return;
-        if (message.split(' ')[0] === "verify-spotify") {
-            const checkCode = await custom.doQuery(`
-                SELECT *
-                FROM access_token
-                WHERE code="${message.split(' ')[1]}"
-                `);
-
-            if (checkCode.length === 0) {
-                kb.whisper(from, 'Provided code is invalid.');
-                return;
-            }
-
-            const checkUser = await custom.doQuery(`
-                SELECT *
-                FROM access_token
-                WHERE user="${userstate['user-id']}"
-                `);
-
-            if (checkUser.length != 0) {
-                kb.whisper(from, 'You are already registered for this command.');
-                await custom.doQuery(`
-                    DELETE FROM access_token
-                    WHERE code="${message.split(' ')[1]}"
-                    `);
-                return;
-            }
-
-            await custom.doQuery(`
-                UPDATE access_token
-                SET userName="${from.replace('#', '')}", user="${userstate['user-id']}", code="Resolved"
-                WHERE code="${message.split(' ')[1]}"
-                `);
-
-            kb.whisper(from, `All done! You can now use the Spotify command. If you have Spotify premium,
-                check out command parameters under "kb help spotify", also note that you can use these parameters
-                like: "kb skip", "kb vol 10", "kb shuffle true" etc.`);
-            return;
-        }
-        return;
-    });
-
     res.send(`
         <!doctype html>
         <html>
@@ -318,7 +275,50 @@ app.get("/resolved", async (req, res, next) => {
         </html>
         `);
     return;
-})
+});
+
+kb.on("whisper", async (from, userstate, message, self) => {
+    if (self) return;
+    if (message.split(' ')[0] === "verify-spotify") {
+        const checkCode = await custom.doQuery(`
+            SELECT *
+            FROM access_token
+            WHERE code="${message.split(' ')[1]}"
+            `);
+
+        if (checkCode.length === 0) {
+            kb.whisper(from, 'Provided code is invalid.');
+            return;
+        }
+
+        const checkUser = await custom.doQuery(`
+            SELECT *
+            FROM access_token
+            WHERE user="${userstate['user-id']}"
+            `);
+
+        if (checkUser.length != 0) {
+            kb.whisper(from, 'You are already registered for this command.');
+            await custom.doQuery(`
+                DELETE FROM access_token
+                WHERE code="${message.split(' ')[1]}"
+                `);
+            return;
+        }
+
+        await custom.doQuery(`
+            UPDATE access_token
+            SET userName="${from.replace('#', '')}", user="${userstate['user-id']}", code="Resolved"
+            WHERE code="${message.split(' ')[1]}"
+            `);
+
+        kb.whisper(from, `All done! You can now use the Spotify command. If you have Spotify premium,
+            check out command parameters under "kb help spotify", also note that you can use these parameters
+            like: "kb skip", "kb vol 10", "kb shuffle true" etc.`);
+        return;
+    }
+    return;
+});
 
 app.get("/commands", async (req, res, next) => {
     const Table = require('table-builder');
