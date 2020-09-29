@@ -264,6 +264,10 @@ app.get("/resolved", async (req, res, next) => {
 
             if (checkUser.length != 0) {
                 kb.whisper(from, 'You are already registered for this command.');
+                await custom.doQuery(`
+                    DELETE FROM access_token
+                    WHERE code="${message.split(' ')[1]}"
+                    `);
                 return;
             }
 
