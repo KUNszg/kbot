@@ -208,62 +208,32 @@ app.get("/resolved", async (req, res, next) => {
     }
 
     try {
-        const got = require('got');
+        (async () => {
+            const got = require('got');
 
-        const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=0a53ae5438f24d0da272a2e663c615c3&client_secret=85c458f0cc4f4fb18b8e8ea843009890&code=${req.query.code}&redirect_uri=https://kunszg.xyz/resolved`
-        const spotifyToken = await got(api, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-        }).json();
+            const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=0a53ae5438f24d0da272a2e663c615c3&client_secret=85c458f0cc4f4fb18b8e8ea843009890&code=${req.query.code}&redirect_uri=https://kunszg.xyz/resolved`
+            const spotifyToken = await got(api, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+            }).json();
 
-        const checkPremium = await got(`https://api.spotify.com/v1/me`, {
-            method: "GET",
-            headers: {
-                'Authorization': `Bearer ${spotifyToken.access_token}`,
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-        }).json();
+            const checkPremium = await got(`https://api.spotify.com/v1/me`, {
+                method: "GET",
+                headers: {
+                    'Authorization': `Bearer ${spotifyToken.access_token}`,
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+            }).json();
 
-        kb.whisper('kunszg', JSON.stringify(spotifyToken))
+            kb.whisper('kunszg', JSON.stringify(spotifyToken))
 
-        await custom.doQuery(`
-            INSERT INTO access_token (refresh_token, platform, premium, code, user)
-            VALUES ("${spotifyToken.refresh_token}", "spotify", ${(checkPremium.product === "open") ? "N" : "Y"}, "${verifCode}", "123654")
-            `);
-
-        res.send(`
-            <!doctype html>
-            <html>
-                <head>
-                    <meta name="viewport" content="width=device-width, initial-scale=1">
-                    <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-                    <title>Successfully resolved</title>
-                </head>
-                <body style="background-color: #1a1a1a">
-                    <div style="vertical-align: middle; text-align: center; margin-top: 10%;">
-                        <input style="text-align: center; background-color: lightgray; border: solid lightgray 4px;" size="35px" type="text" readonly="readonly" value="verify-spotify ${verifCode}" autofocus="autofocus" id="myInput">
-                        <br>
-                        <br>
-                        <button onclick="myFunction()">Copy code</button>
-                    </div>
-                    <script>
-                        function myFunction() {
-                          /* Get the text field */
-                          var copyText = document.getElementById("myInput");
-
-                          /* Select the text field */
-                          copyText.select();
-                          copyText.setSelectionRange(0, 99999); /*For mobile devices*/
-
-                          /* Copy the text inside the text field */
-                          document.execCommand("copy");
-                        }
-                    </script>
-                </body>
-            </html>
-            `);
+            custom.doQuery(`
+                INSERT INTO access_token (refresh_token, platform, premium, code)
+                VALUES ("${spotifyToken.refresh_token}", "spotify", ${(checkPremium.product === "open") ? "N" : "Y"}, "${verifCode}")
+                `);
+        })();
     } catch (err) {
         if (err.message === "Response code 400 (Bad Request)") {
             res.send('<body>Your code has expired, repeat the process.</body>');
@@ -273,6 +243,38 @@ app.get("/resolved", async (req, res, next) => {
             res.send('<body>Invalid code.</body>')
         }
     }
+
+    res.send(`
+        <!doctype html>
+        <html>
+            <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
+                <title>Successfully resolved</title>
+            </head>
+            <body style="background-color: #1a1a1a">
+                <div style="vertical-align: middle; text-align: center; margin-top: 10%;">
+                    <input style="text-align: center; background-color: lightgray; border: solid lightgray 4px;" size="35px" type="text" readonly="readonly" value="verify-spotify ${verifCode}" autofocus="autofocus" id="myInput">
+                    <br>
+                    <br>
+                    <button onclick="myFunction()">Copy code</button>
+                </div>
+                <script>
+                    function myFunction() {
+                      /* Get the text field */
+                      var copyText = document.getElementById("myInput");
+
+                      /* Select the text field */
+                      copyText.select();
+                      copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+                      /* Copy the text inside the text field */
+                      document.execCommand("copy");
+                    }
+                </script>
+            </body>
+        </html>
+        `);
 })
 
 app.get("/commands", async (req, res, next) => {
