@@ -180,7 +180,6 @@ app.get("/spotify", async (req, res, next) => {
         `);
 })
 
-try {
 app.get("/resolved", async (req, res, next) => {
     if (typeof req.query.code === "undefined") {
         res.send(`
@@ -282,9 +281,6 @@ app.get("/resolved", async (req, res, next) => {
         }
     }
 })
-} catch (err) {
-    console.log(err)
-}
 
 app.get("/commands", async (req, res, next) => {
     const Table = require('table-builder');
