@@ -242,6 +242,11 @@ app.get("/resolved", async (req, res, next) => {
         }
     }
 
+    kb.on("whisper", (from, userstate, message, self) => {
+        if (self) return;
+        console.log(from, userstate, message);
+    });
+
     res.send(`
         <!doctype html>
         <html>
@@ -274,10 +279,6 @@ app.get("/resolved", async (req, res, next) => {
             </body>
         </html>
         `);
-    kb.on("whisper", (from, userstate, message, self) => {
-        if (self) return;
-        console.log(from, userstate, message);
-    });
 })
 
 app.get("/commands", async (req, res, next) => {
