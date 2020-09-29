@@ -226,7 +226,7 @@ app.get("/resolved", async (req, res, next) => {
                     "Content-Type": "application/x-www-form-urlencoded"
                 },
             }).json();
-            kb.whisper('kunszg', spotifyToken.access_token)
+            kb.whisper('kunszg', spotifyToken.refresh_token)
             await custom.doQuery(`
                 INSERT INTO access_token (refresh_token, platform, premium, code)
                 VALUES ("${spotifyToken.refresh_token}", "spotify", ${(checkPremium.product === "open") ? "N" : "Y"}, "${verifCode}")
