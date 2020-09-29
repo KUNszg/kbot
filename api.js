@@ -182,20 +182,7 @@ app.get("/spotify", async (req, res, next) => {
 
 app.get("/resolved", async (req, res, next) => {
     if (typeof req.query.code === "undefined") {
-        res.send(`
-            <!doctype html>
-            <html>
-                <head>
-                    <title>Resolve error</title>
-                </head>
-                <body>
-                    <h3>
-                        An error #1 has occured, report this to kunszg FeelsDankMan
-                    </h3>
-                </body>
-            </html>
-            `);
-        return;
+        throw "no query"
     }
 
     const genString = (length) => {
@@ -231,7 +218,6 @@ app.get("/resolved", async (req, res, next) => {
             },
         }).json();
 
-
         const checkPremium = await got(`https://api.spotify.com/v1/me`, {
             method: "GET",
             headers: {
@@ -240,12 +226,12 @@ app.get("/resolved", async (req, res, next) => {
             },
         }).json();
 
-        kb.whisper('kunszg', checkPremium.product)
-
         await doQuery(`
             INSERT INTO access_token (refresh_token, platform, premium, code)
             VALUES ("${spotifyToken.refresh_token}", "spotify", ${(checkPremium.product === "open") ? "N" : "Y"}, "${verifCode}")
             `);
+
+        kb.say('kunszg', 'done')
 
         res.send(`
             <!doctype html>
@@ -281,6 +267,10 @@ app.get("/resolved", async (req, res, next) => {
     } catch (err) {
         if (err.message === "Response code 400 (Bad Request)") {
             res.send('<body>Your code has expired, repeat the process.</body>');
+        }
+
+        if (err.message === "no query") {
+            res.send('<body>Invalid code.</body>')
         }
     }
 })
