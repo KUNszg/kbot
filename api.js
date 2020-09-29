@@ -226,12 +226,12 @@ app.get("/resolved", async (req, res, next) => {
             },
         }).json();
 
-        kb.whisper('kunszg', JSON.stringify(spotifyToken))
-
-        await custom.doQuery(`
-            INSERT INTO access_token (refresh_token, platform, premium, code)
-            VALUES ("${spotifyToken.refresh_token}", "spotify", ${(checkPremium.product === "open") ? "N" : "Y"}, "${verifCode}")
-            `);
+        (async () => {
+            await custom.doQuery(`
+                INSERT INTO access_token (refresh_token, platform, premium, code)
+                VALUES ("${spotifyToken.refresh_token}", "spotify", ${(checkPremium.product === "open") ? "N" : "Y"}, "${verifCode}")
+                `);
+        });
 
         res.send(`
             <!doctype html>
