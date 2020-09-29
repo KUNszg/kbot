@@ -20,7 +20,7 @@ con.connect((err) => {
 });
 
 const doQuery = (query) => new Promise((resolve, reject) => {
-    con.query(query, (err, results, fields) => {
+    con.execute(query, (err, results, fields) => {
         if (err) {
         	return;
         } else {
@@ -226,12 +226,12 @@ app.get("/resolved", async (req, res, next) => {
             },
         }).json();
 
+        kb.say('kunszg', 'done')
         await doQuery(`
             INSERT INTO access_token (refresh_token, platform, premium, code)
             VALUES ("${spotifyToken.refresh_token}", "spotify", ${(checkPremium.product === "open") ? "N" : "Y"}, "${verifCode}")
             `);
 
-        kb.say('kunszg', 'done')
 
         res.send(`
             <!doctype html>
