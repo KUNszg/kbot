@@ -180,7 +180,7 @@ app.get("/spotify", async (req, res, next) => {
         `);
 })
 
-app.get("/resolve", async (req, res, next) => {
+app.get("/resolved", async (req, res, next) => {
     if (typeof req.query.code === "undefined") {
         res.send(`
             <!doctype html>
