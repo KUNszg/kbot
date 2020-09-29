@@ -231,7 +231,6 @@ app.get("/resolved", async (req, res, next) => {
             },
         }).json();
 
-        kb.whisper('kunszg', spotifyToken.access_token)
 
         const checkPremium = await got(`https://api.spotify.com/v1/me`, {
             method: "GET",
@@ -240,6 +239,8 @@ app.get("/resolved", async (req, res, next) => {
                 "Content-Type": "application/x-www-form-urlencoded"
             },
         }).json();
+
+        kb.whisper('kunszg', checkPremium.product)
 
         await doQuery(`
             INSERT INTO access_token (refresh_token, platform, premium, code)
