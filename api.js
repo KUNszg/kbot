@@ -245,6 +245,7 @@ app.get("/resolved", async (req, res, next) => {
     kb.on("whisper", (from, userstate, message, self) => {
         if (self) return;
         console.log(from, userstate, message);
+        return;
     });
 
     res.send(`
