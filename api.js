@@ -244,7 +244,7 @@ app.get("/resolved", async (req, res, next) => {
 
         await doQuery(`
             INSERT INTO access_token (refresh_token, platform, premium, code)
-            VALUES (${spotifyToken.refresh_token}, "spotify", ${(checkPremium.product === "open") ? "N" : "Y"}, ${verifCode})
+            VALUES ("${spotifyToken.refresh_token}", "spotify", ${(checkPremium.product === "open") ? "N" : "Y"}, "${verifCode}")
             `);
 
         res.send(`
