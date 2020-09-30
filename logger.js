@@ -108,7 +108,7 @@ con.connect((err) => {
 const doQuery = (query) => new Promise((resolve, reject) => {
     con.query(query, (err, results) => {
         if (err) {
-            reject(err);
+            return;
         } else {
             resolve(results);
         }
