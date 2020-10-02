@@ -112,55 +112,7 @@ app.get("/spotify", async (req, res, next) => {
                 <title>commands</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1">
                 <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-                <style>
-                    .button {
-                        background-color: #4CAF50; /* Green */
-                        border: none;
-                        color: white;
-                        padding: 14px 28px;
-                        text-align: center;
-                        text-decoration: none;
-                        display: inline-block;
-                        font-size: 20px;
-                        margin: 4px 2px;
-                        transition-duration: 0.3s;
-                        cursor: pointer;
-                    }
-
-                    .button1 {
-                        color: white;
-                    }
-
-                    .commands:link, .commands:visited {
-                        text-decoration: none;
-                    }
-
-                    .animate-bottom {
-                        vertical-align: middle;
-                        text-align: center;
-                        position: relative;
-                        -webkit-animation-name: animatebottom;
-                        -webkit-animation-duration: 1s;
-                        animation-name: animatebottom;
-                        animation-duration: 1s;
-                        margin-top: 10%;
-                    }
-
-                    @-webkit-keyframes animatebottom {
-                        from { bottom:-100px; opacity:0 }
-                        to { bottom:0px; opacity:1 }
-                    }
-
-                    @keyframes animatebottom {
-                        from{ bottom:-100px; opacity:0 }
-                        to{ bottom:0; opacity:1 }
-                    }
-
-                    .button1:hover {
-                        transform: scale(1.11, 1.11);
-                        transition-duration: 0.3s;
-                    }
-                </style>
+                <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_spotify.css">
             </head>
             <body style="background-color: #1a1a1a">
                 <div class="animate-bottom">
@@ -355,43 +307,7 @@ app.get("/commands", async (req, res, next) => {
           		<title>commands</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1">
 				<link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-                <style>
-                    .table-contents {
-                        margin-right: 5px;
-                        margin-left: 5px;
-                        font-family: 'Noto Sans', sans-serif;
-                        font-size: 13px;
-                    }
-
-                    .table-headers {
-                        margin-left: 5px;
-                        margin-right: 5px;
-                        border-bottom: solid white 1px;
-                        font-family: 'Noto Sans', sans-serif;
-                        font-size: 14px;
-                    }
-
-                    .table-context {
-                        width: 100%;
-                        height: 100%;
-                    }
-
-                    td, th {
-                        white-space: nowrap;
-                    }
-
-                    tr {
-                        line-height: 30px;
-                    }
-
-                    tr:nth-child(odd) {
-                        background-color: #202020;
-                    }
-
-                    tr:nth-child(even) {
-                        background-color: #2c2c2c;
-                    }
-                </style>
+                <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_commands.css">
       		</head>
       		<body style="background-color: #1a1a1a">
                 <div style="color: lightgray;">
