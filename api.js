@@ -519,7 +519,7 @@ app.get("/emotes", async (req, res, next) => {
                 <meta charset="UTF-8">
                 <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-                <link rel="stylesheet" href="https://kunszg.xyz/emotes_table.css">
+                <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/emotes.css">
             </head>
             <body style="background-color: #1a1a1a">
                 <br><br>
