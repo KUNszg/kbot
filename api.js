@@ -425,11 +425,11 @@ app.get("/emotes", async (req, res, next) => {
         "removed": " <div class='table-headers'>removed</div> "
     };
 
-    if (typeof await req.query != "undefined") {
+    if (await req.query?.search ?? false) {
         const emotes = await doQuery(`
             SELECT *
             FROM emotes
-            WHERE channel="${(typeof req.query.search === "undefined") ? req.query.search : req.query.search.toLowerCase()}"
+            WHERE channel="${req.query.search.toLowerCase()}"
             ORDER BY date
             DESC
             `);
@@ -437,7 +437,7 @@ app.get("/emotes", async (req, res, next) => {
         const emotesRemoved = await doQuery(`
             SELECT *
             FROM emotes_removed
-            WHERE channel="${(typeof req.query.search === "undefined") ? req.query.search : req.query.search.toLowerCase()}"
+            WHERE channel="${req.query.search.toLowerCase()}"
             ORDER BY date
             DESC
             `);
@@ -465,7 +465,15 @@ app.get("/emotes", async (req, res, next) => {
                 tableData.push({
                     "ID": `<div class="table-contents" style="text-align: center;">${i+1}</div>`,
                     "name": `<div class="table-contents" style="text-align: center;">${emotes[i].emote}</div>`,
-                    "emote": `<div class="table-contents" style="text-align: center;"><a target="_blank" href="${(emotes[i].type === "bttv") ? emotes[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '') : `https://www.frankerfacez.com/emoticon/${emotes[i].emoteId}-${emotes[i].emote}`}"><span title="${emotes[i].emote}"><img src="${emotes[i].url}" alt="${emotes[i].emote}"></span></a></div>`,
+                    "emote": `<div class="table-contents" style="text-align: center;">
+                                <a target="_blank" href="${(emotes[i].type === "bttv") ?
+                                    emotes[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '') :
+                                    `https://www.frankerfacez.com/emoticon/${emotes[i].emoteId}-${emotes[i].emote}`}">
+                                    <span title="${emotes[i].emote}">
+                                        <img src="${emotes[i].url}" alt="${emotes[i].emote}">
+                                    </span>
+                                </a>
+                            </div>`,
                     "type": `<div class="table-contents" style="text-align: center;">${emotes[i].type}</div>`,
                     "added": `<div class="table-contents" style="text-align: center;">${(Date.parse(emotes[i].date) < 1594764720000) ? "*" : formatDate(emotes[i].date)}</div>`
                 })
@@ -511,97 +519,7 @@ app.get("/emotes", async (req, res, next) => {
                 <meta charset="UTF-8">
                 <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-                <style>
-                    * {
-                      box-sizing: border-box;
-                    }
-
-                    /* Style the search field */
-                    form.example input[type=text] {
-                      padding: 10px;
-                      font-size: 15px;
-                      border: 1px solid grey;
-                      float: left;
-                      background: #f1f1f1;
-                      height: 25px;
-                      height: 5%
-                      width: 20%
-                    }
-
-                    /* Style the submit button */
-                    form.example button {
-                      float: left;
-                      padding: 10px;
-                      background: #2196F3;
-                      color: white;
-                      font-size: 15px;
-                      border: 1px solid grey;
-                      border-left: none; /* Prevent double borders */
-                      cursor: pointer;
-                      height: 25px;
-                    }
-
-                    form.example button:hover {
-                      background: #0b7dda;
-                    }
-
-                    /* Clear floats */
-                    form.example::after {
-                        content: "";
-                        clear: both;
-                        display: table;
-                    }
-
-                    .table-contents {
-                        margin-right: 5px;
-                        margin-left: 5px;
-                        font-family: 'Noto Sans', sans-serif;
-                        font-size: 13px;
-                    }
-
-                    .table-headers {
-                        margin-left: 5px;
-                        margin-right: 5px;
-                        border-bottom: solid white 1px;
-                        font-family: 'Noto Sans', sans-serif;
-                        font-size: 14px;
-                    }
-
-                    .hidden {
-                        display: none;
-                    }
-
-                    .table-button {
-                        font-family: 'Noto Sans', sans-serif;
-                        font-size: 13px;
-                        color: gray;
-                        background-color: #2c2c2c;
-                        border: solid dimgray 1px;
-                        float: left;
-                        cursor: pointer;
-                        border-radius: 5px;
-                    }
-
-                    td, th {
-                        white-space: nowrap;
-                    }
-
-                    table {
-                        float: left;
-                    }
-
-                    tr {
-                        line-height: 30px;
-                    }
-
-                    tr:nth-child(odd) {
-                        background-color: #202020;
-                    }
-
-                    tr:nth-child(even) {
-                        background-color: #2c2c2c;
-                    }
-                </style>
+                <link rel="stylesheet" href="https://kunszg.xyz/emotes_table.css">
             </head>
             <body style="background-color: #1a1a1a">
                 <br><br>
@@ -626,11 +544,11 @@ app.get("/emotes", async (req, res, next) => {
                         .render()}
                 </div>
                 <script>
-                    function toggleTable() {
+                    toggleTable () => {
                         document.getElementById("removed-emotes-table").classList.toggle("hidden");
                     }
 
-                    function toggleTable2() {
+                    toggleTable2 () => {
                         document.getElementById("added-emotes-table").classList.toggle("hidden");
                     }
                 </script>

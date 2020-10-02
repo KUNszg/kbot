@@ -1,30 +1,33 @@
 
+
 /* main page background color */
+
 .bd {
-	background-color: #1a1a1a;
+    background-color: #1a1a1a;
 }
 
 .inner {
-	font-family: Georgia;
-	font-size: 40px;
-	color: #ffffff;
-	margin-left: 20px;
-	text-indent: 10px;
-	height: 100%;
+    font-family: Georgia;
+    font-size: 40px;
+    color: #ffffff;
+    margin-left: 20px;
+    text-indent: 10px;
+    height: 100%;
 }
 
 .button {
-	background-color: #4CAF50; /* Green */
-	border: none;
-	color: white;
-	padding: 14px 28px;
-	text-align: center;
-	text-decoration: none;
-	display: inline-block;
-	font-size: 20px;
-	margin: 4px 2px;
-	transition-duration: 0.3s;
-	cursor: pointer;
+    background-color: #4CAF50;
+    /* Green */
+    border: none;
+    color: white;
+    padding: 14px 28px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+    margin: 4px 2px;
+    transition-duration: 0.3s;
+    cursor: pointer;
     border: none;
     background: none;
     white-space: nowrap;
@@ -36,300 +39,375 @@
 }
 
 .button1 {
-	color: white;
+    color: white;
 }
 
 .button1:hover {
-	transform: scale(1.11, 1.11);
-	transition-duration: 0.3s;
+    transform: scale(1.11, 1.11);
+    transition-duration: 0.3s;
 }
 
-.github:link, .github:visited {
-	text-decoration: none;
+.github:link,
+.github:visited {
+    text-decoration: none;
 }
 
-.commands:link, .commands:visited {
-	text-decoration: none;
+.commands:link,
+.commands:visited {
+    text-decoration: none;
 }
-
 
 .api {
-	margin-left: 70px;
-	color: white;
-	border-left: solid dimgray 1px;
-	border-right: solid dimgray 1px;
-	border-bottom: solid dimgray 1px;
-	font-family: 'Source Sans Pro', 'sans-serif'
+    margin-left: 70px;
+    color: white;
+    border-left: solid dimgray 1px;
+    border-right: solid dimgray 1px;
+    border-bottom: solid dimgray 1px;
+    font-family: 'Source Sans Pro', 'sans-serif'
 }
 
 .bot {
-	color: #ffffff;
-	margin-left: 35px;
+    color: #ffffff;
+    margin-left: 35px;
 }
 
 .row-header {
-	color: #e3e3e3;
+    color: #e3e3e3;
 }
+
 
 /* Fixed sidenav, full height */
+
 .sidenav {
-	height: 100%;
-	width: 200px;
-	z-index: 1;
-	top: 0;
-	left: 0;
-	background-color: #111;
-	padding-top: 20px;
+    height: 100%;
+    width: 200px;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    padding-top: 20px;
 }
+
 
 /* Style the sidenav links and the dropdown button */
-.sidenav a, .dropdown-btn {
-	padding: 6px 8px 6px 16px;
-	text-decoration: none;
-	font-size: 15px;
-	color: #818181;
-	display: block;
-	border: all;
-	border-width: 1px;
-	background: none;
-	width:100%;
-	text-align: left;
-	cursor: pointer;
-	outline: none;
+
+.sidenav a,
+.dropdown-btn {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 15px;
+    color: #818181;
+    display: block;
+    border: all;
+    border-width: 1px;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
 }
+
 
 /* On mouse-over */
-.sidenav a:hover, .dropdown-btn:hover {
-	color: #f1f1f1;
+
+.sidenav a:hover,
+.dropdown-btn:hover {
+    color: #f1f1f1;
 }
+
 
 /* Main content */
+
 .main {
-	margin-left: 200px; /* Same as the width of the sidenav */
-	font-size: 20px; /* Increased text to enable scrolling */
-	padding: 0px 10px;
+    margin-left: 200px;
+    /* Same as the width of the sidenav */
+    font-size: 20px;
+    /* Increased text to enable scrolling */
+    padding: 0px 10px;
 }
+
 
 /* Add an active class to the active dropdown button */
+
 .active {
-  	background-color: green;
-  	color: white;
+    background-color: green;
+    color: white;
 }
+
 
 /* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
+
 .dropdown-container {
-	display: none;
-	background-color: #262626;
-	padding-left: 8px;
+    display: none;
+    background-color: #262626;
+    padding-left: 8px;
 }
+
 
 /* Optional: Style the caret down icon */
+
 .fa-caret-down {
-	float: right;
-	padding-right: 8px;
+    float: right;
+    padding-right: 8px;
 }
+
 
 /* arrow used in showing bot responses */
+
 .commentArrow {
-	color: green;
-	font-size: 25px;
+    color: green;
+    font-size: 25px;
 }
 
+
 /* disable text underline on hover */
+
 .commentArrow:hover {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 ul.nav-pills {
-	font-size: 20px;
-	line-height: 8px;
-	border-left: 1px solid dimgray;
-	margin-top: 21px;
-	margin-left: 50px;
+    font-size: 20px;
+    line-height: 8px;
+    border-left: 1px solid dimgray;
+    margin-top: 21px;
+    margin-left: 50px;
 }
+
 div.col-sm-9 div {
-	font-size: 19px;
+    font-size: 19px;
 }
 
 .comment {
-	font-size: 14px;
-	color: gray;
+    font-size: 14px;
+    color: gray;
 }
 
 .comment.text {
-	font-size: 20px;
-	font-weight: 300;
-	vertical-align: middle;
-	text-align: center;
+    font-size: 20px;
+    font-weight: 300;
+    vertical-align: middle;
+    text-align: center;
 }
 
 .apiDiv {
-	font-family: 'Source Sans Pro', Helvetica, sans-serif;
-	font-size: 50px;
-	margin-left: 100px;
-	text-align: left;
-	margin-top: 100px;
-	color: white;
+    font-family: 'Source Sans Pro', Helvetica, sans-serif;
+    font-size: 50px;
+    margin-left: 100px;
+    text-align: left;
+    margin-top: 100px;
+    color: white;
 }
 
 .noHighlight {
-	text-decoration: none;
+    text-decoration: none;
 }
 
-
 .expandable {
-  background: #fff;
-  overflow: hidden;
-
-  transition: all .5s ease-in-out;
-  line-height: 0;
-  padding: 0 1em;
-  color: transparent;
+    background: #fff;
+    overflow: hidden;
+    transition: all .5s ease-in-out;
+    line-height: 0;
+    padding: 0 1em;
+    color: transparent;
 }
 
 .expandable:target {
-  line-height: 1.5;
-  padding-top: 1em;
-  padding-bottom: 1em;
-  color: black;
+    line-height: 1.5;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    color: black;
 }
 
+
 /* page loader */
+
 #loader {
-  position: fixed;
-  left: 49%;
-  top: 300px;
-  z-index: 1;
-  width: 150px;
-  height: 150px;
-  margin: -75px 0 0 -75px;
-  border: 16px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 16px solid #3498db;
-  width: 120px;
-  height: 120px;
-  -webkit-animation: spin 1s linear infinite;
-  animation: spin 1s linear infinite;
+    position: fixed;
+    left: 49%;
+    top: 300px;
+    z-index: 1;
+    width: 150px;
+    height: 150px;
+    margin: -75px 0 0 -75px;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 1s linear infinite;
+    animation: spin 1s linear infinite;
 }
 
 @-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
+
 /* Add animation to "page content" */
+
 .animate-bottom {
-  position: relative;
-  -webkit-animation-name: animatebottom;
-  -webkit-animation-duration: 1s;
-  animation-name: animatebottom;
-  animation-duration: 1s
+    position: relative;
+    -webkit-animation-name: animatebottom;
+    -webkit-animation-duration: 1s;
+    animation-name: animatebottom;
+    animation-duration: 1s
 }
 
 @-webkit-keyframes animatebottom {
-  from { bottom:-100px; opacity:0 }
-  to { bottom:0px; opacity:1 }
+    from {
+        bottom: -100px;
+        opacity: 0
+    }
+    to {
+        bottom: 0px;
+        opacity: 1
+    }
 }
 
 @keyframes animatebottom {
-  from{ bottom:-100px; opacity:0 }
-  to{ bottom:0; opacity:1 }
+    from {
+        bottom: -100px;
+        opacity: 0
+    }
+    to {
+        bottom: 0;
+        opacity: 1
+    }
 }
 
 #myDiv {
-  display: none;
-  text-align: center;
+    display: none;
+    text-align: center;
 }
 
- /* Center the loader */
+
+/* Center the loader */
+
 #loader {
-  position: absolute;
-  left: 49%;
-  top: 300px;
-  z-index: 1;
-  width: 150px;
-  height: 150px;
-  margin: -75px 0 0 -75px;
-  border: 16px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 16px solid #3498db;
-  width: 120px;
-  height: 120px;
-  -webkit-animation: spin 1s linear infinite;
-  animation: spin 1s linear infinite;
+    position: absolute;
+    left: 49%;
+    top: 300px;
+    z-index: 1;
+    width: 150px;
+    height: 150px;
+    margin: -75px 0 0 -75px;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 1s linear infinite;
+    animation: spin 1s linear infinite;
 }
 
 @-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
+
 /* Add animation to "page content" */
+
 .animate-bottom {
-  position: relative;
-  -webkit-animation-name: animatebottom;
-  -webkit-animation-duration: 1s;
-  animation-name: animatebottom;
-  animation-duration: 1s
+    position: relative;
+    -webkit-animation-name: animatebottom;
+    -webkit-animation-duration: 1s;
+    animation-name: animatebottom;
+    animation-duration: 1s
 }
 
 @-webkit-keyframes animatebottom {
-  from { bottom:-100px; opacity:0 }
-  to { bottom:0px; opacity:1 }
+    from {
+        bottom: -100px;
+        opacity: 0
+    }
+    to {
+        bottom: 0px;
+        opacity: 1
+    }
 }
 
 @keyframes animatebottom {
-  from{ bottom:-100px; opacity:0 }
-  to{ bottom:0; opacity:1 }
+    from {
+        bottom: -100px;
+        opacity: 0
+    }
+    to {
+        bottom: 0;
+        opacity: 1
+    }
 }
 
 body {
-  font-family: "Lato", sans-serif;
+    font-family: "Lato", sans-serif;
 }
 
 .sidenav {
-  height: 100%;
-  width: 0;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  background-color: #111;
-  overflow-x: hidden;
-  transition: 0.5s;
-  padding-top: 50px;
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 50px;
 }
 
 .sidenav a {
-  padding: 4px 12px 4px 15px;
-  text-decoration: none;
-  font-size: 25px;
-  color: #818181;
-  display: block;
-  transition: 0.1s;
+    padding: 4px 12px 4px 15px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.1s;
 }
 
 .sidenav a:hover {
-  color: #f1f1f1;
+    color: #f1f1f1;
 }
 
 .sidenav .closebtn {
-  position: absolute;
-  top: 0;
-  margin-left: 165px
+    position: absolute;
+    top: 0;
+    margin-left: 165px
 }
 
 @media screen and (max-height: 10050px) {
-  .sidenav {padding-top: 35px;}
-  .sidenav a {font-size: 18px;}
+    .sidenav {
+        padding-top: 35px;
+    }
+    .sidenav a {
+        font-size: 18px;
+    }
 }
+
