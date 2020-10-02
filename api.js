@@ -519,7 +519,97 @@ app.get("/emotes", async (req, res, next) => {
                 <meta charset="UTF-8">
                 <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-                <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/emotes.css">
+                <style>
+                    * {
+                      box-sizing: border-box;
+                    }
+
+                    /* Style the search field */
+                    form.example input[type=text] {
+                      padding: 10px;
+                      font-size: 15px;
+                      border: 1px solid grey;
+                      float: left;
+                      background: #f1f1f1;
+                      height: 25px;
+                      height: 5%
+                      width: 20%
+                    }
+
+                    /* Style the submit button */
+                    form.example button {
+                      float: left;
+                      padding: 10px;
+                      background: #2196F3;
+                      color: white;
+                      font-size: 15px;
+                      border: 1px solid grey;
+                      border-left: none; /* Prevent double borders */
+                      cursor: pointer;
+                      height: 25px;
+                    }
+
+                    form.example button:hover {
+                      background: #0b7dda;
+                    }
+
+                    /* Clear floats */
+                    form.example::after {
+                        content: "";
+                        clear: both;
+                        display: table;
+                    }
+
+                    .table-contents {
+                        margin-right: 5px;
+                        margin-left: 5px;
+                        font-family: 'Noto Sans', sans-serif;
+                        font-size: 13px;
+                    }
+
+                    .table-headers {
+                        margin-left: 5px;
+                        margin-right: 5px;
+                        border-bottom: solid white 1px;
+                        font-family: 'Noto Sans', sans-serif;
+                        font-size: 14px;
+                    }
+
+                    .hidden {
+                        display: none;
+                    }
+
+                    .table-button {
+                        font-family: 'Noto Sans', sans-serif;
+                        font-size: 13px;
+                        color: gray;
+                        background-color: #2c2c2c;
+                        border: solid dimgray 1px;
+                        float: left;
+                        cursor: pointer;
+                        border-radius: 5px;
+                    }
+
+                    td, th {
+                        white-space: nowrap;
+                    }
+
+                    table {
+                        float: left;
+                    }
+
+                    tr {
+                        line-height: 30px;
+                    }
+
+                    tr:nth-child(odd) {
+                        background-color: #202020;
+                    }
+
+                    tr:nth-child(even) {
+                        background-color: #2c2c2c;
+                    }
+                </style>
             </head>
             <body style="background-color: #1a1a1a">
                 <br><br>
@@ -544,11 +634,11 @@ app.get("/emotes", async (req, res, next) => {
                         .render()}
                 </div>
                 <script>
-                    toggleTable () => {
+                    function toggleTable() {
                         document.getElementById("removed-emotes-table").classList.toggle("hidden");
                     }
 
-                    toggleTable2 () => {
+                    function toggleTable2() {
                         document.getElementById("added-emotes-table").classList.toggle("hidden");
                     }
                 </script>
