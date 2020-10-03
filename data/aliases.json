@@ -32,7 +32,7 @@
         {"color": "stats -color"},
         {"vol": "spotify volume"},
         {"volume": "spotify volume"},
-        {"start": "spotify start"}
+        {"start": "spotify start"},
         {"resume": "spotify start"},
         {"pause": "spotify pause"},
         {"stop": "spotify pause"},
