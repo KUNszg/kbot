@@ -40,6 +40,7 @@
         {"random": "spotify shuffle"},
         {"repeat": "spotify repeat"},
         {"skip": "spotify skip"},
-        {"removed": "emotes removed"}
+        {"removed": "emotes removed"},
+        {"rq": "rl"}
     ]
 }
