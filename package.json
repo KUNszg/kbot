@@ -9,8 +9,6 @@
   "author": "kunszg",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.19.0",
-    "bufferutil": "^4.0.1",
     "express": "^4.17.1",
     "figlet": "^1.5.0",
     "got": "^11.7.0",
@@ -20,25 +18,15 @@
     "os": "^0.1.1",
     "pi-number": "^1.0.0",
     "querystring": "^0.2.0",
-    "random-facts": "^1.0.6",
     "regex": "^0.1.1",
     "request-promise": "^4.2.6",
     "require-dir": "^1.2.0",
-    "rnd-song": "^1.0.2",
-    "systeminformation": "^4.27.6",
     "table-builder": "^2.1.1",
     "tmi.js": "1.5.0",
     "youtube-dl": "^3.0.2",
     "youtube-search": "^1.1.4"
   },
-  "devDependencies": {
-    "eslint": "^7.10.0",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1"
-  },
+  "devDependencies": {},
   "directories": {
     "lib": "lib"
   },
