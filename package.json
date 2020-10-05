@@ -28,7 +28,7 @@
     "systeminformation": "^4.26.10",
     "table-builder": "^2.1.1",
     "tmi.js": "1.5.0",
-    "youtube-dl": "^2.3.0",
+    "youtube-dl": "^3.0.2",
     "youtube-search": "^1.1.4"
   },
   "devDependencies": {
