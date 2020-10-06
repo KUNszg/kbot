@@ -106,7 +106,7 @@ kb.on('chat', (channel, message) => {
 
 app.get("/spotify", async (req, res, next) => {
     res.send(`
-        <!doctype html>
+        <!DOCTYPE html>
         <html>
             <head>
                 <title>commands</title>
@@ -195,7 +195,7 @@ app.get("/resolved", async (req, res, next) => {
     }
 
     res.send(`
-        <!doctype html>
+        <!DOCTYPE html>
         <html>
             <head>
                 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -301,7 +301,7 @@ app.get("/commands", async (req, res, next) => {
     };
 
    res.send(
-       `<!doctype html>
+       `<!DOCTYPE html>
       	<html>
       		<head>
           		<title>commands</title>
@@ -321,6 +321,24 @@ app.get("/commands", async (req, res, next) => {
 	    `
     );
 });
+
+app.get("/genres", async (req, res, next) => {
+    let genres = require('./data/genres.json');
+    genres = JSON.stringify(genres);
+
+    res.send(`
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <link href="https:/kunszg.xyz/prism.css" rel="stylesheet" />
+            </head>
+            <body>
+                <pre><code class="language-json">${genres}</code></pre>
+                <script src="prism.js"></script>
+            </body>
+        </html>
+        `);
+})
 
 app.get("/emotes", async (req, res, next) => {
     const Table = require('table-builder');
@@ -427,7 +445,7 @@ app.get("/emotes", async (req, res, next) => {
     }
     res.send(
        `
-        <!doctype html>
+        <!DOCTYPE html>
         <html>
             <head>
                 <title>emotes</title>
