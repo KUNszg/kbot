@@ -323,8 +323,8 @@ app.get("/commands", async (req, res, next) => {
 });
 
 app.get("/genres", async (req, res, next) => {
-    let genres = require('./data/genres.json');
-    genres = JSON.stringify(genres);
+    const fs = require('fs');
+    let genres = fs.readFileSync('./data/genres.json');
 
     res.send(`
         <!DOCTYPE html>
