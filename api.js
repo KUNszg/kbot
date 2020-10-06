@@ -330,11 +330,11 @@ app.get("/genres", async (req, res, next) => {
         <!DOCTYPE html>
         <html>
             <head>
-                <link href="https:/kunszg.xyz/prism.css" rel="stylesheet" />
+                <link href="https://kunszg.xyz/prism.css" rel="stylesheet" />
             </head>
             <body>
                 <pre><code class="language-json">${genres}</code></pre>
-                <script src="prism.js"></script>
+                <script src="https://kunszg.xyz/prism.js"></script>
             </body>
         </html>
         `);
