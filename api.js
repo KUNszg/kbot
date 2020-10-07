@@ -129,7 +129,7 @@ app.get("/spotify", async (req, res, next) => {
             <body style="background-color: #1a1a1a">
                 <div class="animate-bottom">
                     <strong style="color: gray; font-family: 'Noto Sans', sans-serif;">Click the button below and log into your Spotify</strong><br>
-                    <i style="color: gray; font-family: 'Noto Sans', sans-serif;">this command has been used ${execCount[0].count} times by ${userCount[0].count} users</i>
+                    <i style="color: gray; font-family: 'Noto Sans', sans-serif;">this command has been used ${execCount[0].count} times by ${userCount[0].count} users so far...</i>
                     <a class="commands" href="https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private" target="_self">
                         <br>
                         <button style="border: none; background: none" class="button button1">
