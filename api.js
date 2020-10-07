@@ -351,7 +351,7 @@ app.get("/commands/code/*", async (req, res, next) => {
                         <title>${query} command code</title>
                     </head>
                     <body style="background-color: #272822;">
-                        <h3 style="color: gray;">Command code for ${query}</h3><br>
+                        <h3 style="color: gray;">Code for ${query} command</h3><br>
                         <pre><code style="font-size: 13px;" class="language-js">${requestedFile}</code></pre>
                         <script src="https://kunszg.xyz/prism.js"></script>
                     </body>
