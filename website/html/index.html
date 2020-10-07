@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-158909830-3"></script>
+        <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-158909830-3');
+        </script>
+    </head>
+    <meta charset="utf-8">
+    <title>KUNszg</title>
+    <body onload="myFunction()" class="bd">
+        <div id="mySidenav" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn"  onclick="closeNav()">&times;</a>
+            <div id="box" style="margin-left: 20px; text-align: center;"></div>
+        </div>
+        <br>
+        <span class="animate-bottom" style="font-size:20px; cursor:pointer; color:white; margin-left: 15px;" onclick="openNav()">&#9776; <a style="font-size: 20px;  font-family: 'Source Sans Pro', 'sans-serif';" >CHANNELS</a></span>
+
+        <script>
+            const openNav = () => {
+                document.getElementById("mySidenav").style.width = "230px";
+            }
+
+            const closeNav = () => {
+                document.getElementById("mySidenav").style.width = "0";
+            }
+        </script>
+        <div id="loader"></div>
+
+        <div style="display:none;" id="myDiv" class="animate-bottom">
+            <script>
+                var myVar;
+
+                const myFunction = () => {
+                    myVar = setTimeout(showPage, 1);
+                }
+
+                const showPage = () => {
+                    document.getElementById("loader").style.display = "none";
+                    document.getElementById("myDiv").style.display = "block";
+                }
+            </script>
+            <div style="margin-top: 10%; vertical-align: middle; white-space: nowrap;">
+                <h1 class="inner" style="margin-left: -3px;">
+                    <a href="https://www.twitch.tv/kunszg" style="text-decoration: none;" class="button1">KUNszg</a>
+                </h1>
+                <div class="animate-bottom">
+                    <a class="github" href="https://github.com/KUNszg/kbot" target="_blank">
+                        <button style="margin-left: 20px;" class="button button1">
+                            <div class="button1">
+                                <pre style="margin-bottom:17px">GITHUB</pre>
+                                <img class="res" src="img\logo.png">
+                            </div>
+                        </button>
+                    </a>
+                    <a class="commands" href="commands" target="_self">
+                        <button class="button button1">
+                            <div class="button1">
+                                <pre style="margin-bottom:17px">COMMANDS</pre>
+                                <img class="res" src="img\commands.png">
+                            </div>
+                        </button>
+                    </a>
+                    <a class="commands" href="emotes" target="_self">
+                        <button class="button button1">
+                            <div class="button1">
+                                <pre style="margin-bottom:17px;">EMOTES</pre>
+                                <img class="res" src="img\emotes.png">
+                            </div>
+                        </button>
+                    </a>
+                    <a class="commands" href="api" target="_self" style="margin-left: 12px;">
+                        <button class="button button1">
+                            <div class="button1">
+                                <pre style="margin-bottom:17px">API</pre>
+                                <img class="res" src="img\api.png">
+                            </div>
+                        </button>
+                    </a>
+                    <a class="commands" href="spotify" target="_self">
+                        <button class="button button1" style="margin-left: 12px;">
+                            <div class="button1">
+                                <pre style="margin-bottom:17px">SPOTIFY</pre>
+                                <img class="res" src="img\spotify.png">
+                            </div>
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            fetch('https://kunszg.xyz/api/channels')
+              .then(response => response.json())
+              .then(rows => {
+                var html = "<table><td style='color: green; border-bottom: solid dimgray 1px; font-weight: bold;'></td>";
+                for (var i = 0; i < rows.data.length; i++) {
+                    html+="<tr>";
+                    html+="<td class='api'><a style='font-size: 15px;' href='https://twitch.tv/"+rows.data[i]+"'/>"+rows.data[i]+"</td>";
+
+                    html+="</tr>";
+                }
+                html+="</table><br><br><br><br>";
+                document.getElementById("box").innerHTML = html;
+            })
+        </script>
+    </body>
+</html>
