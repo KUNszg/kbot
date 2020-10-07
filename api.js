@@ -104,6 +104,17 @@ kb.on('chat', (channel, message) => {
     msgCount.push({'channel': channel.replace('#', ''), 'message':'add'})
 });
 
+/*location / {
+        rewrite ^(/.*)\.html(\?.*)?$ $1$2 permanent;
+        rewrite ^/(.*)/$ /$1 permanent;
+
+        root /home/kunszg/kbot/website/html;
+        index index.html index.htm;
+
+        try_files $uri/index.html $uri.html $uri/ $uri =404;
+    }*/
+
+
 app.get("/", async (req, res, next) => {
     res.send(`<!DOCTYPE html>
                 <html lang="en">
@@ -164,7 +175,7 @@ app.get("/", async (req, res, next) => {
                                         <button style="margin-left: 20px;" class="button button1">
                                             <div class="button1">
                                                 <pre style="margin-bottom:17px">GITHUB</pre>
-                                                <img class="res" src="https://kunszg.xyz/img/logo.png">
+                                                <img class="res" src="/website/html/img/logo.png">
                                             </div>
                                         </button>
                                     </a>
@@ -172,7 +183,7 @@ app.get("/", async (req, res, next) => {
                                         <button class="button button1">
                                             <div class="button1">
                                                 <pre style="margin-bottom:17px">COMMANDS</pre>
-                                                <img class="res" src="https://kunszg.xyz/img/commands.png">
+                                                <img class="res" src="/website/html/img/commands.png">
                                             </div>
                                         </button>
                                     </a>
@@ -180,7 +191,7 @@ app.get("/", async (req, res, next) => {
                                         <button class="button button1">
                                             <div class="button1">
                                                 <pre style="margin-bottom:17px;">EMOTES</pre>
-                                                <img class="res" src="https://kunszg.xyz/img/emotes.png">
+                                                <img class="res" src="/website/html/img/emotes.png">
                                             </div>
                                         </button>
                                     </a>
@@ -188,7 +199,7 @@ app.get("/", async (req, res, next) => {
                                         <button class="button button1">
                                             <div class="button1">
                                                 <pre style="margin-bottom:17px">API</pre>
-                                                <img class="res" src="https://kunszg.xyz/img/api.png">
+                                                <img class="res" src="/website/html/api.png">
                                             </div>
                                         </button>
                                     </a>
@@ -196,7 +207,7 @@ app.get("/", async (req, res, next) => {
                                         <button class="button button1" style="margin-left: 12px;">
                                             <div class="button1">
                                                 <pre style="margin-bottom:17px">SPOTIFY</pre>
-                                                <img class="res" src="https://kunszg.xyz/img/spotify.png">
+                                                <img class="res" src="/website/html/spotify.png">
                                             </div>
                                         </button>
                                     </a>
