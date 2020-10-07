@@ -175,7 +175,7 @@ app.get("/", async (req, res, next) => {
                                         <button style="margin-left: 20px;" class="button button1">
                                             <div class="button1">
                                                 <pre style="margin-bottom:17px">GITHUB</pre>
-                                                <img class="res" src="/website/html/img/logo.png">
+                                                <img class="res" src="https://i.nuuls.com/TTs4r.png">
                                             </div>
                                         </button>
                                     </a>
@@ -183,7 +183,7 @@ app.get("/", async (req, res, next) => {
                                         <button class="button button1">
                                             <div class="button1">
                                                 <pre style="margin-bottom:17px">COMMANDS</pre>
-                                                <img class="res" src="/website/html/img/commands.png">
+                                                <img class="res" src="https://i.imgur.com/DBdPIv9.png">
                                             </div>
                                         </button>
                                     </a>
@@ -191,7 +191,7 @@ app.get("/", async (req, res, next) => {
                                         <button class="button button1">
                                             <div class="button1">
                                                 <pre style="margin-bottom:17px;">EMOTES</pre>
-                                                <img class="res" src="/website/html/img/emotes.png">
+                                                <img class="res" src="https://i.imgur.com/HPzMtoi.png">
                                             </div>
                                         </button>
                                     </a>
@@ -199,7 +199,7 @@ app.get("/", async (req, res, next) => {
                                         <button class="button button1">
                                             <div class="button1">
                                                 <pre style="margin-bottom:17px">API</pre>
-                                                <img class="res" src="/website/html/api.png">
+                                                <img class="res" src="https://i.imgur.com/BF9KNKj.png">
                                             </div>
                                         </button>
                                     </a>
@@ -207,7 +207,7 @@ app.get("/", async (req, res, next) => {
                                         <button class="button button1" style="margin-left: 12px;">
                                             <div class="button1">
                                                 <pre style="margin-bottom:17px">SPOTIFY</pre>
-                                                <img class="res" src="/website/html/spotify.png">
+                                                <img class="res" src="https://i.imgur.com/jUMulyu.png">
                                             </div>
                                         </button>
                                     </a>
