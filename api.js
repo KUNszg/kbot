@@ -519,8 +519,8 @@ app.get("/emotes", async (req, res, next) => {
                 <strong style="color: lightgray;">* - emote added before my logs</strong>
                 <br><br>
                 <div style="color: lightgray;">
-                    <button class="table-button" onClick="toggleTable2()">Added emotes</button>
-                    <button style="margin-left: 5px;" class="table-button" onClick="toggleTable()">Removed emotes</button>
+                    <! -- <button class="table-button" onClick="toggleTable2()">Added emotes</button>
+                    <button style="margin-left: 5px;" class="table-button" onClick="toggleTable()">Removed emotes</button> -->
                     <br><br>
                     ${(new Table({'class': 'table-context', 'id': "added-emotes-table"}))
                         .setHeaders(headers)
