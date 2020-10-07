@@ -50,8 +50,6 @@ pre[class*="language-"] {
 	white-space: normal;
 }
 
-.token.url,
-.token.entity,
 .token.comment,
 .token.prolog,
 .token.doctype,
@@ -90,6 +88,8 @@ pre[class*="language-"] {
 	color: #e6db74;
 }
 
+.token.url,
+.token.entity,
 .language-css .token.string,
 .style .token.string,
 .token.variable {
