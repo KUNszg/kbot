@@ -328,14 +328,15 @@ app.get("/commands", async (req, res, next) => {
                         background-color: #2f2f2f;
                         color: white;
                         width: 100px;
-                        border-color: #393939;
+                        border-color: #2f2f2f;
                         cursor: pointer;
                     }
 
                     .code-button:hover {
                         transition-duration: 0.2s;
                         background-color: #151515;
-                        border-color: #4c4c4c;
+                        border: 1px solid #4c4c4c;
+                        border-radius: 5px;
                     }
                 </style>
       		</head>
