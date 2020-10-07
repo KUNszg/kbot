@@ -352,7 +352,7 @@ app.get("/commands/code/*", async (req, res, next) => {
                     </head>
                     <body style="background-color: #272822;">
                         <h3 style="color: gray;">Code for ${query} command</h3><br>
-                        <pre><code style="font-size: 13px;" class="language-js">${requestedFile}</code></pre>
+                        <pre class="line-numbers"><code style="font-size: 13px;" class="language-js">${requestedFile}</code></pre>
                         <script src="https://kunszg.xyz/prism.js"></script>
                     </body>
                 </html>
