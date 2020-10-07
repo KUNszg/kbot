@@ -331,6 +331,11 @@ app.get("/commands", async (req, res, next) => {
                         border-color: #393939;
                         cursor: pointer;
                     }
+
+                    .code-button:hover {
+                        color: #585858;
+                        border-color: #606060;
+                    }
                 </style>
       		</head>
       		<body style="background-color: #1a1a1a">
