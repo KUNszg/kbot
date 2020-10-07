@@ -288,6 +288,7 @@ app.get("/commands", async (req, res, next) => {
                 "command": `<div class="table-contents" style="text-align: center;">${commands[i].command}</div>`,
                 "cooldown": `<div class="table-contents" style="text-align: center;">${commands[i].cooldown/1000}s</div>`,
                 "opt-out": `<div class="table-contents" style="text-align: center;">${(commands[i].optoutable === "Y") ? "yes" : "no"}</div>`,
+                "code": `<div class="table-contents" style="text-align: center;"><a href="https://kunszg.xyz/commands/code/${commands[i].command}"><button class="code-button" type="button">${commands[i].command}.js</button></a></div>`,
                 "description": `<div class="table-contents" style="margin-right: 50px; margin-left: 5px;">${commands[i].description}</div>`
             })
     }
@@ -297,6 +298,7 @@ app.get("/commands", async (req, res, next) => {
         "command": " <div class='table-headers'>command</div> ",
         "cooldown": " <div class='table-headers'>cooldown</div> ",
         "opt-out": " <div class='table-headers'>opt-out</div> ",
+        "code": " <div class='table-headers'>code</div> ",
         "description": " <div class='table-headers'>description</div> "
     };
 
@@ -308,6 +310,15 @@ app.get("/commands", async (req, res, next) => {
 				<meta name="viewport" content="width=device-width, initial-scale=1">
 				<link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
                 <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_commands.css">
+                <style>
+                    .code-button {
+                        background-color: #2f2f2f;
+                        color: white;
+                        width: 100px;
+                        border-color: #393939;
+                        cursor: pointer;
+                    }
+                </style>
       		</head>
       		<body style="background-color: #1a1a1a">
                 <div style="color: lightgray;">
@@ -322,13 +333,45 @@ app.get("/commands", async (req, res, next) => {
     );
 });
 
+app.get("/commands/code/*", async (req, res, next) => {
+    const query = req.url.split('/')[3];
+
+    if (query) {
+        const fs = require('fs');
+        try {
+            const requestedFile = fs.readFileSync(`./lib/commands/${query}.js`);
+
+            res.send(`
+                <!DOCTYPE html>
+                <html>
+                    <head>
+                        <meta name="viewport" content="width=device-width, initial-scale=1">
+                        <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
+                        <link href="https://kunszg.xyz/prism.css" rel="stylesheet" />
+                        <title>${query} command code</title>
+                    </head>
+                    <body style="background-color: #272822;">
+                        <h3 style="color: gray;">Command code for ${query}</h3><br>
+                        <pre><code style="font-size: 13px;" class="language-js">${requestedFile}</code></pre>
+                        <script src="https://kunszg.xyz/prism.js"></script>
+                    </body>
+                </html>
+                `);
+        } catch (err) {
+            console.log(err)
+            res.send('<h3>Error: not found</h3>');
+        }
+
+    }
+});
+
 /*  Data for random track command
 *
 *   credit to Musixmatch
 */
 app.get("/genres", async (req, res, next) => {
     const fs = require('fs');
-    let genres = fs.readFileSync('./data/genres.json');
+    const genres = fs.readFileSync('./data/genres.json');
 
     res.send(`
         <!DOCTYPE html>
