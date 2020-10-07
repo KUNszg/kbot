@@ -288,7 +288,12 @@ app.get("/commands", async (req, res, next) => {
                 "command": `<div class="table-contents" style="text-align: center;">${commands[i].command}</div>`,
                 "cooldown": `<div class="table-contents" style="text-align: center;">${commands[i].cooldown/1000}s</div>`,
                 "opt-out": `<div class="table-contents" style="text-align: center;">${(commands[i].optoutable === "Y") ? "yes" : "no"}</div>`,
-                "description": `<div class="table-contents" style="margin-right: 50px; margin-left: 5px;">${commands[i].description}</div>`
+                "description": `<div class="table-contents" style="margin-right: 50px; margin-left: 5px;">
+                                    <div id="module" class="container">
+                                        <p class="collapse" id="collapseExample" aria-expanded="false">${commands[i].description}</p>
+                                        <a role="button" class="collapsed" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample"></a>
+                                    </div>
+                                </div>`
             })
     }
 
@@ -322,6 +327,10 @@ app.get("/commands", async (req, res, next) => {
     );
 });
 
+/*  Data for random track command
+*
+*   credit to Musixmatch
+*/
 app.get("/genres", async (req, res, next) => {
     const fs = require('fs');
     let genres = fs.readFileSync('./data/genres.json');
@@ -345,7 +354,7 @@ app.get("/genres", async (req, res, next) => {
             </body>
         </html>
         `);
-})
+});
 
 app.get("/emotes", async (req, res, next) => {
     const Table = require('table-builder');
