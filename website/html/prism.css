@@ -98,9 +98,12 @@ pre[class*="language-"] {
 
 .token.atrule,
 .token.attr-value,
-.token.function,
 .token.class-name {
 	color: #66d9ef;
+}
+
+.token.function {
+    color: #66d9ef;
     font-style: italic;
 }
 
