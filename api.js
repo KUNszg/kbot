@@ -566,6 +566,7 @@ app.get("/emotes", async (req, res, next) => {
 
 });
 
+// kunszg.xyz/api/stats
 app.get("/stats", async (req, res, next) => {
     const modules = await custom.doQuery(`
         SELECT *
