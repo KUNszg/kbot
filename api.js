@@ -598,22 +598,22 @@ app.get("/stats", async (req, res, next) => {
     const commits = shell.execSync('sudo git rev-list --count master');
 
     res.send({
-        "modules": [
-            {"remindersLastSeen": getModuleData('reminders')},
-            {"loggerLastSeen": getModuleData('logger')},
-            {"apiLastSeen": getModuleData('api')}
-        ],
-        "bot": [
-            {"codeUptime": (process.uptime() * 1000)},
-            {"usersLogged": usersLogged[0].count},
-            {"commandExecutions": executions[0].count}
-        ],
-        "github": [
-            {"commits": Number(commits)}
-        ],
-        "twitch": [
-            {"isAuthorLive": checkIfLive}
-        ]
+        "modules": {
+            "remindersLastSeen": getModuleData('reminders'),
+            "loggerLastSeen": getModuleData('logger'),
+            "apiLastSeen": getModuleData('api')
+        },
+        "bot": {
+            "codeUptime": (process.uptime() * 1000).toFixed(0),
+            "usersLogged": usersLogged[0].count,
+            "commandExecutions": executions[0].count
+        },
+        "github": {
+            "commits": Number(commits)
+        },
+        "twitch": {
+            "isAuthorLive": checkIfLive
+        }
     });
 });
 
