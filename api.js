@@ -566,7 +566,7 @@ app.get("/emotes", async (req, res, next) => {
 
 });
 
-app.get("/api/stats", async (req, res, next) => {
+app.get("/stats", async (req, res, next) => {
     const modules = await custom.doQuery(`
         SELECT *
         FROM stats
@@ -614,7 +614,7 @@ app.get("/api/stats", async (req, res, next) => {
         "twitch": [
             {"isAuthorLive": checkIfLive}
         ]
-    })
+    });
 });
 
 // kunszg.xyz/api/channels
