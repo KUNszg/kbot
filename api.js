@@ -597,6 +597,8 @@ app.get("/stats", async (req, res, next) => {
     const shell = require('child_process');
     const commits = shell.execSync('sudo git rev-list --count master');
 
+    const uptime = Date.now() - Math.trunc(process.uptime() * 1000);
+
     res.send({
         "modules": {
             "remindersLastSeen": getModuleData('reminders'),
@@ -604,7 +606,7 @@ app.get("/stats", async (req, res, next) => {
             "apiLastSeen": getModuleData('api')
         },
         "bot": {
-            "codeUptime": Math.trunc(process.uptime() * 1000),
+            "codeUptime": uptime,
             "usersLogged": usersLogged[0].count,
             "commandExecutions": executions[0].count
         },
