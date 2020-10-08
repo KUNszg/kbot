@@ -566,11 +566,62 @@ app.get("/emotes", async (req, res, next) => {
 
 });
 
+app.get("/api/stats", async (req, res, next) => {
+    const modules = await custom.doQuery(`
+        SELECT *
+        FROM stats
+        `);
+
+    const getModuleData = (input) => {
+        const moduleData = modules.filter(i => i.type === 'module' && i.sha === input);
+        return Date.parse(moduleData[0].date)
+    }
+
+    const executions = await custom.doQuery(`
+        SELECT MAX(ID) AS count
+        FROM executions
+        `);
+
+    const statusData = await custom.doQuery(`
+        SELECT *
+        FROM channels
+        WHERE channel="kunszg"
+        `);
+    const checkIfLive = statusData[0].status === "live";
+
+    const usersLogged = await custom.doQuery(`
+        SELECT count(id) AS count
+        FROM user_list
+        `);
+
+    const shell = require('child_process');
+    const commits = shell.execSync('sudo git rev-list --count master');
+
+    res.send({
+        "modules": [
+            {"remindersLastSeen": getModuleData('reminders')},
+            {"loggerLastSeen": getModuleData('logger')},
+            {"apiLastSeen": getModuleData('api')}
+        ],
+        "bot": [
+            {"codeUptime": (process.uptime() * 1000)},
+            {"usersLogged": usersLogged[0].count},
+            {"commandExecutions": executions[0].count}
+        ],
+        "github": [
+            {"commits": Number(commits)}
+        ],
+        "twitch": [
+            {"isAuthorLive": checkIfLive}
+        ]
+    })
+});
+
 // kunszg.xyz/api/channels
 const apiDataChannels = () => {
 	app.get("/channels", (req, res, next) => {
 	 	res.send({
-	 		data: channelOptions
+	 		"data": channelOptions
         });
 	});
 }
