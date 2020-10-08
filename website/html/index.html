@@ -13,24 +13,102 @@
 
             gtag('config', 'UA-158909830-3');
         </script>
+        <style type="text/css">
+            .container {
+                position: relative;
+                background-color: #2e2e2e;
+            }
+
+            .topright {
+                position: absolute;
+                top: -28px;
+                right: 16px;
+                color: white;
+                font-family: 'Source Sans Pro', 'sans-serif';
+            }
+        </style>
     </head>
     <meta charset="utf-8">
     <title>KUNszg</title>
     <body onload="myFunction()" class="bd">
-        <div id="mySidenav" class="sidenav">
+        <div id="sideNav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn"  onclick="closeNav()">&times;</a>
             <div id="box" style="margin-left: 20px; text-align: center;"></div>
         </div>
         <br>
         <span class="animate-bottom" style="font-size:20px; cursor:pointer; color:white; margin-left: 15px;" onclick="openNav()">&#9776; <a style="font-size: 20px;  font-family: 'Source Sans Pro', 'sans-serif';" >CHANNELS</a></span>
 
+        <script type="text/javascript">
+            fetch('https://kunszg.xyz/api/stats')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+
+                    const secondsToDhms = (seconds) => {
+                        seconds = Number(seconds);
+                        const d = Math.floor(seconds / (3600*24));
+                        const h = Math.floor(seconds % (3600*24) / 3600);
+                        const m = Math.floor(seconds % 3600 / 60);
+                        const s = Math.floor(seconds % 60);
+
+                        const dDisplay = d > 0 ? d + "d " : "";
+                        const hDisplay = h > 0 ? h + "h " : "";
+                        const mDisplay = m > 0 ? m + "m " : "";
+                        const sDisplay = s > 0 ? s + "s " : "";
+                        return dDisplay + hDisplay + mDisplay + sDisplay;
+                    }
+
+                    let botUptime = Math.trunc((Date.now() - data.bot.codeUptime)/1000)
+
+                    const spreadNumbers = (input) => {
+                        return input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+                    }
+
+                    setInterval(() => {
+                        botUptime += 1
+
+                        const html = `
+                            <table style="font-size: 13px; background-color: #212121;">
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                <tr>
+                                    <td style="font-style: italic;">bot uptime </td>
+                                    <td style="padding:0 15px;">${secondsToDhms(botUptime)}</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-style: italic;">total users tracked </td>
+                                    <td style="padding:0 15px;">${spreadNumbers(data.bot.usersLogged)}</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-style: italic;">command executions </td>
+                                    <td style="padding:0 15px;">${spreadNumbers(data.bot.commandExecutions)}</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-style: italic;">commits </td>
+                                    <td style="padding:0 15px;">${spreadNumbers(data.github.commits)}</td>
+                                </tr>
+                            </table>
+                            `;
+                        document.getElementById("stats").innerHTML = html;
+                    }, 1000);
+                });
+
+        </script>
+
+        <div class="container">
+            <div class="topright" id="stats">
+            </div>
+        </div>
+
         <script>
             const openNav = () => {
-                document.getElementById("mySidenav").style.width = "230px";
+                document.getElementById("sideNav").style.width = "230px";
             }
 
             const closeNav = () => {
-                document.getElementById("mySidenav").style.width = "0";
+                document.getElementById("sideNav").style.width = "0";
             }
         </script>
         <div id="loader"></div>
