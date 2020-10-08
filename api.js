@@ -604,7 +604,7 @@ app.get("/stats", async (req, res, next) => {
             "apiLastSeen": getModuleData('api')
         },
         "bot": {
-            "codeUptime": (process.uptime() * 1000).toFixed(0),
+            "codeUptime": Number((process.uptime() * 1000).toFixed(0)),
             "usersLogged": usersLogged[0].count,
             "commandExecutions": executions[0].count
         },
