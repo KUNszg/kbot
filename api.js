@@ -604,7 +604,8 @@ app.get("/stats", async (req, res, next) => {
         "modules": {
             "remindersLastSeen": getModuleData('reminders'),
             "loggerLastSeen": getModuleData('logger'),
-            "apiLastSeen": getModuleData('api')
+            "apiLastSeen": getModuleData('api'),
+            "botLastSeen": getModuleData('bot')
         },
         "bot": {
             "codeUptime": uptime,
