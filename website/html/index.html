@@ -104,10 +104,6 @@
                                         <td style="padding:0 15px;">${data.twitch.isAuthoLive ? "live" : "offline"}</td>
                                     </tr>
                                     <tr>
-                                        <td style="font-style: italic;">bot uptime </td>
-                                        <td style="padding:0 15px;">${botAlive > 70 ? '<span title="offline" class="redDot"></span>' : secondsToDhms(botUptime)}</td>
-                                    </tr>
-                                    <tr>
                                         <td style="font-style: italic;">total users tracked </td>
                                         <td style="padding:0 15px;">${spreadNumbers(data.bot.usersLogged)}</td>
                                     </tr>
@@ -118,6 +114,10 @@
                                     <tr>
                                         <td style="font-style: italic;">commits </td>
                                         <td style="padding:0 15px;">${spreadNumbers(data.github.commits)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-style: italic;">bot uptime </td>
+                                        <td style="padding:0 15px;">${botAlive > 70 ? '<span title="offline" class="redDot"></span>' : secondsToDhms(botUptime)}</td>
                                     </tr>
                                     <tr>
                                         <td style="font-style: italic;">logger </td>
