@@ -56,7 +56,6 @@ const aliveCheck = async () => {
     `);
 }
 aliveCheck();
-
 setInterval(() => {
     aliveCheck();
 }, 60000);
