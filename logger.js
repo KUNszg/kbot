@@ -196,7 +196,7 @@ const statusCheck = async() => {
         `)
 }
 statusCheck();
-setInterval(()=>{statusCheck()}, 600000);
+setInterval(()=>{statusCheck()}, 60000);
 
 kb.on("subscription", async (channel, username, method, message) => {
     const sqlUser = "INSERT INTO subs (username, channel, months, subMessage, type, date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";

@@ -698,4 +698,4 @@ const statusCheck = async() => {
 			`)
 	}
 statusCheck();
-setInterval(()=>{statusCheck()}, 30000);
+setInterval(()=>{statusCheck()}, 60000);

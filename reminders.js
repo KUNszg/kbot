@@ -41,7 +41,9 @@ kb.whisper('kunszg', 'reminders reconnected');
 // update memory usage in database
 setInterval(async () => {
     await custom.doQuery(`
-        UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="reminders"
+        UPDATE memory
+        SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}"
+        WHERE module="reminders"
         `);
 }, 600000);
 
@@ -57,7 +59,7 @@ aliveCheck();
 
 setInterval(() => {
     aliveCheck();
-}, 600000);
+}, 60000);
 
 
 // unfire clogging reminders
