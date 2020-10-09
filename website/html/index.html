@@ -79,10 +79,11 @@
 
                         let botUptime = Math.trunc((Date.now() - data.bot.codeUptime)/1000);
 
-                        let [loggerUptime, remindersUptime, apiUptime] = [
+                        let [loggerUptime, remindersUptime, apiUptime, botUptime] = [
                             Math.trunc((Date.now() - data.modules.loggerLastSeen)/1000),
                             Math.trunc((Date.now() - data.modules.remindersLastSeen)/1000),
-                            Math.trunc((Date.now() - data.modules.apiLastSeen)/1000)
+                            Math.trunc((Date.now() - data.modules.apiLastSeen)/1000),
+                            Math.trunc((Date.now() - data.modules.botLastSeen)/1000)
                             ]
 
                         const spreadNumbers = (input) => {
@@ -104,7 +105,7 @@
                                     </tr>
                                     <tr>
                                         <td style="font-style: italic;">bot uptime </td>
-                                        <td style="padding:0 15px;">${secondsToDhms(botUptime)}</td>
+                                        <td style="padding:0 15px;">${botUptime > 70 ? '<span title="offline" class="redDot"></span>' : secondsToDhms(botUptime)}</td>
                                     </tr>
                                     <tr>
                                         <td style="font-style: italic;">total users tracked </td>
