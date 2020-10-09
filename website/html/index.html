@@ -62,7 +62,6 @@
                 fetch('https://kunszg.xyz/api/stats')
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data)
 
                         const secondsToDhms = (seconds) => {
                             seconds = Number(seconds);
