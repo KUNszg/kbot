@@ -26,6 +26,23 @@
                 color: white;
                 font-family: 'Source Sans Pro', 'sans-serif';
             }
+
+            .redDot {
+                background-color: darkred;
+                height: 10px;
+                width: 10px;
+                border-radius: 50%;
+                display: inline-block;
+
+            }
+
+            .greenDot {
+                background-color: darkgreen;
+                height: 10px;
+                width: 10px;
+                border-radius: 50%;
+                display: inline-block;
+            }
         </style>
     </head>
     <meta charset="utf-8">
@@ -39,62 +56,94 @@
         <span class="animate-bottom" style="font-size:20px; cursor:pointer; color:white; margin-left: 15px;" onclick="openNav()">&#9776; <a style="font-size: 20px;  font-family: 'Source Sans Pro', 'sans-serif';" >CHANNELS</a></span>
 
         <script type="text/javascript">
-            fetch('https://kunszg.xyz/api/stats')
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data)
+            if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
 
-                    const secondsToDhms = (seconds) => {
-                        seconds = Number(seconds);
-                        const d = Math.floor(seconds / (3600*24));
-                        const h = Math.floor(seconds % (3600*24) / 3600);
-                        const m = Math.floor(seconds % 3600 / 60);
-                        const s = Math.floor(seconds % 60);
+            } else {
+                fetch('https://kunszg.xyz/api/stats')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data)
 
-                        const dDisplay = d > 0 ? d + "d " : "";
-                        const hDisplay = h > 0 ? h + "h " : "";
-                        const mDisplay = m > 0 ? m + "m " : "";
-                        const sDisplay = s > 0 ? s + "s " : "";
-                        return dDisplay + hDisplay + mDisplay + sDisplay;
-                    }
+                        const secondsToDhms = (seconds) => {
+                            seconds = Number(seconds);
+                            const d = Math.floor(seconds / (3600*24));
+                            const h = Math.floor(seconds % (3600*24) / 3600);
+                            const m = Math.floor(seconds % 3600 / 60);
+                            const s = Math.floor(seconds % 60);
 
-                    let botUptime = Math.trunc((Date.now() - data.bot.codeUptime)/1000)
+                            const dDisplay = d > 0 ? d + "d " : "";
+                            const hDisplay = h > 0 ? h + "h " : "";
+                            const mDisplay = m > 0 ? m + "m " : "";
+                            const sDisplay = s > 0 ? s + "s " : "";
+                            return dDisplay + hDisplay + mDisplay + sDisplay;
+                        }
 
-                    const spreadNumbers = (input) => {
-                        return input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-                    }
+                        let botUptime = Math.trunc((Date.now() - data.bot.codeUptime)/1000);
 
-                    setInterval(() => {
-                        botUptime += 1
+                        let [loggerUptime, remindersUptime, apiUptime] = [
+                            Math.trunc((Date.now() - data.modules.loggerLastSeen)/1000),
+                            Math.trunc((Date.now() - data.modules.remindersLastSeen)/1000),
+                            Math.trunc((Date.now() - data.modules.apiLastSeen)/1000)
+                            ]
 
-                        const html = `
-                            <table style="font-size: 13px; background-color: #212121;">
-                                <tr>
-                                    <th></th>
-                                    <th></th>
-                                </tr>
-                                <tr>
-                                    <td style="font-style: italic;">bot uptime </td>
-                                    <td style="padding:0 15px;">${secondsToDhms(botUptime)}</td>
-                                </tr>
-                                <tr>
-                                    <td style="font-style: italic;">total users tracked </td>
-                                    <td style="padding:0 15px;">${spreadNumbers(data.bot.usersLogged)}</td>
-                                </tr>
-                                <tr>
-                                    <td style="font-style: italic;">command executions </td>
-                                    <td style="padding:0 15px;">${spreadNumbers(data.bot.commandExecutions)}</td>
-                                </tr>
-                                <tr>
-                                    <td style="font-style: italic;">commits </td>
-                                    <td style="padding:0 15px;">${spreadNumbers(data.github.commits)}</td>
-                                </tr>
-                            </table>
-                            `;
-                        document.getElementById("stats").innerHTML = html;
-                    }, 1000);
-                });
+                        const spreadNumbers = (input) => {
+                            return input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+                        }
 
+                        const updateStats = () => {
+                            botUptime += 1
+
+                            const botMeter = `
+                                <table style="font-size: 13px;">
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-style: italic;">my stream is currently </td>
+                                        <td style="padding:0 15px;">${data.twitch.isAuthoLive ? "live" : "offline"}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-style: italic;">bot uptime </td>
+                                        <td style="padding:0 15px;">${secondsToDhms(botUptime)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-style: italic;">total users tracked </td>
+                                        <td style="padding:0 15px;">${spreadNumbers(data.bot.usersLogged)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-style: italic;">command executions </td>
+                                        <td style="padding:0 15px;">${spreadNumbers(data.bot.commandExecutions)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-style: italic;">commits </td>
+                                        <td style="padding:0 15px;">${spreadNumbers(data.github.commits)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-style: italic;">logger </td>
+                                        <td style="padding:0 15px;">${loggerUptime > 70 ? '<span title="offline" class="redDot"></span>' : '<span title="online" class="greenDot"></span>'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-style: italic;">reminders </td>
+                                        <td style="padding:0 15px;">${remindersUptime > 70 ? '<span title="offline" class="redDot"></span>' : '<span title="online" class="greenDot"></span>'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-style: italic;">API </td>
+                                        <td style="padding:0 15px;">${apiUptime > 70 ? '<span title="offline" class="redDot"></span>' : '<span title="online" class="greenDot"></span>'}</td>
+                                    </tr>
+                                </table>
+                                `;
+
+                            document.getElementById("stats").innerHTML = botMeter;
+                        }
+
+                        updateStats();
+
+                        setInterval(() => {
+                            updateStats();
+                        }, 1000);
+                    });
+                }
         </script>
 
         <div class="container">
