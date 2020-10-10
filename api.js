@@ -633,59 +633,16 @@ apiDataChannels();
 setInterval(()=>{apiDataChannels()}, 600000)
 
 // kunszg.xyz/api/colors
-const apiDataColors = (data) => {
-	app.get("/colors", (req, res, next) => {
-	 	res.json(
-	 		data
-		);
-	});
-}
+/*
+    const apiDataColors = (data) => {
+    	app.get("/colors", (req, res, next) => {
+    	 	res.json(
+    	 		data
+    		);
+    	});
+    }
+*/
 
-const diagramData = async() => {
-	const dataInsert = async(data) => {
-		const info = await doQuery(`SELECT count(*) As data FROM user_list WHERE color="${data}"`);
-		return info[0].data
-	}
-	const getData = await Promise.all([
-		{"color": 'Red', 'amount': await dataInsert('#FF0000')},
-		{"color": 'SpringGreen', 'amount': await dataInsert('#00FF7F')},
-	 	{"color": 'DodgerBlue', 'amount': await dataInsert('#1E90FF')},
-	 	{"color": 'BlueViolet', 'amount': await dataInsert('#8A2BE2')},
-	 	{"color": 'OrangeRed', 'amount': await dataInsert('#FF4500')},
-		{"color": 'GoldenRod', 'amount': await dataInsert('#DAA520')},
-		{"color": 'Blue', 'amount': await dataInsert('#0000FF')},
-		{"color": 'HotPink', 'amount': await dataInsert('#FF69B4')},
-		{"color": 'Green', 'amount': await dataInsert('#008000')},
-		{"color": 'YellowGreen', 'amount': await dataInsert('#9ACD32')},
-		{"color": 'FireBrick', 'amount': await dataInsert('#B22222')},
-		{"color": 'White', 'amount': await dataInsert('#FFFFFF')},
-		{"color": 'SeaGreen', 'amount':await  dataInsert('#2E8B57')},
-		{"color": 'Yellow', 'amount': await dataInsert('#FFFF00')},
-		{"color": 'CadetBlue', 'amount': await dataInsert('#5F9EA0')},
-		{"color": 'Coral', 'amount': await dataInsert('#FF7F50')},
-		{"color": 'Chocolate', 'amount': await dataInsert('#D2691E')},
-		{"color": 'Black', 'amount': await dataInsert('#000000')},
-	])
-	const cache = [];
-	const check = await getData.forEach(i => cache.push(i.amount))
-	const reduce = cache.reduce((a, b) => a + b, 0)
-	return {'users': reduce, 'data': await getData.sort()}
-}
-diagramData().then((data) => {apiDataColors(data)})
-
-const updateMem = async() => {
-	await doQuery(`
-		UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="api"
-		`)
-}
-updateMem()
-setInterval(() => {
-	updateMem()
-}, 602000)
-
-const shell = require('child_process');
-// restart process every 4h
-setInterval(()=>{shell.execSync('pm2 restart api')}, 7200000)
 const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
     const port = server.address().port;
     console.log('app running on port', port);
