@@ -621,6 +621,17 @@ app.get("/stats", async (req, res, next) => {
     });
 });
 
+// kunszg.xyz/commands/code
+app.get("/commands/code", async (req, res, next) => {
+    res.send(`<!DOCTYPE html>
+                <html>
+                    <head>
+                        <meta http-equiv="refresh" content = "0; url=https://kunszg.xyz/commands" />
+                    </head>
+                </html>
+            `);
+});
+
 // kunszg.xyz/api/channels
 const apiDataChannels = () => {
 	app.get("/channels", (req, res, next) => {
@@ -630,7 +641,7 @@ const apiDataChannels = () => {
 	});
 }
 apiDataChannels();
-setInterval(()=>{apiDataChannels()}, 600000)
+setInterval(()=>{apiDataChannels()}, 600000);
 
 // kunszg.xyz/api/colors
 /*
