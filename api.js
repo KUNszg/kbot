@@ -353,7 +353,6 @@ app.get("/commands", async (req, res, next) => {
 });
 
 app.get("/commands/code/*", async (req, res, next) => {
-    console.log(req.url)
     const query = req.url.split('/')[3];
 
     if (query) {
@@ -381,6 +380,8 @@ app.get("/commands/code/*", async (req, res, next) => {
             res.send('<h3>Error: command not found</h3>');
         }
 
+    } else {
+        res.send('<h3>Error: command not found</h3>')
     }
 });
 
