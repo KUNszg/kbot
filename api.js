@@ -359,7 +359,7 @@ app.get("/commands/code/*", async (req, res, next) => {
         const fs = require('fs');
         try {
             const requestedFile = fs.readFileSync(`./lib/commands/${query}.js`);
-
+            console.log(requestedFile.toString())
             res.send(`
                 <!DOCTYPE html>
                 <html>
@@ -377,8 +377,7 @@ app.get("/commands/code/*", async (req, res, next) => {
                 </html>
                 `);
         } catch (err) {
-            console.log(err)
-            res.send('<h3>Error: not found</h3>');
+            res.send('<h3>Error: command not found</h3>');
         }
 
     }
@@ -562,8 +561,6 @@ app.get("/emotes", async (req, res, next) => {
         </html>
         `
     );
-
-
 });
 
 // kunszg.xyz/api/stats
