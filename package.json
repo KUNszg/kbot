@@ -13,8 +13,6 @@
     "got": "^11.7.0",
     "mysql2": "^2.2.5",
     "os": "^0.1.1",
-    "pi-number": "^1.0.0",
-    "request-promise": "^4.2.6",
     "require-dir": "^1.2.0",
     "table-builder": "^2.1.1",
     "tmi.js": "1.5.0",
