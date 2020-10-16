@@ -16,9 +16,7 @@
 }
 
 .button {
-    background-color: #4CAF50;
-    /* Green */
-    border: none;
+    background-color: #4CAF50;  /* Green */
     color: white;
     padding: 14px 28px;
     text-align: center;
@@ -42,9 +40,9 @@
     color: white;
 }
 
-.button1:hover {
-    transform: scale(1.11, 1.11);
-    transition-duration: 0.3s;
+.button:hover {
+    transform: scale(1.25, 1.25);
+    transition-duration: 0.5s;
 }
 
 .github:link,
