@@ -45,6 +45,56 @@
     transition-duration: 0.5s;
 }
 
+.container {
+    position: relative;
+    background-color: #2e2e2e;
+}
+
+.topright {
+    position: absolute;
+    top: -28px;
+    right: 16px;
+    color: white;
+    font-family: 'Source Sans Pro', 'sans-serif';
+}
+
+.redDot {
+    background-color: darkred;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    display: inline-block;
+
+}
+
+.greenDot {
+    background-color: darkgreen;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.channels-button {
+    font-size:20px;
+    cursor:pointer;
+    color:white;
+    padding: -15px;
+    margin-left: 25px;
+    text-align: center;
+    display: inline-block;
+    transition-duration: 0.3s;
+    cursor: pointer;
+    border: none;
+    background: none;
+    white-space: nowrap;
+}
+
+.channels-button:hover {
+    transform: scale(1.11, 1.11);
+    transition-duration: 0.5s;
+}
+
 .github:link,
 .github:visited {
     text-decoration: none;
