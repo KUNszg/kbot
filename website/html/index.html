@@ -4,37 +4,6 @@
         <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-        <style type="text/css">
-            .container {
-                position: relative;
-                background-color: #2e2e2e;
-            }
-
-            .topright {
-                position: absolute;
-                top: -28px;
-                right: 16px;
-                color: white;
-                font-family: 'Source Sans Pro', 'sans-serif';
-            }
-
-            .redDot {
-                background-color: darkred;
-                height: 10px;
-                width: 10px;
-                border-radius: 50%;
-                display: inline-block;
-
-            }
-
-            .greenDot {
-                background-color: darkgreen;
-                height: 10px;
-                width: 10px;
-                border-radius: 50%;
-                display: inline-block;
-            }
-        </style>
     </head>
     <meta charset="utf-8">
     <title>KUNszg</title>
@@ -44,7 +13,9 @@
             <div id="box" style="margin-left: 20px; text-align: center;"></div>
         </div>
         <br>
-        <span class="animate-bottom" style="font-size:20px; cursor:pointer; color:white; margin-left: 15px;" onclick="openNav()">&#9776; <a style="font-size: 20px;  font-family: 'Source Sans Pro', 'sans-serif';" >CHANNELS</a></span>
+        <span class="animate-bottom channels-button" onclick="openNav()">&#9776;
+            <a style="font-size: 20px;  font-family: 'Source Sans Pro', 'sans-serif';" >CHANNELS</a>
+        </span>
 
         <script type="text/javascript">
             if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
