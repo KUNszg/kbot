@@ -600,9 +600,16 @@ app.get("/commands/code", async (req, res, next) => {
 
 // kunszg.xyz/api/channels
 const apiDataChannels = () => {
-	app.get("/channels", (req, res, next) => {
+	app.get("/channels", async (req, res, next) => {
+        let channelList = await custom.doQuery(`
+            SELECT *
+            FROM channels
+            `);
+
+        channelList = channelList.map(i => i.channel);
+
 	 	res.send({
-	 		"data": channelOptions
+	 		"data": channelList
         });
 	});
 }
