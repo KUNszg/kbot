@@ -616,17 +616,6 @@ const apiDataChannels = () => {
 apiDataChannels();
 setInterval(()=>{apiDataChannels()}, 600000);
 
-// kunszg.xyz/api/colors
-/*
-    const apiDataColors = (data) => {
-    	app.get("/colors", (req, res, next) => {
-    	 	res.json(
-    	 		data
-    		);
-    	});
-    }
-*/
-
 const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
     const port = server.address().port;
     console.log('app running on port', port);
