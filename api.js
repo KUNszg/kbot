@@ -10,7 +10,11 @@ const con = mysql.createConnection({
 	password: api.db_pass,
 	database: "kbot"
 });
-con.on('error', (err) => {console.log(err)});
+
+con.on('error', (err) => {
+    console.log(err)
+});
+
 con.connect((err) => {
 	if (err) {
 		console.log('Database connection error in express!')
@@ -29,41 +33,6 @@ const doQuery = (query) => new Promise((resolve, reject) => {
     });
 });
 
-const getChannels = () => new Promise((resolve, reject) => {
-    con.query('SELECT * FROM channels', (err, results, fields) => {
-        if (err) {
-        	const sql = 'INSERT INTO error_logs (error_message, date) VALUES (?, ?)';
-			const insert = [JSON.stringify(err), new Date()];
-			con.query(mysql.format(sql, insert),
-				(error, results, fields) => {
-					if (error) {
-						console.log(error)
-						reject(error)
-					} else {
-						resolve(results)
-					}
-				})
-            reject(err);
-        }
-        else {
-            resolve(results);
-        }
-    });
-});
-
-const channelList = [];
-const channelOptions = [];
-
-const sleep = (milliseconds) => {
-    var start = new Date().getTime();
-    for (var i = 0; i < 1e7; i++) {
-        if ((new Date().getTime() - start) > milliseconds) {
-            break;
-        }
-    }
-}
-sleep(500)
-
 const options = {
     options: {
         debug: false,
@@ -74,20 +43,12 @@ const options = {
     identity: {
         username: 'kunszgbot',
         password: api.oauth,
-    },
-    channels: ['supinic', 'kunszg'],
+    }
 };
 
 const tmi = require('tmi.js');
 const kb = new tmi.client(options);
 kb.connect();
-
-const res = async() => {
-	channelList.push(await getChannels());
-	await channelList[0].forEach(i => channelOptions.push(i.channel))
-}
-res();
-// setInterval(()=>{channelList.length = 0; channelOptions.length = 0; res();}, 3600000)
 
 const sleepGlob = (milliseconds) => {
 	var start = new Date().getTime();
@@ -98,11 +59,6 @@ const sleepGlob = (milliseconds) => {
 	}
 }
 sleepGlob(1000)
-
-const msgCount = [];
-kb.on('chat', (channel, message) => {
-    msgCount.push({'channel': channel.replace('#', ''), 'message':'add'})
-});
 
 app.get("/spotify", async (req, res, next) => {
     const userCount = await custom.doQuery(`
