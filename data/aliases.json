@@ -41,6 +41,8 @@
         {"repeat": "spotify repeat"},
         {"skip": "spotify skip"},
         {"removed": "emotes removed"},
-        {"rq": "rl"}
+        {"rq": "rl"},
+        {"music": "spotify"},
+        {"lastfm": "spotify"},
     ]
 }

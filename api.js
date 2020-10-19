@@ -238,6 +238,20 @@ kb.on("whisper", async (from, userstate, message, self) => {
             return;
         }
 
+        const checkIfUserRegisteredSpotify = await custom.doQuery(`
+            SELECT *
+            FROM access_token
+            WHERE platform="lastfm" AND user="${userstate['user-id']}"
+            `);
+        if (checkIfUserRegisteredSpotify.length != 0) {
+            kb.whisper(from.replace('#', ''), 'you are already registered for Lastfm command. At the moment you can either register for Lastfm or Spotify, not both at the same time.');
+            await custom.doQuery(`
+                DELETE FROM access_token
+                WHERE code="${message.split(' ')[1]}"
+                `);
+            return;
+        }
+
         await custom.doQuery(`
             UPDATE access_token
             SET userName="${from.replace('#', '')}", user="${userstate['user-id']}", code="Resolved"
