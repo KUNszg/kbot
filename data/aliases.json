@@ -30,6 +30,7 @@
         {"unready": "party unready"},
         {"disband": "party disband"},
         {"color": "stats -color"},
+        {"colour": "stats -color"},
         {"vol": "spotify volume"},
         {"volume": "spotify volume"},
         {"start": "spotify start"},
