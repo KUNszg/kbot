@@ -76,6 +76,7 @@
 }
 
 .channels-button {
+    font-family: 'Source Sans Pro', 'sans-serif';
     font-size:20px;
     cursor:pointer;
     color:white;
@@ -111,7 +112,7 @@
     border-left: solid dimgray 1px;
     border-right: solid dimgray 1px;
     border-bottom: solid dimgray 1px;
-    font-family: 'Source Sans Pro', 'sans-serif'
+    font-family: 'Source Sans Pro', 'sans-serif';
 }
 
 .bot {
