@@ -340,7 +340,6 @@ app.get("/commands/code/*", async (req, res, next) => {
         const fs = require('fs');
         try {
             const requestedFile = fs.readFileSync(`./lib/commands/${query}.js`);
-            console.log(requestedFile.toString())
             res.send(`
                 <!DOCTYPE html>
                 <html>
