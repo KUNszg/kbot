@@ -17,9 +17,7 @@ con.on('error', (err) => {
 
 con.connect((err) => {
 	if (err) {
-		console.log('Database connection error in express!')
-	} else {
-		console.log("Database connected in express!");
+		console.log('Database connection error in express')
 	}
 });
 
