@@ -20,7 +20,7 @@ con.connect((err) => {
 		console.log('Database connection error in express!')
 	} else {
 		console.log("Database connected in express!");
-	asd}
+	}
 });
 
 const doQuery = (query) => new Promise((resolve, reject) => {
