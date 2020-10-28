@@ -196,14 +196,14 @@ app.get("/resolved", async (req, res, next) => {
     return;
 });
 
-kb.on("whisper", async (from, userstate, message, self) => {
+kb.on("whisper", async (username, user, message, self) => {
     if (self) return;
     if (message.split(' ')[0] === "verify-spotify") {
         // check if user is banned from bot
         const checkBan = await custom.doQuery(`
             SELECT *
             FROM ban_list
-            WHERE user_id="${userstate['user-id']}"
+            WHERE user_id="${user['user-id']}"
             `);
 
         if (checkBan.length != 0) {
@@ -217,18 +217,18 @@ kb.on("whisper", async (from, userstate, message, self) => {
             `);
 
         if (checkCode.length === 0) {
-            kb.whisper(from, 'Provided code is invalid.');
+            kb.whisper(username, 'Provided code is invalid.');
             return;
         }
 
         const checkUser = await custom.doQuery(`
             SELECT *
             FROM access_token
-            WHERE user="${userstate['user-id']}"
+            WHERE user="${user['user-id']}"
             `);
 
         if (checkUser.length != 0) {
-            kb.whisper(from, 'You are already registered for this command.');
+            kb.whisper(username, 'You are already registered for this command.');
             await custom.doQuery(`
                 DELETE FROM access_token
                 WHERE code="${message.split(' ')[1]}"
@@ -239,10 +239,10 @@ kb.on("whisper", async (from, userstate, message, self) => {
         const checkIfUserRegisteredSpotify = await custom.doQuery(`
             SELECT *
             FROM access_token
-            WHERE platform="lastfm" AND user="${userstate['user-id']}"
+            WHERE platform="lastfm" AND user="${user['user-id']}"
             `);
         if (checkIfUserRegisteredSpotify.length != 0) {
-            kb.whisper(from.replace('#', ''), 'you are already registered for Lastfm command. At the moment you can either register for Lastfm or Spotify, not both at the same time.');
+            kb.whisper(username.replace('#', ''), 'you are already registered for Lastfm command. At the moment you can either register for Lastfm or Spotify, not both at the same time.');
             await custom.doQuery(`
                 DELETE FROM access_token
                 WHERE code="${message.split(' ')[1]}"
@@ -252,11 +252,11 @@ kb.on("whisper", async (from, userstate, message, self) => {
 
         await custom.doQuery(`
             UPDATE access_token
-            SET userName="${from.replace('#', '')}", user="${userstate['user-id']}", code="Resolved"
+            SET userName="${username.replace('#', '')}", user="${user['user-id']}", code="Resolved"
             WHERE code="${message.split(' ')[1]}"
             `);
 
-        kb.whisper(from, `All done! You can now use the Spotify command. If you have Spotify premium,
+        kb.whisper(username, `All done! You can now use the Spotify command. If you have Spotify premium,
             check out command parameters under "kb help spotify", also note that you can use these parameters
             like: "kb skip", "kb vol 10", "kb shuffle true" etc.`);
         return;
