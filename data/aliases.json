@@ -44,6 +44,10 @@
         {"removed": "emotes removed"},
         {"rq": "rl"},
         {"music": "spotify"},
-        {"lastfm": "spotify"}
+        {"lastfm": "spotify"},
+        {"play": "spotify play"},
+        {"queue": "spotify play"},
+        {"p": "spotify play"},
+        {"q": "spotify play"}
     ]
 }
