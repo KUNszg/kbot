@@ -75,7 +75,7 @@ app.get("/spotify", async (req, res, next) => {
         <!DOCTYPE html>
         <html>
             <head>
-                <title>commands</title>
+                <title>Spotify integration</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1">
                 <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
                 <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_spotify.css">
@@ -306,17 +306,6 @@ app.get("/commands", async (req, res, next) => {
 				<meta name="viewport" content="width=device-width, initial-scale=1">
 				<link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
                 <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_commands.css">
-                <style>
-                    .code {
-                        cursor: pointer;
-                        text-align: center;
-                    }
-
-                    .code:hover {
-                        transition-duration: 0.2s;
-                        background-color: #434343;
-                    }
-                </style>
       		</head>
       		<body style="background-color: #1a1a1a">
                 <div style="color: lightgray;">

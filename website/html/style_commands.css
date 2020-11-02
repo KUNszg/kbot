@@ -20,6 +20,16 @@
     height: 100%;
 }
 
+.code {
+    cursor: pointer;
+    text-align: center;
+}
+
+.code:hover {
+    transition-duration: 0.2s;
+    background-color: #434343;
+}
+
 td,
 th {
     white-space: nowrap;
