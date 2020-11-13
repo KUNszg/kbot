@@ -260,7 +260,7 @@ kb.on("whisper", async (username, user, message, self) => {
 
         kb.whisper(username, `All done! You can now use the Spotify command. If you have Spotify premium,
             check out command parameters under "kb help spotify", also note that you can use these parameters
-            like: "kb skip", "kb vol 10", "kb shuffle true" etc.`);
+            without specifying a command like: "kb skip", "kb vol 10", "kb shuffle true" etc.`);
         return;
     }
     return;
