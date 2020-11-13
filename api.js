@@ -250,9 +250,11 @@ kb.on("whisper", async (username, user, message, self) => {
             return;
         }
 
+        const timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
         await custom.doQuery(`
             UPDATE access_token
-            SET userName="${username.replace('#', '')}", user="${user['user-id']}", code="Resolved"
+            SET userName="${username.replace('#', '')}", user="${user['user-id']}", code="Resolved", lastRenew="${timestamp}"
             WHERE code="${message.split(' ')[1]}"
             `);
 
