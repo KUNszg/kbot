@@ -198,6 +198,7 @@ app.get("/resolved", async (req, res, next) => {
 
 kb.on("whisper", async (username, user, message, self) => {
     if (self) return;
+    kb.whisper('kunszg', `whisper to kbot: ${username}: ${message}`);
     if (message.split(' ')[0] === "verify-spotify") {
         // check if user is banned from bot
         const checkBan = await custom.doQuery(`
