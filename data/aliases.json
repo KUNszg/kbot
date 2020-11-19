@@ -48,6 +48,8 @@
         {"play": "spotify play"},
         {"queue": "spotify play"},
         {"p": "spotify play"},
-        {"q": "spotify play"}
+        {"q": "spotify play"},
+        {"emojicons": "emotes"},
+        {"emojis": "emotes"}
     ]
 }
