@@ -50,6 +50,9 @@
         {"p": "spotify play"},
         {"q": "spotify play"},
         {"emojicons": "emotes"},
-        {"emojis": "emotes"}
+        {"emojis": "emotes"},
+        {"wow": "wowtoken"},
+        {"token": "wowtoken"},
+        {"price": "wowtoken"}
     ]
 }
