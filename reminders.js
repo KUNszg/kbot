@@ -121,7 +121,7 @@ const unfireEd = async () => {
             return;
         }
 
-        const getUsername = await custom.doQuery(`SELECT * FROM user_list WHERE ID="${unfire[0].user_alias}" ORDER BY ID DESC`)
+        const getUsername = await custom.doQuery(`SELECT * FROM user_list WHERE ID="${unfire[0].user_alias}"`)
         await custom.doQuery('UPDATE ed_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
         const dateUnfiredUsers = new Date(selectUnfiredUsers[0].fires)
         const unfiredDiff = (serverDate - dateUnfiredUsers)/1000/60
@@ -157,7 +157,7 @@ const reminder = async () => {
             return;
         }
 
-        const getUsername = await custom.doQuery(`SELECT * FROM user_list WHERE ID="${userData[0].user_alias}" ORDER BY ID DESC`)
+        const getUsername = await custom.doQuery(`SELECT * FROM user_list WHERE ID="${userData[0].user_alias}"`)
         const checkChannelStatus = await custom.doQuery(`SELECT * FROM channels WHERE channel="${userData[0].channel}"`)
         if (checkChannelStatus[0].status === "live") {
             limit.add(userData[0].user_alias)
@@ -174,7 +174,7 @@ const reminder = async () => {
         await custom.doQuery(`
             UPDATE user_list t1, cookie_reminders t2
             SET t2.username=t1.username
-            WHERE t1.ID="${getUsername[0].ID}" AND t2.user_alias="${getUsername[0].ID}"
+            WHERE t1.ID="${userData[0].user_alias}" AND t2.user_alias="${userData[0].user_alias}"
         `);
         sleep(500);
         if (userData[0].channel === "forsen" || userData[0].channel === "nymn") {
@@ -210,7 +210,6 @@ const reminder2 = async () => {
     const diff = serverDate - fires
     const differenceToSec = diff/1000;
 
-
     // consider only cases where reminder is apart from current date by 7 seconds
     if ((differenceToSec<=15) && !(differenceToSec<0)) {
         const limit = new Set();
@@ -229,12 +228,10 @@ const reminder2 = async () => {
             SET status="fired"
             WHERE user_alias="${userData[0].user_alias}" AND status="scheduled"
             `);
-
-        const getUsername = await custom.doQuery(`SELECT * FROM user_list WHERE ID="${userData[0].user_alias}" ORDER BY ID DESC`)
         await custom.doQuery(`
             UPDATE user_list t1, ed_reminders t2
             SET t2.username=t1.username
-            WHERE t1.ID="${getUsername[0].ID}" AND t2.user_alias="${getUsername[0].ID}"
+            WHERE t1.ID="${userData[0].user_alias}" AND t2.user_alias="${userData[0].user_alias}"
         `);
         sleep(500);
         kb.whisper(userData[0].username, '(ed reminder) enter dungeon please :) 🏰 ');
