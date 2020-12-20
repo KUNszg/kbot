@@ -88,6 +88,14 @@ form.searchBox2::after {
     display: table;
 }
 
+textarea:focus, input:focus {
+    outline: none;
+}
+
+*:focus {
+    outline: none;
+}
+
 #cf img {
   position:absolute;
   left:0;

@@ -431,15 +431,16 @@ app.get("/emotes", async (req, res, next) => {
             </head>
             <body style="background-color: #1a1a1a">
                 <div>
-                    <div class="logo">
-                        <h7 style="color: white">Emote</h7>
-                        <h7 style="color: #3E91F2"> checker</h7>
-                    </div>
-
                     <div class="searchBox">
                         <div>
                             <form action="/emotes" class="searchBox2">
-                                <input type="text" placeholder="${(typeof req.query.search === "undefined") ? "Search for channel.." : req.query.search}" name="search">
+                                <label style="line-height: 500%;">
+                                    <div class="logo">
+                                        <h7 style="color: white">Emote</h7>
+                                        <h7 style="color: #3E91F2"> checker</h7>
+                                    </div>
+                                </label>
+                                <input type="text" placeholder="${(typeof req.query.search === "undefined") ? "Search for channel.." : req.query.search}" name="search" autocomplete="off" autofocus="autofocus">
                                 <button type="submit">
                                     <img src="./img/magnifier.png" height="20" width="20">
                                 </button>
@@ -477,6 +478,16 @@ app.get("/emotes", async (req, res, next) => {
                                     document.body.removeChild(img)
                                 }, 2000);
                             }
+
+                            fetch('https://kunszg.xyz/api/randomemote')
+                                .then(response => response.json())
+                                .then(data => {
+                                        show_image(data[0].emoteUrl, data[0].emote);
+
+                                        show_image(data[1].emoteUrl, data[1].emote);
+
+                                        show_image(data[2].emoteUrl, data[2].emote);
+                                })
 
                             setInterval(() => {
                                 fetch('https://kunszg.xyz/api/randomemote')
