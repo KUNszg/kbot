@@ -518,7 +518,7 @@ app.get("/emotes", async (req, res, next) => {
         `;
 
     if (!req.query.search) {
-        res.redirect('https://kunszg.xyz/emotes');
+        res.send(homepage)
         return;
     }
 
