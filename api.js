@@ -476,7 +476,7 @@ app.get("/emotes", async (req, res, next) => {
 
                                 setTimeout(() => {
                                     document.body.removeChild(img)
-                                }, 3000);
+                                }, 3200);
                             }
 
                             fetch('https://kunszg.xyz/api/randomemote')
