@@ -58,17 +58,6 @@ const sleepGlob = (milliseconds) => {
 }
 sleepGlob(1000)
 
-app.disable('view cache');
-app.set('etag', false);
-app.use((req, res, next) => {
-  res.set('Cache-Control', 'no-store')
-  next()
-});
-app.get('/*', function(req, res, next){
-  res.setHeader('Last-Modified', (new Date()).toUTCString());
-  next();
-});
-
 app.get("/spotify", async (req, res, next) => {
     const userCount = await custom.doQuery(`
         SELECT COUNT(*) AS count
