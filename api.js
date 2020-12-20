@@ -468,7 +468,7 @@ app.get("/emotes", async (req, res, next) => {
                                             clearInterval(timer);
                                         }
                                         element.style.opacity = op;
-                                        op -= 0.05;
+                                        op -= 0.03;
                                     }, 100);
                                 }
 
