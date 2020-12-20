@@ -440,7 +440,7 @@ app.get("/emotes", async (req, res, next) => {
                                         <h7 style="color: #3E91F2"> checker</h7>
                                     </div>
                                 </label>
-                                <input type="text" placeholder="${(typeof req.query.search === "undefined") ? "Search for channel.." : req.query.search}" name="search" autocomplete="off" autofocus="autofocus">
+                                <input type="text" placeholder="${(typeof req.query.search === "undefined") ? "Search for channel.." : req.query.search}" name="search" autocomplete="off">
                                 <button type="submit">
                                     <img src="./img/magnifier.png" height="20" width="20">
                                 </button>
@@ -518,7 +518,7 @@ app.get("/emotes", async (req, res, next) => {
         `;
 
     if (!req.query.search) {
-        res.send(homepage);
+        res.redirect('https://kunszg.xyz/emotes');
         return;
     }
 
