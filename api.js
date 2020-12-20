@@ -598,7 +598,7 @@ app.get("/emotes", async (req, res, next) => {
 
                                         setInterval(() => {
                                             setTimeout(() => {
-                                                    show_image(${rEmote[]}, "el");
+                                                    show_image("https://cdn.betterttv.net/emote/5fd0d7d50adab74618594fad/3x", "el");
                                             }, Math.floor(Math.random()*10)*1000);
                                         }, 3000);
                                     </script>
