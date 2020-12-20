@@ -549,22 +549,6 @@ app.get("/emotes", async (req, res, next) => {
                         </head>
                         <body style="background-color: #1a1a1a">
                             <div>
-                                <div class="logo">
-                                    <h7 style="color: white">Emote</h7>
-                                    <h7 style="color: #3E91F2"> checker</h7>
-                                </div>
-
-                                <div class="searchBox">
-                                    <div>
-                                        <form action="emotes" class="searchBox2">
-                                            <input type="text" placeholder="${(typeof req.query.search === "undefined") ? "Search for channel.." : req.query.search}" name="search">
-                                            <button type="submit">
-                                                <img src="./img/magnifier.png" height="20" width="20">
-                                            </button>
-                                        </form>
-                                    <div>
-                                <div>
-
                                 <div style="margin-top: 30%; margin-right: 10%; margin-left: 10%; margin-bottom: 10%">
                                     <script>
                                         function show_image(src, alt) {
@@ -603,6 +587,22 @@ app.get("/emotes", async (req, res, next) => {
                                         }, 3000);
                                     </script>
                                 </div>
+
+                                <div class="logo">
+                                    <h7 style="color: white">Emote</h7>
+                                    <h7 style="color: #3E91F2"> checker</h7>
+                                </div>
+
+                                <div class="searchBox">
+                                    <div>
+                                        <form action="emotes" class="searchBox2">
+                                            <input type="text" placeholder="${(typeof req.query.search === "undefined") ? "Search for channel.." : req.query.search}" name="search">
+                                            <button type="submit">
+                                                <img src="./img/magnifier.png" height="20" width="20">
+                                            </button>
+                                        </form>
+                                    <div>
+                                <div>
 
                                 <div class="footer">
                                     Emote checker is based on logs from Kunszgbot
