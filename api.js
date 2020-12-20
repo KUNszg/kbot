@@ -418,11 +418,104 @@ app.get("/emotes", async (req, res, next) => {
         "removed": " <div class='table-headers'>removed</div> "
     };
 
-    if (await req.query?.search ?? false) {
+    const homepage = `
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <title>emotes</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <meta charset="UTF-8">
+                <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
+                <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_emotes.css">
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            </head>
+            <body style="background-color: #1a1a1a">
+                <div>
+                    <div class="logo">
+                        <h7 style="color: white">Emote</h7>
+                        <h7 style="color: #3E91F2"> checker</h7>
+                    </div>
+
+                    <div class="searchBox">
+                        <div>
+                            <form action="/emotes" class="searchBox2">
+                                <input type="text" placeholder="${(typeof req.query.search === "undefined") ? "Search for channel.." : req.query.search}" name="search">
+                                <button type="submit">
+                                    <img src="./img/magnifier.png" height="20" width="20">
+                                </button>
+                            </form>
+                        <div>
+                    <div>
+
+                    <div style="margin-top: 30%; margin-right: 10%; margin-left: 10%; margin-bottom: 10%">
+                        <script>
+                            function show_image(src, alt) {
+                                const img = document.createElement("img");
+                                img.src = src;
+                                img.alt = alt;
+
+                                img.style.position = "absolute";
+                                img.style.top = document.body.clientHeight * Math.random()/1.2 + "px";
+                                img.style.left = document.body.clientWidth * Math.random()/1.2 + "px";
+
+                                document.body.appendChild(img);
+
+                                function fadeOut(element) {
+                                    var op = 1;  // initial opacity
+                                    var timer = setInterval(function () {
+                                        if (op <= 0.1){
+                                            clearInterval(timer);
+                                        }
+                                        element.style.opacity = op;
+                                        op -= 0.05;
+                                    }, 100);
+                                }
+
+                                fadeOut(img)
+
+                                setTimeout(() => {
+                                    document.body.removeChild(img)
+                                }, 2000);
+                            }
+
+                            setInterval(() => {
+                                fetch('https://kunszg.xyz/api/randomemote')
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        setTimeout(() => {
+                                            show_image(data[0].emoteUrl, data[0].emote);
+                                        }, Math.floor(Math.random()*10)*1000);
+
+                                        setTimeout(() => {
+                                            show_image(data[1].emoteUrl, data[1].emote);
+                                        }, Math.floor(Math.random()*10)*1000);
+
+                                        setTimeout(() => {
+                                            show_image(data[2].emoteUrl, data[2].emote);
+                                        }, Math.floor(Math.random()*10)*1000);
+                                    })
+                            }, 3000);
+                        </script>
+                    </div>
+
+                    <div class="footer">
+                        Emote checker is based on logs from Kunszgbot
+                    </div>
+                </div>
+            </body>
+        </html>
+        `;
+
+    if (!req.query.search) {
+        res.send(homepage);
+        return;
+    }
+
+    if ((await req.query?.search ?? false)) {
         const emotes = await doQuery(`
             SELECT *
             FROM emotes
-            WHERE channel="${req.query.search.toLowerCase()}"
+            WHERE channel="${!req.query.search ? "asdf" : req.query.search.toLowerCase()}"
             ORDER BY date
             DESC
             `);
@@ -430,188 +523,12 @@ app.get("/emotes", async (req, res, next) => {
         const emotesRemoved = await doQuery(`
             SELECT *
             FROM emotes_removed
-            WHERE channel="${req.query.search.toLowerCase()}"
+            WHERE channel="${!req.query.search ? "asdf" : req.query.search.toLowerCase()}"
             ORDER BY date
             DESC
             `);
-
         if (!emotes.length) {
-               res.send(
-                   `
-                    <!DOCTYPE html>
-                    <html>
-                        <head>
-                            <title>emotes</title>
-                            <meta name="viewport" content="width=device-width, initial-scale=1">
-                            <meta charset="UTF-8">
-                            <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-                            <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_emotes.css">
-                            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-                            <style>
-                                .logo {
-                                    text-align: center;
-                                    font-weight: 700;
-                                    font-size: 20px;
-                                    font-family: 'Noto Sans', sans-serif;
-                                    margin-top: 1%;
-                                }
-
-                                .footer {
-                                    text-align: center;
-                                    font-size: 12px;
-                                    font-weight: 700;
-                                    font-family: 'Noto Sans', sans-serif;
-                                    position: fixed;
-                                    text-align: center;
-                                    bottom: 1%;
-                                    width: 100%;
-                                    color: #666666;
-                                }
-
-                                .searchBox {
-                                  display: grid;
-                                  text-align: center
-                                }
-
-                                .searchBox :first-child {
-                                    align-self: center;
-                                }
-
-                                /* Style the search field */
-
-                                form {
-                                    height: 200px;
-                                    width: 400px;
-
-                                    position: fixed;
-                                    top: 50%;
-                                    left: 50%;
-                                    margin-top: -100px;
-                                    margin-left: -200px;
-                                }
-
-                                form.searchBox2 input[type=text] {
-                                    padding: 10px;
-                                    font-size: 15px;
-                                    border: 1px solid grey;
-                                    background: #f1f1f1;
-                                    height: 40px;
-                                    height: 5% width: 20%;
-                                    border-top-left-radius: 8px;
-                                    border-bottom-left-radius: 8px;
-                                }
-
-                                /* Style the submit button */
-
-                                form.searchBox2 button {
-                                    padding: 10px;
-                                    background: #2196F3;
-                                    color: white;
-                                    font-size: 15px;
-                                    border: 1px solid grey;
-                                    border-left: none;
-                                    /* Prevent double borders */
-                                    cursor: pointer;
-                                    height: 40px;
-                                    vertical-align: middle;
-                                    margin-top: -5px;
-                                    margin-left: -4px;
-                                    border-top-right-radius: 8px;
-                                    border-bottom-right-radius: 8px;
-                                }
-
-                                form.searchBox2 button:hover {
-                                    background: #0b7dda;
-                                }
-
-                                /* Clear floats */
-
-                                form.searchBox2::after {
-                                    content: "";
-                                    clear: both;
-                                    display: table;
-                                }
-
-                                #cf img {
-                                  position:absolute;
-                                  left:0;
-                                  -webkit-transition: opacity 1s ease-in-out;
-                                  -moz-transition: opacity 1s ease-in-out;
-                                  -o-transition: opacity 1s ease-in-out;
-                                  transition: opacity 1s ease-in-out;
-                                }
-
-                                #cf img.top:hover {
-                                  opacity:0;
-                                }
-
-                            </style>
-                        </head>
-                        <body style="background-color: #1a1a1a">
-                            <div>
-                                <div style="margin-top: 30%; margin-right: 10%; margin-left: 10%; margin-bottom: 10%">
-                                    <script>
-                                        function show_image(src, alt) {
-                                            const img = document.createElement("img");
-                                            img.src = src;
-                                            img.alt = alt;
-
-                                            img.style.position = "absolute";
-                                            img.style.top = document.body.clientHeight * Math.random()/1.2 + "px";
-                                            img.style.left = document.body.clientWidth * Math.random()/1.2 + "px";
-
-                                            document.body.appendChild(img);
-
-                                            function fadeOut(element) {
-                                                var op = 1;  // initial opacity
-                                                var timer = setInterval(function () {
-                                                    if (op <= 0.1){
-                                                        clearInterval(timer);
-                                                    }
-                                                    element.style.opacity = op;
-                                                    op -= 0.05;
-                                                }, 100);
-                                            }
-
-                                            fadeOut(img)
-
-                                            setTimeout(() => {
-                                                document.body.removeChild(img)
-                                            }, 2000);
-                                        }
-
-                                        setInterval(() => {
-                                            setTimeout(() => {
-                                                    show_image("https://cdn.betterttv.net/emote/5fd0d7d50adab74618594fad/3x", "el");
-                                            }, Math.floor(Math.random()*10)*1000);
-                                        }, 3000);
-                                    </script>
-                                </div>
-
-                                <div class="logo">
-                                    <h7 style="color: white">Emote</h7>
-                                    <h7 style="color: #3E91F2"> checker</h7>
-                                </div>
-
-                                <div class="searchBox">
-                                    <div>
-                                        <form action="emotes" class="searchBox2">
-                                            <input type="text" placeholder="${(typeof req.query.search === "undefined") ? "Search for channel.." : req.query.search}" name="search">
-                                            <button type="submit">
-                                                <img src="./img/magnifier.png" height="20" width="20">
-                                            </button>
-                                        </form>
-                                    <div>
-                                <div>
-
-                                <div class="footer">
-                                    Emote checker is based on logs from Kunszgbot
-                                </div>
-                            </div>
-                        </body>
-                    </html>
-                    `
-                );
+               res.send(homepage);
         } else {
             const formatDate = (timestamp) => {
                 const time = Date.now() - Date.parse(timestamp);
@@ -670,7 +587,9 @@ app.get("/emotes", async (req, res, next) => {
                 })
             }
         }
-    } else {
+    }
+
+    if (req.query.search) {
         res.send(
            `
             <!DOCTYPE html>
@@ -718,6 +637,7 @@ app.get("/emotes", async (req, res, next) => {
             `
         );
     }
+
 });
 
 // kunszg.xyz/api/stats

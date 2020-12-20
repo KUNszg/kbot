@@ -4,6 +4,103 @@
     box-sizing: border-box;
 }
 
+.logo {
+    text-align: center;
+    font-weight: 700;
+    font-size: 20px;
+    font-family: 'Noto Sans', sans-serif;
+    margin-top: 1%;
+}
+
+.footer {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Noto Sans', sans-serif;
+    position: fixed;
+    text-align: center;
+    bottom: 1%;
+    width: 100%;
+    color: #666666;
+}
+
+.searchBox {
+  display: grid;
+  text-align: center
+}
+
+.searchBox :first-child {
+    align-self: center;
+}
+
+/* Style the search field */
+
+form {
+    height: 200px;
+    width: 400px;
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -100px;
+    margin-left: -200px;
+}
+
+form.searchBox2 input[type=text] {
+    padding: 10px;
+    font-size: 15px;
+    border: 1px solid grey;
+    background: #f1f1f1;
+    height: 40px;
+    height: 5% width: 20%;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+/* Style the submit button */
+
+form.searchBox2 button {
+    padding: 10px;
+    background: #2196F3;
+    color: white;
+    font-size: 15px;
+    border: 1px solid grey;
+    border-left: none;
+    /* Prevent double borders */
+    cursor: pointer;
+    height: 40px;
+    vertical-align: middle;
+    margin-top: -5px;
+    margin-left: -4px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+form.searchBox2 button:hover {
+    background: #0b7dda;
+}
+
+/* Clear floats */
+
+form.searchBox2::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+#cf img {
+  position:absolute;
+  left:0;
+  -webkit-transition: opacity 1s ease-in-out;
+  -moz-transition: opacity 1s ease-in-out;
+  -o-transition: opacity 1s ease-in-out;
+  transition: opacity 1s ease-in-out;
+}
+
+#cf img.top:hover {
+  opacity:0;
+}
+
 .table-contents {
     margin-right: 5px;
     margin-left: 5px;
