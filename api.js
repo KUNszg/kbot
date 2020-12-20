@@ -384,6 +384,21 @@ app.get("/genres", async (req, res, next) => {
         `);
 });
 
+app.get("/randomemote", async (req, res, next) => {
+    const randomemote = await doQuery(`
+        SELECT *
+        FROM emotes
+        ORDER BY RAND()
+        LIMIT 3
+        `)
+
+    res.send([
+        {"emote": randomemote[0].emote, "emoteUrl": randomemote[0].url},
+        {"emote": randomemote[1].emote, "emoteUrl": randomemote[1].url},
+        {"emote": randomemote[2].emote, "emoteUrl": randomemote[2].url}
+    ])
+})
+
 app.get("/emotes", async (req, res, next) => {
     const Table = require('table-builder');
     const tableData = [];
@@ -421,13 +436,182 @@ app.get("/emotes", async (req, res, next) => {
             `);
 
         if (!emotes.length) {
-            tableData.push({
-                "ID": `<div class="table-contents" style="text-align: center;">-</div>`,
-                "name": `<div class="table-contents" style="text-align: center;">-</div>`,
-                "emote": `<div class="table-contents" style="text-align: center;">-</div>`,
-                "type": `<div class="table-contents" style="text-align: center;">-</div>`,
-                "added": `<div class="table-contents" style="text-align: center;">-</div>`
-            });
+               res.send(
+                   `
+                    <!DOCTYPE html>
+                    <html>
+                        <head>
+                            <title>emotes</title>
+                            <meta name="viewport" content="width=device-width, initial-scale=1">
+                            <meta charset="UTF-8">
+                            <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
+                            <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_emotes.css">
+                            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                            <style>
+                                .logo {
+                                    text-align: center;
+                                    font-weight: 700;
+                                    font-size: 20px;
+                                    font-family: 'Noto Sans', sans-serif;
+                                    margin-top: 1%;
+                                }
+
+                                .footer {
+                                    text-align: center;
+                                    font-size: 12px;
+                                    font-weight: 700;
+                                    font-family: 'Noto Sans', sans-serif;
+                                    position: fixed;
+                                    text-align: center;
+                                    bottom: 1%;
+                                    width: 100%;
+                                    color: #666666;
+                                }
+
+                                .searchBox {
+                                  display: grid;
+                                  text-align: center
+                                }
+
+                                .searchBox :first-child {
+                                    align-self: center;
+                                }
+
+                                /* Style the search field */
+
+                                form {
+                                    height: 200px;
+                                    width: 400px;
+
+                                    position: fixed;
+                                    top: 50%;
+                                    left: 50%;
+                                    margin-top: -100px;
+                                    margin-left: -200px;
+                                }
+
+                                form.searchBox2 input[type=text] {
+                                    padding: 10px;
+                                    font-size: 15px;
+                                    border: 1px solid grey;
+                                    background: #f1f1f1;
+                                    height: 40px;
+                                    height: 5% width: 20%;
+                                    border-top-left-radius: 8px;
+                                    border-bottom-left-radius: 8px;
+                                }
+
+                                /* Style the submit button */
+
+                                form.searchBox2 button {
+                                    padding: 10px;
+                                    background: #2196F3;
+                                    color: white;
+                                    font-size: 15px;
+                                    border: 1px solid grey;
+                                    border-left: none;
+                                    /* Prevent double borders */
+                                    cursor: pointer;
+                                    height: 40px;
+                                    vertical-align: middle;
+                                    margin-top: -5px;
+                                    margin-left: -4px;
+                                    border-top-right-radius: 8px;
+                                    border-bottom-right-radius: 8px;
+                                }
+
+                                form.searchBox2 button:hover {
+                                    background: #0b7dda;
+                                }
+
+                                /* Clear floats */
+
+                                form.searchBox2::after {
+                                    content: "";
+                                    clear: both;
+                                    display: table;
+                                }
+
+                                #cf img {
+                                  position:absolute;
+                                  left:0;
+                                  -webkit-transition: opacity 1s ease-in-out;
+                                  -moz-transition: opacity 1s ease-in-out;
+                                  -o-transition: opacity 1s ease-in-out;
+                                  transition: opacity 1s ease-in-out;
+                                }
+
+                                #cf img.top:hover {
+                                  opacity:0;
+                                }
+
+                            </style>
+                        </head>
+                        <body style="background-color: #1a1a1a">
+                            <div>
+                                <div class="logo">
+                                    <h7 style="color: white">Emote</h7>
+                                    <h7 style="color: #3E91F2"> checker</h7>
+                                </div>
+
+                                <div class="searchBox">
+                                    <div>
+                                        <form action="emotes" class="searchBox2">
+                                            <input type="text" placeholder="${(typeof req.query.search === "undefined") ? "Search for channel.." : req.query.search}" name="search">
+                                            <button type="submit">
+                                                <img src="./img/magnifier.png" height="20" width="20">
+                                            </button>
+                                        </form>
+                                    <div>
+                                <div>
+
+                                <div style="margin-top: 30%; margin-right: 10%; margin-left: 10%; margin-bottom: 10%">
+                                    <script>
+                                        function show_image(src, alt) {
+                                            const img = document.createElement("img");
+                                            img.src = src;
+                                            img.alt = alt;
+
+                                            img.style.position = "absolute";
+                                            img.style.top = document.body.clientHeight * Math.random()/1.2 + "px";
+                                            img.style.left = document.body.clientWidth * Math.random()/1.2 + "px";
+
+                                            document.body.appendChild(img);
+
+                                            function fadeOut(element) {
+                                                var op = 1;  // initial opacity
+                                                var timer = setInterval(function () {
+                                                    if (op <= 0.1){
+                                                        clearInterval(timer);
+                                                    }
+                                                    element.style.opacity = op;
+                                                    op -= 0.05;
+                                                }, 100);
+                                            }
+
+                                            fadeOut(img)
+
+                                            setTimeout(() => {
+                                                document.body.removeChild(img)
+                                            }, 2000);
+                                        }
+
+                                        setInterval(() => {
+                                            setTimeout(() => {
+                                                    show_image(${rEmote[]}, "el");
+                                            }, Math.floor(Math.random()*10)*1000);
+                                        }, 3000);
+                                    </script>
+                                </div>
+
+                                <div class="footer">
+                                    Emote checker is based on logs from Kunszgbot
+                                </div>
+                            </div>
+                        </body>
+                    </html>
+                    `
+                );
         } else {
             const formatDate = (timestamp) => {
                 const time = Date.now() - Date.parse(timestamp);
@@ -486,53 +670,54 @@ app.get("/emotes", async (req, res, next) => {
                 })
             }
         }
-    }
-    res.send(
-       `
-        <!DOCTYPE html>
-        <html>
-            <head>
-                <title>emotes</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1">
-                <meta charset="UTF-8">
-                <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-                <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_emotes.css">
-            </head>
-            <body style="background-color: #1a1a1a">
-                <br><br>
-                <form class="example" action="emotes">
-                    <input type="text" placeholder="${(typeof req.query.search === "undefined") ? "Search for channel.." : req.query.search}" name="search">
-                    <button type="submit"></button>
-                </form>
-                <br>
-                <strong style="color: lightgray;">* - emote added before my logs</strong>
-                <br><br>
-                <div style="color: lightgray;">
-                    <!-- <button class="table-button" onClick="toggleTable2()">Added emotes</button> -->
-                    <!-- <button style="margin-left: 5px;" class="table-button" onClick="toggleTable()">Removed emotes</button> -->
-                    ${(new Table({'class': 'table-context', 'id': "added-emotes-table"}))
-                        .setHeaders(headers)
-                        .setData(tableData)
-                        .render()}
-                    ${(new Table({'class': 'hidden', 'id': "removed-emotes-table"}))
-                        .setHeaders(headersRemoved)
-                        .setData(tableDataRemoved)
-                        .render()}
-                </div>
-                <script>
-                    toggleTable () => {
-                        document.getElementById("removed-emotes-table").classList.toggle("hidden");
-                    }
+    } else {
+        res.send(
+           `
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <title>emotes</title>
+                    <meta name="viewport" content="width=device-width, initial-scale=1">
+                    <meta charset="UTF-8">
+                    <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+                    <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_emotes.css">
+                </head>
+                <body style="background-color: #1a1a1a">
+                    <br><br>
+                    <form class="example" action="emotes">
+                        <input type="text" placeholder="${(typeof req.query.search === "undefined") ? "Search for channel.." : req.query.search}" name="search">
+                        <button type="submit"></button>
+                    </form>
+                    <br>
+                    <strong style="color: lightgray;">* - emote added before my logs</strong>
+                    <br><br>
+                    <div style="color: lightgray;">
+                        <!-- <button class="table-button" onClick="toggleTable2()">Added emotes</button> -->
+                        <!-- <button style="margin-left: 5px;" class="table-button" onClick="toggleTable()">Removed emotes</button> -->
+                        ${(new Table({'class': 'table-context', 'id': "added-emotes-table"}))
+                            .setHeaders(headers)
+                            .setData(tableData)
+                            .render()}
+                        ${(new Table({'class': 'hidden', 'id': "removed-emotes-table"}))
+                            .setHeaders(headersRemoved)
+                            .setData(tableDataRemoved)
+                            .render()}
+                    </div>
+                    <script>
+                        toggleTable () => {
+                            document.getElementById("removed-emotes-table").classList.toggle("hidden");
+                        }
 
-                    toggleTable2 () => {
-                        document.getElementById("added-emotes-table").classList.toggle("hidden");
-                    }
-                </script>
-            </body>
-        </html>
-        `
-    );
+                        toggleTable2 () => {
+                            document.getElementById("added-emotes-table").classList.toggle("hidden");
+                        }
+                    </script>
+                </body>
+            </html>
+            `
+        );
+    }
 });
 
 // kunszg.xyz/api/stats
