@@ -32,6 +32,9 @@
   border-right-style: hidden;
   border-left-style: hidden;
   border-bottom-style: hidden;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  height: 40px;
 }
 
 .search__button {
@@ -43,12 +46,21 @@
   border-left-style: hidden;
   border-bottom-style: hidden;
   border-radius: 0px 5px 5px 0px;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  height: 40px;
 }
 
 .footer {
-  margin-top: 200px;
-  color: #666666;
-  font-family: "Noto Sans", sans-serif;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Noto Sans', sans-serif;
+    position: fixed;
+    text-align: center;
+    bottom: 1%;
+    width: 100%;
+    color: #666666;
 }
 
 textarea:focus, input:focus {
