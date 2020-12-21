@@ -20,11 +20,13 @@
 
 .searchBox {
   text-align: center;
+  margin-top: 17%;
+
 }
 
 .search__input {
   background-color: white;
-  padding: 24px 16px;
+  padding: 13px 16px;
   font-weight: 700;
   color: #000;
   border-radius: 5px 0px 0px 5px;
@@ -32,21 +34,17 @@
   border-right-style: hidden;
   border-left-style: hidden;
   border-bottom-style: hidden;
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
 }
 
 .search__button {
   background-color: #3e91f2;
-  padding: 24px 24px 23px 24px;
+  padding: 13px 13px 12px 13px;
   margin-left: -4px;
   border-top-style: hidden;
   border-right-style: hidden;
   border-left-style: hidden;
   border-bottom-style: hidden;
   border-radius: 0px 5px 5px 0px;
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
 }
 
 .footer {
