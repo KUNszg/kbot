@@ -422,31 +422,34 @@ app.get("/emotes", async (req, res, next) => {
         <!DOCTYPE html>
         <html>
             <head>
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
                 <title>emotes</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1">
-                <meta charset="UTF-8">
-                <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
+
+                <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif">
                 <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_emotes.css">
+                <link rel="stylesheet" href="https://kunszg.xyz/reset.css">
+                <link rel="preconnect" href="https://fonts.gstatic.com">
+                <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
             </head>
-            <body style="background-color: #1a1a1a">
-                <div>
+            <body style="background-color: #1a1a1a" data-new-gr-c-s-check-loaded="14.988.0" data-gr-ext-installed="">
+                <div class="content">
+                    <div class="logo">
+                        <h7 class="white__logo__word">Emote</h7>
+                        <h7 class="blue__logo__word"> checker</h7>
+                    </div>
                     <div class="searchBox">
                         <div>
                             <form action="/emotes" class="searchBox2">
-                                <label style="line-height: 500%;">
-                                    <div class="logo">
-                                        <h7 style="color: white">Emote</h7>
-                                        <h7 style="color: #3E91F2"> checker</h7>
-                                    </div>
-                                </label>
                                 <input type="text" autofocus="autofocus" placeholder="${((typeof req.query.search === "undefined" || !req.query.search) || req.query.search === "") ? "Search for channel.." : req.query.search}" name="search" autocomplete="off">
-                                <button type="submit">
-                                    <img src="./img/magnifier.png" height="20" width="20">
+                                <button type="submit" class="search__button">
+                                    <img src="./emotes_files/magnifier.png" height="20" width="20">
                                 </button>
                             </form>
                         <div>
                     <div>
+
 
                     <div style="margin-top: 30%; margin-right: 10%; margin-left: 10%; margin-bottom: 10%">
                         <script>
