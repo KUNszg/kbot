@@ -442,7 +442,7 @@ app.get("/emotes", async (req, res, next) => {
                     <div class="searchBox">
                         <div>
                             <form action="/emotes" class="searchBox2">
-                                <input type="text" autofocus="autofocus" placeholder="${((typeof req.query.search === "undefined" || !req.query.search) || req.query.search === "") ? "Search for channel.." : req.query.search}" name="search" autocomplete="off">
+                                <input type="text" autofocus="autofocus" placeholder="Search for channel.." name="search" autocomplete="off" class="search__input">
                                 <button type="submit" class="search__button">
                                     <img src="./img/magnifier.png" height="20" width="20">
                                 </button>
