@@ -433,7 +433,7 @@ app.get("/emotes", async (req, res, next) => {
                 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
             </head>
-            <body style="background-color: #1a1a1a" data-new-gr-c-s-check-loaded="14.988.0" data-gr-ext-installed="">
+            <body style="background-color: #1a1a1a">
                 <div class="content">
                     <div class="logo">
                         <h7 class="white__logo__word">Emote</h7>
@@ -444,13 +444,11 @@ app.get("/emotes", async (req, res, next) => {
                             <form action="/emotes" class="searchBox2">
                                 <input type="text" autofocus="autofocus" placeholder="${((typeof req.query.search === "undefined" || !req.query.search) || req.query.search === "") ? "Search for channel.." : req.query.search}" name="search" autocomplete="off">
                                 <button type="submit" class="search__button">
-                                    <img src="./emotes_files/magnifier.png" height="20" width="20">
+                                    <img src="./img/magnifier.png" height="20" width="20">
                                 </button>
                             </form>
                         <div>
                     <div>
-
-
                     <div style="margin-top: 30%; margin-right: 10%; margin-left: 10%; margin-bottom: 10%">
                         <script>
                             function show_image(src, alt) {
