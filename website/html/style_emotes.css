@@ -2,12 +2,16 @@
   font-family: "Noto Sans", sans-serif;
 }
 
+html {
+    overflow-y: hidden;
+}
+
 .logo {
   text-align: center;
   font-size: 24px;
   font-weight: 700;
   margin-top: 24px;
-  margin-bottom: 200px;
+  margin-bottom: 300px;
 }
 
 .white__logo__word {
@@ -20,8 +24,6 @@
 
 .searchBox {
   text-align: center;
-  margin-top: 17%;
-
 }
 
 .search__input {
