@@ -449,6 +449,9 @@ app.get("/emotes", async (req, res, next) => {
                             </form>
                         <div>
                     <div>
+                    <div class="footer">
+                        Emote checker is based on logs from Kunszgbot
+                    </div>
                     <div style="margin-top: 30%; margin-right: 10%; margin-left: 10%; margin-bottom: 10%">
                         <script>
                             function show_image(src, alt) {
@@ -508,10 +511,6 @@ app.get("/emotes", async (req, res, next) => {
                                     })
                             }, 3000);
                         </script>
-                    </div>
-
-                    <div class="footer">
-                        Emote checker is based on logs from Kunszgbot
                     </div>
                 </div>
             </body>
@@ -612,7 +611,7 @@ app.get("/emotes", async (req, res, next) => {
                     <meta charset="UTF-8">
                     <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
                     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-                    <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_emotes.css">
+                    <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_emotes_table.css">
                 </head>
                 <body style="background-color: #1a1a1a">
                     <br><br>
