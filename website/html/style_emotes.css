@@ -2,7 +2,7 @@
   font-family: "Noto Sans", sans-serif;
 }
 
-html {
+.blockscroll {
     overflow-y: hidden;
 }
 
