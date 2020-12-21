@@ -9,6 +9,7 @@
   "author": "kunszg",
   "license": "ISC",
   "dependencies": {
+    "discord.js": "^12.5.1",
     "express": "^4.17.1",
     "got": "^11.8.1",
     "mysql2": "^2.2.5",
