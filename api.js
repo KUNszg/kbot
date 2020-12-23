@@ -4,6 +4,8 @@ const api = require('./config.js');
 const mysql = require('mysql2');
 const custom = require('./lib/utils/functions.js');
 
+require('./lib/static/interval_calls.js');
+
 const con = mysql.createConnection({
 	host: "localhost",
 	user: "root",
@@ -601,6 +603,27 @@ app.get("/emotes", async (req, res, next) => {
     }
 
     if (req.query.search) {
+       /* res.send(
+            `
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <title>emotes</title>
+                    <meta name="viewport" content="width=device-width, initial-scale=1">
+                    <meta charset="UTF-8">
+                    <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+                    <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_emotes_table.css">
+                </head>
+                <body>
+                </body>
+            </html>
+            `
+            );
+
+
+
+        */
         res.send(
            `
             <!DOCTYPE html>
