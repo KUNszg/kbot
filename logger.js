@@ -1,6 +1,5 @@
 'use strict';
 
-require('./lib/static/interval_calls.js');
 require('./lib/static/channel_status.js');
 
 const creds = require('./lib/credentials/config.js');
