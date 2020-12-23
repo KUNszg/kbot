@@ -4,8 +4,6 @@ const api = require('./config.js');
 const mysql = require('mysql2');
 const custom = require('./lib/utils/functions.js');
 
-require('./lib/static/interval_calls.js');
-
 const con = mysql.createConnection({
 	host: "localhost",
 	user: "root",
