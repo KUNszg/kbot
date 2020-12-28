@@ -338,6 +338,8 @@ app.get("/commands/code/*", async (req, res, next) => {
                         <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
                         <link href="https://kunszg.xyz/prism.css" rel="stylesheet" />
                         <title>${query} command code</title>
+                        <link rel="preconnect" href="https://fonts.gstatic.com">
+                        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
                     </head>
                     <body style="background-color: #272822;">
                         <h3 style="color: gray;">Code for ${query} command</h3><br>

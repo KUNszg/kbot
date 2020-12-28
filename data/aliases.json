@@ -53,6 +53,8 @@
         {"emojis": "emotes"},
         {"wow": "wowtoken"},
         {"token": "wowtoken"},
-        {"price": "wowtoken"}
+        {"price": "wowtoken"},
+        {"game": "stream game"},
+        {"title": "stream title"}
     ]
 }
