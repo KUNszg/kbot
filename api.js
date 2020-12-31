@@ -285,7 +285,7 @@ app.get("/commands", async (req, res, next) => {
                 "opt-out": `<div class="table-contents" style="text-align: center;">${(commands[i].optoutable === "Y") ? "yes" : "no"}</div>`,
                 "code": `<a href="https://kunszg.xyz/commands/code/${commands[i].command}">
                             <div class="code" style="font-family: 'Noto Sans', sans-serif; font-size: 13px;">
-                                    <img style="margin-top: 10px;" src="https://i.nuuls.com/Ie4gN.png" height="15" width="15">
+                                    <img style="margin-top: 10px;" src="https://i.imgur.com/81KIfqe.png" height="15" width="15">
                             </div>
                         </a>`,
                 "description": `<div class="table-contents" style="margin-right: 50px; margin-left: 5px;">${commands[i].description}</div>`
