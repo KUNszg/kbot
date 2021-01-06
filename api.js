@@ -406,15 +406,6 @@ kb.on("whisper", async (username, user, message, self) => {
             WHERE user="${user['user-id']}"
             `);
 
-        if (checkUser.length != 0) {
-            kb.whisper(username, 'You are already registered for this command.');
-            await custom.doQuery(`
-                DELETE FROM access_token
-                WHERE code="${message.split(' ')[1]}"
-                `);
-            return;
-        }
-
         const checkIfUserRegisteredLastfm = await custom.doQuery(`
             SELECT *
             FROM access_token
@@ -428,6 +419,16 @@ kb.on("whisper", async (username, user, message, self) => {
                 `);
             return;
         }
+
+        if (checkUser.length != 0) {
+            kb.whisper(username, 'You are already registered for this command.');
+            await custom.doQuery(`
+                DELETE FROM access_token
+                WHERE code="${message.split(' ')[1]}"
+                `);
+            return;
+        }
+
 
         const timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
