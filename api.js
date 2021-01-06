@@ -58,7 +58,7 @@ const sleepGlob = (milliseconds) => {
 }
 sleepGlob(1000)
 
-app.get("/spotify", async (req, res, next) => {
+app.get("/connections", async (req, res, next) => {
     const userCount = await custom.doQuery(`
         SELECT COUNT(*) AS count
         FROM access_token
@@ -75,29 +75,207 @@ app.get("/spotify", async (req, res, next) => {
         <!DOCTYPE html>
         <html>
             <head>
-                <title>Spotify integration</title>
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                <title>emotes</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1">
-                <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-                <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_spotify.css">
+                <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif">
+                <link rel="stylesheet" href="https://kunszg.xyz/reset.css">
+                <link rel="preconnect" href="https://fonts.gstatic.com">
+                <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
             </head>
+            <style type="text/css">
+                .font {
+                    font-family: 'Noto Sans', sans-serif;
+                    color: white;
+                    font-size: 24px;
+                }
+
+                .bttn {
+                    flex-direction: row;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 20px 32px;
+
+                    width: 285px;
+                    height: 40px;
+
+                    border-radius: 10px;
+                }
+
+                .flex {
+                    display: flex;
+                    justify-content: center;
+                }
+
+                .flex-item + .flex-item {
+                    margin-left: 10px;
+                }
+
+                .inputtext {
+                    background: none;
+                    border: none;
+                    color: white;
+                    font-size: 20px;
+                    vertical-align: middle;
+                }
+
+                a:hover {
+                    transition-duration: 0.5s;
+                    filter: brightness(70%);
+                }
+
+                a:not(hover) {
+                    transition-duration: 0.5s;
+                }
+            </style>
             <body style="background-color: #1a1a1a">
-                <div class="animate-bottom">
-                    <strong style="color: gray; font-family: 'Noto Sans', sans-serif;">Click the button below and log into your Spotify</strong><br>
-                    <i style="color: gray; font-family: 'Noto Sans', sans-serif;">this command has been used ${execCount[0].count} times by ${userCount[0].count} users so far...</i>
-                    <a class="commands" href="https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private" target="_self">
-                        <br>
-                        <button style="border: none; background: none" class="button button1">
-                            <div class="button1">
-                                <pre style="margin-bottom:17px;">SPOTIFY-KUNSZGBOT<br>INTEGRATION</pre>
-                                <img src="https://i.imgur.com/WyFrUHi.png" height="60px">
-                            </div>
-                        </button>
+                <div style="text-align: center; margin-top: 200px; line-height: 32px">
+                    <span class="font">
+                        Sign up with your preferred music streaming service to <br>enable
+                        <span class="font" style="color: #5ce600">Spotify</span> or <span class="font" style="color: #d20039">Lastfm</span>
+                        command for yourself
+                    </span>
+                </div>
+                <div class="flex" style="margin-top: 200px">
+                    <a href="https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private">
+                        <form target="_self" class="flex-item bttn" style="background: #1DB954;">
+                            <img src="https://i.imgur.com/XhNJzv0.png" height="40px" width="40px"><input class="inputtext" type="button" value="Sign up with your Spotify"/>
+                        </form>
                     </a>
+                    <a href="lastfm" style="margin-left: 50px">
+                        <form class="flex-item bttn" style="background: #D51007;">
+                            <img src="https://i.imgur.com/MCrUEYp.png" height="40px" width="40px"><input class="inputtext" type="button" value="Sign up with your Last.fm" />
+                        </form>
+                    </a>
+                </div>
+                <br>
+                <div style="text-align: center; margin-top: 150px">
+                    <i style="color: gray; font-family: 'Noto Sans', sans-serif;">These commands have been used ${execCount[0].count} times by ${userCount[0].count} users so far...</i>
                 </div>
             </body>
         </html>
         `);
 })
+
+app.get("/lastfmresolved", async (req, res, next) => {
+    if (typeof req.query.verifcode === "undefined" || typeof req.query.user === "undefined") {
+        throw "no query"
+    }
+
+    const creds = require('./lib/credentials/config.js')
+    const got = require('got');
+    const checkIfUserExists = await got(`http://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${req.query.user}&api_key=${creds.lastfmApiKey}&format=json&limit=2`).json();
+    if (!checkIfUserExists?.user.name ?? true) {
+        res.send('<body>This username does not exist on Lastfm.</body>');
+        return;
+    }
+
+    try {
+        (async () => {
+            res.send(`
+                <!DOCTYPE html>
+                <html>
+                    <head>
+                        <meta name="viewport" content="width=device-width, initial-scale=1">
+                        <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
+                        <title>Successfully resolved</title>
+                    </head>
+                    <body style="background-color: #1a1a1a">
+                        <div style="vertical-align: middle; text-align: center; margin-top: 10%;">
+                            <p style="color: lightgray; font-family: 'Noto Sans', sans-serif;">Copy the code below and whisper it to kunszgbot to finish the authentication.</p>
+                            <input style="font-family: 'Noto Sans', sans-serif; text-align: center; background-color: lightgray; border: solid lightgray 4px;" size="35px" type="text" readonly="readonly" value="verify-lastfm ${req.query.verifcode}" autofocus="autofocus" id="myInput">
+                            <br>
+                            <br>
+                            <button onclick="myFunction()" style="font-family: 'Noto Sans', sans-serif;">Copy code</button>
+                        </div>
+                        <script>
+                            function myFunction() {
+                              /* Get the text field */
+                              var copyText = document.getElementById("myInput");
+
+                              /* Select the text field */
+                              copyText.select();
+                              copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+                              /* Copy the text inside the text field */
+                              document.execCommand("copy");
+                            }
+                        </script>
+                    </body>
+                </html>
+                `);
+
+            await custom.doQuery(`
+                UPDATE access_token
+                SET access_token="${req.query.user}", refresh_token="lastfm currently playing", platform="lastfm", premium="N", allowlookup="N", scopes="lastfm currently playing"
+                WHERE code="${req.query.verifcode}"
+                `);
+        })();
+    } catch (err) {
+        if (err.message === "Response code 400 (Bad Request)") {
+            res.send('<body>Your code has expired, repeat the process.</body>');
+            return;
+        }
+
+        if (err.message === "no query") {
+            res.send('<body>Invalid code.</body>');
+            return;
+        }
+    }
+    return;
+});
+
+app.get("/lastfm", async (req, res, next) => {
+    const genString = (length) => {
+       let result = '';
+       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+       const charactersLength = characters.length;
+       for (let i = 0; i < length; i++) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+       }
+       return result;
+    }
+
+    const verifCode = genString(15);
+
+    const accessToken = await custom.doQuery(`
+        SELECT *
+        FROM access_token
+        WHERE code="verifCode"
+        `);
+
+    if (accessToken.length != 0) {
+        res.send('<body>error<body>');
+    }
+
+    await custom.doQuery(`
+        INSERT INTO access_token (code)
+        VALUES ("${verifCode}")
+        `);
+
+    res.send(`
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
+                <title>Lastfm</title>
+            </head>
+            <body style="background-color: #1a1a1a">
+                <div style="text-align: center; margin-top: 300px;">
+                    <img src="https://i.imgur.com/mXgOqwq.png" height="5%" width="5%">
+                    <form action="/lastfmresolved">
+                      <label for="user" style="font-family: 'Noto sans' sans-serif; color: white; line-height: 50px;">Provide your Lastfm username</label><br>
+                      <input type="text" id="user" name="user" style="width: 200px;" autocomplete="off"><br>
+                      <input type="hidden" id="verifcode" name="verifcode" value="${verifCode}"><br>
+                      <input type="submit" value="Submit">
+                    </form>
+                </div>
+            </body>
+        </html>
+        `);
+});
 
 app.get("/resolved", async (req, res, next) => {
     if (typeof req.query.code === "undefined") {
@@ -199,6 +377,70 @@ app.get("/resolved", async (req, res, next) => {
 kb.on("whisper", async (username, user, message, self) => {
     if (self) return;
     kb.whisper('kunszg', `whisper to kbot: ${username}: ${message}`);
+    if (message.split(' ')[0] === "verify-lastfm") {
+        // check if user is banned from bot
+        const checkBan = await custom.doQuery(`
+            SELECT *
+            FROM ban_list
+            WHERE user_id="${user['user-id']}"
+            `);
+
+        if (checkBan.length != 0) {
+            return;
+        }
+
+        const checkCode = await custom.doQuery(`
+            SELECT *
+            FROM access_token
+            WHERE code="${message.split(' ')[1]}"
+            `);
+
+        if (checkCode.length === 0) {
+            kb.whisper(username, 'Provided code is invalid.');
+            return;
+        }
+
+        const checkUser = await custom.doQuery(`
+            SELECT *
+            FROM access_token
+            WHERE user="${user['user-id']}"
+            `);
+
+        if (checkUser.length != 0) {
+            kb.whisper(username, 'You are already registered for this command.');
+            await custom.doQuery(`
+                DELETE FROM access_token
+                WHERE code="${message.split(' ')[1]}"
+                `);
+            return;
+        }
+
+        const checkIfUserRegisteredLastfm = await custom.doQuery(`
+            SELECT *
+            FROM access_token
+            WHERE platform="spotify" AND user="${user['user-id']}"
+            `);
+        if (checkIfUserRegisteredSpotify.length != 0) {
+            kb.whisper(username.replace('#', ''), 'you are already registered for Spotify command. At the moment you can either register for Lastfm or Spotify, not both at the same time.');
+            await custom.doQuery(`
+                DELETE FROM access_token
+                WHERE code="${message.split(' ')[1]}"
+                `);
+            return;
+        }
+
+        const timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+        await custom.doQuery(`
+            UPDATE access_token
+            SET userName="${username.replace('#', '')}", user="${user['user-id']}", code="Resolved"
+            WHERE code="${message.split(' ')[1]}"
+            `);
+
+        kb.whisper(username, `All done! You can now use the Lastfm command like that 👉 kb lastfm  or kb music. Aliases are: kb music [allow/disallow/unregister] `);
+        return;
+    }
+
     if (message.split(' ')[0] === "verify-spotify") {
         // check if user is banned from bot
         const checkBan = await custom.doQuery(`
