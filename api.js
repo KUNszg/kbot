@@ -435,7 +435,7 @@ kb.on("whisper", async (username, user, message, self) => {
 
         await custom.doQuery(`
             UPDATE access_token
-            SET userName="${username.replace('#', '')}", user="${user['user-id']}", code="Resolved"
+            SET userName="${username.replace('#', '')}", user="${user['user-id']}", code="lastfm"
             WHERE code="${message.split(' ')[1]}"
             `);
 
