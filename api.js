@@ -377,6 +377,7 @@ app.get("/resolved", async (req, res, next) => {
 kb.on("whisper", async (username, user, message, self) => {
     if (self) return;
     kb.whisper('kunszg', `whisper to kbot: ${username}: ${message}`);
+
     if (message.split(' ')[0] === "verify-lastfm") {
         // check if user is banned from bot
         const checkBan = await custom.doQuery(`
@@ -411,7 +412,7 @@ kb.on("whisper", async (username, user, message, self) => {
             FROM access_token
             WHERE platform="spotify" AND user="${user['user-id']}"
             `);
-        if (checkIfUserRegisteredSpotify.length != 0) {
+        if (checkIfUserRegisteredLastfm.length != 0) {
             kb.whisper(username.replace('#', ''), 'you are already registered for Spotify command. At the moment you can either register for Lastfm or Spotify, not both at the same time.');
             await custom.doQuery(`
                 DELETE FROM access_token
