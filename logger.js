@@ -204,8 +204,15 @@ kb.on("subscription", async (channel, username, method, message) => {
     await doQuery(mysql.format(sqlUser, insertsUser));
 
     if (channel === "#kunszg") {
-        for (let i=0; i<11; i++) {
-                kb.say('kunszg', `${username} just subscribed` + ' PagChomp '.repeat(i+1) + ' !');
+        for (let i=0; i<12; i++) {
+            if (i<13) {
+                kb.say('kunszg', `${username} just subscribed` + ' KomodoHype  '.repeat(i+1) + ' !');
+            }
+        }
+        for (let i=22; i>0; i--) {
+            if (i<13) {
+                kb.say('kunszg', `${username} just subscribed` + ' KomodoHype  '.repeat(i-1) + ' !');
+            }
         }
     }
 });
@@ -225,7 +232,7 @@ kb.on("subgift", async (channel, username, streakMonths, recipient, userstate) =
 
     if (channel === "#kunszg") {
         for (let i=0; i<11; i++) {
-                kb.say('kunszg', `${recipient} got gifted a sub from ${username}, it's their ${cumulative} month` + ' PagChomp '.repeat(i+1) + ' !');
+                kb.say('kunszg', `${recipient} got gifted a sub from ${username}, it's their ${cumulative} month` + ' KomodoHype '.repeat(i+1) + ' !');
         }
     }
 });
@@ -239,7 +246,7 @@ kb.on("resub", async (channel, username, streakMonths, message, userstate) => {
 
     if (channel === "#kunszg") {
         for (let i=0; i<11; i++) {
-                kb.say('kunszg', `${username} just resubscribed for ${cumulativeMonths} months` + ' PagChomp '.repeat(i+1) + ' !');
+                kb.say('kunszg', `${username} just resubscribed for ${cumulativeMonths} months` + ' KomodoHype '.repeat(i+1) + ' !');
         }
     }
 });
@@ -251,7 +258,7 @@ kb.on("giftpaidupgrade", async (channel, username, sender) => {
 
     if (channel === "#kunszg") {
         for (let i=0; i<11; i++) {
-                kb.say('kunszg', `${username} is continuing the gifted sub they got from ${sender}` + ' PagChomp '.repeat(i+1) + ' !');
+                kb.say('kunszg', `${username} is continuing the gifted sub they got from ${sender}` + ' KomodoHype '.repeat(i+1) + ' !');
         }
     }
 });
@@ -263,7 +270,7 @@ kb.on("anongiftpaidupgrade", async (channel, username) => {
 
     if (channel === "#kunszg") {
         for (let i=0; i<11; i++) {
-                kb.say('kunszg', `${username} is continuing the gifted sub they got from an anonymous user` + ' PagChomp '.repeat(i+1) + ' !');
+                kb.say('kunszg', `${username} is continuing the gifted sub they got from an anonymous user` + ' KomodoHype '.repeat(i+1) + ' !');
         }
     }
 });
