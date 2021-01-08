@@ -789,12 +789,7 @@ app.get("/emotes", async (req, res, next) => {
         } else {
             const formatDate = (timestamp) => {
                 const time = Date.now() - Date.parse(timestamp);
-                // convert to days
-                if(time > 172800000) {
-                    return `${custom.secondsToDhm(time/1000)} ago`;
-                }
-                // convert to hours
-                return `${custom.format(time/1000)} ago`
+                return `${custom.humanizeDuration(time/1000)} ago`;
             }
 
             for (let i=0; i<emotes.length; i++) {
@@ -827,12 +822,7 @@ app.get("/emotes", async (req, res, next) => {
         } else {
             const formatDate = (timestamp) => {
                 const time = Date.now() - Date.parse(timestamp);
-                // convert to days
-                if(time > 172800000) {
-                    return `${custom.secondsToDhm(time/1000)} ago`;
-                }
-                // convert to hours
-                return `${custom.format(time/1000)} ago`
+                return `${custom.humanizeDuration(time/1000)} ago`;
             }
 
             for (let i=0; i<emotesRemoved.length; i++) {
