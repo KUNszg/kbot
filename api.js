@@ -267,7 +267,7 @@ app.get("/lastfm", async (req, res, next) => {
                     <img src="https://i.imgur.com/mXgOqwq.png" height="5%" width="5%">
                     <form action="/lastfmresolved">
                       <label for="user" style="font-family: 'Noto sans' sans-serif; color: white; line-height: 50px;">Provide your Lastfm username</label><br>
-                      <input type="text" id="user" name="user" style="width: 200px;" autocomplete="off"><br>
+                      <input type="text" id="user" name="user" style="width: 200px;" autocomplete="off" pattern="[a-zA-Z0-9]*"><br>
                       <input type="hidden" id="verifcode" name="verifcode" value="${verifCode}"><br>
                       <input type="submit" value="Submit">
                     </form>
