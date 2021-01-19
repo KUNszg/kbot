@@ -806,7 +806,7 @@ app.get("/emotes", async (req, res, next) => {
                                 </a>
                             </div>`,
                     "type": `<div class="table-contents" style="text-align: center;">${emotes[i].type}</div>`,
-                    "added": `<div class="table-contents" style="text-align: center;">${(Date.parse(emotes[i].date) < 1594764720000) ? "*" : formatDate(emotes[i].date)}</div>`
+                    "added": `<div class="table-contents" style="text-align: center;">${formatDate(emotes[i].date)}</div>`
                 })
             }
         }
