@@ -876,8 +876,6 @@ app.get("/emotes", async (req, res, next) => {
                         <input type="text" placeholder="${(typeof req.query.search === "undefined") ? "Search for channel.." : req.query.search}" name="search">
                         <button type="submit"></button>
                     </form>
-                    <br>
-                    <strong style="color: lightgray;">* - emote added before my logs</strong>
                     <br><br>
                     <div style="color: lightgray;">
                         <!-- <button class="table-button" onClick="toggleTable2()">Added emotes</button> -->
