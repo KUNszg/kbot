@@ -955,7 +955,11 @@ app.get("/emotes", async (req, res, next) => {
                     </style>
                 </head>
                 <body style="background-color: #1a1a1a">
-                    <br><br>
+                    <br>
+                    <div style="text-align: center; color: white">
+                        <strong><a style="color: inherit;" href="https://twitch.tv/${req.query.search.toLowerCase()}">${req.query.search.toLowerCase()}'s</a> emotes</strong>
+                    </div>
+                    <br>
                     <div class="searchBox">
                         <div>
                             <form action="/emotes" class="searchBox2">
@@ -966,7 +970,7 @@ app.get("/emotes", async (req, res, next) => {
                             </form>
                         <div>
                     <div>
-                    <br><br>
+                    <br>
                     <div style="color: lightgray; float: left;">
                         <strong style="color: white; text-align: center;">ADDED EMOTES</strong><br>
                         <input type="text" id="search" placeholder="Type to search" autocomplete="off">
@@ -1006,6 +1010,9 @@ app.get("/emotes", async (req, res, next) => {
                             }).hide();
                         });
                     </script>
+                    <div class="footer">
+                        Emote checker is based on logs from Kunszgbot
+                    </div>
                 </body>
             </html>
             `
