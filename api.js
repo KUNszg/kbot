@@ -968,7 +968,8 @@ app.get("/emotes", async (req, res, next) => {
                     <div>
                     <br><br>
                     <div style="color: lightgray; float: left;">
-                        <strong style="color: white; text-align: center;">ADDED EMOTES</strong>
+                        <strong style="color: white; text-align: center;">ADDED EMOTES</strong><br>
+                        <input type="text" id="search" placeholder="Type to search" autocomplete="off">
                         <br>
                         ${(new Table({'class': 'table-context', 'id': "added-emotes-table"}))
                             .setHeaders(headers)
@@ -976,13 +977,35 @@ app.get("/emotes", async (req, res, next) => {
                             .render()}
                     </div>
                     <div style="margin-top: -1px; color: lightgray; float: right;">
-                        <strong style="color: white; text-align: center;">REMOVED EMOTES</strong>
+                        <strong style="color: white; text-align: center;">REMOVED EMOTES</strong><br>
+                        <input type="text" id="search2" placeholder="Type to search" autocomplete="off">
                         <br>
                         ${(new Table({'class': 'table-context', 'id': "removed-emotes-table"}))
                             .setHeaders(headersRemoved)
                             .setData(tableDataRemoved)
                             .render()}
                     </div>
+                    <script>
+                        let $rows = $('#added-emotes-table tbody tr');
+                        $('#search').keyup(function() {
+                            let val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+                            $rows.show().filter(function() {
+                                let text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                                return !~text.indexOf(val);
+                            }).hide();
+                        });
+
+                        let $rows2 = $('#removed-emotes-table tbody tr');
+                        $('#search2').keyup(function() {
+                            let val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+                            $rows2.show().filter(function() {
+                                let text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                                return !~text.indexOf(val);
+                            }).hide();
+                        });
+                    </script>
                 </body>
             </html>
             `
