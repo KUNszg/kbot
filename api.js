@@ -820,7 +820,7 @@ app.get("/emotes", async (req, res, next) => {
                                     emotes[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '') :
                                     `https://www.frankerfacez.com/emoticon/${emotes[i].emoteId}-${emotes[i].emote}`)}">
                                     <span title="${emotes[i].emote}">
-                                        <img style="vertical-align: middle; margin-top: 4px; margin-bottom: 4px;" src="${emotes[i].url}" alt="${emoteName.trimmer()}">
+                                        <img style="vertical-align: middle; margin-top: 4px; margin-bottom: 4px;" loading="lazy" src="${emotes[i].url}" alt="${emoteName.trimmer()}">
                                     </span>
                                 </a>
                             </div>`,
@@ -856,7 +856,7 @@ app.get("/emotes", async (req, res, next) => {
                                     emotesRemoved[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '') :
                                     `https://www.frankerfacez.com/emoticon/${emotesRemoved[i].emoteId}-${emotesRemoved[i].emote}`)}">
                                     <span title="${emotesRemoved[i].emote}">
-                                        <img style="vertical-align: middle; margin-top: 4px; margin-bottom: 4px;" src="${emotesRemoved[i].url}" alt="${emoteName.trimmer()}">
+                                        <img style="vertical-align: middle; margin-top: 4px; margin-bottom: 4px;" loading="lazy" src="${emotesRemoved[i].url}" alt="${emoteName.trimmer()}">
                                     </span>
                                 </a>
                             </div>`,
