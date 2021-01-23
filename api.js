@@ -972,7 +972,7 @@ app.get("/emotes", async (req, res, next) => {
                     <div>
                     <br>
                     <div style="color: lightgray; float: left;">
-                        <strong style="color: white; text-align: center;">ADDED EMOTES</strong><br>
+                        <strong style="color: white; text-align: center;">USABLE EMOTES</strong><br>
                         <input type="text" id="search" placeholder="Type to search" autocomplete="off">
                         <br>
                         ${(new Table({'class': 'table-context', 'id': "added-emotes-table"}))
@@ -981,7 +981,7 @@ app.get("/emotes", async (req, res, next) => {
                             .render()}
                     </div>
                     <div style="margin-top: -1px; color: lightgray; float: right;">
-                        <strong style="color: white; text-align: center;">REMOVED EMOTES</strong><br>
+                        <strong style="color: white; text-align: center;">PAST EMOTES</strong><br>
                         <input type="text" id="search2" placeholder="Type to search" autocomplete="off">
                         <br>
                         ${(new Table({'class': 'table-context', 'id': "removed-emotes-table"}))
