@@ -1,23 +1,26 @@
-const express = require("express");
-const app = express();
-const api = require('./config.js');
+const express = require('express');
+const fs = require('fs');
 const mysql = require('mysql2');
+const got = require('got');
+const creds = require('./lib/credentials/config.js');
 const custom = require('./lib/utils/functions.js');
+
+const app = express();
 
 const con = mysql.createConnection({
 	host: "localhost",
 	user: "root",
-	password: api.db_pass,
+	password: creds.db_pass,
 	database: "kbot"
 });
 
 con.on('error', (err) => {
-    console.log(err)
+    console.log(err);
 });
 
 con.connect((err) => {
 	if (err) {
-		console.log('Database connection error in express')
+		console.log('Database connection error in express');
 	}
 });
 
@@ -40,7 +43,7 @@ const options = {
     },
     identity: {
         username: 'kunszgbot',
-        password: api.oauth,
+        password: creds.oauth,
     }
 };
 
@@ -48,17 +51,24 @@ const tmi = require('tmi.js');
 const kb = new tmi.client(options);
 kb.connect();
 
-const sleepGlob = (milliseconds) => {
-	var start = new Date().getTime();
-	for (var i = 0; i < 1e7; i++) {
-		if ((new Date().getTime() - start) > milliseconds) {
-			break;
-		}
-	}
-}
-sleepGlob(1000)
+class swapper {
+    constructor(html, repl) {
+        this.html = html;
+        this.value = repl[0];
+        this.valueKeys = Object.keys(repl[0]).map(i => `%{${i}}`);
+    }
 
-app.get("/connections", async (req, res, next) => {
+    template() {
+        for (let i = 0; i < this.valueKeys.length; i++) {
+            this.html = this.html.replace(
+                this.valueKeys[i], this.value[this.valueKeys[i].replace(/^%{/, '').replace(/}$/, '')]
+                );
+        }
+        return this.html;
+    }
+}
+
+app.get("/connections", async (req, res) => {
     const userCount = await custom.doQuery(`
         SELECT COUNT(*) AS count
         FROM access_token
@@ -71,100 +81,23 @@ app.get("/connections", async (req, res, next) => {
         WHERE command LIKE "%spotify%"
         `);
 
-    res.send(`
-        <!DOCTYPE html>
-        <html>
-            <head>
-                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-                <title>Connections</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1">
-                <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif">
-                <link rel="stylesheet" href="https://kunszg.xyz/reset.css">
-                <link rel="preconnect" href="https://fonts.gstatic.com">
-                <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
-                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-            </head>
-            <style type="text/css">
-                .font {
-                    font-family: 'Noto Sans', sans-serif;
-                    color: white;
-                    font-size: 24px;
-                }
+    let html = fs.readFileSync('./website/html/express_pages/connections.html');
 
-                .bttn {
-                    flex-direction: row;
-                    justify-content: center;
-                    align-items: center;
-                    padding: 20px 32px;
+    html = html.toString();
 
-                    width: 285px;
-                    height: 40px;
+    const page = new swapper(html, [{
+        "execs": execCount[0].count,
+        "users": userCount[0].count
+    }]);
 
-                    border-radius: 10px;
-                }
-
-                .flex {
-                    display: flex;
-                    justify-content: center;
-                }
-
-                .flex-item + .flex-item {
-                    margin-left: 10px;
-                }
-
-                .inputtext {
-                    background: none;
-                    border: none;
-                    color: white;
-                    font-size: 20px;
-                    vertical-align: middle;
-                }
-
-                a:hover {
-                    transition-duration: 0.5s;
-                    filter: brightness(70%);
-                }
-
-                a:not(hover) {
-                    transition-duration: 0.5s;
-                }
-            </style>
-            <body style="background-color: #1a1a1a">
-                <div style="text-align: center; margin-top: 200px; line-height: 32px">
-                    <span class="font">
-                        Sign up with your preferred music streaming service to <br>enable
-                        <span class="font" style="color: #5ce600">Spotify</span> or <span class="font" style="color: #d20039">Lastfm</span>
-                        command for yourself
-                    </span>
-                </div>
-                <div class="flex" style="margin-top: 200px">
-                    <a href="https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.xyz/resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private">
-                        <form target="_self" class="flex-item bttn" style="background: #1DB954;">
-                            <img src="https://i.imgur.com/XhNJzv0.png" height="40px" width="40px"><input class="inputtext" type="button" value="Sign up with your Spotify"/>
-                        </form>
-                    </a>
-                    <a href="lastfm" style="margin-left: 50px">
-                        <form class="flex-item bttn" style="background: #D51007;">
-                            <img src="https://i.imgur.com/MCrUEYp.png" height="40px" width="40px"><input class="inputtext" type="button" value="Sign up with your Last.fm" />
-                        </form>
-                    </a>
-                </div>
-                <br>
-                <div style="text-align: center; margin-top: 150px">
-                    <i style="color: gray; font-family: 'Noto Sans', sans-serif;">These commands have been used ${execCount[0].count} times by ${userCount[0].count} users so far...</i>
-                </div>
-            </body>
-        </html>
-        `);
+    res.send(page.template());
 })
 
-app.get("/lastfmresolved", async (req, res, next) => {
+app.get("/lastfmresolved", async (req, res) => {
     if (typeof req.query.verifcode === "undefined" || typeof req.query.user === "undefined") {
         throw "no query"
     }
 
-    const creds = require('./lib/credentials/config.js')
-    const got = require('got');
     const checkIfUserExists = await got(`http://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${req.query.user}&api_key=${creds.lastfmApiKey}&format=json&limit=2`).json();
     if (!checkIfUserExists?.user.name ?? true) {
         res.send('<body>This username does not exist on Lastfm.</body>');
@@ -192,7 +125,7 @@ app.get("/lastfmresolved", async (req, res, next) => {
                         <script>
                             function myFunction() {
                               /* Get the text field */
-                              var copyText = document.getElementById("myInput");
+                              let copyText = document.getElementById("myInput");
 
                               /* Select the text field */
                               copyText.select();
@@ -226,7 +159,7 @@ app.get("/lastfmresolved", async (req, res, next) => {
     return;
 });
 
-app.get("/lastfm", async (req, res, next) => {
+app.get("/lastfm", async (req, res) => {
     const genString = (length) => {
        let result = '';
        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -277,7 +210,7 @@ app.get("/lastfm", async (req, res, next) => {
         `);
 });
 
-app.get("/resolved", async (req, res, next) => {
+app.get("/resolved", async (req, res) => {
     if (typeof req.query.code === "undefined") {
         throw "no query"
     }
@@ -306,8 +239,6 @@ app.get("/resolved", async (req, res, next) => {
 
     try {
         (async () => {
-            const got = require('got');
-
             const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=0a53ae5438f24d0da272a2e663c615c3&client_secret=85c458f0cc4f4fb18b8e8ea843009890&code=${req.query.code}&redirect_uri=https://kunszg.xyz/resolved`
             const spotifyToken = await got(api, {
                 method: "POST",
@@ -358,7 +289,7 @@ app.get("/resolved", async (req, res, next) => {
                 <script>
                     function myFunction() {
                       /* Get the text field */
-                      var copyText = document.getElementById("myInput");
+                      let copyText = document.getElementById("myInput");
 
                       /* Select the text field */
                       copyText.select();
@@ -511,7 +442,7 @@ kb.on("whisper", async (username, user, message, self) => {
     return;
 });
 
-app.get("/commands", async (req, res, next) => {
+app.get("/commands", async (req, res) => {
     const Table = require('table-builder');
     const commands = await doQuery(`
         SELECT *
@@ -567,11 +498,10 @@ app.get("/commands", async (req, res, next) => {
     );
 });
 
-app.get("/commands/code/*", async (req, res, next) => {
+app.get("/commands/code/*", async (req, res) => {
     const query = req.url.split('/')[3];
 
     if (query) {
-        const fs = require('fs');
         try {
             const requestedFile = fs.readFileSync(`./lib/commands/${query}.js`);
             res.send(`
@@ -605,8 +535,7 @@ app.get("/commands/code/*", async (req, res, next) => {
 *
 *   credit to Musixmatch
 */
-app.get("/genres", async (req, res, next) => {
-    const fs = require('fs');
+app.get("/genres", async (req, res) => {
     const genres = fs.readFileSync('./data/genres.json');
 
     res.send(`
@@ -630,7 +559,7 @@ app.get("/genres", async (req, res, next) => {
         `);
 });
 
-app.get("/randomemote", async (req, res, next) => {
+app.get("/randomemote", async (req, res) => {
     const randomemote = await doQuery(`
         SELECT *
         FROM emotes
@@ -645,7 +574,7 @@ app.get("/randomemote", async (req, res, next) => {
     ])
 })
 
-app.get("/emotes", async (req, res, next) => {
+app.get("/emotes", async (req, res) => {
     const Table = require('table-builder');
     const tableData = [];
     const tableDataRemoved = [];
@@ -713,8 +642,8 @@ app.get("/emotes", async (req, res, next) => {
                                 document.body.appendChild(img);
 
                                 function fadeOut(element) {
-                                    var op = 1;  // initial opacity
-                                    var timer = setInterval(function () {
+                                    let op = 1;  // initial opacity
+                                    let timer = setInterval(function () {
                                         if (op <= 0.1){
                                             clearInterval(timer);
                                         }
@@ -1022,7 +951,7 @@ app.get("/emotes", async (req, res, next) => {
 });
 
 // kunszg.xyz/api/stats
-app.get("/stats", async (req, res, next) => {
+app.get("/stats", async (req, res) => {
     const modules = await custom.doQuery(`
         SELECT *
         FROM stats
@@ -1077,7 +1006,7 @@ app.get("/stats", async (req, res, next) => {
 });
 
 // kunszg.xyz/commands/code
-app.get("/commands/code", async (req, res, next) => {
+app.get("/commands/code", async (req, res) => {
     res.send(`<!DOCTYPE html>
                 <html>
                     <head>
@@ -1089,7 +1018,7 @@ app.get("/commands/code", async (req, res, next) => {
 
 // kunszg.xyz/api/channels
 const apiDataChannels = () => {
-	app.get("/channels", async (req, res, next) => {
+	app.get("/channels", async (req, res) => {
         let channelList = await custom.doQuery(`
             SELECT *
             FROM channels
