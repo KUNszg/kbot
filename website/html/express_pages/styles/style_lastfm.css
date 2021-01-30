@@ -1,0 +1,14 @@
+body {
+    background-color: #1a1a1a;
+}
+
+.labelbox {
+    font-family: 'Noto sans' sans-serif;
+    color: white;
+    line-height: 50px;
+}
+
+.container {
+    text-align: center;
+    margin-top: 300px;
+}

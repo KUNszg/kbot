@@ -1,0 +1,25 @@
+body {
+    background-color: #1a1a1a;
+}
+
+.inputbox {
+    font-family: 'Noto Sans', sans-serif;
+    text-align: center;
+    background-color: lightgray;
+    border: solid lightgray 4px;
+}
+
+.boxlabel {
+    color: lightgray;
+    font-family: 'Noto Sans', sans-serif;
+}
+
+.container {
+    vertical-align: middle;
+    text-align: center;
+    margin-top: 10%;
+}
+
+.button {
+    font-family: 'Noto Sans', sans-serif;
+}

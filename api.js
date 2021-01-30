@@ -51,7 +51,7 @@ const tmi = require('tmi.js');
 const kb = new tmi.client(options);
 kb.connect();
 
-class swapper {
+class Swapper {
     constructor(html, repl) {
         this.html = html;
         this.value = repl[0];
@@ -85,7 +85,7 @@ app.get("/connections", async (req, res) => {
 
     html = html.toString();
 
-    const page = new swapper(html, [{
+    const page = new Swapper(html, [{
         "execs": execCount[0].count,
         "users": userCount[0].count
     }]);
@@ -104,40 +104,17 @@ app.get("/lastfmresolved", async (req, res) => {
         return;
     }
 
+    let html = fs.readFileSync('./website/html/express_pages/lastfmresolved.html');
+
+    html = html.toString();
+
+    const page = new Swapper(html, [{
+        "code": req.query.verifcode;
+    }])
+
     try {
         (async () => {
-            res.send(`
-                <!DOCTYPE html>
-                <html>
-                    <head>
-                        <meta name="viewport" content="width=device-width, initial-scale=1">
-                        <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-                        <title>Successfully resolved</title>
-                    </head>
-                    <body style="background-color: #1a1a1a">
-                        <div style="vertical-align: middle; text-align: center; margin-top: 10%;">
-                            <p style="color: lightgray; font-family: 'Noto Sans', sans-serif;">Copy the code below and whisper it to kunszgbot to finish the authentication.</p>
-                            <input style="font-family: 'Noto Sans', sans-serif; text-align: center; background-color: lightgray; border: solid lightgray 4px;" size="35px" type="text" readonly="readonly" value="verify-lastfm ${req.query.verifcode}" autofocus="autofocus" id="myInput">
-                            <br>
-                            <br>
-                            <button onclick="myFunction()" style="font-family: 'Noto Sans', sans-serif;">Copy code</button>
-                        </div>
-                        <script>
-                            function myFunction() {
-                              /* Get the text field */
-                              let copyText = document.getElementById("myInput");
-
-                              /* Select the text field */
-                              copyText.select();
-                              copyText.setSelectionRange(0, 99999); /*For mobile devices*/
-
-                              /* Copy the text inside the text field */
-                              document.execCommand("copy");
-                            }
-                        </script>
-                    </body>
-                </html>
-                `);
+            res.send(page.template());
 
             await custom.doQuery(`
                 UPDATE access_token
@@ -187,27 +164,15 @@ app.get("/lastfm", async (req, res) => {
         VALUES ("${verifCode}")
         `);
 
-    res.send(`
-        <!DOCTYPE html>
-        <html>
-            <head>
-                <meta name="viewport" content="width=device-width, initial-scale=1">
-                <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-                <title>Lastfm</title>
-            </head>
-            <body style="background-color: #1a1a1a">
-                <div style="text-align: center; margin-top: 300px;">
-                    <img src="https://i.imgur.com/mXgOqwq.png" height="5%" width="5%">
-                    <form action="/lastfmresolved">
-                      <label for="user" style="font-family: 'Noto sans' sans-serif; color: white; line-height: 50px;">Provide your Lastfm username</label><br>
-                      <input type="text" id="user" name="user" style="width: 200px;" autocomplete="off" pattern="[a-zA-Z0-9]*"><br>
-                      <input type="hidden" id="verifcode" name="verifcode" value="${verifCode}"><br>
-                      <input type="submit" value="Submit">
-                    </form>
-                </div>
-            </body>
-        </html>
-        `);
+    let html = fs.readFileSync('./website/html/express_pages/lastfm.html');
+
+    html = html.toString();
+
+    const page = new Swapper(html, [{
+        "code": verifCode;
+    }])
+
+    res.send(page.template());
 });
 
 app.get("/resolved", async (req, res) => {
