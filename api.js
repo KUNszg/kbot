@@ -109,7 +109,7 @@ app.get("/lastfmresolved", async (req, res) => {
     html = html.toString();
 
     const page = new Swapper(html, [{
-        "code": req.query.verifcode;
+        "code": req.query.verifcode
     }])
 
     try {
