@@ -169,7 +169,7 @@ app.get("/lastfm", async (req, res) => {
     html = html.toString();
 
     const page = new Swapper(html, [{
-        "code": verifCode;
+        "code": verifCode
     }])
 
     res.send(page.template());
