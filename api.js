@@ -72,7 +72,7 @@ class Swapper {
 
 const conLog = async(req) => {
     const count = await custom.doQuery(`
-        SELECT MAX(count)
+        SELECT COUNT(*) as count
         FROM web_connections
         WHERE ip="${req.ip}"
         `);
