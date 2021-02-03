@@ -70,7 +70,7 @@ class Swapper {
 
 const conLog = async(req) => {
     await custom.doQuery(`
-        INSERT INTO (url, method, ip, protocol, date)
+        INSERT INTO web_connections (url, method, ip, protocol, date)
         VALUES ("${req.originalUrl}", "${req.method}", "${req.ip}", "${req.protocol}", CURRENT_TIMESTAMP)
         `);
 }
