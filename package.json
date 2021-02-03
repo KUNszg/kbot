@@ -9,7 +9,6 @@
   "author": "kunszg",
   "license": "ISC",
   "dependencies": {
-    "@supercharge/request-ip": "^1.1.2",
     "discord.js": "^12.5.1",
     "express": "^4.17.1",
     "got": "^11.8.1",
