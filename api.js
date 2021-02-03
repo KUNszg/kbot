@@ -6,7 +6,6 @@ const creds = require('./lib/credentials/config.js');
 const custom = require('./lib/utils/functions.js');
 
 const app = express();
-app.set('trust proxy', true);
 
 const con = mysql.createConnection({
 	host: "localhost",
@@ -69,7 +68,10 @@ class Swapper {
     }
 }
 
+const { getClientIp } = require('@supercharge/request-ip');
+
 const conLog = async(req) => {
+    req.ip = getClientIp(req);
     await custom.doQuery(`
         INSERT INTO web_connections (url, method, ip, protocol, date)
         VALUES ("${req.originalUrl}", "${req.method}", "${req.ip}", "${req.protocol}", CURRENT_TIMESTAMP)
