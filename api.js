@@ -68,13 +68,12 @@ class Swapper {
     }
 }
 
-const { getClientIp } = require('@supercharge/request-ip');
-
 const conLog = async(req) => {
-    req.ip = getClientIp(req);
+    const forwarded = req.headers['x-forwarded-for'];
+    const ip = forwarded ? forwarded.split(/, /)[0] : req.connection.remoteAddress;
     await custom.doQuery(`
         INSERT INTO web_connections (url, method, ip, protocol, date)
-        VALUES ("${req.originalUrl}", "${req.method}", "${req.ip}", "${req.protocol}", CURRENT_TIMESTAMP)
+        VALUES ("${req.originalUrl}", "${req.method}", "${ip}", "${req.protocol}", CURRENT_TIMESTAMP)
         `);
 }
 
