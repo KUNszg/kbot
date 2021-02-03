@@ -1,0 +1,23 @@
+* {
+    font-family: 'Noto Sans', sans-serif;
+}
+
+body {
+    background-color: #1a1a1a;
+}
+
+.container {
+    vertical-align: middle;
+    text-align: center;
+    margin-top: 10%;
+}
+
+.labelbox {
+    color: lightgray;
+}
+
+.textbox {
+    text-align: center;
+    background-color: lightgray;
+    border: solid lightgray 4px;
+}

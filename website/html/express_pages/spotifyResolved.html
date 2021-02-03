@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <title>Successfully resolved</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-        <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/express_pages/styles/style_lastfmResolved.css">
-        <title>Successfully resolved</title>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/express_pages/styles/style_spotifyResolved.css">
     </head>
     <body>
         <div class="container">
-            <p class="boxlabel">Copy the code below and whisper it to kunszgbot to finish the authentication.</p>
-            <input class="inputbox" size="35px" type="text" readonly="readonly" value="verify-lastfm %{code}" autofocus="autofocus" id="inputtext">
+            <p class="labelbox">Copy the code below and whisper it to kunszgbot to finish the authentication.</p>
+            <input class="textbox" size="35px" type="text" readonly="readonly" value="verify-spotify ${code}" autofocus="autofocus" id="myInput">
             <br>
             <br>
             <button onclick="myFunction()" class="button">Copy code</button>
@@ -17,7 +19,7 @@
         <script>
             function myFunction() {
               /* Get the text field */
-              let copyText = document.getElementById("inputtext");
+              let copyText = document.getElementById("myInput");
 
               /* Select the text field */
               copyText.select();

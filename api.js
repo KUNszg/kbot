@@ -68,6 +68,13 @@ class Swapper {
     }
 }
 
+const conLog = async(req) => {
+    await custom.doQuery(`
+        INSERT INTO (url, method, ip, protocol, date)
+        VALUES ("${req.originalUrl}", "${req.method}", "${req.ip}", "${req.protocol}", CURRENT_TIMESTAMP)
+        `);
+}
+
 app.get("/connections", async (req, res) => {
     const userCount = await custom.doQuery(`
         SELECT COUNT(*) AS count
@@ -91,6 +98,10 @@ app.get("/connections", async (req, res) => {
     }]);
 
     res.send(page.template());
+
+    await conLog(req);
+
+    return;
 })
 
 app.get("/lastfmresolved", async (req, res) => {
@@ -104,7 +115,7 @@ app.get("/lastfmresolved", async (req, res) => {
         return;
     }
 
-    let html = fs.readFileSync('./website/html/express_pages/lastfmresolved.html');
+    let html = fs.readFileSync('./website/html/express_pages/lastfmResolved.html');
 
     html = html.toString();
 
@@ -118,7 +129,12 @@ app.get("/lastfmresolved", async (req, res) => {
 
             await custom.doQuery(`
                 UPDATE access_token
-                SET access_token="${req.query.user}", refresh_token="lastfm currently playing", platform="lastfm", premium="N", allowlookup="N", scopes="lastfm currently playing"
+                SET access_token="${req.query.user}",
+                    refresh_token="lastfm currently playing",
+                    platform="lastfm",
+                    premium="N",
+                    allowlookup="N",
+                    scopes="lastfm currently playing"
                 WHERE code="${req.query.verifcode}"
                 `);
         })();
@@ -133,6 +149,9 @@ app.get("/lastfmresolved", async (req, res) => {
             return;
         }
     }
+
+    await conLog(req);
+
     return;
 });
 
@@ -173,6 +192,10 @@ app.get("/lastfm", async (req, res) => {
     }])
 
     res.send(page.template());
+
+    await conLog(req);
+
+    return;
 });
 
 app.get("/resolved", async (req, res) => {
@@ -235,38 +258,18 @@ app.get("/resolved", async (req, res) => {
         }
     }
 
-    res.send(`
-        <!DOCTYPE html>
-        <html>
-            <head>
-                <meta name="viewport" content="width=device-width, initial-scale=1">
-                <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-                <title>Successfully resolved</title>
-            </head>
-            <body style="background-color: #1a1a1a">
-                <div style="vertical-align: middle; text-align: center; margin-top: 10%;">
-                    <p style="color: lightgray; font-family: 'Noto Sans', sans-serif;">Copy the code below and whisper it to kunszgbot to finish the authentication.</p>
-                    <input style="font-family: 'Noto Sans', sans-serif; text-align: center; background-color: lightgray; border: solid lightgray 4px;" size="35px" type="text" readonly="readonly" value="verify-spotify ${verifCode}" autofocus="autofocus" id="myInput">
-                    <br>
-                    <br>
-                    <button onclick="myFunction()" style="font-family: 'Noto Sans', sans-serif;">Copy code</button>
-                </div>
-                <script>
-                    function myFunction() {
-                      /* Get the text field */
-                      let copyText = document.getElementById("myInput");
+    let html = fs.readFileSync('./website/html/express_pages/spotifyResolved.html');
 
-                      /* Select the text field */
-                      copyText.select();
-                      copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+    html = html.toString();
 
-                      /* Copy the text inside the text field */
-                      document.execCommand("copy");
-                    }
-                </script>
-            </body>
-        </html>
-        `);
+    const page = new Swapper(html, [{
+        "code": verifCode
+    }])
+
+    res.send(page.template());
+
+    await conLog(req);
+
     return;
 });
 
@@ -326,16 +329,13 @@ kb.on("whisper", async (username, user, message, self) => {
             return;
         }
 
-
-        const timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
-
         await custom.doQuery(`
             UPDATE access_token
             SET userName="${username.replace('#', '')}", user="${user['user-id']}", code="lastfm"
             WHERE code="${message.split(' ')[1]}"
             `);
 
-        kb.whisper(username, `All done! You can now use the Lastfm command like that 👉 kb lastfm  or kb music. Aliases are: kb music [allow/disallow/unregister] `);
+        kb.whisper(username, 'All done! You can now use the Lastfm command like that 👉 kb lastfm  or kb music. Aliases are: kb music [allow/disallow/unregister]');
         return;
     }
 
@@ -461,6 +461,10 @@ app.get("/commands", async (req, res) => {
 		</html>
 	    `
     );
+
+   await conLog(req);
+
+   return;
 });
 
 app.get("/commands/code/*", async (req, res) => {
@@ -490,10 +494,13 @@ app.get("/commands/code/*", async (req, res) => {
         } catch (err) {
             res.send('<h3>Error: command not found</h3>');
         }
-
     } else {
         res.send('<h3>Error: command not found</h3>')
     }
+
+    await conLog(req);
+
+    return;
 });
 
 /*  Data for random track command
@@ -522,6 +529,10 @@ app.get("/genres", async (req, res) => {
             </body>
         </html>
         `);
+
+    await conLog(req);
+
+    return;
 });
 
 app.get("/randomemote", async (req, res) => {
@@ -541,6 +552,9 @@ app.get("/randomemote", async (req, res) => {
 
 app.get("/emotes", async (req, res) => {
     const Table = require('table-builder');
+
+    await conLog(req);
+
     const tableData = [];
     const tableDataRemoved = [];
     const headers = {
@@ -875,7 +889,7 @@ app.get("/emotes", async (req, res) => {
                             .render()}
                     </div>
                     <div style="margin-top: -1px; color: lightgray; float: right;">
-                        <strong style="color: white; text-align: center;">PAST EMOTES</strong><br>
+                        <strong style="color: white; text-align: center;">REMOVED EMOTES</strong><br>
                         <input type="text" id="search2" placeholder="Type to search" autocomplete="off">
                         <br>
                         ${(new Table({'class': 'table-context', 'id': "removed-emotes-table"}))
@@ -913,6 +927,7 @@ app.get("/emotes", async (req, res) => {
         );
     }
 
+    return;
 });
 
 // kunszg.xyz/api/stats
@@ -968,17 +983,22 @@ app.get("/stats", async (req, res) => {
             "isAuthorLive": checkIfLive
         }
     });
+
+    await conLog(req);
+
+    return;
 });
 
 // kunszg.xyz/commands/code
 app.get("/commands/code", async (req, res) => {
-    res.send(`<!DOCTYPE html>
-                <html>
-                    <head>
-                        <meta http-equiv="refresh" content = "0; url=https://kunszg.xyz/commands" />
-                    </head>
-                </html>
-            `);
+    res.send(`
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <meta http-equiv="refresh" content = "0; url=https://kunszg.xyz/commands" />
+            </head>
+        </html>
+        `);
 });
 
 // kunszg.xyz/api/channels
@@ -994,6 +1014,10 @@ const apiDataChannels = () => {
 	 	res.send({
 	 		"data": channelList
         });
+
+        await conLog(req);
+
+        return;
 	});
 }
 apiDataChannels();
