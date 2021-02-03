@@ -7,6 +7,8 @@ const custom = require('./lib/utils/functions.js');
 
 const app = express();
 
+app.enable('trust proxy')
+
 const con = mysql.createConnection({
 	host: "localhost",
 	user: "root",
@@ -69,11 +71,9 @@ class Swapper {
 }
 
 const conLog = async(req) => {
-    const forwarded = req.headers['x-forwarded-for'];
-    const ip = forwarded ? forwarded.split(/, /)[0] : req.connection.remoteAddress;
     await custom.doQuery(`
         INSERT INTO web_connections (url, method, ip, protocol, date)
-        VALUES ("${req.originalUrl}", "${req.method}", "${ip}", "${req.protocol}", CURRENT_TIMESTAMP)
+        VALUES ("${req.originalUrl}", "${req.method}", "${req.ip}", "${req.protocol}", CURRENT_TIMESTAMP)
         `);
 }
 
