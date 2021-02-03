@@ -69,9 +69,11 @@ class Swapper {
 }
 
 const conLog = async(req) => {
+    let ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
+
     await custom.doQuery(`
         INSERT INTO web_connections (url, method, ip, protocol, date)
-        VALUES ("${req.originalUrl}", "${req.method}", "${req.ip}", "${req.protocol}", CURRENT_TIMESTAMP)
+        VALUES ("${req.originalUrl}", "${req.method}", "${ip}", "${req.protocol}", CURRENT_TIMESTAMP)
         `);
 }
 
