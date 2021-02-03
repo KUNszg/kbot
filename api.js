@@ -117,7 +117,7 @@ app.get("/lastfmresolved", async (req, res) => {
         return;
     }
 
-    let html = fs.readFileSync('./website/html/express_pages/lastfmResolved.html');
+    let html = fs.readFileSync('./website/html/express_pages/lastfmResolve.html');
 
     html = html.toString();
 
@@ -260,7 +260,7 @@ app.get("/resolved", async (req, res) => {
         }
     }
 
-    let html = fs.readFileSync('./website/html/express_pages/spotifyResolved.html');
+    let html = fs.readFileSync('./website/html/express_pages/spotifyResolve.html');
 
     html = html.toString();
 
