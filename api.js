@@ -1,3 +1,6 @@
+#!/usr/bin/env node
+'use strict';
+
 const express = require('express');
 const fs = require('fs');
 const mysql = require('mysql2');
@@ -71,15 +74,30 @@ class Swapper {
 }
 
 const conLog = async(req) => {
+    const crypto = require('crypto');
+
+    const ENCRYPTION_KEY = creds.encryption_key; // Must be 256 bits (32 characters)
+    const IV_LENGTH = 16; // For AES, this is always 16
+
+    function encrypt(text) {
+        let iv = crypto.randomBytes(IV_LENGTH);
+        let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);
+        let encrypted = cipher.update(text);
+
+        encrypted = Buffer.concat([encrypted, cipher.final()]);
+
+        return iv.toString('hex') + ':' + encrypted.toString('hex');
+    }
+
     const count = await custom.doQuery(`
         SELECT COUNT(*) as count
         FROM web_connections
-        WHERE ip="${req.ip}"
+        WHERE ip="${encrypt(req.ip)}"
         `);
 
     await custom.doQuery(`
         INSERT INTO web_connections (url, method, ip, protocol, count, date)
-        VALUES ("${req.originalUrl}", "${req.method}", "${req.ip}", "${req.protocol}", "${count[0].count+1}",CURRENT_TIMESTAMP)
+        VALUES ("${req.originalUrl}", "${req.method}", "${encrypt(req.ip)}", "${req.protocol}", "${count[0].count+1}",CURRENT_TIMESTAMP)
         `);
 }
 
