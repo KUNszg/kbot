@@ -76,18 +76,21 @@ class Swapper {
 const conLog = async(req) => {
     const crypto = require('crypto');
 
-    const ENCRYPTION_KEY = creds.encryption_key; // Must be 256 bits (32 characters)
-    const IV_LENGTH = 16; // For AES, this is always 16
+    const algorithm = 'aes-256-ctr';
+    const secretKey = creds.encryption_key;
+    const iv = crypto.randomBytes(16);
 
-    function encrypt(text) {
-        let iv = crypto.randomBytes(IV_LENGTH);
-        let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);
-        let encrypted = cipher.update(text);
+    const encrypt = (text) => {
 
-        encrypted = Buffer.concat([encrypted, cipher.final()]);
+        const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
 
-        return iv.toString('hex') + ':' + encrypted.toString('hex');
-    }
+        const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
+
+        return {
+            iv: iv.toString('hex'),
+            content: encrypted.toString('hex')
+        };
+    };
 
     const count = await custom.doQuery(`
         SELECT COUNT(*) as count
