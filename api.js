@@ -95,12 +95,12 @@ const conLog = async(req) => {
     const count = await custom.doQuery(`
         SELECT COUNT(*) as count
         FROM web_connections
-        WHERE ip="${encrypt(req.ip)}"
+        WHERE ip="${encrypt(req.ip).content}"
         `);
 
     await custom.doQuery(`
         INSERT INTO web_connections (url, method, ip, protocol, count, date)
-        VALUES ("${req.originalUrl}", "${req.method}", "${encrypt(req.ip)}", "${req.protocol}", "${count[0].count+1}",CURRENT_TIMESTAMP)
+        VALUES ("${req.originalUrl}", "${req.method}", "${encrypt(req.ip).content}", "${req.protocol}", "${count[0].count+1}",CURRENT_TIMESTAMP)
         `);
 }
 
