@@ -74,15 +74,16 @@ class Swapper {
 }
 
 const conLog = async(req) => {
+    const ipFootprint = req.ip.split('.').pop().join('.')
     const count = await custom.doQuery(`
         SELECT COUNT(*) as count
         FROM web_connections
-        WHERE ip="${req.ip}"
+        WHERE ip="${ipFootprint}"
         `);
 
     await custom.doQuery(`
         INSERT INTO web_connections (url, method, ip, protocol, count, date)
-        VALUES ("${req.originalUrl}", "${req.method}", "${req.ip}", "${req.protocol}", "${count[0].count+1}",CURRENT_TIMESTAMP)
+        VALUES ("${req.originalUrl}", "${req.method}", "${ipFootprint}", "${req.protocol}", "${count[0].count+1}",CURRENT_TIMESTAMP)
         `);
 }
 
