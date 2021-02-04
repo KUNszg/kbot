@@ -74,7 +74,7 @@ class Swapper {
 }
 
 const conLog = async(req) => {
-    const ipFootprint = req.ip.split('.').splice(0, 3);
+    const ipFootprint = req.ip.split('.').splice(0, 3).join('.');
     const count = await custom.doQuery(`
         SELECT COUNT(*) as count
         FROM web_connections
