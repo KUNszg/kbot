@@ -177,7 +177,7 @@ const reminder = async () => {
             WHERE t1.ID="${userData[0].user_alias}" AND t2.user_alias="${userData[0].user_alias}"
         `);
         sleep(500);
-        if (userData[0].channel === "forsen" || userData[0].channel === "nymn") {
+        if ((userData[0].channel === "forsen" || userData[0].channel === "nymn") || userData[0].channel === "zoil") {
             kb.whisper(userData[0].username, `(cookie reminder from channel ${userData[0].channel}) eat cookie please :) 🍪`);
             setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
         } else {
