@@ -277,7 +277,7 @@ kb.on("anongiftpaidupgrade", async (channel, username) => {
 
 // notice messages from twitch
 kb.on("notice", async (channel, msgid, message) => {
-    await custom.doQuery(`
+    await doQuery(`
         INSERT INTO notice (msgid, message, channel, date, module)
         VALUES ("${msgid}", "${message}", "${channel.replace('#', '')}", CURRENT_TIMESTAMP, "logger")
         `);
