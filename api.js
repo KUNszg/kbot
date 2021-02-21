@@ -114,7 +114,13 @@ app.get("/connections", async (req, res) => {
     await conLog(req);
 
     return;
-})
+});
+
+app.get("/countdown", async (req, res) => {
+    if (!req.query) {
+        res.send('');
+    }
+});
 
 app.get("/lastfmresolved", async (req, res) => {
     if (typeof req.query.verifcode === "undefined" || typeof req.query.user === "undefined") {
@@ -239,7 +245,7 @@ app.get("/resolved", async (req, res) => {
 
     try {
         (async () => {
-            const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=0a53ae5438f24d0da272a2e663c615c3&client_secret=85c458f0cc4f4fb18b8e8ea843009890&code=${req.query.code}&redirect_uri=https://kunszg.xyz/resolved`
+            const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=0a53ae5438f24d0da272a2e663c615c3&client_secret=85c458f0cc4f4fb18b8e8ea843009890&code=${req.query.code}&redirect_uri=https://kunszg.com/resolved`
             const spotifyToken = await got(api, {
                 method: "POST",
                 headers: {
@@ -435,7 +441,7 @@ app.get("/commands", async (req, res) => {
                 "command": `<div class="table-contents" style="text-align: center;">${commands[i].command}</div>`,
                 "cooldown": `<div class="table-contents" style="text-align: center;">${commands[i].cooldown/1000}s</div>`,
                 "opt-out": `<div class="table-contents" style="text-align: center;">${(commands[i].optoutable === "Y") ? "yes" : "no"}</div>`,
-                "code": `<a href="https://kunszg.xyz/commands/code/${commands[i].command}">
+                "code": `<a href="https://kunszg.com/commands/code/${commands[i].command}">
                             <div class="code" style="font-family: 'Noto Sans', sans-serif; font-size: 13px;">
                                     <img style="margin-top: 10px;" src="https://i.imgur.com/1THd3GD.png" height="15" width="15">
                             </div>
@@ -460,7 +466,7 @@ app.get("/commands", async (req, res) => {
           		<title>commands</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1">
 				<link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-                <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_commands.css">
+                <link rel="stylesheet" type="text/css" href="https://kunszg.com/style_commands.css">
       		</head>
       		<body style="background-color: #1a1a1a">
                 <div style="color: lightgray;">
@@ -491,7 +497,7 @@ app.get("/commands/code/*", async (req, res) => {
                     <head>
                         <meta name="viewport" content="width=device-width, initial-scale=1">
                         <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-                        <link href="https://kunszg.xyz/prism.css" rel="stylesheet" />
+                        <link href="https://kunszg.com/prism.css" rel="stylesheet" />
                         <title>${query} command code</title>
                         <link rel="preconnect" href="https://fonts.gstatic.com">
                         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
@@ -499,7 +505,7 @@ app.get("/commands/code/*", async (req, res) => {
                     <body style="background-color: #272822;">
                         <h3 style="color: gray;">Code for ${query} command</h3><br>
                         <pre style="font-size: 13px;" class="line-numbers"><code class="language-js">${requestedFile}</code></pre>
-                        <script src="https://kunszg.xyz/prism.js"></script>
+                        <script src="https://kunszg.com/prism.js"></script>
                     </body>
                 </html>
                 `);
@@ -528,7 +534,7 @@ app.get("/genres", async (req, res) => {
             <head>
                 <meta name="viewport" content="width=device-width, initial-scale=1">
                 <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-                <link href="https://kunszg.xyz/prism.css" rel="stylesheet" />
+                <link href="https://kunszg.com/prism.css" rel="stylesheet" />
                 <title>genres</title>
             </head>
             <body style="background-color: #272822;">
@@ -537,7 +543,7 @@ app.get("/genres", async (req, res) => {
                 <pre style="font-size: 13px; color: gray;">example 1: kb rt 2</pre>
                 <pre style="font-size: 13px; color: gray;">example 2: kb rt blues</pre><br>
                 <pre><code style="font-size: 13px;" class="language-json">${genres}</code></pre>
-                <script src="https://kunszg.xyz/prism.js"></script>
+                <script src="https://kunszg.com/prism.js"></script>
             </body>
         </html>
         `);
@@ -594,8 +600,8 @@ app.get("/emotes", async (req, res) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1">
 
                 <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif">
-                <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_emotes.css">
-                <link rel="stylesheet" href="https://kunszg.xyz/reset.css">
+                <link rel="stylesheet" type="text/css" href="https://kunszg.com/style_emotes.css">
+                <link rel="stylesheet" href="https://kunszg.com/reset.css">
                 <link rel="preconnect" href="https://fonts.gstatic.com">
                 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -650,7 +656,7 @@ app.get("/emotes", async (req, res) => {
                                 }, 3200);
                             }
 
-                            fetch('https://kunszg.xyz/api/randomemote')
+                            fetch('https://kunszg.com/api/randomemote')
                                 .then(response => response.json())
                                 .then(data => {
                                         show_image(data[0].emoteUrl, data[0].emote);
@@ -661,7 +667,7 @@ app.get("/emotes", async (req, res) => {
                                 })
 
                             setInterval(() => {
-                                fetch('https://kunszg.xyz/api/randomemote')
+                                fetch('https://kunszg.com/api/randomemote')
                                     .then(response => response.json())
                                     .then(data => {
                                         setTimeout(() => {
@@ -798,7 +804,7 @@ app.get("/emotes", async (req, res) => {
                     <meta charset="UTF-8">
                     <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
                     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-                    <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_emotes_table.css">
+                    <link rel="stylesheet" type="text/css" href="https://kunszg.com/style_emotes_table.css">
                 </head>
                 <body>
                 </body>
@@ -817,7 +823,7 @@ app.get("/emotes", async (req, res) => {
                     <meta charset="UTF-8">
                     <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
                     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-                    <link rel="stylesheet" type="text/css" href="https://kunszg.xyz/style_emotes_table.css">
+                    <link rel="stylesheet" type="text/css" href="https://kunszg.com/style_emotes_table.css">
                     <link rel="preconnect" href="https://fonts.gstatic.com">
                     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
                     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -942,7 +948,7 @@ app.get("/emotes", async (req, res) => {
     return;
 });
 
-// kunszg.xyz/api/stats
+// kunszg.com/api/stats
 app.get("/stats", async (req, res) => {
     const modules = await custom.doQuery(`
         SELECT *
@@ -1001,19 +1007,19 @@ app.get("/stats", async (req, res) => {
     return;
 });
 
-// kunszg.xyz/commands/code
+// kunszg.com/commands/code
 app.get("/commands/code", async (req, res) => {
     res.send(`
         <!DOCTYPE html>
         <html>
             <head>
-                <meta http-equiv="refresh" content = "0; url=https://kunszg.xyz/commands" />
+                <meta http-equiv="refresh" content = "0; url=https://kunszg.com/commands" />
             </head>
         </html>
         `);
 });
 
-// kunszg.xyz/api/channels
+// kunszg.com/api/channels
 const apiDataChannels = () => {
 	app.get("/channels", async (req, res) => {
         let channelList = await custom.doQuery(`
