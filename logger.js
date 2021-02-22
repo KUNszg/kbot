@@ -277,6 +277,9 @@ kb.on("anongiftpaidupgrade", async (channel, username) => {
 
 // notice messages from twitch
 kb.on("notice", async (channel, msgid, message) => {
+    if (msgid === "host_target_went_offline") {
+        return;
+    }
     await doQuery(`
         INSERT INTO notice (msgid, message, channel, date, module)
         VALUES ("${msgid}", "${message}", "${channel.replace('#', '')}", CURRENT_TIMESTAMP, "logger")
