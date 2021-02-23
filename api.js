@@ -154,7 +154,7 @@ app.get("/countdown", async (req, res) => {
             return;
         }
 
-        const checkIfUpdated = custom.doQuery(`
+        const checkIfUpdated = await custom.doQuery(`
             SELECT *
             FROM countdown
             WHERE verifcode="${req.query.verifcode}" AND seconds IS NULL
@@ -170,7 +170,7 @@ app.get("/countdown", async (req, res) => {
             return;
         }
 
-        const seconds = custom.doQuery(`
+        const seconds = await custom.doQuery(`
             SELECT *
             FROM countdown
             WHERE verifcode="${req.query.verifcode}"
