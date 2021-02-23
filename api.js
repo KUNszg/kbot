@@ -180,7 +180,7 @@ app.get("/countdown", async (req, res) => {
             }]);
 
             res.send(page.template())
-        return;
+            return;
         } else {
             res.send("<body>Combination not found, refresh the previous page and try again</body>");
             return;
