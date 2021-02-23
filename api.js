@@ -141,7 +141,7 @@ app.get("/countdown", async (req, res) => {
             }]);
 
             await custom.doQuery(`
-                INSER INTO countdown (verifcode, date)
+                INSERT INTO countdown (verifcode, date)
                 VALUES ("${verifCode}", CURRENT_TIMESTAMP)
                 `);
 
