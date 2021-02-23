@@ -119,7 +119,7 @@ app.get("/connections", async (req, res) => {
 app.get("/countdown", async (req, res) => {
     await conLog(req);
 
-    if (!req.query?.seconds ?? false || !req.query?.verifcode ?? false) {
+    if ((!req.query?.seconds ?? false) || (!req.query?.verifcode ?? false)) {
         const genString = (length) => {
            let result = '';
            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
