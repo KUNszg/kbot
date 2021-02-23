@@ -120,7 +120,7 @@ app.get("/countdown", async (req, res) => {
     try {
         await conLog(req);
 
-        if ((!req.query?.seconds ?? false) || (!req.query?.verifcode ?? false)) {
+        if (!req.query?.verifcode ?? false) {
             const genString = (length) => {
                let result = '';
                const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -149,6 +149,11 @@ app.get("/countdown", async (req, res) => {
             return;
         }
 
+        if (!req.query?.seconds ?? false) {
+            res.send("<body>No verifcode</body>");
+            return;
+        }
+
         const checkIfUpdated = custom.doQuery(`
             SELECT *
             FROM countdown
@@ -161,7 +166,8 @@ app.get("/countdown", async (req, res) => {
                 WHERE verifcode="${req.query.verifcode}"
                 `);
         } else {
-            res.send("<body>Combination not found</body>")
+            res.send("<body>Combination not found</body>");
+            return;
         }
 
         const seconds = custom.doQuery(`
