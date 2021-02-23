@@ -117,9 +117,67 @@ app.get("/connections", async (req, res) => {
 });
 
 app.get("/countdown", async (req, res) => {
-    if (!req.query) {
-        res.send('');
+    await conLog(req);
+
+    if (!req.query?.seconds ?? false || !req.query?.verifcode ?? false) {
+        const genString = (length) => {
+           let result = '';
+           const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+           for (let i = 0; i < length; i++) {
+              result += characters.charAt(Math.floor(Math.random() * characters.length));
+           }
+           return result;
+        }
+
+        const verifCode = genString(15);
+
+        let html = fs.readFileSync('./website/html/express_pages/countdownInput.html');
+
+        html = html.toString();
+
+        const page = new Swapper(html, [{
+            "code": verifCode
+        }]);
+
+        await custom.doQuery(`
+            INSER INTO countdown (verifcode, date)
+            VALUES ("${verifCode}", CURRENT_TIMESTAMP)
+            `);
+
+        res.send(page.template());
+        return;
     }
+
+    const checkIfUpdated = custom.doQuery(`
+        SELECT *
+        FROM countdown
+        WHERE verifcode="${req.query.verifcode}" AND seconds IS NULL
+        `);
+
+    if (!checkIfUpdated.length) {
+        await custom.doQuery(`
+            UPDATE countdown SET seconds="${req.query.seconds}"
+            WHERE verifcode="${req.query.verifcode}"
+            `);
+    } else {
+        res.send("<body>Combination not found</body>")
+    }
+
+    const seconds = custom.doQuery(`
+        SELECT *
+        FROM countdown
+        WHERE verifcode="${req.query.verifcode}"
+        `);
+
+    let html = fs.readFileSync('./website/html/express_pages/countdown.html');
+
+    html = html.toString();
+
+    const page = new Swapper(html, [{
+        "seconds": seconds[0].seconds
+    }]);
+
+    res.send(page.template())
 });
 
 app.get("/lastfmresolved", async (req, res) => {
@@ -177,9 +235,8 @@ app.get("/lastfm", async (req, res) => {
     const genString = (length) => {
        let result = '';
        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-       const charactersLength = characters.length;
        for (let i = 0; i < length; i++) {
-          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+          result += characters.charAt(Math.floor(Math.random() * characters.length));
        }
        return result;
     }
