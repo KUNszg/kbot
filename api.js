@@ -157,34 +157,35 @@ app.get("/countdown", async (req, res) => {
         const checkIfUpdated = await custom.doQuery(`
             SELECT *
             FROM countdown
-            WHERE verifcode="${req.query.verifcode}" AND seconds IS NULL
+            WHERE verifcode="${req.query.verifcode}"
             `);
 
-        if (checkIfUpdated.length) {
+        if (checkIfUpdated[0].seconds === null) {
             await custom.doQuery(`
                 UPDATE countdown SET seconds="${req.query.seconds}"
                 WHERE verifcode="${req.query.verifcode}"
                 `);
-            const seconds = await custom.doQuery(`
-                SELECT *
-                FROM countdown
-                WHERE verifcode="${req.query.verifcode}"
-                `);
-
-            let html = fs.readFileSync('./website/html/express_pages/countdown.html');
-
-            html = html.toString();
-
-            const page = new Swapper(html, [{
-                "seconds": seconds[0].seconds
-            }]);
-
-            res.send(page.template())
-            return;
         } else {
             res.send("<body>Combination not found, refresh the previous page and try again</body>");
             return;
         }
+
+        const seconds = await custom.doQuery(`
+            SELECT *
+            FROM countdown
+            WHERE verifcode="${req.query.verifcode}"
+            `);
+
+        let html = fs.readFileSync('./website/html/express_pages/countdown.html');
+
+        html = html.toString();
+
+        const page = new Swapper(html, [{
+            "seconds": seconds[0].seconds
+        }]);
+
+        res.send(page.template())
+        return;
     } catch (err) {
         console.log(err);
     }
