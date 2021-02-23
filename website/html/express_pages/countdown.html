@@ -27,7 +27,7 @@
                 return dDisplay + hDisplay + mDisplay + sDisplay;
             }
 
-            let time = Date.now() - %{seconds};
+            let time = Date.now()/1000 - %{seconds};
 
             const updateTimer = () => {
                 if (time > 0) {
