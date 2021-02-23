@@ -160,7 +160,7 @@ app.get("/countdown", async (req, res) => {
             WHERE verifcode="${req.query.verifcode}" AND seconds IS NULL
             `);
 
-        if (!checkIfUpdated.length) {
+        if (checkIfUpdated.length) {
             await custom.doQuery(`
                 UPDATE countdown SET seconds="${req.query.seconds}"
                 WHERE verifcode="${req.query.verifcode}"
