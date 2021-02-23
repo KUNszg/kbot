@@ -166,7 +166,7 @@ app.get("/countdown", async (req, res) => {
                 WHERE verifcode="${req.query.verifcode}"
                 `);
         } else {
-            res.send("<body>Combination not found</body>");
+            res.send("<body>Combination not found, refresh the previous page and try again</body>");
             return;
         }
 
