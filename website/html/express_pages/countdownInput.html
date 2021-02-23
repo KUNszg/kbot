@@ -7,6 +7,14 @@
         <title>Countdown</title>
     </head>
     <body>
+        <script>
+        window.onload = function() {
+            if(!window.location.hash) {
+                window.location = window.location + '#loaded';
+                window.location.reload();
+            }
+        }
+        </script>
         <div class="container">
             <form action="/countdown">
               <label for="seconds" class="labelbox">Input value in seconds</label><br>
