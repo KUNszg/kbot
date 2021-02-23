@@ -182,7 +182,7 @@ app.get("/countdown", async (req, res) => {
         html = html.toString();
 
         const page = new Swapper(html, [{
-            "seconds": seconds[0].seconds
+            "seconds": Date.now() - seconds[0].seconds
         }]);
 
         res.send(page.template())
