@@ -167,7 +167,7 @@ app.get("/countdown", async (req, res) => {
 
         if (checkIfUpdated[0].seconds === null) {
             await custom.doQuery(`
-                UPDATE countdown SET seconds="${Date.now() + (req.query.seconds * 1000)}"
+                UPDATE countdown SET seconds="${Date.now() + req.query.seconds * 1000}"
                 WHERE verifcode="${req.query.verifcode}"
                 `);
         }
@@ -182,7 +182,7 @@ app.get("/countdown", async (req, res) => {
         html = html.toString();
 
         const page = new Swapper(html, [{
-            "seconds": Date.now() - seconds[0].seconds
+            "seconds": seconds[0].seconds
         }]);
 
         res.send(page.template())
