@@ -167,7 +167,7 @@ app.get("/countdown", async (req, res) => {
 
         if (checkIfUpdated[0].seconds === null) {
             await custom.doQuery(`
-                UPDATE countdown SET seconds="${Date.now() + (req.query.seconds * 1000)}"
+                UPDATE countdown SET seconds="${Date.now()/1000 + req.query.seconds}"
                 WHERE verifcode="${req.query.verifcode}"
                 `);
         }
