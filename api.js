@@ -132,20 +132,32 @@ app.get("/countdown", async (req, res) => {
 
             const verifCode = genString(15);
 
-            let html = fs.readFileSync('./website/html/express_pages/countdownInput.html');
-
-            html = html.toString();
-
-            const page = new Swapper(html, [{
-                "code": verifCode
-            }]);
+            let html = `<!DOCTYPE html>
+                    <html>
+                        <head>
+                            <meta name="viewport" content="width=device-width, initial-scale=1">
+                            <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
+                            <link rel="stylesheet" type="text/css" href="https://kunszg.com/express_pages/styles/style_lastfm.css">
+                            <title>Countdown</title>
+                        </head>
+                        <body>
+                            <div class="container">
+                                <form action="/countdown" autocomplete="off">
+                                  <label for="seconds" class="labelbox">Input value in seconds</label><br>
+                                  <input type="text" id="seconds" name="seconds" style="width: 200px;" autocomplete="off" pattern="[0-9]*"><br>
+                                  <input type="hidden" id="verifcode" name="verifcode" value="${verifCode}"><br>
+                                  <input type="submit" value="Submit">
+                                </form>
+                            </div>
+                        </body>
+                    </html>`
 
             await custom.doQuery(`
                 INSERT INTO countdown (verifcode, date)
                 VALUES ("${verifCode}", CURRENT_TIMESTAMP)
                 `);
 
-            res.send(page.template());
+            res.send(html);
             return;
         }
 
@@ -167,7 +179,7 @@ app.get("/countdown", async (req, res) => {
 
         if (checkIfUpdated[0].seconds === null) {
             await custom.doQuery(`
-                UPDATE countdown SET seconds="${Date.now()/1000 + req.query.seconds}"
+                UPDATE countdown SET seconds="${Date.now()/1000 + Number(req.query.seconds)}"
                 WHERE verifcode="${req.query.verifcode}"
                 `);
         }
