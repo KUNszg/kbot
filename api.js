@@ -160,16 +160,17 @@ app.get("/countdown", async (req, res) => {
             WHERE verifcode="${req.query.verifcode}"
             `);
 
+        if (!checkIfUpdated.length) {
+            res.send("<body>Combination not found, refresh the previous page and try again</body>");
+            return;
+        }
+
         if (checkIfUpdated[0].seconds === null) {
             await custom.doQuery(`
                 UPDATE countdown SET seconds="${req.query.seconds}"
                 WHERE verifcode="${req.query.verifcode}"
                 `);
-        } else {
-            res.send("<body>Combination not found, refresh the previous page and try again</body>");
-            return;
         }
-
         const seconds = await custom.doQuery(`
             SELECT *
             FROM countdown
