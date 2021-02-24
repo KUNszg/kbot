@@ -49,6 +49,7 @@
         {"queue": "spotify play"},
         {"p": "spotify play"},
         {"q": "spotify play"},
+        {"top": "spotify top"},
         {"emojicons": "emotes"},
         {"emojis": "emotes"},
         {"wow": "wowtoken"},
