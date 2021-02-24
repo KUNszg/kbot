@@ -142,9 +142,7 @@ app.get("/countdown", async (req, res) => {
                             <meta http-equiv="Cache-Control" content="no-cache" />
                             <meta http-equiv="Expires" content="0" />
                             <title>Countdown</title>
-                        </head>
-                        <body>
-                            <script>
+                                                        <script>
                                 (function () {
                                     if(window.localStorage) {
                                         if(!localStorage.getItem('firstLoad') ) {
@@ -156,6 +154,8 @@ app.get("/countdown", async (req, res) => {
                                     }
                                 })();
                             </script>
+                        </head>
+                        <body>
                             <div class="container">
                                 <form action="/countdown" autocomplete="off">
                                   <label for="seconds" autocomplete="off" class="labelbox">Input value in seconds</label><br>
