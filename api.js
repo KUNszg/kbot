@@ -138,14 +138,17 @@ app.get("/countdown", async (req, res) => {
                             <meta name="viewport" content="width=device-width, initial-scale=1">
                             <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
                             <link rel="stylesheet" type="text/css" href="https://kunszg.com/express_pages/styles/style_lastfm.css">
+                            <meta http-equiv="Pragma" content="no-cache" />
+                            <meta http-equiv="Cache-Control" content="no-cache" />
+                            <meta http-equiv="Expires" content="0" />
                             <title>Countdown</title>
                         </head>
                         <body>
                             <div class="container">
                                 <form action="/countdown" autocomplete="off">
-                                  <label for="seconds" class="labelbox">Input value in seconds</label><br>
+                                  <label for="seconds" autocomplete="off" class="labelbox">Input value in seconds</label><br>
                                   <input type="text" id="seconds" name="seconds" style="width: 200px;" autocomplete="off" pattern="[0-9]*"><br>
-                                  <input type="hidden" id="verifcode" name="verifcode" value="${verifCode}"><br>
+                                  <input type="hidden" id="verifcode" name="verifcode" value="${verifCode}" autocomplete="off"><br>
                                   <input type="submit" value="Submit">
                                 </form>
                             </div>
