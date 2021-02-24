@@ -142,18 +142,6 @@ app.get("/countdown", async (req, res) => {
                             <meta http-equiv="Cache-Control" content="no-cache" />
                             <meta http-equiv="Expires" content="0" />
                             <title>Countdown</title>
-                                                        <script>
-                                (function () {
-                                    if(window.localStorage) {
-                                        if(!localStorage.getItem('firstLoad') ) {
-                                            localStorage = true;
-                                            window.location.reload();
-                                        } else {
-                                            localStorage.removeItem('firstLoad');
-                                        }
-                                    }
-                                })();
-                            </script>
                         </head>
                         <body>
                             <div class="container">
@@ -165,7 +153,7 @@ app.get("/countdown", async (req, res) => {
                                 </form>
                             </div>
                         </body>
-                    </html>`
+                    </html>`;
 
             await custom.doQuery(`
                 INSERT INTO countdown (verifcode, date)
