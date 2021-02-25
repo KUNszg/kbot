@@ -92,6 +92,10 @@ const ignoreList = [
     '500384894' // botder423
 ];
 
+const channelIgnoreList = [
+    "187193365" // lukickk
+];
+
 kb.connect();
 
 kb.whisper('kunszg', 'logger reconnected');
@@ -129,9 +133,10 @@ setInterval(() => {
 const cache = [];
 kb.on('message', (channel, user, message) => {
     const filterBots = ignoreList.filter(i => i === user['user-id'])
+    const filterIgnoredChannels = channelIgnoreList.filter(i => i === channel.replace('#', ''))
     const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
     const channelParsed = channel.replace('#', '');
-    if (filterBots.length != 0 || msg === '') {
+    if (filterBots.length != 0 || msg === '' || channelIgnoreList.length != 0) {
         return;
     }
 
