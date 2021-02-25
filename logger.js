@@ -93,7 +93,8 @@ const ignoreList = [
 ];
 
 const channelIgnoreList = [
-    "187193365" // lukickk
+    "187193365", // lukickk
+    "189892499" // ondrash_
 ];
 
 kb.connect();
