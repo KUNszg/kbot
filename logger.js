@@ -89,7 +89,9 @@ const ignoreList = [
     '237719657', // fossabot
     '500670723', // VJBotardo
     '452276558', // spergbot02
-    '500384894' // botder423
+    '500384894', // botder423
+    '632499854', // verydonkbot
+    '603757453'
 ];
 
 const channelIgnoreList = [
