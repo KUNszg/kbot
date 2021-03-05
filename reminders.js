@@ -212,7 +212,7 @@ const reminder = async () => {
         ];
 
         if (restrictedChannels.find(i => i === userData[0].channel)) {
-            kb.whisper(getUsername[0].username, `(cookie reminder from channel ${userData[0].channel}) eat cookie please :) 🍪`);
+            kb.whisper(getUsername[0].username, `(cookie reminder) eat cookie please :) 🍪`);
             setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
         } else {
             if (userData[0].initplatform === "whisper") {
