@@ -108,7 +108,7 @@ con.connect((err) => {
 const query = (query, data = []) => new Promise((resolve, reject) => {
     con.execute(query, data, async(err, results) => {
         if (err) {
-            reject(err);
+            return;
         } else {
             resolve(results);
         }
