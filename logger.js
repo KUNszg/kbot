@@ -147,7 +147,7 @@ kb.on('message', (channel, user, message) => {
         'user-id': user['user-id'],
         'color': user['color'],
         'message': msg,
-        'date': new Date()
+        'date': new Date().toISOString().slice(0, 19).replace('T', ' ')
     });
 })
 
