@@ -179,7 +179,7 @@ setInterval(()=>{
 }, 7000);
 
 kb.on('message', async (channel, user) => {
-    const sqlUser = "INSERT INTO user_list (username, userId, channel_first_appeared, color, added) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)"
+    const sqlUser = "INSERT INTO user_list (username, userId, firstSeen, color, added) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)"
     const insertsUser = [user['username'], user['user-id'], channel.replace('#', ''), user['color']]
     await doQuery(mysql.format(sqlUser, insertsUser))
 });
