@@ -47,6 +47,7 @@
         {"token": "wowtoken"},
         {"price": "wowtoken"},
         {"game": "stream game"},
-        {"title": "stream title"}
+        {"title": "stream title"},
+        {"lastseen": "ls"}
     ]
 }
