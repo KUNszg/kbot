@@ -170,7 +170,7 @@ const updateLogs = () => {
             UPDATE user_list
             SET lastSeen=?
             WHERE username=?`,
-            [`${data['date']}*${data['message']}`, data['username']]);
+            [data['message'], data['username']]);
 
         // matching bad words
         const badWord = data['message'].match(/(?:(?:\b(?<![-=\.])|monka)(?:[Nnñ]|[Ii7]V)|[\/|]\\[\/|])[\s\.]*?[liI1y!j\/|]+[\s\.]*?(?:[GgbB6934Q🅱qğĜƃ၅5\*][\s\.]*?){2,}(?!arcS|l|Ktlw|ylul|ie217|64|\d? ?times)/);
