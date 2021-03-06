@@ -94,14 +94,7 @@ const ignoreList = [
     '603757453'
 ];
 
-const channelIgnoreList = [
-    "187193365", // lukickk
-    "189892499" // ondrash_
-];
-
 kb.connect();
-
-kb.whisper('kunszg', 'logger reconnected');
 
 con.connect((err) => {
     if (err) {
@@ -112,10 +105,10 @@ con.connect((err) => {
     }
 });
 
-const doQuery = (query) => new Promise((resolve, reject) => {
-    con.query(query, (err, results) => {
+const query = (query, data = []) => new Promise((resolve, reject) => {
+    con.execute(query, data, async(err, results) => {
         if (err) {
-            return;
+            reject(err);
         } else {
             resolve(results);
         }
@@ -123,9 +116,11 @@ const doQuery = (query) => new Promise((resolve, reject) => {
 });
 
 const updateMemory = async () => {
-    await doQuery(`
-        UPDATE memory SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}" WHERE module="logger"
-        `)
+    await query(`
+        UPDATE memory
+        SET memory=?
+        WHERE module="logger"`,
+        [(process.memoryUsage().heapUsed/1024/1024).toFixed(2)]);
 }
 updateMemory();
 
@@ -135,11 +130,13 @@ setInterval(() => {
 
 const cache = [];
 kb.on('message', (channel, user, message) => {
-    const filterBots = ignoreList.filter(i => i === user['user-id'])
-    const filterIgnoredChannels = channelIgnoreList.filter(i => i === channel.replace('#', ''))
-    const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '')
+    const filterBots = ignoreList.filter(i => i === user['user-id']);
+
+    const msg = message.trimRight();
+
     const channelParsed = channel.replace('#', '');
-    if (filterBots.length != 0 || msg === '' || channelIgnoreList.length != 0) {
+
+    if (filterBots.length != 0 || msg === '') {
         return;
     }
 
@@ -147,27 +144,41 @@ kb.on('message', (channel, user, message) => {
     cache.push({
         'channel': channelParsed,
         'username': user['username'],
+        'user-id': user['user-id'],
+        'color': user['color'],
         'message': msg,
         'date': new Date()
     });
 })
 
-
-
-// inserting cached rows every interval to database instead of real-time logging
 const updateLogs = () => {
-    cache.forEach(async(data) => {
-        const sql = `INSERT INTO logs_${data['channel']} (username, message, date) VALUES (?, ?, ?)`;
-        const inserts = [data['username'], data['message'], data['date']];
-        await doQuery(mysql.format(sql, inserts))
+    cache.forEach(async (data) => {
+        // log user's message
+        await query(`
+            INSERT INTO logs_${data['channel']} (username, message, date)
+            VALUES (?, ?, ?)`,
+            [data['username'], data['message'], data['date']])
+
+        // insert a new user
+        await query(`
+            INSERT INTO user_list (username, userId, firstSeen, color, added)
+            VALUES (?, ?, ?, ?, ?)`,
+            [data['username'], data['user-id'], data['channel'], data['color'], data['date']]);
+
+        // update last message of the user
+        await query(`
+            UPDATE user_list
+            SET lastSeen=?
+            WHERE username=?`,
+            [`${data['date']}*${data['message']}`, data['username']]);
 
         // matching bad words
         const badWord = data['message'].match(/(?:(?:\b(?<![-=\.])|monka)(?:[Nnñ]|[Ii7]V)|[\/|]\\[\/|])[\s\.]*?[liI1y!j\/|]+[\s\.]*?(?:[GgbB6934Q🅱qğĜƃ၅5\*][\s\.]*?){2,}(?!arcS|l|Ktlw|ylul|ie217|64|\d? ?times)/);
-
         if (badWord) {
-            const sqlBruh = `INSERT INTO bruh (username, channel, message, date) VALUES (?, ?, ?, CURRENT_TIMESTAMP)`;
-            const insertsBruh = [data['username'], data['channel'], data['message']];
-            await doQuery(mysql.format(sqlBruh, insertsBruh))
+            await query(`
+                INSERT INTO bruh (username, channel, message, date)
+                VALUES (?, ?, ?, ?)`,
+                [data['username'], data['channel'], data['message'], data['date']]);
         }
     })
 }
@@ -178,108 +189,85 @@ setInterval(()=>{
     }
 }, 7000);
 
-kb.on('message', async (channel, user) => {
-    const sqlUser = "INSERT INTO user_list (username, userId, firstSeen, color, added) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)"
-    const insertsUser = [user['username'], user['user-id'], channel.replace('#', ''), user['color']]
-    await doQuery(mysql.format(sqlUser, insertsUser))
-});
-
 setInterval(async() => {
-    await doQuery(`
+    await query(`
         UPDATE user_list
         SET color="gray"
         WHERE color IS null
         `);
-    await doQuery(`
+
+    await query(`
         DELETE FROM user_list
         WHERE username IS null
         `);
 }, 1800000);
 
 const statusCheck = async() => {
-    await doQuery(`
+    await query(`
         UPDATE stats
-        SET date="${new Date().toISOString().slice(0, 19).replace('T', ' ')}"
-        WHERE type="module" AND sha="logger"
-        `)
+        SET date=?
+        WHERE type="module" AND sha="logger"`,
+        [new Date().toISOString().slice(0, 19).replace('T', ' ')]);
 }
 statusCheck();
 setInterval(()=>{statusCheck()}, 60000);
 
 kb.on("subscription", async (channel, username, method, message) => {
-    const sqlUser = "INSERT INTO subs (username, channel, months, subMessage, type, date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
-    const insertsUser = [username, channel.replace('#', ''), "1", message, "subscription"];
-    await doQuery(mysql.format(sqlUser, insertsUser));
+    await query(`
+        INSERT INTO subs (username, channel, months, subMessage, type, date)
+        VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+        [username, channel.replace('#', ''), "1", message, "subscription"]);
 
     if (channel === "#kunszg") {
-        for (let i=0; i<12; i++) {
-            if (i<13) {
-                kb.say('kunszg', `${username} just subscribed` + ' KomodoHype  '.repeat(i+1) + ' !');
-            }
-        }
-        for (let i=22; i>0; i--) {
-            if (i<13) {
-                kb.say('kunszg', `${username} just subscribed` + ' KomodoHype  '.repeat(i-1) + ' !');
-            }
-        }
+        kb.say('kunszg', `${username} just subscribed KomodoHype !`);
     }
 });
 
 kb.on("subgift", async (channel, username, streakMonths, recipient, userstate) => {
     let cumulative = ~~userstate["msg-param-cumulative-months"];
 
-    if (username.toLowerCase()==="teodorv") {
-        for (let i=0; i<3; i++) {
-            kb.whisper('kunszg', "teo just got a sub gift in " + channel);
-        }
-    }
-
-    const sqlUser = "INSERT INTO subs (gifter, channel, months, username, type, date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
-    const insertsUser = [username, channel.replace('#', ''), cumulative, recipient, "subgift"];
-    await doQuery(mysql.format(sqlUser, insertsUser));
+    await query(`
+        INSERT INTO subs (gifter, channel, months, username, type, date)
+        VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+        [username, channel.replace('#', ''), cumulative, recipient, "subgift"]);
 
     if (channel === "#kunszg") {
-        for (let i=0; i<11; i++) {
-                kb.say('kunszg', `${recipient} got gifted a sub from ${username}, it's their ${cumulative} month` + ' KomodoHype '.repeat(i+1) + ' !');
-        }
+        kb.say('kunszg', `${recipient} got gifted a sub from ${username}, it's their ${cumulative} month KomodoHype !`);
     }
 });
 
 kb.on("resub", async (channel, username, streakMonths, message, userstate) => {
     let cumulativeMonths = ~~userstate["msg-param-cumulative-months"];
 
-    const sqlUser = "INSERT INTO subs (username, channel, months, subMessage, type, date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
-    const insertsUser = [username, channel.replace('#', ''), cumulativeMonths, message, "resub"];
-    await doQuery(mysql.format(sqlUser, insertsUser));
+    await query(`
+        INSERT INTO subs (username, channel, months, subMessage, type, date)
+        VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+        [username, channel.replace('#', ''), cumulativeMonths, message, "resub"]);
 
     if (channel === "#kunszg") {
-        for (let i=0; i<11; i++) {
-                kb.say('kunszg', `${username} just resubscribed for ${cumulativeMonths} months` + ' KomodoHype '.repeat(i+1) + ' !');
-        }
+        kb.say('kunszg', `${username} just resubscribed for ${cumulativeMonths} months KomodoHype !`);
     }
 });
 
 kb.on("giftpaidupgrade", async (channel, username, sender) => {
-    const sqlUser = "INSERT INTO subs (username, channel, gifter, type, date) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)";
-    const insertsUser = [username, channel.replace('#', ''), sender, "giftpaidupgrade"];
-    await doQuery(mysql.format(sqlUser, insertsUser));
+    await query(`
+        INSERT INTO subs (username, channel, gifter, type, date)
+        VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+        [username, channel.replace('#', ''), sender, "giftpaidupgrade"]);
 
     if (channel === "#kunszg") {
-        for (let i=0; i<11; i++) {
-                kb.say('kunszg', `${username} is continuing the gifted sub they got from ${sender}` + ' KomodoHype '.repeat(i+1) + ' !');
-        }
+        kb.say('kunszg', `${username} is continuing the gifted sub they got from ${sender} KomodoHype !`);
     }
 });
 
 kb.on("anongiftpaidupgrade", async (channel, username) => {
-    const sqlUser = "INSERT INTO subs (username, channel, type, date) VALUES (?, ?, ?, CURRENT_TIMESTAMP)";
-    const insertsUser = [username, channel.replace('#', ''), "anongiftpaidupgrade"];
-    await doQuery(mysql.format(sqlUser, insertsUser));
+    await query(`
+        INSERT INTO subs (username, channel, type, date)
+        VALUES (?, ?, ?, CURRENT_TIMESTAMP)`,
+        [username, channel.replace('#', ''), "anongiftpaidupgrade"]);
 
     if (channel === "#kunszg") {
-        for (let i=0; i<11; i++) {
-                kb.say('kunszg', `${username} is continuing the gifted sub they got from an anonymous user` + ' KomodoHype '.repeat(i+1) + ' !');
-        }
+        kb.say('kunszg', `${username} is continuing the gifted sub they got from an anonymous user KomodoHype !`);
     }
 });
 
@@ -288,9 +276,10 @@ kb.on("notice", async (channel, msgid, message) => {
     if (msgid === "host_target_went_offline") {
         return;
     }
-    await doQuery(`
-        INSERT INTO notice (msgid, message, channel, date, module)
-        VALUES ("${msgid}", "${message}", "${channel.replace('#', '')}", CURRENT_TIMESTAMP, "logger")
-        `);
+
+    await query(`
+        INSERT INTO notice (msgid, message, channel, module, date)
+        VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+        [msgid, message, channel.replace('#', ''), "logger"]);
     return;
 });
