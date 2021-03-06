@@ -159,18 +159,12 @@ const updateLogs = () => {
             VALUES (?, ?, ?)`,
             [data['username'], data['message'], data['date']])
 
-        // insert a new user
-        await query(`
-            INSERT INTO user_list (username, userId, firstSeen, color, added)
-            VALUES (?, ?, ?, ?, ?)`,
-            [data['username'], data['user-id'], data['channel'], data['color'], data['date']]);
-
         // update last message of the user
         await query(`
             UPDATE user_list
             SET lastSeen=?
             WHERE username=?`,
-            [data['message'], data['username']]);
+            [`${data['date']}*${data['message']}`, data['username']]);
 
         // matching bad words
         const badWord = data['message'].match(/(?:(?:\b(?<![-=\.])|monka)(?:[Nnñ]|[Ii7]V)|[\/|]\\[\/|])[\s\.]*?[liI1y!j\/|]+[\s\.]*?(?:[GgbB6934Q🅱qğĜƃ၅5\*][\s\.]*?){2,}(?!arcS|l|Ktlw|ylul|ie217|64|\d? ?times)/);
@@ -180,6 +174,12 @@ const updateLogs = () => {
                 VALUES (?, ?, ?, ?)`,
                 [data['username'], data['channel'], data['message'], data['date']]);
         }
+
+        // insert a new user
+        await query(`
+            INSERT INTO user_list (username, userId, firstSeen, color, added)
+            VALUES (?, ?, ?, ?, ?)`,
+            [data['username'], data['user-id'], data['channel'], data['color'], data['date']]);
     })
 }
 setInterval(()=>{
