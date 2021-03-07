@@ -146,8 +146,8 @@ app.get("/countdown", async (req, res) => {
                         <body>
                             <div class="container">
                                 <form action="/countdown" autocomplete="off">
-                                  <label for="seconds" autocomplete="off" class="labelbox">Input value in seconds</label><br>
-                                  <input type="text" id="seconds" name="seconds" style="width: 200px;" autocomplete="off" pattern="[0-9]*"><br>
+                                  <label for="seconds" autocomplete="off" class="labelbox">Input value in seconds </label><br>
+                                  <input type="text" id="seconds" name="seconds" style="width: 200px;" placeholder="default: 120" autocomplete="off" pattern="[0-9]*"><br>
                                   <input type="hidden" id="verifcode" name="verifcode" value="${verifCode}" autocomplete="off"><br>
                                   <input type="submit" value="Submit">
                                 </form>
@@ -165,8 +165,7 @@ app.get("/countdown", async (req, res) => {
         }
 
         if (!req.query?.seconds ?? false) {
-            res.send("<body>No verifcode</body>");
-            return;
+            req.query.seconds = 120;
         }
 
         const checkIfUpdated = await custom.doQuery(`
@@ -197,7 +196,10 @@ app.get("/countdown", async (req, res) => {
         html = html.toString();
 
         const page = new Swapper(html, [{
-            "seconds": seconds[0].seconds
+            "seconds": seconds[0].seconds,
+            "code": req.query.verifcode,
+            "secValue": req.query.seconds,
+            "stringLength": `https://kunszg.com/countdown?seconds=${req.query.seconds}&verifCode=${req.query.verifcode}`.length + 8
         }]);
 
         res.send(page.template())

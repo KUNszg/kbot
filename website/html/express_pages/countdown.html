@@ -7,12 +7,41 @@
         <link href="http://fonts.cdnfonts.com/css/ds-digital" rel="stylesheet">
         <title>Countdown</title>
     </head>
+    <style>
+        @font-face {
+            font-family: "digital";
+            src: url(https://kunszg.com/fonts/digital-7.ttf) format("truetype");
+        }
+    </style>
     <body>
-        <div class="container">
+        <div style="text-align: center; margin-top: 8vh; color: white; font-family: digital;">
+            <span>KEEP THIS TAB OPEN AT ALL TIMES</span>
+            <br><span>OTHERWISE IT WILL DESYNC</span>
+        </div>
+        </div>
+        <div style="text-align: center; margin-top: 17vh; font-family: digital;">
             <div id="timer">
             </div>
         </div>
+        <div class="container" style="margin-top: 17vh; color: white;">
+            <p class="boxlabel">Share link</p>
+            <input style="text-align: center;" class="inputbox" size="%{stringLength}px" type="text" readonly="readonly" value="https://kunszg.com/countdown?seconds=%{secValue}&verifcode=%{code}" autofocus="autofocus" id="inputtext">
+            <br>
+            <br>
+            <button onclick="copy()" class="button">Copy link</button>
         <script>
+            function copy() {
+                /* Get the text field */
+                let copyText = document.getElementById("inputtext");
+
+                /* Select the text field */
+                copyText.select();
+                copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+                /* Copy the text inside the text field */
+                document.execCommand("copy");
+            }
+
             const secondsToDhms = (seconds) => {
                 seconds = Number(seconds);
                 const d = Math.floor(seconds / (3600*24));
