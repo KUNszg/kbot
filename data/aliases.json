@@ -48,6 +48,7 @@
         {"price": "wowtoken"},
         {"game": "stream game"},
         {"title": "stream title"},
-        {"lastseen": "ls"}
+        {"lastseen": "ls"},
+        {"cd": "countdown"}
     ]
 }
