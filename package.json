@@ -17,7 +17,7 @@
     "os": "^0.1.1",
     "require-dir": "^1.2.0",
     "table-builder": "^2.1.1",
-    "tmi.js": "^1.7.3",
+    "tmi.js": "1.7.3",
     "ytsearcher": "1.2.3"
   },
   "devDependencies": {},
