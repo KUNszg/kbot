@@ -132,7 +132,7 @@ const cache = [];
 kb.on('message', (channel, user, message) => {
     const filterBots = ignoreList.filter(i => i === user['user-id']);
 
-    const msg = message.trimRight();
+    const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '');
 
     const channelParsed = channel.replace('#', '');
 
