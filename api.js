@@ -121,16 +121,7 @@ app.get("/countdown", async (req, res) => {
         await conLog(req);
 
         if (!req.query?.verifcode ?? false) {
-            const genString = (length) => {
-               let result = '';
-               const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-               for (let i = 0; i < length; i++) {
-                  result += characters.charAt(Math.floor(Math.random() * characters.length));
-               }
-               return result;
-            }
-
-            const verifCode = genString(15);
+            const verifCode = custom.genString();
 
             let html = `<!DOCTYPE html>
                     <html>
@@ -261,16 +252,7 @@ app.get("/lastfmresolved", async (req, res) => {
 });
 
 app.get("/lastfm", async (req, res) => {
-    const genString = (length) => {
-       let result = '';
-       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-       for (let i = 0; i < length; i++) {
-          result += characters.charAt(Math.floor(Math.random() * characters.length));
-       }
-       return result;
-    }
-
-    const verifCode = genString(15);
+    const verifCode = custom.genString();
 
     const accessToken = await custom.doQuery(`
         SELECT *
@@ -307,17 +289,7 @@ app.get("/resolved", async (req, res) => {
         throw "no query"
     }
 
-    const genString = (length) => {
-       let result = '';
-       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-       const charactersLength = characters.length;
-       for (let i = 0; i < length; i++) {
-          result += characters.charAt(Math.floor(Math.random() * charactersLength));
-       }
-       return result;
-    }
-
-    const verifCode = genString(15);
+    const verifCode = custom.genString();
 
     const accessToken = await doQuery(`
         SELECT *

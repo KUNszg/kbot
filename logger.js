@@ -91,7 +91,8 @@ const ignoreList = [
     '452276558', // spergbot02
     '500384894', // botder423
     '632499854', // verydonkbot
-    '603757453'
+    '603757453', // botnextstreet
+    '621622210' // BeptoBot
 ];
 
 kb.connect();
