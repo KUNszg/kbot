@@ -49,6 +49,7 @@
         {"game": "stream game"},
         {"title": "stream title"},
         {"lastseen": "ls"},
-        {"cd": "countdown"}
+        {"cd": "countdown"},
+        {"debug": "eval"}
     ]
 }
