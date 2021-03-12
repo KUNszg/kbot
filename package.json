@@ -20,9 +20,7 @@
     "tmi.js": "1.7.5",
     "ytsearcher": "1.2.3"
   },
-  "devDependencies": {
-    "eslint": "^7.21.0"
-  },
+  "devDependencies": {},
   "directories": {
     "lib": "lib"
   },
