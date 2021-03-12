@@ -1,5 +1,8 @@
 'use strict';
 
+require('./lib/static/chatters.js');
+require('./lib/static/channel_status.js');
+
 const creds = require('./lib/credentials/config.js');
 const mysql = require('mysql2');
 
