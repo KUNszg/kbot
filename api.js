@@ -29,16 +29,6 @@ con.connect((err) => {
 	}
 });
 
-const doQuery = (query) => new Promise((resolve, reject) => {
-    con.execute(query, (err, results, fields) => {
-        if (err) {
-        	return;
-        } else {
-            resolve(results);
-        }
-    });
-});
-
 const options = {
     options: {
         debug: false,
@@ -74,31 +64,22 @@ class Swapper {
 }
 
 const conLog = async(req) => {
-    const ipFootprint = req.ip.split('.').splice(0, 3).join('.');
-    const count = await custom.doQuery(`
-        SELECT COUNT(*) as count
-        FROM web_connections
-        WHERE ip="${ipFootprint}"
-        `);
-
-    await custom.doQuery(`
-        INSERT INTO web_connections (url, method, ip, protocol, count, date)
-        VALUES ("${req.originalUrl}", "${req.method}", "${ipFootprint}", "${req.protocol}", "${count[0].count+1}", CURRENT_TIMESTAMP)
-        `);
+    await custom.query(`
+        INSERT INTO web_connections (url, method, protocol, date)
+        VALUES (?, ?, ?, CURRENT_TIMESTAMP)`,
+        [req.originalUrl, req.method, req.protocol]);
 }
 
 app.get("/connections", async (req, res) => {
-    const userCount = await custom.doQuery(`
+    const userCount = await custom.query(`
         SELECT COUNT(*) AS count
         FROM access_token
-        WHERE platform="spotify" AND user IS NOT NULL
-        `);
+        WHERE platform="spotify" AND user IS NOT NULL`);
 
-    const execCount = await custom.doQuery(`
+    const execCount = await custom.query(`
         SELECT COUNT(*) AS count
         FROM executions
-        WHERE command LIKE "%spotify%"
-        `);
+        WHERE command LIKE "%spotify%"`);
 
     let html = fs.readFileSync('./website/html/express_pages/connections.html');
 
@@ -146,10 +127,10 @@ app.get("/countdown", async (req, res) => {
                         </body>
                     </html>`;
 
-            await custom.doQuery(`
+            await custom.query(`
                 INSERT INTO countdown (verifcode, date)
-                VALUES ("${verifCode}", CURRENT_TIMESTAMP)
-                `);
+                VALUES (?, CURRENT_TIMESTAMP)`,
+                [verifCode]);
 
             res.send(html);
             return;
@@ -159,11 +140,11 @@ app.get("/countdown", async (req, res) => {
             req.query.seconds = 120;
         }
 
-        const checkIfUpdated = await custom.doQuery(`
+        const checkIfUpdated = await custom.query(`
             SELECT *
             FROM countdown
-            WHERE verifcode="${req.query.verifcode}"
-            `);
+            WHERE verifcode=?`,
+            [req.query.verifcode]);
 
         if (!checkIfUpdated.length) {
             res.send("<body>Combination not found, refresh the previous page and try again</body>");
@@ -171,16 +152,17 @@ app.get("/countdown", async (req, res) => {
         }
 
         if (checkIfUpdated[0].seconds === null) {
-            await custom.doQuery(`
-                UPDATE countdown SET seconds="${Date.now()/1000 + Number(req.query.seconds)}"
-                WHERE verifcode="${req.query.verifcode}"
-                `);
+            await custom.query(`
+                UPDATE countdown SET seconds=?
+                WHERE verifcode=?`,
+                [Date.now()/1000 + Number(req.query.seconds), req.query.verifcode]);
         }
-        const seconds = await custom.doQuery(`
+
+        const seconds = await custom.query(`
             SELECT *
             FROM countdown
-            WHERE verifcode="${req.query.verifcode}"
-            `);
+            WHERE verifcode=?`,
+            [req.query.verifcode]);
 
         let html = fs.readFileSync('./website/html/express_pages/countdown.html');
 
@@ -223,16 +205,16 @@ app.get("/lastfmresolved", async (req, res) => {
         (async () => {
             res.send(page.template());
 
-            await custom.doQuery(`
+            await custom.query(`
                 UPDATE access_token
-                SET access_token="${req.query.user}",
+                SET access_token=?,
                     refresh_token="lastfm currently playing",
                     platform="lastfm",
                     premium="N",
                     allowlookup="N",
                     scopes="lastfm currently playing"
-                WHERE code="${req.query.verifcode}"
-                `);
+                WHERE code=?`,
+                [req.query.user, req.query.verifcode]);
         })();
     } catch (err) {
         if (err.message === "Response code 400 (Bad Request)") {
@@ -254,20 +236,18 @@ app.get("/lastfmresolved", async (req, res) => {
 app.get("/lastfm", async (req, res) => {
     const verifCode = custom.genString();
 
-    const accessToken = await custom.doQuery(`
+    const accessToken = await custom.query(`
         SELECT *
         FROM access_token
-        WHERE code="verifCode"
-        `);
+        WHERE code="verifCode"`);
 
     if (accessToken.length != 0) {
         res.send('<body>error<body>');
     }
 
-    await custom.doQuery(`
+    await custom.query(`
         INSERT INTO access_token (code)
-        VALUES ("${verifCode}")
-        `);
+        VALUES (?)`, [verifCode]);
 
     let html = fs.readFileSync('./website/html/express_pages/lastfm.html');
 
@@ -291,11 +271,10 @@ app.get("/resolved", async (req, res) => {
 
     const verifCode = custom.genString();
 
-    const accessToken = await doQuery(`
+    const accessToken = await custom.query(`
         SELECT *
         FROM access_token
-        WHERE code="verifCode"
-        `);
+        WHERE code="verifCode"`);
 
     if (accessToken.length != 0) {
         return;
@@ -319,10 +298,10 @@ app.get("/resolved", async (req, res) => {
                 },
             }).json();
 
-            await custom.doQuery(`
-                INSERT INTO access_token (access_token, refresh_token, platform, premium, code)
-                VALUES ("${spotifyToken.access_token}", "${spotifyToken.refresh_token}", "spotify", "${(checkPremium.product === "open") ? "N" : "Y"}", "${verifCode}")
-                `);
+            await custom.query(`
+                INSERT INTO access_token (access_token, refresh_token, premium, code, platform)
+                VALUES (?, ?, ?, ?, "spotify")`,
+                [spotifyToken.access_token, spotifyToken.refresh_token, ((checkPremium.product === "open") ? "N" : "Y"), verifCode]);
         })();
     } catch (err) {
         if (err.message === "Response code 400 (Bad Request)") {
@@ -355,61 +334,62 @@ kb.on("whisper", async (username, user, message, self) => {
 
     if (message.split(' ')[0] === "verify-lastfm") {
         // check if user is banned from bot
-        const checkBan = await custom.doQuery(`
+        const checkBan = await custom.query(`
             SELECT *
             FROM ban_list
-            WHERE user_id="${user['user-id']}"
-            `);
+            WHERE user_id=?`,
+            [user['user-id']]);
 
         if (checkBan.length != 0) {
             return;
         }
 
-        const checkCode = await custom.doQuery(`
+        const checkCode = await custom.query(`
             SELECT *
             FROM access_token
-            WHERE code="${message.split(' ')[1]}"
-            `);
+            WHERE code=?`,
+            [message.split(' ')[1]]);
 
         if (checkCode.length === 0) {
             kb.whisper(username, 'Provided code is invalid.');
             return;
         }
 
-        const checkUser = await custom.doQuery(`
+        const checkUser = await custom.query(`
             SELECT *
             FROM access_token
-            WHERE user="${user['user-id']}"
-            `);
+            WHERE user=?`,
+            [user['user-id']]);
 
-        const checkIfUserRegisteredLastfm = await custom.doQuery(`
+        const checkIfUserRegisteredLastfm = await custom.query(`
             SELECT *
             FROM access_token
-            WHERE platform="spotify" AND user="${user['user-id']}"
-            `);
+            WHERE platform="spotify" AND user=?`,
+            [user['user-id']]);
+
         if (checkIfUserRegisteredLastfm.length != 0) {
             kb.whisper(username.replace('#', ''), 'you are already registered for Spotify command. At the moment you can either register for Lastfm or Spotify, not both at the same time.');
-            await custom.doQuery(`
+            await custom.query(`
                 DELETE FROM access_token
-                WHERE code="${message.split(' ')[1]}"
-                `);
+                WHERE code=?`,
+                [message.split(' ')[1]]);
             return;
         }
 
         if (checkUser.length != 0) {
             kb.whisper(username, 'You are already registered for this command.');
-            await custom.doQuery(`
+            await custom.query(`
                 DELETE FROM access_token
-                WHERE code="${message.split(' ')[1]}"
-                `);
+                WHERE code=?`,
+                [message.split(' ')[1]]);
             return;
         }
 
-        await custom.doQuery(`
+        await custom.query(`
             UPDATE access_token
-            SET userName="${username.replace('#', '')}", user="${user['user-id']}", code="lastfm"
-            WHERE code="${message.split(' ')[1]}"
-            `);
+            SET userName=?, user=?, code="lastfm"
+            WHERE code=?`,
+            [username.replace('#', ''), user['user-id'], message.split(' ')[1]]);
 
         kb.whisper(username, 'All done! You can now use the Lastfm command like that 👉 kb lastfm  or kb music. Aliases are: kb music [allow/disallow/unregister]');
         return;
@@ -417,63 +397,67 @@ kb.on("whisper", async (username, user, message, self) => {
 
     if (message.split(' ')[0] === "verify-spotify") {
         // check if user is banned from bot
-        const checkBan = await custom.doQuery(`
+        const checkBan = await custom.query(`
             SELECT *
             FROM ban_list
-            WHERE user_id="${user['user-id']}"
-            `);
+            WHERE user_id=?`,
+            [user['user-id']]);
 
         if (checkBan.length != 0) {
             return;
         }
 
-        const checkCode = await custom.doQuery(`
+        const checkCode = await custom.query(`
             SELECT *
             FROM access_token
-            WHERE code="${message.split(' ')[1]}"
-            `);
+            WHERE code=?`,
+            [message.split(' ')[1]]);
 
         if (checkCode.length === 0) {
             kb.whisper(username, 'Provided code is invalid.');
             return;
         }
 
-        const checkUser = await custom.doQuery(`
+        const checkUser = await custom.query(`
             SELECT *
             FROM access_token
-            WHERE user="${user['user-id']}"
-            `);
+            WHERE user=?`,
+            [user['user-id']]);
 
         if (checkUser.length != 0) {
             kb.whisper(username, 'You are already registered for this command.');
-            await custom.doQuery(`
+            await custom.query(`
                 DELETE FROM access_token
-                WHERE code="${message.split(' ')[1]}"
-                `);
+                WHERE code=?`,
+                [message.split(' ')[1]]);
             return;
         }
 
-        const checkIfUserRegisteredSpotify = await custom.doQuery(`
+        const checkIfUserRegisteredSpotify = await custom.query(`
             SELECT *
             FROM access_token
-            WHERE platform="lastfm" AND user="${user['user-id']}"
-            `);
+            WHERE platform="lastfm" AND user=?`,
+            [user['user-id']]);
+
         if (checkIfUserRegisteredSpotify.length != 0) {
             kb.whisper(username.replace('#', ''), 'you are already registered for Lastfm command. At the moment you can either register for Lastfm or Spotify, not both at the same time.');
-            await custom.doQuery(`
+            await custom.query(`
                 DELETE FROM access_token
-                WHERE code="${message.split(' ')[1]}"
-                `);
+                WHERE code=?`,
+                [message.split(' ')[1]]);
             return;
         }
 
         const timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-        await custom.doQuery(`
+        await custom.query(`
             UPDATE access_token
-            SET userName="${username.replace('#', '')}", user="${user['user-id']}", code="Resolved", lastRenew="${timestamp}"
-            WHERE code="${message.split(' ')[1]}"
-            `);
+            SET userName=?,
+                user=?,
+                code="Resolved",
+                lastRenew=?
+            WHERE code=?`,
+            [username.replace('#', ''), user['user-id'], timestamp, message.split(' ')[1]]);
 
         kb.whisper(username, `All done! You can now use the Spotify command. If you have Spotify premium,
             check out command parameters under "kb help spotify", also note that you can use these parameters
@@ -485,12 +469,11 @@ kb.on("whisper", async (username, user, message, self) => {
 
 app.get("/commands", async (req, res) => {
     const Table = require('table-builder');
-    const commands = await doQuery(`
+    const commands = await custom.query(`
         SELECT *
         FROM commands
         ORDER BY command
-        ASC
-        `);
+        ASC`);
 
     const tableData = [];
     for (let i=0; i<commands.length; i++) {
@@ -612,12 +595,11 @@ app.get("/genres", async (req, res) => {
 });
 
 app.get("/randomemote", async (req, res) => {
-    const randomemote = await doQuery(`
+    const randomemote = await custom.query(`
         SELECT *
         FROM emotes
         ORDER BY RAND()
-        LIMIT 3
-        `)
+        LIMIT 3`);
 
     res.send([
         {"emote": randomemote[0].emote, "emoteUrl": randomemote[0].url},
@@ -754,21 +736,21 @@ app.get("/emotes", async (req, res) => {
     }
 
     if ((await req.query?.search ?? false)) {
-        const emotes = await doQuery(`
+        const emotes = await custom.query(`
             SELECT *
             FROM emotes
-            WHERE channel="${!req.query.search ? "asdf" : req.query.search.toLowerCase()}"
+            WHERE channel=?
             ORDER BY date
-            DESC
-            `);
+            DESC`,
+            [(!req.query.search ? "asdf" : req.query.search.toLowerCase())]);
 
-        const emotesRemoved = await doQuery(`
+        const emotesRemoved = await custom.query(`
             SELECT *
             FROM emotes_removed
-            WHERE channel="${!req.query.search ? "asdf" : req.query.search.toLowerCase()}"
+            WHERE channel=?
             ORDER BY date
-            DESC
-            `);
+            DESC`,
+            [(!req.query.search ? "asdf" : req.query.search.toLowerCase())]);
 
         const formatDate = (timestamp) => {
             const time = Date.now() - Date.parse(timestamp);
@@ -1008,32 +990,27 @@ app.get("/emotes", async (req, res) => {
 
 // kunszg.com/api/stats
 app.get("/stats", async (req, res) => {
-    const modules = await custom.doQuery(`
-        SELECT *
-        FROM stats
-        `);
+    const modules = await custom.query(`SELECT * FROM stats`);
 
     const getModuleData = (input) => {
         const moduleData = modules.filter(i => i.type === 'module' && i.sha === input);
         return Date.parse(moduleData[0].date)
     }
 
-    const executions = await custom.doQuery(`
+    const executions = await custom.query(`
         SELECT MAX(ID) AS count
-        FROM executions
-        `);
+        FROM executions`);
 
-    const statusData = await custom.doQuery(`
+    const statusData = await custom.query(`
         SELECT *
         FROM channels
-        WHERE channel="kunszg"
-        `);
+        WHERE channel="kunszg"`);
+
     const checkIfLive = statusData[0].status === "live";
 
-    const usersLogged = await custom.doQuery(`
+    const usersLogged = await custom.query(`
         SELECT count(id) AS count
-        FROM user_list
-        `);
+        FROM user_list`);
 
     const shell = require('child_process');
     const commits = shell.execSync('sudo git rev-list --count master');
@@ -1080,10 +1057,7 @@ app.get("/commands/code", async (req, res) => {
 // kunszg.com/api/channels
 const apiDataChannels = () => {
 	app.get("/channels", async (req, res) => {
-        let channelList = await custom.doQuery(`
-            SELECT *
-            FROM channels
-            `);
+        let channelList = await custom.query(`SELECT *FROM channels`);
 
         channelList = channelList.map(i => i.channel);
 
@@ -1105,11 +1079,11 @@ const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
 });
 
 const statusCheck = async() => {
-		await doQuery(`
+		await custom.query(`
 			UPDATE stats
-			SET date="${new Date().toISOString().slice(0, 19).replace('T', ' ')}"
-			WHERE type="module" AND sha="api"
-			`)
+			SET date=?
+			WHERE type="module" AND sha="api"`,
+            [new Date().toISOString().slice(0, 19).replace('T', ' ')])
 	}
 statusCheck();
 setInterval(()=>{statusCheck()}, 60000);

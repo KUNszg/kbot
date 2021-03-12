@@ -40,20 +40,20 @@ kb.whisper('kunszg', 'reminders reconnected');
 
 // update memory usage in database
 setInterval(async () => {
-    await custom.doQuery(`
+    await custom.query(`
         UPDATE memory
-        SET memory="${(process.memoryUsage().heapUsed/1024/1024).toFixed(2)}"
-        WHERE module="reminders"
-        `);
+        SET memory=?
+        WHERE module="reminders"`,
+        [(process.memoryUsage().heapUsed/1024/1024).toFixed(2)]);
 }, 600000);
 
 // update alive check
 const aliveCheck = async () => {
-    await custom.doQuery(`
+    await custom.query(`
         UPDATE stats
-        SET date="${new Date().toISOString().slice(0, 19).replace('T', ' ')}"
-        WHERE type="module" AND sha="reminders"
-    `);
+        SET date=?
+        WHERE type="module" AND sha="reminders"`,
+        [new Date().toISOString().slice(0, 19).replace('T', ' ')]);
 }
 aliveCheck();
 setInterval(() => {
@@ -64,7 +64,12 @@ setInterval(() => {
 // unfire clogging reminders
 const unfireCookie = async () => {
     // cookies
-    const unfire = await custom.doQuery('SELECT username, channel, fires, status FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC');
+    const unfire = await custom.query(`
+        SELECT username, channel, fires, status
+        FROM cookie_reminders
+        WHERE status!="fired"
+        ORDER BY fires
+        ASC`);
 
     if (!unfire[0]) {
         return;
@@ -78,12 +83,25 @@ const unfireCookie = async () => {
 
     if (differenceToSec>20) {
         // update the database with fired reminder
-        const selectUnfiredUsers = await custom.doQuery('SELECT * FROM cookie_reminders WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
+        const selectUnfiredUsers = await custom.query(`
+            SELECT *
+            FROM cookie_reminders
+            WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled"
+            ORDER BY fires
+            ASC
+            LIMIT 1;`);
+
         if (!selectUnfiredUsers[0]) {
             return;
         }
 
-        await custom.doQuery('UPDATE cookie_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
+        await custom.query(`
+            UPDATE cookie_reminders
+            SET status="fired"
+            WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled"
+            ORDER BY fires
+            ASC
+            LIMIT 1;`);
     }
 }
 setInterval(() => {
@@ -94,7 +112,13 @@ setInterval(() => {
 const unfireEd = async () => {
 
     // ed
-    const unfire = await custom.doQuery('SELECT * FROM ed_reminders WHERE status!="fired" ORDER BY fires ASC');
+    const unfire = await custom.query(`
+        SELECT *
+        FROM ed_reminders
+        WHERE status!="fired"
+        ORDER BY fires
+        ASC`);
+
     if (!unfire[0]) {
         return;
     }
@@ -105,27 +129,44 @@ const unfireEd = async () => {
 
     if (differenceToSec>20) {
         // update the database with fired reminder
-        const selectUnfiredUsers = await custom.doQuery('SELECT * FROM ed_reminders WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
+        const selectUnfiredUsers = await custom.query(`
+            SELECT *
+            FROM ed_reminders
+            WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled"
+            ORDER BY fires
+            ASC
+            LIMIT 1;`);
+
         if (!selectUnfiredUsers[0]) {
             return;
         }
-        const getUserid = await custom.doQuery(`
+        const getUserid = await custom.query(`
             SELECT *
             FROM user_list
-            WHERE ID="${unfire[0].user_alias}"
+            WHERE ID=?`,
+            [unfire[0].user_alias]);
+
+        const getUsername = await custom.query(`
+            SELECT *
+            FROM user_list
+            WHERE userId=?
+            ORDER BY added
+            DESC`,
+            [getUserid[0].userId]);
+
+        await custom.query(`
+            UPDATE ed_reminders
+            SET status="fired"
+            WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled"
+            ORDER BY fires
+            ASC
+            LIMIT 1;
             `);
 
-        const getUsername = await custom.doQuery(`
-            SELECT *
-            FROM user_list
-            WHERE userId="${getUserid[0].userId}"
-            ORDER BY added
-            DESC
-            `);
-        await custom.doQuery('UPDATE ed_reminders SET status="fired" WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled" ORDER BY fires ASC LIMIT 1;');
         const dateUnfiredUsers = new Date(selectUnfiredUsers[0].fires)
         const unfiredDiff = (serverDate - dateUnfiredUsers)/1000/60
-        kb.whisper(getUsername[0].username, `You had an unfired dungeon reminder ${unfiredDiff.toFixed(0)} minutes ago, sorry about that and enter the dungeon please :)`);
+        kb.whisper(getUsername[0].username, `You had an unfired dungeon reminder ${unfiredDiff.toFixed(0)}
+            minutes ago, sorry about that and enter the dungeon please :)`);
     }
 }
 setInterval(() => {
@@ -134,7 +175,12 @@ setInterval(() => {
 
 // check and send reminders - cookie
 const reminder = async () => {
-    const userData = await custom.doQuery('SELECT * FROM cookie_reminders WHERE status!="fired" ORDER BY fires ASC');
+    const userData = await custom.query(`
+        SELECT *
+        FROM cookie_reminders
+        WHERE status!="fired"
+        ORDER BY fires
+        ASC`);
 
     // if there is no "fired" argument, ignore
     if (!userData[0]) {
@@ -157,33 +203,34 @@ const reminder = async () => {
             return;
         }
 
-        const getUserid = await custom.doQuery(`
+        const getUserid = await custom.query(`
             SELECT *
             FROM user_list
-            WHERE ID="${userData[0].user_alias}"
-            `);
+            WHERE ID=?`,
+            [userData[0].user_alias]);
 
-        const getUsername = await custom.doQuery(`
+        const getUsername = await custom.query(`
             SELECT *
             FROM user_list
-            WHERE userId="${getUserid[0].userId}"
+            WHERE userId=?
             ORDER BY added
-            DESC
-            `);
+            DESC`,
+            [getUserid[0].userId]);
 
-        const checkChannelStatus = await custom.doQuery(`
+        const checkChannelStatus = await custom.query(`
             SELECT *
             FROM channels
-            WHERE channel="${userData[0].channel}"
-            `);
+            WHERE channel=?`,
+            [userData[0].channel]);
 
         if (checkChannelStatus[0].status === "live") {
             limit.add(userData[0].user_alias)
-            await custom.doQuery(`
+            await custom.query(`
                 UPDATE cookie_reminders
                 SET status="fired"
-                WHERE user_alias="${userData[0].user_alias}" AND status="scheduled"
-                `);
+                WHERE user_alias=? AND status="scheduled"`,
+                [userData[0].user_alias]);
+
             kb.whisper(getUsername[0].username, `cookie reminder - eat cookie please :) 🍪 (this reminder fired in a channel that is live [${userData[0].channel}])`)
             setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
             return;
@@ -192,16 +239,18 @@ const reminder = async () => {
         limit.add(userData[0].user_alias);
 
         // update the database with fired reminder
-        await custom.doQuery(`
+        await custom.query(`
             UPDATE cookie_reminders
             SET status="fired"
-            WHERE user_alias="${userData[0].user_alias}" AND status="scheduled"
-            `);
-        await custom.doQuery(`
+            WHERE user_alias=? AND status="scheduled"`,
+            [userData[0].user_alias]);
+
+        await custom.query(`
             UPDATE user_list t1, cookie_reminders t2
             SET t2.username=t1.username
-            WHERE t1.ID="${userData[0].user_alias}" AND t2.user_alias="${userData[0].user_alias}"
-        `);
+            WHERE t1.ID=? AND t2.user_alias=?`,
+            [userData[0].user_alias, userData[0].user_alias]);
+
         sleep(500);
 
         const restrictedChannels = [
@@ -232,7 +281,12 @@ setInterval(() => {
 }, 3500)
 
 const reminder2 = async () => {
-    const userData = await custom.doQuery('SELECT * FROM ed_reminders WHERE status!="fired" ORDER BY fires ASC');
+    const userData = await custom.query(`
+        SELECT *
+        FROM ed_reminders
+        WHERE status!="fired"
+        ORDER BY fires
+        ASC`);
 
     // if there is no "fired" argument, ignore
     if (!userData[0]) {
@@ -257,31 +311,32 @@ const reminder2 = async () => {
 
         limit.add(userData[0].user_alias);
 
-        const getUserid = await custom.doQuery(`
+        const getUserid = await custom.query(`
             SELECT *
             FROM user_list
-            WHERE ID="${userData[0].user_alias}"
-            `);
+            WHERE ID=?`,
+            [userData[0].user_alias]);
 
-        const getUsername = await custom.doQuery(`
+        const getUsername = await custom.query(`
             SELECT *
             FROM user_list
-            WHERE userId="${getUserid[0].userId}"
+            WHERE userId=?
             ORDER BY added
-            DESC
-            `);
+            DESC`,
+            [getUserid[0].userId]);
 
         // update the database with fired reminder
-        await custom.doQuery(`
+        await custom.query(`
             UPDATE ed_reminders
             SET status="fired"
-            WHERE user_alias="${userData[0].user_alias}" AND status="scheduled"
-            `);
-        await custom.doQuery(`
+            WHERE user_alias=? AND status="scheduled"`,
+            [userData[0].user_alias]);
+
+        await custom.query(`
             UPDATE user_list t1, ed_reminders t2
             SET t2.username=t1.username
-            WHERE t1.ID="${userData[0].user_alias}" AND t2.user_alias="${userData[0].user_alias}"
-        `);
+            WHERE t1.ID=? AND t2.user_alias=?`,
+            [userData[0].user_alias, userData[0].user_alias]);
         sleep(500);
         kb.whisper(getUsername[0].username, '(ed reminder) enter dungeon please :) 🏰 ');
         setTimeout(() => {limit.delete(userData[0].user_alias)}, 10000);
