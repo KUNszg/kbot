@@ -253,7 +253,7 @@ require('./lib/static/chatters.js');
                 [(process.memoryUsage().heapUsed/1024/1024).toFixed(2)]);
         }, 600000);
     } catch (err) {
-        console.log("---------------------------------------------");
+        console.log("-------------------------------------------------------------");
         console.log(new Date.toISOString());
         console.log(err);
     }
