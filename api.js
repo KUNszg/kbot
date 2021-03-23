@@ -367,17 +367,8 @@ kb.on("whisper", async (username, user, message, self) => {
             WHERE platform="spotify" AND user=?`,
             [user['user-id']]);
 
-        if (checkIfUserRegisteredLastfm.length != 0) {
-            kb.whisper(username.replace('#', ''), 'you are already registered for Spotify command. At the moment you can either register for Lastfm or Spotify, not both at the same time.');
-            await custom.query(`
-                DELETE FROM access_token
-                WHERE code=?`,
-                [message.split(' ')[1]]);
-            return;
-        }
-
         if (checkUser.length != 0) {
-            kb.whisper(username, 'You are already registered for this command.');
+            kb.whisper(username, 'You are already registered for LastFM command.');
             await custom.query(`
                 DELETE FROM access_token
                 WHERE code=?`,
@@ -391,7 +382,7 @@ kb.on("whisper", async (username, user, message, self) => {
             WHERE code=?`,
             [username.replace('#', ''), user['user-id'], message.split(' ')[1]]);
 
-        kb.whisper(username, 'All done! You can now use the Lastfm command like that 👉 kb lastfm  or kb music. Aliases are: kb music [allow/disallow/unregister]');
+        kb.whisper(username, 'All done! You can now use the Lastfm command like that :) 👉 kb lastfm  or kb music. Aliases are: kb music [allow/disallow/unregister]');
         return;
     }
 
@@ -425,22 +416,7 @@ kb.on("whisper", async (username, user, message, self) => {
             [user['user-id']]);
 
         if (checkUser.length != 0) {
-            kb.whisper(username, 'You are already registered for this command.');
-            await custom.query(`
-                DELETE FROM access_token
-                WHERE code=?`,
-                [message.split(' ')[1]]);
-            return;
-        }
-
-        const checkIfUserRegisteredSpotify = await custom.query(`
-            SELECT *
-            FROM access_token
-            WHERE platform="lastfm" AND user=?`,
-            [user['user-id']]);
-
-        if (checkIfUserRegisteredSpotify.length != 0) {
-            kb.whisper(username.replace('#', ''), 'you are already registered for Lastfm command. At the moment you can either register for Lastfm or Spotify, not both at the same time.');
+            kb.whisper(username, 'You are already registered for Spotify command.');
             await custom.query(`
                 DELETE FROM access_token
                 WHERE code=?`,
@@ -460,8 +436,9 @@ kb.on("whisper", async (username, user, message, self) => {
             [username.replace('#', ''), user['user-id'], timestamp, message.split(' ')[1]]);
 
         kb.whisper(username, `All done! You can now use the Spotify command. If you have Spotify premium,
-            check out command parameters under "kb help spotify", also note that you can use these parameters
-            without specifying a command like: "kb skip", "kb vol 10", "kb shuffle true" etc.`);
+            check out command parameters under kb help spotify. Note that you can use these parameters
+            the main command like: kb skip, kb vol 10 etc. To allow other users to check out your
+            playing songs type "kb spotify allow"`);
         return;
     }
     return;
