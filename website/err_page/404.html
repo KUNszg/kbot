@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Error</title>
+<style>
+    body, html {
+      height: 99%;
+    }
+
+    .bg {
+      background-image: url("../html/img/404.gif");
+      height: 100%;
+
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    .blink_me {
+      animation: blinker 1s linear infinite;
+      color:white;
+      font-size: 50px
+    }
+
+    @keyframes blinker {
+      50% {
+        opacity: 0;
+      }
+    }
+</style>
+</head>
+<body>
+    <div class="bg" style="size: ">
+        <div class="blink_me">ERROR 404 - PAGE NOT FOUND</div>
+    </div>
+    <audio src="../html/img/404.mp3" autoplay>
+</body>
+</html>
