@@ -358,13 +358,7 @@ kb.on("whisper", async (username, user, message, self) => {
         const checkUser = await custom.query(`
             SELECT *
             FROM access_token
-            WHERE user=?`,
-            [user['user-id']]);
-
-        const checkIfUserRegisteredLastfm = await custom.query(`
-            SELECT *
-            FROM access_token
-            WHERE platform="spotify" AND user=?`,
+            WHERE user=? AND platform="lastfm"`,
             [user['user-id']]);
 
         if (checkUser.length != 0) {
@@ -412,7 +406,7 @@ kb.on("whisper", async (username, user, message, self) => {
         const checkUser = await custom.query(`
             SELECT *
             FROM access_token
-            WHERE user=?`,
+            WHERE user=? AND platform="spotify"`,
             [user['user-id']]);
 
         if (checkUser.length != 0) {
