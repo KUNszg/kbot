@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 'use strict';
 
-require('./lib/static/chatters.js');
-
 (async() => {
     try {
         const creds = require('./lib/credentials/config.js');

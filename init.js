@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
 require('./lib/handler.js');
-require('./lib/static/static_commands.js');
-require('./lib/static/loops.js');
+require('./lib/misc/specialCommands.js');
+require('./lib/misc/loops.js');
+require('./lib/misc/chatters.js');
