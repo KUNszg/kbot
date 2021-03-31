@@ -87,7 +87,12 @@
         const cache = [];
 
         kb.on('message', (channel, user, message) => {
-            const channels = this.channelList.filter(i => i.channel === channel.replace('#', ''))
+            const channels = this.channelList.filter(i => i.channel === channel.replace('#', ''));
+
+            if (!channels[0]?.status ?? true) {
+                return;
+            }
+
             if (channels[0].status === "disabled") {
                 return;
             }
