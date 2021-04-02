@@ -18,7 +18,7 @@
     "require-dir": "^1.2.0",
     "table-builder": "^2.1.1",
     "tmi.js": "1.7.5",
-    "ytsearcher": "1.2.3"
+    "ytsearcher": "1.2.4"
   },
   "directories": {
     "lib": "lib"
