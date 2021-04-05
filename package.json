@@ -9,7 +9,7 @@
   "author": "kunszg",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^12.5.2",
+    "discord.js": "^12.5.3",
     "express": "^4.17.1",
     "got": "^11.8.2",
     "humanize-duration": "^3.25.1",
