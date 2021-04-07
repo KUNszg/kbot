@@ -13,6 +13,7 @@
     "express": "^4.17.1",
     "got": "^11.8.2",
     "humanize-duration": "^3.25.1",
+    "inquirer": "^8.0.0",
     "mysql2": "^2.2.5",
     "os": "^0.1.1",
     "require-dir": "^1.2.0",
