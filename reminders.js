@@ -258,7 +258,8 @@ const reminder = async () => {
             "nymn",
             "zoil",
             "koaster",
-            "cyr"
+            "cyr",
+            "nani"
         ];
 
         if (restrictedChannels.find(i => i === userData[0].channel)) {
