@@ -6,7 +6,7 @@ const fs = require('fs');
 const mysql = require('mysql2');
 const got = require('got');
 const creds = require('./lib/credentials/config.js');
-const custom = require('./lib/utils/functions.js');
+const utils = require('./lib/utils/utils.js');
 
 const app = express();
 
@@ -64,19 +64,19 @@ class Swapper {
 }
 
 const conLog = async(req) => {
-    await custom.query(`
+    await utils.query(`
         INSERT INTO web_connections (url, method, protocol, date)
         VALUES (?, ?, ?, CURRENT_TIMESTAMP)`,
         [req.originalUrl, req.method, req.protocol]);
 }
 
 app.get("/connections", async (req, res) => {
-    const userCount = await custom.query(`
+    const userCount = await utils.query(`
         SELECT COUNT(*) AS count
         FROM access_token
         WHERE platform="spotify" AND user IS NOT NULL`);
 
-    const execCount = await custom.query(`
+    const execCount = await utils.query(`
         SELECT COUNT(*) AS count
         FROM executions
         WHERE command LIKE "%spotify%"`);
@@ -97,12 +97,122 @@ app.get("/connections", async (req, res) => {
     return;
 });
 
+/*app.get("/chatguesser", async (req, res) => {
+    const randomChannel = "logs_nymn"
+
+    const maxId = await utils.query(`SELECT MAX(ID) as maxid FROM ??`, [randomChannel])
+    const randomId = Math.floor(Math.random() * Math.floor(maxId[0].maxid));
+
+    let messages = await utils.query(`
+        SELECT t.username, t.message, t.date
+        FROM (
+            SELECT id
+            FROM ??
+            ORDER BY id
+            LIMIT ?, 100
+            ) q
+        JOIN ?? t
+        ON t.id = q.id`,
+        [randomChannel, Number(randomId), randomChannel]);
+
+    const emotes = await utils.query(`
+        SELECT *
+        FROM emotes
+        WHERE channel=?`, [randomChannel.replace('logs_', '')]);
+
+    for (let i = 0; i<messages.length; i++) {
+        for (let j = 0; j<emotes.length; j++) {
+            const emoteRegex = new RegExp(`\\b${emotes[j].emote.toString()}\\b`, "g");
+            const replace = (emotes[j].url === null) ? emotes[j].emote : `<img style="vertical-align: middle; margin-top: -5px" src="${emotes[j].url}">`;
+            messages[i].message = messages[i].message.replace(emoteRegex, replace);
+        }
+    }
+
+    res.send(`<!DOCTYPE html>
+        <html>
+            <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <script
+                src="https://code.jquery.com/jquery-3.6.0.js"
+                integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+                crossorigin="anonymous"></script>
+            <style>
+            body {
+              margin: 0 auto;
+              max-width: 430px;
+              padding: 0 20px;
+            }
+
+            .container {
+              border-top: 1px solid #999a;
+              background-color: rgb(40,40,40);
+              padding: 6px;
+              margin: 1px 0;
+            }
+
+            .darker {
+              background-color: rgb(30,30,30);
+            }
+
+            .container::after {
+              content: "";
+              clear: both;
+              display: table;
+            }
+
+            .time-left {
+              float: left;
+              color: #999;
+            }
+
+            .chatbox {
+              margin-top: 5vh;
+              margin-bottom: 5vh;
+              padding: 3px;
+              word-break: break-word;
+              word-wrap: break-word;
+              overflow: scroll;
+              overflow-x: hidden;
+              height: 80vh;
+            }
+
+            .container:nth-child(odd) {
+                background-color: #202020;
+            }
+
+            .container:nth-child(even) {
+                background-color: #2c2c2c;
+            }
+
+            </style>
+            </head>
+            <body style="background-color: #1a1a1a;">
+                <div class="chatbox" id="chatbox"></div>
+                <script type="text/javascript">
+                    const chatData = ${JSON.stringify(messages)};
+                    for (let i = 0; i<${messages.length}; i++) {
+                        if (i === 0) {
+                            $("#chatbox").append('<div class="container"><span class="time-left">' + (new Date(chatData[i].date).toISOString().split('T')[1].split('.')[0]) + '<span style="color:white"><strong style="color: red"> '+ chatData[i].username +':</strong> ' + chatData[i].message + '</span></span></div>');
+                        } else {
+                        console.log((Date.parse(chatData[i].date) - Date.parse(chatData[i-1].date)));
+                            setTimeout(() => {
+                                $("#chatbox").append('<div class="container"><span class="time-left">' + (new Date(chatData[i].date).toISOString().split('T')[1].split('.')[0]) + '<span style="color:white"><strong style="color: red"> '+ chatData[i].username +':</strong> ' + chatData[i].message + '</span></span></div>');
+                                $("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
+                            }, 500);
+                        }
+                    }
+                </script>
+            </body>
+        </html>
+        `)
+})*/
+
 app.get("/countdown", async (req, res) => {
     try {
         await conLog(req);
 
         if (!req.query?.verifcode ?? false) {
-            const verifCode = custom.genString();
+            const verifCode = utils.genString();
 
             let html = `<!DOCTYPE html>
                     <html>
@@ -127,7 +237,7 @@ app.get("/countdown", async (req, res) => {
                         </body>
                     </html>`;
 
-            await custom.query(`
+            await utils.query(`
                 INSERT INTO countdown (verifcode, date)
                 VALUES (?, CURRENT_TIMESTAMP)`,
                 [verifCode]);
@@ -140,7 +250,7 @@ app.get("/countdown", async (req, res) => {
             req.query.seconds = 120;
         }
 
-        const checkIfUpdated = await custom.query(`
+        const checkIfUpdated = await utils.query(`
             SELECT *
             FROM countdown
             WHERE verifcode=?`,
@@ -152,13 +262,13 @@ app.get("/countdown", async (req, res) => {
         }
 
         if (checkIfUpdated[0].seconds === null) {
-            await custom.query(`
+            await utils.query(`
                 UPDATE countdown SET seconds=?
                 WHERE verifcode=?`,
                 [Date.now()/1000 + Number(req.query.seconds), req.query.verifcode]);
         }
 
-        const seconds = await custom.query(`
+        const seconds = await utils.query(`
             SELECT *
             FROM countdown
             WHERE verifcode=?`,
@@ -205,7 +315,7 @@ app.get("/lastfmresolved", async (req, res) => {
         (async () => {
             res.send(page.template());
 
-            await custom.query(`
+            await utils.query(`
                 UPDATE access_token
                 SET access_token=?,
                     refresh_token="lastfm currently playing",
@@ -234,9 +344,9 @@ app.get("/lastfmresolved", async (req, res) => {
 });
 
 app.get("/lastfm", async (req, res) => {
-    const verifCode = custom.genString();
+    const verifCode = utils.genString();
 
-    const accessToken = await custom.query(`
+    const accessToken = await utils.query(`
         SELECT *
         FROM access_token
         WHERE code="verifCode"`);
@@ -245,7 +355,7 @@ app.get("/lastfm", async (req, res) => {
         res.send('<body>error<body>');
     }
 
-    await custom.query(`
+    await utils.query(`
         INSERT INTO access_token (code)
         VALUES (?)`, [verifCode]);
 
@@ -269,9 +379,9 @@ app.get("/resolved", async (req, res) => {
         throw "no query"
     }
 
-    const verifCode = custom.genString();
+    const verifCode = utils.genString();
 
-    const accessToken = await custom.query(`
+    const accessToken = await utils.query(`
         SELECT *
         FROM access_token
         WHERE code="verifCode"`);
@@ -298,7 +408,7 @@ app.get("/resolved", async (req, res) => {
                 },
             }).json();
 
-            await custom.query(`
+            await utils.query(`
                 INSERT INTO access_token (access_token, refresh_token, premium, code, platform)
                 VALUES (?, ?, ?, ?, "spotify")`,
                 [spotifyToken.access_token, spotifyToken.refresh_token, ((checkPremium.product === "open") ? "N" : "Y"), verifCode]);
@@ -334,7 +444,7 @@ kb.on("whisper", async (username, user, message, self) => {
 
     if (message.split(' ')[0] === "verify-lastfm") {
         // check if user is banned from bot
-        const checkBan = await custom.query(`
+        const checkBan = await utils.query(`
             SELECT *
             FROM ban_list
             WHERE user_id=?`,
@@ -344,7 +454,7 @@ kb.on("whisper", async (username, user, message, self) => {
             return;
         }
 
-        const checkCode = await custom.query(`
+        const checkCode = await utils.query(`
             SELECT *
             FROM access_token
             WHERE code=?`,
@@ -355,49 +465,34 @@ kb.on("whisper", async (username, user, message, self) => {
             return;
         }
 
-        const checkUser = await custom.query(`
+        const checkUser = await utils.query(`
             SELECT *
             FROM access_token
-            WHERE user=?`,
+            WHERE user=? AND platform="lastfm"`,
             [user['user-id']]);
-
-        const checkIfUserRegisteredLastfm = await custom.query(`
-            SELECT *
-            FROM access_token
-            WHERE platform="spotify" AND user=?`,
-            [user['user-id']]);
-
-        if (checkIfUserRegisteredLastfm.length != 0) {
-            kb.whisper(username.replace('#', ''), 'you are already registered for Spotify command. At the moment you can either register for Lastfm or Spotify, not both at the same time.');
-            await custom.query(`
-                DELETE FROM access_token
-                WHERE code=?`,
-                [message.split(' ')[1]]);
-            return;
-        }
 
         if (checkUser.length != 0) {
-            kb.whisper(username, 'You are already registered for this command.');
-            await custom.query(`
+            kb.whisper(username, 'You are already registered for LastFM command.');
+            await utils.query(`
                 DELETE FROM access_token
                 WHERE code=?`,
                 [message.split(' ')[1]]);
             return;
         }
 
-        await custom.query(`
+        await utils.query(`
             UPDATE access_token
             SET userName=?, user=?, code="lastfm"
             WHERE code=?`,
             [username.replace('#', ''), user['user-id'], message.split(' ')[1]]);
 
-        kb.whisper(username, 'All done! You can now use the Lastfm command like that 👉 kb lastfm  or kb music. Aliases are: kb music [allow/disallow/unregister]');
+        kb.whisper(username, 'All done! You can now use the Lastfm command like that :) 👉 kb lastfm  or kb music. Aliases are: kb music [allow/disallow/unregister]');
         return;
     }
 
     if (message.split(' ')[0] === "verify-spotify") {
         // check if user is banned from bot
-        const checkBan = await custom.query(`
+        const checkBan = await utils.query(`
             SELECT *
             FROM ban_list
             WHERE user_id=?`,
@@ -407,7 +502,7 @@ kb.on("whisper", async (username, user, message, self) => {
             return;
         }
 
-        const checkCode = await custom.query(`
+        const checkCode = await utils.query(`
             SELECT *
             FROM access_token
             WHERE code=?`,
@@ -418,30 +513,15 @@ kb.on("whisper", async (username, user, message, self) => {
             return;
         }
 
-        const checkUser = await custom.query(`
+        const checkUser = await utils.query(`
             SELECT *
             FROM access_token
-            WHERE user=?`,
+            WHERE user=? AND platform="spotify"`,
             [user['user-id']]);
 
         if (checkUser.length != 0) {
-            kb.whisper(username, 'You are already registered for this command.');
-            await custom.query(`
-                DELETE FROM access_token
-                WHERE code=?`,
-                [message.split(' ')[1]]);
-            return;
-        }
-
-        const checkIfUserRegisteredSpotify = await custom.query(`
-            SELECT *
-            FROM access_token
-            WHERE platform="lastfm" AND user=?`,
-            [user['user-id']]);
-
-        if (checkIfUserRegisteredSpotify.length != 0) {
-            kb.whisper(username.replace('#', ''), 'you are already registered for Lastfm command. At the moment you can either register for Lastfm or Spotify, not both at the same time.');
-            await custom.query(`
+            kb.whisper(username, 'You are already registered for Spotify command.');
+            await utils.query(`
                 DELETE FROM access_token
                 WHERE code=?`,
                 [message.split(' ')[1]]);
@@ -450,7 +530,7 @@ kb.on("whisper", async (username, user, message, self) => {
 
         const timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-        await custom.query(`
+        await utils.query(`
             UPDATE access_token
             SET userName=?,
                 user=?,
@@ -460,8 +540,9 @@ kb.on("whisper", async (username, user, message, self) => {
             [username.replace('#', ''), user['user-id'], timestamp, message.split(' ')[1]]);
 
         kb.whisper(username, `All done! You can now use the Spotify command. If you have Spotify premium,
-            check out command parameters under "kb help spotify", also note that you can use these parameters
-            without specifying a command like: "kb skip", "kb vol 10", "kb shuffle true" etc.`);
+            check out command parameters under kb help spotify. Note that you can use these parameters
+            the main command like: kb skip, kb vol 10 etc. To allow other users to check out your
+            playing songs type "kb spotify allow"`);
         return;
     }
     return;
@@ -469,9 +550,10 @@ kb.on("whisper", async (username, user, message, self) => {
 
 app.get("/commands", async (req, res) => {
     const Table = require('table-builder');
-    const commands = await custom.query(`
+    const commands = await utils.query(`
         SELECT *
         FROM commands
+        WHERE permissions < 5
         ORDER BY command
         ASC`);
 
@@ -595,7 +677,7 @@ app.get("/genres", async (req, res) => {
 });
 
 app.get("/randomemote", async (req, res) => {
-    const randomemote = await custom.query(`
+    const randomemote = await utils.query(`
         SELECT *
         FROM emotes
         ORDER BY RAND()
@@ -736,7 +818,7 @@ app.get("/emotes", async (req, res) => {
     }
 
     if ((await req.query?.search ?? false)) {
-        const emotes = await custom.query(`
+        const emotes = await utils.query(`
             SELECT *
             FROM emotes
             WHERE channel=?
@@ -744,7 +826,7 @@ app.get("/emotes", async (req, res) => {
             DESC`,
             [(!req.query.search ? "asdf" : req.query.search.toLowerCase())]);
 
-        const emotesRemoved = await custom.query(`
+        const emotesRemoved = await utils.query(`
             SELECT *
             FROM emotes_removed
             WHERE channel=?
@@ -754,7 +836,7 @@ app.get("/emotes", async (req, res) => {
 
         const formatDate = (timestamp) => {
             const time = Date.now() - Date.parse(timestamp);
-            return `${custom.humanizeDuration(time/1000)} ago`;
+            return `${utils.humanizeDuration(time/1000)} ago`;
         }
 
         class ModifyOutput {
@@ -990,25 +1072,25 @@ app.get("/emotes", async (req, res) => {
 
 // kunszg.com/api/stats
 app.get("/stats", async (req, res) => {
-    const modules = await custom.query(`SELECT * FROM stats`);
+    const modules = await utils.query(`SELECT * FROM stats`);
 
     const getModuleData = (input) => {
         const moduleData = modules.filter(i => i.type === 'module' && i.sha === input);
         return Date.parse(moduleData[0].date)
     }
 
-    const executions = await custom.query(`
+    const executions = await utils.query(`
         SELECT MAX(ID) AS count
         FROM executions`);
 
-    const statusData = await custom.query(`
+    const statusData = await utils.query(`
         SELECT *
         FROM channels
         WHERE channel="kunszg"`);
 
     const checkIfLive = statusData[0].status === "live";
 
-    const usersLogged = await custom.query(`
+    const usersLogged = await utils.query(`
         SELECT count(id) AS count
         FROM user_list`);
 
@@ -1057,7 +1139,7 @@ app.get("/commands/code", async (req, res) => {
 // kunszg.com/api/channels
 const apiDataChannels = () => {
 	app.get("/channels", async (req, res) => {
-        let channelList = await custom.query(`SELECT *FROM channels`);
+        let channelList = await utils.query(`SELECT *FROM channels`);
 
         channelList = channelList.map(i => i.channel);
 
@@ -1079,7 +1161,7 @@ const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
 });
 
 const statusCheck = async() => {
-		await custom.query(`
+		await utils.query(`
 			UPDATE stats
 			SET date=?
 			WHERE type="module" AND sha="api"`,

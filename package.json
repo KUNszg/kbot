@@ -9,18 +9,18 @@
   "author": "kunszg",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^12.5.1",
+    "discord.js": "^12.5.3",
     "express": "^4.17.1",
     "got": "^11.8.2",
     "humanize-duration": "^3.25.1",
+    "inquirer": "^8.0.0",
     "mysql2": "^2.2.5",
     "os": "^0.1.1",
     "require-dir": "^1.2.0",
     "table-builder": "^2.1.1",
-    "tmi.js": "1.7.5",
-    "ytsearcher": "1.2.3"
+    "tmi.js": "1.8.1",
+    "ytsearcher": "1.2.4"
   },
-  "devDependencies": {},
   "directories": {
     "lib": "lib"
   },

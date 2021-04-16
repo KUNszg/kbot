@@ -24,7 +24,7 @@ const options = {
 const tmi = require('tmi.js');
 const kb = new tmi.client(options);
 
-const custom = require('./lib/utils/functions.js');
+const utils = require('./lib/utils/utils.js');
 
 function sleep(milliseconds) {
     var start = new Date().getTime();
@@ -40,7 +40,7 @@ kb.whisper('kunszg', 'reminders reconnected');
 
 // update memory usage in database
 setInterval(async () => {
-    await custom.query(`
+    await utils.query(`
         UPDATE memory
         SET memory=?
         WHERE module="reminders"`,
@@ -49,7 +49,7 @@ setInterval(async () => {
 
 // update alive check
 const aliveCheck = async () => {
-    await custom.query(`
+    await utils.query(`
         UPDATE stats
         SET date=?
         WHERE type="module" AND sha="reminders"`,
@@ -64,7 +64,7 @@ setInterval(() => {
 // unfire clogging reminders
 const unfireCookie = async () => {
     // cookies
-    const unfire = await custom.query(`
+    const unfire = await utils.query(`
         SELECT username, channel, fires, status
         FROM cookie_reminders
         WHERE status!="fired"
@@ -83,7 +83,7 @@ const unfireCookie = async () => {
 
     if (differenceToSec>20) {
         // update the database with fired reminder
-        const selectUnfiredUsers = await custom.query(`
+        const selectUnfiredUsers = await utils.query(`
             SELECT *
             FROM cookie_reminders
             WHERE fires < TIMESTAMPADD(SECOND, -8, NOW()) AND STATUS="scheduled"
@@ -95,7 +95,7 @@ const unfireCookie = async () => {
             return;
         }
 
-        await custom.query(`
+        await utils.query(`
             UPDATE cookie_reminders
             SET status="fired"
             WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled"
@@ -112,7 +112,7 @@ setInterval(() => {
 const unfireEd = async () => {
 
     // ed
-    const unfire = await custom.query(`
+    const unfire = await utils.query(`
         SELECT *
         FROM ed_reminders
         WHERE status!="fired"
@@ -129,7 +129,7 @@ const unfireEd = async () => {
 
     if (differenceToSec>20) {
         // update the database with fired reminder
-        const selectUnfiredUsers = await custom.query(`
+        const selectUnfiredUsers = await utils.query(`
             SELECT *
             FROM ed_reminders
             WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled"
@@ -140,13 +140,13 @@ const unfireEd = async () => {
         if (!selectUnfiredUsers[0]) {
             return;
         }
-        const getUserid = await custom.query(`
+        const getUserid = await utils.query(`
             SELECT *
             FROM user_list
             WHERE ID=?`,
             [unfire[0].user_alias]);
 
-        const getUsername = await custom.query(`
+        const getUsername = await utils.query(`
             SELECT *
             FROM user_list
             WHERE userId=?
@@ -154,7 +154,7 @@ const unfireEd = async () => {
             DESC`,
             [getUserid[0].userId]);
 
-        await custom.query(`
+        await utils.query(`
             UPDATE ed_reminders
             SET status="fired"
             WHERE fires < TIMESTAMPADD(SECOND, -20, NOW()) AND STATUS="scheduled"
@@ -175,7 +175,7 @@ setInterval(() => {
 
 // check and send reminders - cookie
 const reminder = async () => {
-    const userData = await custom.query(`
+    const userData = await utils.query(`
         SELECT *
         FROM cookie_reminders
         WHERE status!="fired"
@@ -203,13 +203,13 @@ const reminder = async () => {
             return;
         }
 
-        const getUserid = await custom.query(`
+        const getUserid = await utils.query(`
             SELECT *
             FROM user_list
             WHERE ID=?`,
             [userData[0].user_alias]);
 
-        const getUsername = await custom.query(`
+        const getUsername = await utils.query(`
             SELECT *
             FROM user_list
             WHERE userId=?
@@ -217,7 +217,7 @@ const reminder = async () => {
             DESC`,
             [getUserid[0].userId]);
 
-        const checkChannelStatus = await custom.query(`
+        const checkChannelStatus = await utils.query(`
             SELECT *
             FROM channels
             WHERE channel=?`,
@@ -225,7 +225,7 @@ const reminder = async () => {
 
         if (checkChannelStatus[0].status === "live") {
             limit.add(userData[0].user_alias)
-            await custom.query(`
+            await utils.query(`
                 UPDATE cookie_reminders
                 SET status="fired"
                 WHERE user_alias=? AND status="scheduled"`,
@@ -239,13 +239,13 @@ const reminder = async () => {
         limit.add(userData[0].user_alias);
 
         // update the database with fired reminder
-        await custom.query(`
+        await utils.query(`
             UPDATE cookie_reminders
             SET status="fired"
             WHERE user_alias=? AND status="scheduled"`,
             [userData[0].user_alias]);
 
-        await custom.query(`
+        await utils.query(`
             UPDATE user_list t1, cookie_reminders t2
             SET t2.username=t1.username
             WHERE t1.ID=? AND t2.user_alias=?`,
@@ -258,7 +258,8 @@ const reminder = async () => {
             "nymn",
             "zoil",
             "koaster",
-            "cyr"
+            "cyr",
+            "nani"
         ];
 
         if (restrictedChannels.find(i => i === userData[0].channel)) {
@@ -281,7 +282,7 @@ setInterval(() => {
 }, 3500)
 
 const reminder2 = async () => {
-    const userData = await custom.query(`
+    const userData = await utils.query(`
         SELECT *
         FROM ed_reminders
         WHERE status!="fired"
@@ -311,13 +312,13 @@ const reminder2 = async () => {
 
         limit.add(userData[0].user_alias);
 
-        const getUserid = await custom.query(`
+        const getUserid = await utils.query(`
             SELECT *
             FROM user_list
             WHERE ID=?`,
             [userData[0].user_alias]);
 
-        const getUsername = await custom.query(`
+        const getUsername = await utils.query(`
             SELECT *
             FROM user_list
             WHERE userId=?
@@ -326,13 +327,13 @@ const reminder2 = async () => {
             [getUserid[0].userId]);
 
         // update the database with fired reminder
-        await custom.query(`
+        await utils.query(`
             UPDATE ed_reminders
             SET status="fired"
             WHERE user_alias=? AND status="scheduled"`,
             [userData[0].user_alias]);
 
-        await custom.query(`
+        await utils.query(`
             UPDATE user_list t1, ed_reminders t2
             SET t2.username=t1.username
             WHERE t1.ID=? AND t2.user_alias=?`,

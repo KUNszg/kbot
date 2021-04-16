@@ -4,3 +4,4 @@ config.js
 test.js
 .eslintrc.json
 .vscode
+data/aliases.json
