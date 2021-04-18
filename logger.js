@@ -68,7 +68,8 @@
             '500384894', // botder423
             '632499854', // verydonkbot
             '603757453', // botnextstreet
-            '621622210' // BeptoBot
+            '621622210', // BeptoBot
+            '75501168' // okayegbot
         ];
 
         kb.connect();
