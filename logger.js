@@ -69,7 +69,9 @@
             '632499854', // verydonkbot
             '603757453', // botnextstreet
             '621622210', // BeptoBot
-            '75501168' // okayegbot
+            '75501168', // okayegbot
+            '105166207', // streamlabs
+            '19264788 ' // nightbot
         ];
 
         kb.connect();
