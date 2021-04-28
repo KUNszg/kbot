@@ -44,35 +44,10 @@
 
         const tmi = require('tmi.js');
         const kb = new tmi.client(options);
-        const ignoreList = [
-            '268612479', // titlechange_bot
-            '68136884', // Supibot
-            '229225576', // kunszgbot
-            '100135110', // StreamElements
-            '122770725', // Scriptorex
-            '442600612', // Mm_sUtilityBot
-            '465732747', // charlestonbieber
-            '469718952', // wayt00dank
-            '64313471', // HuwoBot
-            '425363834', // ThePositiveBot
-            '97661864', // botnextdoor
-            '413480192', // futuregadget8
-            '132134724', // gazatu2
-            '62541963', // snusbot
-            '82008718', // pajbot
-            '27574018', // magicbot321
-            '264879410', // schnozebot
-            '237719657', // fossabot
-            '500670723', // VJBotardo
-            '452276558', // spergbot02
-            '500384894', // botder423
-            '632499854', // verydonkbot
-            '603757453', // botnextstreet
-            '621622210', // BeptoBot
-            '75501168', // okayegbot
-            '105166207', // streamlabs
-            '19264788 ' // nightbot
-        ];
+
+        const ignoreList = [];
+
+        (await query("SELECT * FROM logger_ignore_list")).map(i => ignoreList.push(i.channelUserId));
 
         kb.connect();
 
@@ -260,7 +235,7 @@
         }, 600000);
     } catch (err) {
         console.log("-------------------------------------------------------------");
-        console.log(new Date.toISOString());
+        console.log(new Date().toISOString());
         console.log(err);
     }
 })();
