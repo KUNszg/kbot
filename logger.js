@@ -47,8 +47,8 @@
 
         const ignoreList = [];
 
-        (await query("SELECT * FROM logger_ignore_list")).map(i => ignoreList.push(i.channelUserId));
-
+        (await query("SELECT * FROM logger_ignore_list")).map(i => ignoreList.push(i.userId));
+        console.log(ignoreList)
         kb.connect();
 
         con.connect((err) => {
