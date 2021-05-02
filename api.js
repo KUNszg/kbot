@@ -392,7 +392,7 @@ app.get("/resolved", async (req, res) => {
 
     try {
         (async () => {
-            const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=0a53ae5438f24d0da272a2e663c615c3&client_secret=85c458f0cc4f4fb18b8e8ea843009890&code=${req.query.code}&redirect_uri=https://kunszg.com/resolved`
+            const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=0a53ae5438f24d0da272a2e663c615c3&client_secret=${creds.client_secret_spotify}&code=${req.query.code}&redirect_uri=https://kunszg.com/resolved`
             const spotifyToken = await got(api, {
                 method: "POST",
                 headers: {
