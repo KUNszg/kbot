@@ -10,7 +10,7 @@ body {
 
 .top-text {
     text-align: center;
-    margin-top: 200px;
+    margin-top: 16vh;
     line-height: 32px;
 }
 
@@ -53,7 +53,7 @@ body {
 
 .footer-div {
     text-align: center;
-    margin-top: 150px;
+    margin-top: 25vh;
 }
 
 .footer-text {

@@ -33,6 +33,10 @@
     <div class="bg" style="size: ">
         <div class="blink_me">ERROR 404 - PAGE NOT FOUND</div>
     </div>
-    <audio src="../img/404.mp3" autoplay>
+    <audio src="../img/404.mp3" type="audio/mpeg"></audio>
+    <script type="text/javascript">
+        const _ = () => (document.querySelector('audio').play(),document.removeEventListener('click', _));
+        document.addEventListener('click', _);
+    </script>
 </body>
 </html>
