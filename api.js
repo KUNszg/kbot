@@ -218,6 +218,8 @@ const webhookHandler = GithubWebHook({ path: '/webhooks/github', secret: secret 
 app.use(bodyParser.json());
 app.use(webhookHandler);
 
+const rateLimit = new Set();
+
 webhookHandler.on('*', async function (event, repo, data, head) {
     if (event === "push") {
         await utils.query(`
@@ -226,16 +228,84 @@ webhookHandler.on('*', async function (event, repo, data, head) {
             WHERE type="ping"`,
             [data.head_commit.timestamp, data.head_commit.id.slice(0, 7)]);
 
-        if (data.commits.length > 1) {
-            kb.say("kunszg", `⬆  New push with ${data.commits.length} commits in kunszgbot's repository
-                by ${data.sender.login} #⃣  title: ${data.head_commit.message}
-                🔄 changes in: ${data.head_commit.modified.join(", ").replace(/\.js/g, "")}, `);
+        const files = (filenames) => {
+            const path = require('path');
+
+            const result = [];
+
+            for (i = 0; i<filenames.length; i++) {
+                result.push(path.parse(filenames[i]).name);
+            }
+
+            return result.join(", ");
         }
-        kb.say("kunszg", `⬆  New commit ${data.head_commit.id.slice(0, 7)} in kunszgbot's repository
-            by ${data.sender.login} #⃣  title: ${data.head_commit.message}
-            🔄 changes in: ${data.head_commit.modified.join(", ").replace(/\.js/g, "")}`);
-        return;
+
+        if (data.commits.length > 1) {
+            kb.say("kunszg", `[github webhook] ⬆  New push ${data.head_commit.id.slice(0, 7)} with ${data.commits.length} commits in kunszgbot's repository
+                by ${data.sender.login} #⃣  "${data.head_commit.message}" 🔄 changes in: ${files(data.head_commit.modified)}, `);
+        }
+        kb.say("kunszg", `[github webhook] ⬆  New commit ${data.head_commit.id.slice(0, 7)} in kunszgbot's repository
+            by ${data.sender.login} #⃣  "${data.head_commit.message}" 🔄 changes in: ${files(data.head_commit.modified)}`);
     }
+
+    if (event === "star" && data.action === "created") {
+        const key = "star-" + data.sender.login;
+
+        if (rateLimit.has(key)) { return; }
+        rateLimit.add(key);
+
+        setTimeout(() => {
+            rateLimit.delete(key);
+        }, 1200000);
+
+        kb.say("kunszg", `[github webhook] ${data.sender.login} just starred the kunszgbot repository for the total of ${data.repository.stargazers_count}
+            stars and ${data.repository.watchers_count} watchers PogChamp <3 https://github.com/KUNszg/kbot`);
+    }
+
+    if (event === "repository_vulnerability_alert") {
+        if (data.action === "create") {
+            kb.say("kunszg", `[github vulnerability alert]  monkaS package ${data.alert.affected_package_name} in
+                https://github.com/KUNszg/kbot has been spotted by ${data.sender.login}
+                as ${data.alert.severity} severity for version range ${data.alert.affected_range}`);
+        }
+
+        if (data.action === "dismiss") {
+            kb.say("kunszg", `[github vulnerability alert] Vulnerability from ${data.alert.affected_package_name}
+                package with ${data.alert.severity} severity has been dismissed in https://github.com/KUNszg/kbot`);
+        }
+
+        if (data.action === "resolve") {
+            kb.say("kunszg", `[github vulnerability alert] Vulnerability from ${data.alert.affected_package_name}
+                package with ${data.alert.severity} severity has been fixed and resolved to version ${data.alert.fixed_in} in https://github.com/KUNszg/kbot`);
+        }
+    }
+
+    if (event === "fork") {
+        kb.say("kunszg", `${data.sender.login} just forked the repo PogChamp ! https://github.com/KUNszg/kbot`);
+    }
+
+    if (event === "pull_request") {
+        if (data.action === "opened") {
+            kb.say("kunszg", `[github webhook] ⬇ New pull request #${data.number} "${data.pull_request.title}" 📂  opened by
+                ${data.pull_request.user.login}, mergeable state: ${data.pull_request.base.mergeable_state} ${data.pull_request.html_url}`);
+        }
+        if (data.action === "closed") {
+            const isMerged = data.pull_request.base.merged ? "without merging" : "and merged";
+            kb.say("kunszg", `[github webhook] ✅ pull request #${data.number} has been closed ${isMerged} by ${data.sender.login}
+                at ${String(data.pull_request.closed_at.replace(/T|Z/g, " "))}${data.pull_request.html_url}`);
+        }
+    }
+
+    if (event === "issues") {
+        if (data.action === "opened") {
+            kb.say("kunszg", `[github webhook] ⛔ New issue created #${data.issue.number} "${data.issue.title}" by ${data.issue.user.login} ${data.issue.html_url}`);
+        }
+        if (data.action === "closed") {
+             kb.say("kunszg", `[github webhook] ✅ issue #${data.issue.number} has been closed by ${data.sender.login} at ${String(data.issue.closed_at.replace(/T|Z/g, " "))} ${data.issue.html_url}`);
+        }
+    }
+
+    return;
 });
 
 app.get("/countdown", async (req, res) => {
