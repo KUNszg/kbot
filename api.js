@@ -223,7 +223,7 @@ app.post("/webhooks/github", jsonParser, async (req, res) => {
     //creating hmac object
     var hmac = crypto.createHmac('sha256', creds.webhook_github_secret);
     //passing the data to be hashed
-    data = hmac.update(req.body.payload);
+    const data = hmac.update(req.body.payload);
     //Creating the hmac in the required format
     gen_hmac= data.digest('hex');
     //Printing the output on the console
