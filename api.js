@@ -315,7 +315,7 @@ webhookHandler.on('*', async function (event, repo, data, head) {
 
         if (data.action === "deleted") {
              kb.say("kunszg", `[github webhook] ❌ issue #${data.issue.number} has been deleted by ${data.sender.login}
-                at ${data.issue.closed_at.toString().replace(/T|Z/g, " ")}`);
+                at ${new Date().toISOString().replace(/T|Z/g, " ").split('.')[0]}`);
         }
     }
 
