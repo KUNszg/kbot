@@ -218,9 +218,9 @@ const webhookHandler = GithubWebHook({ path: '/webhooks/github', secret: secret 
 app.use(bodyParser.json());
 app.use(webhookHandler);
 
-webhookHandler.on('*', function (event, repo, data) {
+webhookHandler.on('*', function (event, repo, data, head) {
 
-    console.log(event, repo, data)
+    console.log(event, repo, data, head)
 
 });
 
