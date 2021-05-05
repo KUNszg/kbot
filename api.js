@@ -215,42 +215,16 @@ const crypto = require("crypto");
 
 const secret = creds.webhook_github_secret;
 
-const createComparisonSignature = (body) => {
-    const hmac = crypto.createHmac('sha256', secret);
-    const self_signature = hmac.update(body).digest('hex');
-    return `sha256=${self_signature}`; // shape in GitHub header
-}
+const GithubWebHook = require('express-github-webhook');
+const webhookHandler = GithubWebHook({ path: '/webhooks/github', secret: secret });
 
-const compareSignatures = (signature, comparison_signature) => {
-    const source = Buffer.from(signature);
-    const comparison = Buffer.from(comparison_signature);
-    return crypto.timingSafeEqual(source, comparison); // constant time comparison
-}
+app.use(bodyParser.json());
+app.use(webhookHandler);
 
-const verifyGithubPayload = (req, res, next) => {
-    const signature = req.headers['X-Hub-Signature-256'];
-    const comparison_signature = createComparisonSignature(req.body.payload);
+webhookHandler.on('*', function (event, repo, data) {
 
-    if (!compareSignatures(signature, comparison_signature)) {
-        return res.status(401).send('Mismatched signatures');
-    }
+    console.log(event, repo, data)
 
-    const { action, ...payload } = body;
-    req.event_type = headers['X-GitHub-Event']; // one of: https://developer.github.com/v3/activity/events/types/
-    req.action = action;
-    req.payload = payload;
-    next();
-}
-
-app.post("/webhooks/github", verifyGithubPayload, async (req, res) => {
-    const payload = req.body.payload
-
-    console.log(payload)
-    if (req.headers["x-github-event"] === "push") {
-    }
-
-    res.status(200);
-    res.send("OK");
 });
 
 app.get("/countdown", async (req, res) => {
