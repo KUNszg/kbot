@@ -224,16 +224,16 @@ webhookHandler.on('*', async function (event, repo, data, head) {
             UPDATE stats
             SET date=?, sha=?
             WHERE type="ping"`,
-            [data.header_commit.timestamp, data.header_commit.id.slice(0, 7)]);
+            [data.head_commit.timestamp, data.head_commit.id.slice(0, 7)]);
 
         if (data.commits.length > 1) {
             kb.say("kunszg", `⬆  New push with ${data.commits.length} commits in kunszgbot's repository
-                by ${data.sender.login} #⃣  title: ${data.header_commit.message}
-                🔄 changes in: ${data.header_commit.modified.join(", ").replace(/\.js/g, "")}, `);
+                by ${data.sender.login} #⃣  title: ${data.head_commit.message}
+                🔄 changes in: ${data.head_commit.modified.join(", ").replace(/\.js/g, "")}, `);
         }
-        kb.say("kunszg", `⬆  New commit ${data.header_commit.id.slice(0, 7)} in kunszgbot's repository
-            by ${data.sender.login} #⃣  title: ${data.header_commit.message}
-            🔄 changes in: ${data.header_commit.modified.join(", ").replace(/\.js/g, "")}`);
+        kb.say("kunszg", `⬆  New commit ${data.head_commit.id.slice(0, 7)} in kunszgbot's repository
+            by ${data.sender.login} #⃣  title: ${data.head_commit.message}
+            🔄 changes in: ${data.head_commit.modified.join(", ").replace(/\.js/g, "")}`);
     }
 });
 
