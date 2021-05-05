@@ -208,9 +208,6 @@ app.get("/connections", async (req, res) => {
         `)
 })*/
 
-// parse application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true }))
-
 const crypto = require("crypto");
 
 const secret = creds.webhook_github_secret;
