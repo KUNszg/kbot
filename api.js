@@ -209,7 +209,7 @@ app.get("/connections", async (req, res) => {
 })*/
 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded());
+app.use(express.urlencoded({ extended: true }))
 
 // create application/json parser
 let jsonParser = bodyParser.json();
