@@ -219,9 +219,22 @@ app.use(bodyParser.json());
 app.use(webhookHandler);
 
 webhookHandler.on('*', function (event, repo, data, head) {
+    if (event === "push") {
+        await utils.query(`
+            UPDATE stats
+            SET date=?, sha=?
+            WHERE type="ping"`,
+            [data.header_commit.timestamp, data.header_commit.id.slice(0, 7)]);
 
-    console.log(event, repo, data, head)
-
+        if (data.commits.length > 1) {
+            kb.say("kunszg", `⬆  New push with ${data.commits.length} commits in kunszgbot's repository
+                by ${data.sender.login} #⃣  title: ${data.header_commit.message}
+                🔄 changes in: ${data.header_commit.modified.join(", ").replace(/\.js/g, "")}, `)
+        }
+        kb.say("kunszg", `⬆  New commit ${data.header_commit.id.slice(0, 7)} in kunszgbot's repository
+            by ${data.sender.login} #⃣  title: ${data.header_commit.message}
+            🔄 changes in: ${data.header_commit.modified.join(", ").replace(/\.js/g, "")}`)
+    }
 });
 
 app.get("/countdown", async (req, res) => {
