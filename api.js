@@ -217,7 +217,7 @@ const secret = creds.webhook_github_secret;
 
 const createComparisonSignature = (body) => {
     const hmac = crypto.createHmac('sha256', secret);
-    const self_signature = hmac.update(JSON.stringify(body)).digest('hex');
+    const self_signature = hmac.update(body).digest('hex');
     return `sha256=${self_signature}`; // shape in GitHub header
 }
 
