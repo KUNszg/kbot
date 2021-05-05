@@ -11,7 +11,6 @@
   "dependencies": {
     "discord.js": "^12.5.3",
     "express": "^4.17.1",
-    "express-github-webhook": "^1.0.6",
     "got": "^11.8.2",
     "humanize-duration": "^3.26.0",
     "inquirer": "^8.0.0",
