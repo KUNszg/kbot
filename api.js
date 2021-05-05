@@ -208,8 +208,11 @@ app.get("/connections", async (req, res) => {
         `)
 })*/
 
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded());
+
 // create application/json parser
-let jsonParser = bodyParser.json()
+let jsonParser = bodyParser.json();
 
 app.post("/webhooks/github", jsonParser, async (req, res) => {
     console.log(req.body)
