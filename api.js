@@ -211,7 +211,7 @@ app.post("/webhooks/github", async (req, res) => {
     res.status(200);
     res.send("OK");
 
-    console.log(req)
+    console.log(req.body.json())
 })
 
 app.get("/countdown", async (req, res) => {
