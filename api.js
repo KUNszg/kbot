@@ -259,7 +259,7 @@ webhookHandler.on('*', async function (event, repo, data, head) {
         }, 1200000);
 
         kb.say("kunszg", `[github webhook] ${data.sender.login} just starred the kunszgbot repository for the total of ${data.repository.stargazers_count}
-            stars and ${data.repository.watchers_count} watchers PogChamp <3 https://github.com/KUNszg/kbot`);
+            stars and ${data.repository.watchers} watchers PogChamp <3 https://github.com/KUNszg/kbot`);
     }
 
     if (event === "repository_vulnerability_alert") {
