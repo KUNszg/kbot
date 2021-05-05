@@ -211,31 +211,57 @@ app.get("/connections", async (req, res) => {
 // parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }))
 
-// create application/json parser
-let jsonParser = bodyParser.json();
+const secret = creds.webhook_github_secret;
 
-app.post("/webhooks/github", jsonParser, async (req, res) => {
+// For these headers, a sigHashAlg of sha1 must be used instead of sha256
+// GitHub: X-Hub-Signature
+// Gogs:   X-Gogs-Signature
+const sigHeaderName = 'X-Hub-Signature-256'
+const sigHashAlg = 'sha256'
+
+const app = express()
+
+// Saves a valid raw JSON body to req.rawBody
+// Credits to https://stackoverflow.com/a/35651853/90674
+app.use(bodyParser.json({
+    verify: (req, res, buf, encoding) => {
+        if (buf && buf.length) {
+        req.rawBody = buf.toString(encoding || 'utf8');
+        }
+    },
+}))
+
+function verifyPostData(req, res, next) {
+    if (!req.rawBody) {
+        return next('Request body empty')
+    }
+
+    const sig = Buffer.from(req.get(sigHeaderName) || '', 'utf8')
+    const hmac = crypto.createHmac(sigHashAlg, secret)
+    const digest = Buffer.from(sigHashAlg + '=' + hmac.update(req.rawBody).digest('hex'), 'utf8')
+    if (sig.length !== digest.length || !crypto.timingSafeEqual(digest, sig)) {
+        return next(`Request body digest (${digest}) did not match ${sigHeaderName} (${sig})`)
+    }
+
+    return next()
+}
+
+app.post("/webhooks/github", verifyPostData, async (req, res) => {
     const payload = req.body.payload
 
-    //Name of the file : sha256-hmac.js
-    //Loading the crypto module in node.js
-    var crypto = require('crypto');
-    //creating hmac object
-    var hmac = crypto.createHmac('sha256', creds.webhook_github_secret);
-    //passing the data to be hashed
-    const data = hmac.update(payload);
-    //Creating the hmac in the required format
-    const gen_hmac = data.digest('hex');
-    //Printing the output on the console
-    console.log("hmac : " + gen_hmac);
-
-
+    console.log(payload)
     if (req.headers["x-github-event"] === "push") {
-
     }
 
     res.status(200);
     res.send("OK");
+});
+
+app.use((err, req, res, next) => {
+    if (err) {
+        console.error(err);
+    }
+    res.status(403).send('Request body was not signed or verification failed')
 })
 
 app.get("/countdown", async (req, res) => {
