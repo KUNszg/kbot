@@ -207,6 +207,11 @@ app.get("/connections", async (req, res) => {
         `)
 })*/
 
+app.post("/webhooks/github", async (req, res) => {
+    res.status(200);
+    res.send("OK");
+})
+
 app.get("/countdown", async (req, res) => {
     try {
         await conLog(req);
