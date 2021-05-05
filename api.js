@@ -225,7 +225,7 @@ app.post("/webhooks/github", jsonParser, async (req, res) => {
     //passing the data to be hashed
     const data = hmac.update(req.body.payload);
     //Creating the hmac in the required format
-    gen_hmac= data.digest('hex');
+    const gen_hmac = data.digest('hex');
     //Printing the output on the console
     console.log("hmac : " + gen_hmac);
 
