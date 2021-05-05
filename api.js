@@ -218,7 +218,7 @@ const webhookHandler = GithubWebHook({ path: '/webhooks/github', secret: secret 
 app.use(bodyParser.json());
 app.use(webhookHandler);
 
-webhookHandler.on('*', function (event, repo, data, head) {
+webhookHandler.on('*', async function (event, repo, data, head) {
     if (event === "push") {
         await utils.query(`
             UPDATE stats
