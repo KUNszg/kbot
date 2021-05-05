@@ -303,11 +303,11 @@ webhookHandler.on('*', async function (event, repo, data, head) {
 
     if (event === "issues") {
         if (data.action === "opened") {
-            kb.say("kunszg", `[github webhook] ⛔ New issue created #${data.issue.number} "${data.issue.title}" by ${data.issue.user.login} ${data.issue.html_url}`);
+            kb.say("kunszg", `[github webhook] ✅New issue created #${data.issue.number} "${data.issue.title}" by ${data.issue.user.login} ${data.issue.html_url}`);
         }
 
         if (data.action === "closed") {
-             kb.say("kunszg", `[github webhook] ✅ issue #${data.issue.number} has been closed by ${data.sender.login} at ${String(data.issue.closed_at.replace(/T|Z/g, " "))} ${data.issue.html_url}`);
+             kb.say("kunszg", `[github webhook] ⛔ issue #${data.issue.number} has been closed by ${data.sender.login} at ${String(data.issue.closed_at.replace(/T|Z/g, " "))} ${data.issue.html_url}`);
         }
     }
 
