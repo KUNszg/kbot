@@ -258,8 +258,8 @@ webhookHandler.on('*', async function (event, repo, data, head) {
             rateLimit.delete(key);
         }, 1200000);
 
-        kb.say("kunszg", `[github webhook] ${data.sender.login} just starred the kunszgbot repository for the total of ${data.repository.stargazers_count}
-            stars and ${data.repository.watchers} watchers PogChamp <3 https://github.com/KUNszg/kbot`);
+        kb.say("kunszg", `[github webhook] ${data.sender.login} just starred the kunszgbot repository for the total
+            of ${data.repository.stargazers_count} stars PogChamp <3 https://github.com/KUNszg/kbot`);
     }
 
     if (event === "repository_vulnerability_alert") {
@@ -276,7 +276,8 @@ webhookHandler.on('*', async function (event, repo, data, head) {
 
         if (data.action === "resolve") {
             kb.say("kunszg", `[github vulnerability alert] Vulnerability from ${data.alert.affected_package_name}
-                package with ${data.alert.severity} severity has been fixed and resolved to version ${data.alert.fixed_in} in https://github.com/KUNszg/kbot`);
+                package with ${data.alert.severity} severity has been fixed and resolved to version
+                ${data.alert.fixed_in} in https://github.com/KUNszg/kbot`);
         }
     }
 
