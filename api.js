@@ -213,38 +213,36 @@ app.use(express.urlencoded({ extended: true }))
 
 const secret = creds.webhook_github_secret;
 
-// For these headers, a sigHashAlg of sha1 must be used instead of sha256
-// GitHub: X-Hub-Signature
-// Gogs:   X-Gogs-Signature
-const sigHeaderName = 'X-Hub-Signature-256'
-const sigHashAlg = 'sha256'
-
-// Saves a valid raw JSON body to req.rawBody
-// Credits to https://stackoverflow.com/a/35651853/90674
-app.use(bodyParser.json({
-    verify: (req, res, buf, encoding) => {
-        if (buf && buf.length) {
-        req.rawBody = buf.toString(encoding || 'utf8');
-        }
-    },
-}))
-
-function verifyPostData(req, res, next) {
-    if (!req.rawBody) {
-        return next('Request body empty')
-    }
-
-    const sig = Buffer.from(req.get(sigHeaderName) || '', 'utf8')
-    const hmac = crypto.createHmac(sigHashAlg, secret)
-    const digest = Buffer.from(sigHashAlg + '=' + hmac.update(req.rawBody).digest('hex'), 'utf8')
-    if (sig.length !== digest.length || !crypto.timingSafeEqual(digest, sig)) {
-        return next(`Request body digest (${digest}) did not match ${sigHeaderName} (${sig})`)
-    }
-
-    return next()
+const createComparisonSignature = (body) => {
+    const hmac = crypto.createHmac('sha256', secret);
+    const self_signature = hmac.update(JSON.stringify(body)).digest('hex');
+    return `sha256=${self_signature}`; // shape in GitHub header
 }
 
-app.post("/webhooks/github", verifyPostData, async (req, res) => {
+const compareSignatures = (signature, comparison_signature) => {
+    const source = Buffer.from(signature);
+    const comparison = Buffer.from(comparison_signature);
+    return crypto.timingSafeEqual(source, comparison); // constant time comparison
+}
+
+const verifyGithubPayload = (req, res, next) => {
+    const { headers, body } = req;
+
+    const signature = headers['X-Hub-Signature-256'];
+    const comparison_signature = createComparisonSignature(body);
+
+    if (!compareSignatures(signature, comparison_signature)) {
+        return res.status(401).send('Mismatched signatures');
+    }
+
+    const { action, ...payload } = body;
+    req.event_type = headers['X-GitHub-Event']; // one of: https://developer.github.com/v3/activity/events/types/
+    req.action = action;
+    req.payload = payload;
+    next();
+}
+
+app.post("/webhooks/github", verifyGithubPayload, async (req, res) => {
     const payload = req.body.payload
 
     console.log(payload)
@@ -254,13 +252,6 @@ app.post("/webhooks/github", verifyPostData, async (req, res) => {
     res.status(200);
     res.send("OK");
 });
-
-app.use((err, req, res, next) => {
-    if (err) {
-        console.error(err);
-    }
-    res.status(403).send('Request body was not signed or verification failed')
-})
 
 app.get("/countdown", async (req, res) => {
     try {
