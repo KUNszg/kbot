@@ -7,6 +7,7 @@ const mysql = require('mysql2');
 const got = require('got');
 const creds = require('./lib/credentials/config.js');
 const utils = require('./lib/utils/utils.js');
+const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -207,7 +208,10 @@ app.get("/connections", async (req, res) => {
         `)
 })*/
 
-app.post("/webhooks/github", async (req, res) => {
+// create application/json parser
+let jsonParser = bodyParser.json()
+
+app.post("/webhooks/github", jsonParser, async (req, res) => {
     console.log(req.body)
     console.log(req)
     res.status(200);
