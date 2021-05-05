@@ -228,10 +228,8 @@ const compareSignatures = (signature, comparison_signature) => {
 }
 
 const verifyGithubPayload = (req, res, next) => {
-    const { headers, body } = req;
-
-    const signature = headers['X-Hub-Signature-256'];
-    const comparison_signature = createComparisonSignature(body);
+    const signature = req.headers['X-Hub-Signature-256'];
+    const comparison_signature = createComparisonSignature(req.body.payload);
 
     if (!compareSignatures(signature, comparison_signature)) {
         return res.status(401).send('Mismatched signatures');
