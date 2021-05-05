@@ -212,7 +212,7 @@ const crypto = require("crypto");
 
 const secret = creds.webhook_github_secret;
 
-const GithubWebHook = require('express-github-webhook');
+const GithubWebHook = require('./lib/utils/git-webhook-middleware.js');
 const webhookHandler = GithubWebHook({ path: '/webhooks/github', secret: secret });
 
 app.use(bodyParser.json());
