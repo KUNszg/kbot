@@ -208,10 +208,10 @@ app.get("/connections", async (req, res) => {
 })*/
 
 app.post("/webhooks/github", async (req, res) => {
+    console.log(req.body)
+    console.log(req)
     res.status(200);
     res.send("OK");
-
-    console.log(req.body.json())
 })
 
 app.get("/countdown", async (req, res) => {
