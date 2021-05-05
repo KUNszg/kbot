@@ -245,6 +245,7 @@ webhookHandler.on('*', async function (event, repo, data, head) {
                 ${data.commits.length} commits in kunszgbot's repository by ${data.sender.login} #⃣
                 "${data.head_commit.message}" 🔄 changes in: ${files(data.head_commit.modified)}, `);
         }
+
         kb.say("kunszg", `[github webhook] ⬆  New commit ${data.head_commit.id.slice(0, 7)} in
             kunszgbot's repository by ${data.sender.login} #⃣  "${data.head_commit.message}" 🔄
             changes in: ${files(data.head_commit.modified)}`);
@@ -292,6 +293,7 @@ webhookHandler.on('*', async function (event, repo, data, head) {
             kb.say("kunszg", `[github webhook] ⬇ New pull request #${data.number} "${data.pull_request.title}" 📂  opened by
                 ${data.pull_request.user.login}, mergeable state: ${data.pull_request.base.mergeable_state} ${data.pull_request.html_url}`);
         }
+
         if (data.action === "closed") {
             const isMerged = data.pull_request.base.merged ? "without merging" : "and merged";
             kb.say("kunszg", `[github webhook] ✅ pull request #${data.number} has been closed ${isMerged} by ${data.sender.login}
@@ -303,6 +305,7 @@ webhookHandler.on('*', async function (event, repo, data, head) {
         if (data.action === "opened") {
             kb.say("kunszg", `[github webhook] ⛔ New issue created #${data.issue.number} "${data.issue.title}" by ${data.issue.user.login} ${data.issue.html_url}`);
         }
+
         if (data.action === "closed") {
              kb.say("kunszg", `[github webhook] ✅ issue #${data.issue.number} has been closed by ${data.sender.login} at ${String(data.issue.closed_at.replace(/T|Z/g, " "))} ${data.issue.html_url}`);
         }
