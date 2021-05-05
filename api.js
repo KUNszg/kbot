@@ -215,8 +215,6 @@ app.use(bodyParser.urlencoded());
 let jsonParser = bodyParser.json();
 
 app.post("/webhooks/github", jsonParser, async (req, res) => {
-    const payload = req.body.payload.json();
-
     //Name of the file : sha256-hmac.js
     //Loading the crypto module in node.js
     var crypto = require('crypto');
