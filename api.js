@@ -234,7 +234,6 @@ webhookHandler.on('*', async function (event, repo, data, head) {
         kb.say("kunszg", `⬆  New commit ${data.head_commit.id.slice(0, 7)} in kunszgbot's repository
             by ${data.sender.login} #⃣  title: ${data.head_commit.message}
             🔄 changes in: ${data.head_commit.modified.join(", ").replace(/\.js/g, "")}`);
-
         return;
     }
 });
