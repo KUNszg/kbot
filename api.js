@@ -241,11 +241,13 @@ webhookHandler.on('*', async function (event, repo, data, head) {
         }
 
         if (data.commits.length > 1) {
-            kb.say("kunszg", `[github webhook] ⬆  New push ${data.head_commit.id.slice(0, 7)} with ${data.commits.length} commits in kunszgbot's repository
-                by ${data.sender.login} #⃣  "${data.head_commit.message}" 🔄 changes in: ${files(data.head_commit.modified)}, `);
+            kb.say("kunszg", `[github webhook] ⬆  New push ${data.head_commit.id.slice(0, 7)} with
+                ${data.commits.length} commits in kunszgbot's repository by ${data.sender.login} #⃣
+                "${data.head_commit.message}" 🔄 changes in: ${files(data.head_commit.modified)}, `);
         }
-        kb.say("kunszg", `[github webhook] ⬆  New commit ${data.head_commit.id.slice(0, 7)} in kunszgbot's repository
-            by ${data.sender.login} #⃣  "${data.head_commit.message}" 🔄 changes in: ${files(data.head_commit.modified)}`);
+        kb.say("kunszg", `[github webhook] ⬆  New commit ${data.head_commit.id.slice(0, 7)} in
+            kunszgbot's repository by ${data.sender.login} #⃣  "${data.head_commit.message}" 🔄
+            changes in: ${files(data.head_commit.modified)}`);
     }
 
     if (event === "star" && data.action === "created") {
@@ -282,7 +284,7 @@ webhookHandler.on('*', async function (event, repo, data, head) {
     }
 
     if (event === "fork") {
-        kb.say("kunszg", `${data.sender.login} just forked the repo PogChamp ! https://github.com/KUNszg/kbot`);
+        kb.say("kunszg", `[github webhook] ${data.sender.login} just forked the repo PogChamp ! https://github.com/KUNszg/kbot ➡ https://github.com/${data.forkee.full_name}`);
     }
 
     if (event === "pull_request") {
