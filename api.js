@@ -210,6 +210,8 @@ app.get("/connections", async (req, res) => {
 app.post("/webhooks/github", async (req, res) => {
     res.status(200);
     res.send("OK");
+
+    console.log(req)
 })
 
 app.get("/countdown", async (req, res) => {
