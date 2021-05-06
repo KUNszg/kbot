@@ -255,6 +255,7 @@ webhookHandler.on('*', async function (event, repo, data, head) {
         const key = "star-" + data.sender.login;
 
         if (rateLimit.has(key)) { return; }
+
         rateLimit.add(key);
 
         setTimeout(() => {
