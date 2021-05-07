@@ -244,6 +244,7 @@ webhookHandler.on('*', async function (event, repo, data, head) {
             kb.say("kunszg", `[github webhook] ⬆  New push ${data.head_commit.id.slice(0, 7)} with
                 ${data.commits.length} commits in kunszgbot's repository by ${data.sender.login} #⃣
                 "${data.head_commit.message}" 🔄 changes in: ${files(data.head_commit.modified)}, `);
+            return;
         }
 
         kb.say("kunszg", `[github webhook] ⬆  New commit ${data.head_commit.id.slice(0, 7)} in
