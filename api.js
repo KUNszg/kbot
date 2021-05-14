@@ -1136,7 +1136,35 @@ app.get("/emotes", async (req, res) => {
                             </form>
                         <div>
                     <div>
-                    <br>
+                    <div style="text-align: center; margin-top: 15px;">
+                        <div id="timer">
+                        </div>
+                    </div>
+                    <script>
+                        function lastUpdate() {
+                            return (Date.now() - (Date.parse("${(await utils.query(`SELECT emotesUpdate FROM channels WHERE channel="${req.query.search.toLowerCase()}"`))[0].emotesUpdate} UTC")))/1000;
+                        }
+
+                        const secondsToDhms = (seconds) => {
+                            seconds = Number(seconds);
+                            const d = Math.floor(seconds / (3600*24));
+                            const h = Math.floor(seconds % (3600*24) / 3600);
+                            const m = Math.floor(seconds % 3600 / 60);
+                            const s = Math.floor(seconds % 60);
+
+                            const dDisplay = d > 0 ? d + " " : "";
+                            const hDisplay = h > 0 ? h + 'h' + " " : "";
+                            const mDisplay = m > 0 ? m + 'm' + " " : "";
+                            const sDisplay = s > 0 ? s + 's' : '0' + s + 's';
+                            return dDisplay + hDisplay + mDisplay + sDisplay;
+                        }
+
+                        setInterval(() => {
+                            const timer = '<i style="color:white">LAST UPDATE</i><div style="text-align: center; color: white; font-size: 20px;">'+secondsToDhms(lastUpdate())+'<i style="color:white; font-size:15px; font-family: "Noto Sans", sans-serif;"> AGO</i></div>';
+
+                            document.getElementById("timer").innerHTML = timer;
+                        }, 1000)
+                    </script>
                     <div style="color: lightgray; float: left;">
                         <strong style="color: white; text-align: center;">USABLE EMOTES</strong><br>
                         <input type="text" id="search" placeholder="Type to search" autocomplete="off">
