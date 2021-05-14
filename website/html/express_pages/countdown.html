@@ -13,11 +13,6 @@
         }
     </style>
     <body>
-        <div style="text-align: center; margin-top: 5vh; color: white; font-family: digital; font-size: 30px;">
-            <span>KEEP THIS TAB OPEN AT ALL TIMES</span>
-            <br><span>OTHERWISE IT WILL DESYNC</span>
-        </div>
-        </div>
         <div style="text-align: center; margin-top: 15vh; font-family: digital;">
             <div id="timer">
             </div>
@@ -55,50 +50,68 @@
                 return dDisplay + hDisplay + mDisplay + sDisplay;
             }
 
-            let time = Math.trunc(%{seconds} - Date.now()/1000);
+            function time() {
+                return Math.trunc(%{seconds} - Date.now()/1000);
+            }
+
+            const cd = new Set();
 
             const updateTimer = () => {
-                if (time > 0) {
-                    time -= 1
-                } else {
-                    time = 0;
-                }
+                let timer = time();
+                if (timer === 5) {
+                    if (cd.has(5)) { return; }
+                    cd.add(5);
 
-                if (time === 5) {
                     let audio = new Audio('https://kunszg.com/5.mp3');
                     audio.play();
                 }
-                if (time === 4) {
+                if (timer === 4) {
+                    if (cd.has(4)) { return; }
+                    cd.add(4);
+
                     let audio = new Audio('https://kunszg.com/4.mp3');
                     audio.play();
                 }
-                if (time === 3) {
+                if (timer === 3) {
+                    if (cd.has(3)) { return; }
+                    cd.add(3);
+
                     let audio = new Audio('https://kunszg.com/3.mp3');
                     audio.play();
                 }
-                if (time === 2) {
+                if (timer === 2) {
+                    if (cd.has(2)) { return; }
+                    cd.add(2);
+
                     let audio = new Audio('https://kunszg.com/2.mp3');
                     audio.play();
                 }
-                if (time === 1) {
+                if (timer === 1) {
+                    if (cd.has(1)) { return; }
+                    cd.add(1);
+
                     let audio = new Audio('https://kunszg.com/1.mp3');
                     audio.play();
                 }
 
+                if (timer < 0) {
+                    timer = 0;
+                }
 
-                const timer = `
+                const _timer = `
                     <div style="text-align: center; color: white; font-size: 100px;">
-                        ${secondsToDhms(time)}
+                        ${secondsToDhms(timer)}
                     </div>
                     `;
 
-                document.getElementById("timer").innerHTML = timer;
+
+                document.getElementById("timer").innerHTML = _timer;
             }
             updateTimer();
 
             setInterval(() => {
                 updateTimer();
-            }, 1000);
+            }, 500);
         </script>
     </body>
 </html>
