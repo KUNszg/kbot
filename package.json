@@ -9,6 +9,7 @@
   "author": "kunszg",
   "license": "ISC",
   "dependencies": {
+    "buffer-equal-constant-time": "^1.0.1",
     "discord.js": "^12.5.3",
     "express": "^4.17.1",
     "got": "^11.8.2",
