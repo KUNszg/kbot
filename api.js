@@ -906,21 +906,23 @@ app.get("/emotes", async (req, res) => {
                                 })
 
                             setInterval(() => {
-                                fetch('https://kunszg.com/api/randomemote')
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        setTimeout(() => {
-                                            show_image(data[0].emoteUrl, data[0].emote);
-                                        }, Math.floor(Math.random()*10)*1000);
+                                if (!document.hidden) {
+                                    fetch('https://kunszg.com/api/randomemote')
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            setTimeout(() => {
+                                                show_image(data[0].emoteUrl, data[0].emote);
+                                            }, Math.floor(Math.random()*10)*1000);
 
-                                        setTimeout(() => {
-                                            show_image(data[1].emoteUrl, data[1].emote);
-                                        }, Math.floor(Math.random()*10)*1000);
+                                            setTimeout(() => {
+                                                show_image(data[1].emoteUrl, data[1].emote);
+                                            }, Math.floor(Math.random()*10)*1000);
 
-                                        setTimeout(() => {
-                                            show_image(data[2].emoteUrl, data[2].emote);
-                                        }, Math.floor(Math.random()*10)*1000);
-                                    })
+                                            setTimeout(() => {
+                                                show_image(data[2].emoteUrl, data[2].emote);
+                                            }, Math.floor(Math.random()*10)*1000);
+                                        })
+                                }
                             }, 3000);
                         </script>
                     </div>
@@ -1052,8 +1054,7 @@ app.get("/emotes", async (req, res) => {
             );
         */
 
-        res.send(
-           `
+        res.send(`
             <!DOCTYPE html>
             <html>
                 <head>
@@ -1179,8 +1180,7 @@ app.get("/emotes", async (req, res) => {
                         Emote checker is based on logs from Kunszgbot
                     </div>
                 </body>
-            </html>
-            `
+            </html>`
         );
     }
 
