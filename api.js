@@ -1163,10 +1163,6 @@ app.get("/emotes", async (req, res) => {
                             const timer = '<i style="color:white">LAST UPDATE</i><div style="text-align: center; color: white; font-size: 20px;">'+secondsToDhms(lastUpdate())+'<i style="color:white; font-size:15px; font-family: "Noto Sans", sans-serif;"> AGO</i></div>';
 
                             document.getElementById("timer").innerHTML = timer;
-
-                            if (lastUpdate() === 335) {
-                                window.location.reload(true)
-                            }
                         }, 1000)
                     </script>
                     <div style="color: lightgray; float: left;">
