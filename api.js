@@ -1142,7 +1142,7 @@ app.get("/emotes", async (req, res) => {
                     </div>
                     <script>
                         function lastUpdate() {
-                            return (Date.now() - (Date.parse("${(await utils.query(`SELECT emotesUpdate FROM channels WHERE channel="${req.query.search.toLowerCase()}"`))[0].emotesUpdate} UTC")))/1000;
+                            return (Date.now() - (Date.parse("${(await utils.query(`SELECT emotesUpdate FROM channels_logger WHERE channel="${req.query.search.toLowerCase()}"`))[0].emotesUpdate} UTC")))/1000;
                         }
 
                         const secondsToDhms = (seconds) => {
