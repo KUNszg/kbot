@@ -852,14 +852,12 @@ app.get("/emotes", async (req, res) => {
                         <h7 class="blue__logo__word"> checker</h7>
                     </div>
                     <div class="searchBox">
-                        <div>
-                            <form action="/emotes" class="searchBox2">
-                                <input type="text" autofocus="autofocus" placeholder="Search for channel.." name="search" autocomplete="off" class="search__input">
-                                <button type="submit" class="search__button">
-                                    <img src="./img/magnifier.png" height="20" width="20">
-                                </button>
-                            </form>
-                        <div>
+                        <form action="/emotes" class="searchBox2">
+                            <input type="text" autofocus="autofocus" placeholder="Search for channel.." name="search" autocomplete="off" class="search__input">
+                            <button type="submit" class="search__button">
+                                <img src="./img/magnifier.png" height="20" width="20">
+                            </button>
+                        </form>
                     <div>
                     <div class="footer">
                         Emote checker is based on logs from Kunszgbot
@@ -1127,14 +1125,12 @@ app.get("/emotes", async (req, res) => {
                     </div>
                     <br>
                     <div class="searchBox">
-                        <div>
-                            <form action="/emotes" class="searchBox2">
-                                <input type="text" autofocus="autofocus" placeholder="Search for channel.." name="search" autocomplete="off" class="search__input">
-                                <button type="submit" class="search__button">
-                                    <img style="vertical-align: middle;" src="https://i.imgur.com/gQPOwPT.png" height="20" width="20">
-                                </button>
-                            </form>
-                        <div>
+                        <form action="/emotes" class="searchBox2">
+                            <input type="text" autofocus="autofocus" placeholder="Search for channel.." name="search" autocomplete="off" class="search__input">
+                            <button type="submit" class="search__button">
+                                <img style="vertical-align: middle;" src="https://i.imgur.com/gQPOwPT.png" height="20" width="20">
+                            </button>
+                        </form>
                     <div>
                     <div style="text-align: center; margin-top: 15px;">
                         <div id="timer">
