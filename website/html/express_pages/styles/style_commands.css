@@ -47,3 +47,47 @@ tr:nth-child(even) {
     background-color: #2c2c2c;
 }
 
+details,
+details[open],
+summary {
+  display: inline;
+}
+
+tr {
+    line-height: normal;
+}
+
+summary {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.command-th {
+    width: 120px;
+}
+
+.opt-out-th, .code-th, .cooldown-th, .id-th {
+    width: 30px;
+}
+
+.usage-div {
+    height: 20px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.usage-div:hover, tr {
+    overflow: visible;
+    height: auto;
+    line-height: auto;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    margin-top: -5px;
+}
+
+.limiter {
+    margin-right: 35vw;
+}
