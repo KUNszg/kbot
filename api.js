@@ -715,52 +715,6 @@ app.get("/commands", async (req, res) => {
 				<meta name="viewport" content="width=device-width, initial-scale=1">
 				<link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
                 <link rel="stylesheet" type="text/css" href="https://kunszg.com/style_commands.css">
-                <style>
-                    details,
-                    details[open],
-                    summary {
-                      display: inline;
-                    }
-
-                    tr {
-                        line-height: normal;
-                    }
-
-                    summary {
-                        cursor: pointer;
-                        font-weight: bold;
-                    }
-
-                    .command-th {
-                        width: 120px;
-                    }
-
-                    .opt-out-th, .code-th, .cooldown-th, .id-th {
-                        width: 30px;
-                    }
-
-                    .usage-div {
-                        height: 20px;
-                        overflow: hidden;
-                        cursor: pointer;
-                    }
-
-                    .usage-div:hover, tr {
-                        overflow: visible;
-                        height: auto;
-                        line-height: auto;
-                    }
-
-                    thead {
-                        position: sticky;
-                        top: 0;
-                        margin-top: -5px;
-                    }
-
-                    .limiter {
-                        margin-right: 20vw;
-                    }
-                </style>
       		</head>
       		<body style="background-color: #1a1a1a">
                 <div style="color: lightgray;">
