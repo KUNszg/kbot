@@ -676,27 +676,35 @@ app.get("/commands", async (req, res) => {
 
     const tableData = [];
     for (let i=0; i<commands.length; i++) {
+        const desc = commands[i].description.replace(" - ", " - <details><summary>[...] </summary>") + "</details>";
+
+        let usage = commands[i].usage ?? "NULL";
+
+        usage = usage.replace(/;/g, "<br>")
+
         tableData.push({
                 "ID": `<div class="table-contents" style="text-align: center;">${i+1}</div>`,
                 "command": `<div class="table-contents" style="text-align: center;">${commands[i].command}</div>`,
                 "cooldown": `<div class="table-contents" style="text-align: center;">${commands[i].cooldown/1000}s</div>`,
-                "opt-out": `<div class="table-contents" style="text-align: center;">${(commands[i].optoutable === "Y") ? "yes" : "no"}</div>`,
+                "opt-out": `<div class="table-contents" style="text-align: center;">${(commands[i].optoutable === "Y") ? "✅" : "❌"}</div>`,
                 "code": `<a href="https://kunszg.com/commands/code/${commands[i].command}">
                             <div class="code" style="font-family: 'Noto Sans', sans-serif; font-size: 13px;">
-                                    <img style="margin-top: 10px;" src="https://i.imgur.com/1THd3GD.png" height="15" width="15">
+                                    <img style="margin-top: 10px; margin-bottom: 5px;" src="https://i.imgur.com/1THd3GD.png" height="15" width="15">
                             </div>
                         </a>`,
-                "description": `<div class="table-contents" style="margin-right: 50px; margin-left: 5px;">${commands[i].description}</div>`
+                "usage": `<div class="table-contents usage-div"><span style="cursor: auto;">${usage}</span></div>`,
+                "description": `<div class="table-contents"><div class="limiter">${desc}</div></div>`,
             })
     }
 
     const headers = {
-        "ID": " <div class='table-headers'>ID</div> ",
-        "command": " <div class='table-headers'>command</div> ",
-        "cooldown": " <div class='table-headers'>cooldown</div> ",
-        "opt-out": " <div class='table-headers'>opt-out</div> ",
-        "code": " <div class='table-headers'>code</div> ",
-        "description": " <div class='table-headers'>description</div> "
+        "ID": ` <div class="table-headers">ID</div> `,
+        "command": ` <div class="table-headers">command</div> `,
+        "cooldown": ` <div class="table-headers">cooldown</div> `,
+        "opt-out": ` <div class="table-headers">opt-out</div> `,
+        "code": ` <div class="table-headers">code</div> `,
+        "usage": ` <div class="table-headers">usage</div> `,
+        "description": ` <div class="table-headers">description</div> `,
     };
 
    res.send(
@@ -707,6 +715,52 @@ app.get("/commands", async (req, res) => {
 				<meta name="viewport" content="width=device-width, initial-scale=1">
 				<link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
                 <link rel="stylesheet" type="text/css" href="https://kunszg.com/style_commands.css">
+                <style>
+                    details,
+                    details[open],
+                    summary {
+                      display: inline;
+                    }
+
+                    tr {
+                        line-height: normal;
+                    }
+
+                    summary {
+                        cursor: pointer;
+                        font-weight: bold;
+                    }
+
+                    .command-th {
+                        width: 120px;
+                    }
+
+                    .opt-out-th, .code-th, .cooldown-th, .id-th {
+                        width: 30px;
+                    }
+
+                    .usage-div {
+                        height: 20px;
+                        overflow: hidden;
+                        cursor: pointer;
+                    }
+
+                    .usage-div:hover, tr {
+                        overflow: visible;
+                        height: auto;
+                        line-height: auto;
+                    }
+
+                    thead {
+                        position: sticky;
+                        top: 0;
+                        margin-top: -5px;
+                    }
+
+                    .limiter {
+                        margin-right: 20vw;
+                    }
+                </style>
       		</head>
       		<body style="background-color: #1a1a1a">
                 <div style="color: lightgray;">
@@ -741,6 +795,12 @@ app.get("/commands/code/*", async (req, res) => {
                         <title>${query} command code</title>
                         <link rel="preconnect" href="https://fonts.gstatic.com">
                         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+                        <style>
+                            .parameter {
+                                color: orange;
+                                font-style: italic;
+                            }
+                        </style>
                     </head>
                     <body style="background-color: #272822;">
                         <h3 style="color: gray;">Code for ${query} command</h3><br>
@@ -1302,11 +1362,11 @@ const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
 });
 
 const statusCheck = async() => {
-		await utils.query(`
-			UPDATE stats
-			SET date=?
-			WHERE type="module" AND sha="api"`,
-            [new Date().toISOString().slice(0, 19).replace('T', ' ')])
-	}
+	await utils.query(`
+		UPDATE stats
+		SET date=?
+		WHERE type="module" AND sha="api"`,
+        [new Date().toISOString().slice(0, 19).replace('T', ' ')])
+}
 statusCheck();
 setInterval(()=>{statusCheck()}, 60000);
