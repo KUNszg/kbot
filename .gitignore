@@ -1,4 +1,5 @@
 lib/credentials/config.js
+amp.js
 node_modules
 config.js
 test.js
