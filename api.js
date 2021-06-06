@@ -1033,13 +1033,13 @@ app.get("/emotes", async (req, res) => {
                 let emoteCDN = "#";
 
                 if (emotesRemoved[i].type === "bttv") {
-                    emoteCDN = emotes[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '');
+                    emoteCDN = emotesRemoved[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '');
                 }
                 else if (emotesRemoved[i].type === "ffz") {
-                    emoteCDN = `https://www.frankerfacez.com/emoticon/${emotes[i].emoteId}-${emotes[i].emote}`;
+                    emoteCDN = `https://www.frankerfacez.com/emoticon/${emotesRemoved[i].emoteId}-${emotesRemoved[i].emote}`;
                 }
                 else if (emotesRemoved[i].type === "7tv") {
-                    emoteCDN = `https://7tv.app/emotes/${emotes[i].sevenTvId}`;
+                    emoteCDN = `https://7tv.app/emotes/${emotesRemoved[i].sevenTvId}`;
                 }
 
                 tableDataRemoved.push({
