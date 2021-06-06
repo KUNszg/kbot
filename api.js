@@ -987,15 +987,16 @@ app.get("/emotes", async (req, res) => {
                 const emoteName = new ModifyOutput(emotes[i].emote);
 
                 let emoteCDN = "#";
-
-                if (emotes[i].type === "bttv") {
-                    emoteCDN = emotes[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '');
-                }
-                else if (emotes[i].type === "ffz") {
-                    emoteCDN = `https://www.frankerfacez.com/emoticon/${emotes[i].emoteId}-${emotes[i].emote}`;
-                }
-                else if (emotes[i].type === "7tv") {
-                    emoteCDN = `https://7tv.app/emotes/${emotes[i].sevenTvId}`;
+                if (emotes[i].url != null) {
+                    if (emotes[i].type === "bttv") {
+                        emoteCDN = emotes[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '');
+                    }
+                    else if (emotes[i].type === "ffz") {
+                        emoteCDN = `https://www.frankerfacez.com/emoticon/${emotes[i].emoteId}-${emotes[i].emote}`;
+                    }
+                    else if (emotes[i].type === "7tv") {
+                        emoteCDN = `https://7tv.app/emotes/${emotes[i].sevenTvId}`;
+                    }
                 }
 
                 tableData.push({
@@ -1032,14 +1033,16 @@ app.get("/emotes", async (req, res) => {
 
                 let emoteCDN = "#";
 
-                if (emotesRemoved[i].type === "bttv") {
-                    emoteCDN = emotesRemoved[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '');
-                }
-                else if (emotesRemoved[i].type === "ffz") {
-                    emoteCDN = `https://www.frankerfacez.com/emoticon/${emotesRemoved[i].emoteId}-${emotesRemoved[i].emote}`;
-                }
-                else if (emotesRemoved[i].type === "7tv") {
-                    emoteCDN = `https://7tv.app/emotes/${emotesRemoved[i].sevenTvId}`;
+                if (emotesRemoved[i].url != null) {
+                    if (emotesRemoved[i].type === "bttv") {
+                        emoteCDN = emotesRemoved[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '');
+                    }
+                    else if (emotesRemoved[i].type === "ffz") {
+                        emoteCDN = `https://www.frankerfacez.com/emoticon/${emotesRemoved[i].emoteId}-${emotesRemoved[i].emote}`;
+                    }
+                    else if (emotesRemoved[i].type === "7tv") {
+                        emoteCDN = `https://7tv.app/emotes/${emotesRemoved[i].sevenTvId}`;
+                    }
                 }
 
                 tableDataRemoved.push({
