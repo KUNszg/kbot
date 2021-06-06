@@ -985,19 +985,28 @@ app.get("/emotes", async (req, res) => {
 
             for (let i=0; i<emotes.length; i++) {
                 const emoteName = new ModifyOutput(emotes[i].emote);
+
+                let emoteCDN = "#";
+
+                if (emotes[i].type === "bttv") {
+                    emoteCDN = emotes[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '');
+                }
+                else if (emotes[i].type === "ffz") {
+                    emoteCDN = `https://www.frankerfacez.com/emoticon/${emotes[i].emoteId}-${emotes[i].emote}`;
+                }
+                else if (emotes[i].type === "7tv") {
+                    emoteCDN = `https://7tv.app/emotes/${emotes[i].sevenTvId}`;
+                }
+
                 tableData.push({
                     "ID": `<div class="table-contents" style="text-align: center;">${i+1}</div>`,
                     "name": `<div class="table-contents" style="text-align: center;">
-                            <a target="_blank" style="color: inherit; text-decoration: none;" href="${(emotes[i].url === null) ? '#' : ((emotes[i].type === "bttv") ?
-                                    emotes[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '') :
-                                    `https://www.frankerfacez.com/emoticon/${emotes[i].emoteId}-${emotes[i].emote}`)}">
+                            <a target="_blank" style="color: inherit; text-decoration: none;" href="${emoteCDN}">
                                 ${emoteName.trimmer()}
                             </a>
                             </div>`,
                     "emote": `<div class="table-contents" style="text-align: center;">
-                                <a target="_blank" style="color: inherit; text-decoration: none;" href="${(emotes[i].url === null) ? '#' : ((emotes[i].type === "bttv") ?
-                                    emotes[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '') :
-                                    `https://www.frankerfacez.com/emoticon/${emotes[i].emoteId}-${emotes[i].emote}`)}">
+                                <a target="_blank" style="color: inherit; text-decoration: none;" href="${emoteCDN}">
                                     <span title="${emotes[i].emote}">
                                         <img style="vertical-align: middle; margin-top: 4px; margin-bottom: 4px;" loading="lazy" src="${emotes[i].url}" alt="${emoteName.trimmer()}">
                                     </span>
@@ -1021,19 +1030,27 @@ app.get("/emotes", async (req, res) => {
             for (let i=0; i<emotesRemoved.length; i++) {
                 const emoteName = new ModifyOutput(emotesRemoved[i].emote);
 
+                let emoteCDN = "#";
+
+                if (emotesRemoved[i].type === "bttv") {
+                    emoteCDN = emotes[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '');
+                }
+                else if (emotesRemoved[i].type === "ffz") {
+                    emoteCDN = `https://www.frankerfacez.com/emoticon/${emotes[i].emoteId}-${emotes[i].emote}`;
+                }
+                else if (emotesRemoved[i].type === "7tv") {
+                    emoteCDN = `https://7tv.app/emotes/${emotes[i].sevenTvId}`;
+                }
+
                 tableDataRemoved.push({
                     "ID": `<div class="table-contents" style="text-align: center;">${i+1}</div>`,
                     "name": `<div class="table-contents" style="text-align: center;">
-                                <a target="_blank" style="color: inherit; text-decoration: none;" href="${(emotesRemoved[i].url === null) ? '#' : ((emotesRemoved[i].type === "bttv") ?
-                                        emotesRemoved[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '') :
-                                        `https://www.frankerfacez.com/emoticon/${emotesRemoved[i].emoteId}-${emotesRemoved[i].emote}`)}">
+                                <a target="_blank" style="color: inherit; text-decoration: none;" href="${emoteCDN}">
                                     ${emoteName.trimmer()}
                                 </a>
                             </div>`,
                     "emote": `<div class="table-contents" style="text-align: center;">
-                                <a target="_blank" style="color: inherit; text-decoration: none;" href="${(emotesRemoved[i].url === null) ? '#' : ((emotesRemoved[i].type === "bttv") ?
-                                    emotesRemoved[i].url.replace('https://cdn.betterttv.net/emote/', 'https://betterttv.com/emotes/').replace('/1x', '') :
-                                    `https://www.frankerfacez.com/emoticon/${emotesRemoved[i].emoteId}-${emotesRemoved[i].emote}`)}">
+                                <a target="_blank" style="color: inherit; text-decoration: none;" href="${emoteCDN}">
                                     <span title="${emotesRemoved[i].emote}">
                                         <img style="vertical-align: middle; margin-top: 4px; margin-bottom: 4px;" loading="lazy" src="${emotesRemoved[i].url}" alt="${emoteName.trimmer()}">
                                     </span>
