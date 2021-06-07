@@ -13,7 +13,7 @@
     "discord.js": "^12.5.3",
     "express": "^4.17.1",
     "got": "^11.8.2",
-    "humanize-duration": "^3.26.0",
+    "humanize-duration": "^3.27.0",
     "inquirer": "^8.1.0",
     "mysql2": "^2.2.5",
     "os": "^0.1.1",
