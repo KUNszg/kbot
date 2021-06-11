@@ -11,6 +11,39 @@
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://i.nuuls.com/B320I.jpeg" />
     <meta name="description" content="Website for my dank bot - kunszgbot" />
+    <style type="text/css">
+        .dropdown {
+          position: relative;
+          display: inline-block;
+        }
+
+        .dropdown-content {
+          display: none;
+          background-color: none;
+          border: none;
+          overflow: auto;
+          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+          z-index: 1;
+          position: absolute;
+        }
+
+        .dropdown-content a {
+          line-height: 8px;
+          font-size: 17px;
+          color: white;
+          padding: 1px 15px;
+          text-decoration: none;
+          display: block;
+        }
+
+        .show {display: block; }
+
+        .select:hover {
+            background-color: #262626;
+            text-align: center;
+
+        }
+    </style>
     <title>KUNszg</title>
     <body onload="slideUp()" class="bd">
         <div id="sideNav" class="sidenav">
@@ -145,14 +178,20 @@
                     <a href="https://www.twitch.tv/kunszg" style="text-decoration: none;" class="button1">KUNszg</a>
                 </h1>
                 <div class="animate-bottom">
-                    <a class="github" href="https://github.com/KUNszg/kbot" target="_blank">
-                        <button style="margin-left: 20px;" class="button button1">
-                            <div class="button1">
-                                <pre style="margin-bottom:17px">GITHUB</pre>
-                                <img class="res" src="img\logo.png">
+                    <div class="dropdown">
+                        <button style="margin-left: 20px;" onclick="drop()" class="button button1 dropbtn">
+                            <pre style="margin-bottom:17px">PROJECTS</pre>
+                            <img class="res" src="img\logo.png">
+                            <div id="dropdwn" class="dropdown-content">
+                                <a class="github select" target="_blank" href="https://github.com/KUNszg/kbot">
+                                    <pre style="margin-bottom:17px">KUNSZGBOT</pre>
+                                </a>
+                                <a class="github select" target="_blank" href="https://github.com/KUNszg/vypyr-connector">
+                                    <pre style="margin-bottom:17px">VYPYR-CONNECTOR</pre>
+                                </a>
                             </div>
                         </button>
-                    </a>
+                    </div>
                     <a class="commands" href="commands" target="_self">
                         <button class="button button1">
                             <div class="button1">
@@ -189,6 +228,24 @@
             </div>
         </div>
         <script type="text/javascript">
+            function drop() {
+                document.getElementById("dropdwn").classList.toggle("show");
+            }
+
+            // Close the dropdown if the user clicks outside of it
+            window.onclick = function(event) {
+                if (!event.target.matches('.dropbtn')) {
+                    let dropdowns = document.getElementsByClassName("dropdwn-content");
+                    for (let i = 0; i < dropdowns.length; i++) {
+                        let openDropdown = dropdowns[i];
+
+                        if (openDropdown.classList.contains('show')) {
+                            openDropdown.classList.remove('show');
+                        }
+                    }
+                }
+            }
+
             fetch('https://kunszg.com/api/channels')
               .then(response => response.json())
               .then(rows => {
