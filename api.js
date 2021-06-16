@@ -1269,9 +1269,9 @@ app.get("/stats", async (req, res) => {
 
     const data = fs.readFileSync("./data/uptime.txt", "utf8");
 
-    const uptime = Date.now() - (Number(data) * 1000);
+    const uptime = Date.now() - Math.trunc(Number(data.split(";")[0]) * 1000);
 
-    const isRestarting = (0.9 * chanels.length) > Math.trunc((Date.now() - uptime)/1000);
+    const isRestarting = (0.9 * chanels.length) > (Date.now() - data.split(";")[1]);
 
     res.send({
         "modules": {
