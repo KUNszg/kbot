@@ -1271,7 +1271,7 @@ app.get("/stats", async (req, res) => {
 
     const uptime = Date.now() - Math.trunc(Number(data.split(";")[0]) * 1000);
 
-    const isRestarting = (0.9 * chanels.length) > (Date.now() - data.split(";")[1]);
+    const isRestarting = (0.9 * channels.length) > (Date.now() - data.split(";")[1]);
 
     res.send({
         "modules": {
