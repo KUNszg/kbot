@@ -1267,7 +1267,7 @@ app.get("/stats", async (req, res) => {
     const shell = require('child_process');
     const commits = shell.execSync('sudo git rev-list --count master');
 
-    const data = fs.readFileSync("./data/uptime.txt", "utf8");
+    const data = (fs.readFileSync("./data/uptime.txt")).toString();
 
     const uptime = Date.now() - Math.trunc(Number(data.split(";")[0]) * 1000);
 
