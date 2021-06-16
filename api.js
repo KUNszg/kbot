@@ -683,18 +683,18 @@ app.get("/commands", async (req, res) => {
         usage = usage.replace(/;/g, "<br>")
 
         tableData.push({
-                "ID": `<div class="table-contents" style="text-align: center;">${i+1}</div>`,
-                "command": `<div class="table-contents" style="text-align: center;">${commands[i].command}</div>`,
-                "cooldown": `<div class="table-contents" style="text-align: center;">${commands[i].cooldown/1000}s</div>`,
-                "opt-out": `<div class="table-contents" style="text-align: center;">${(commands[i].optoutable === "Y") ? "✅" : "❌"}</div>`,
-                "code": `<a href="https://kunszg.com/commands/code/${commands[i].command}">
-                            <div class="code" style="font-family: 'Noto Sans', sans-serif; font-size: 13px;">
-                                    <img style="margin-top: 10px; margin-bottom: 5px;" src="https://i.imgur.com/1THd3GD.png" height="15" width="15">
-                            </div>
-                        </a>`,
-                "usage": `<div class="table-contents usage-div"><span style="cursor: auto;">${usage}</span></div>`,
-                "description": `<div class="table-contents"><div class="limiter">${desc}</div></div>`,
-            })
+            "ID": `<div class="table-contents" style="text-align: center;">${i+1}</div>`,
+            "command": `<div class="table-contents" style="text-align: center;">${commands[i].command}</div>`,
+            "cooldown": `<div class="table-contents" style="text-align: center;">${commands[i].cooldown/1000}s</div>`,
+            "opt-out": `<div class="table-contents" style="text-align: center;">${(commands[i].optoutable === "Y") ? "✅" : "❌"}</div>`,
+            "code": `<a href="https://kunszg.com/commands/code/${commands[i].command}">
+                        <div class="code" style="font-family: 'Noto Sans', sans-serif; font-size: 13px;">
+                                <img style="margin-top: 10px; margin-bottom: 5px;" src="https://i.imgur.com/1THd3GD.png" height="15" width="15">
+                        </div>
+                    </a>`,
+            "usage": `<div class="table-contents usage-div"><span style="cursor: auto;">${usage}</span></div>`,
+            "description": `<div class="table-contents"><div class="limiter">${desc}</div></div>`,
+        })
     }
 
     const headers = {
