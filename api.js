@@ -1258,21 +1258,20 @@ app.get("/stats", async (req, res) => {
         SELECT MAX(ID) AS count
         FROM executions`);
 
-    const statusData = await utils.query(`
-        SELECT *
-        FROM channels
-        WHERE channel="kunszg"`);
+    const channels = await utils.query(`SELECT * FROM channels`);
 
-    const checkIfLive = statusData[0].status === "live";
+    const checkIfLive = channels.filter(i => i.channel === "kunszg")[0].status === "live";
 
-    const usersLogged = await utils.query(`
-        SELECT count(id) AS count
-        FROM user_list`);
+    const usersLogged = await utils.query("SELECT count(id) AS count FROM user_list");
 
     const shell = require('child_process');
     const commits = shell.execSync('sudo git rev-list --count master');
 
-    const uptime = Date.now() - Math.trunc(process.uptime() * 1000);
+    const data = fs.readFileSync("./data/uptime.txt", "utf8");
+
+    const uptime = Date.now() - (Number(data) * 1000);
+
+    const isRestarting = (0.9 * chanels.length) > Math.trunc((Date.now() - uptime)/1000);
 
     res.send({
         "modules": {
@@ -1282,6 +1281,7 @@ app.get("/stats", async (req, res) => {
             "botLastSeen": getModuleData('bot')
         },
         "bot": {
+            "isRestarting": isRestarting,
             "codeUptime": uptime,
             "usersLogged": usersLogged[0].count,
             "commandExecutions": executions[0].count
