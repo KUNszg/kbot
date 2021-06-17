@@ -115,6 +115,10 @@
                                         <td style="padding:0 15px;">${spreadNumbers(data.github.commits)}</td>
                                     </tr>
                                     <tr>
+                                        <td style="font-style: italic;">lines of code </td>
+                                        <td style="padding:0 15px;">${spreadNumbers(data.bot.linesOfCode)}</td>
+                                    </tr>
+                                    <tr>
                                         <td style="font-style: italic;">bot uptime </td>
                                         <td style="padding: 0 15px;">${data.bot.isRestarting ? '🔄 restarting' : secondsToDhms(botUptime)}</td>
                                     </tr>
@@ -125,10 +129,6 @@
                                     <tr>
                                         <td style="font-style: italic;">reminders </td>
                                         <td style="padding:0 15px;">${remindersUptime > 70 ? '<span title="offline" class="redDot"></span>' : '<span title="online" class="greenDot"></span>'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-style: italic;">API </td>
-                                        <td style="padding:0 15px;">${apiUptime > 70 ? '<span title="offline" class="redDot"></span>' : '<span title="online" class="greenDot"></span>'}</td>
                                     </tr>
                                     <tr>
                                         <td style="font-style: italic;">API </td>

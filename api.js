@@ -1274,7 +1274,6 @@ app.get("/stats", async (req, res) => {
     const restartData = (fs.readFileSync("./data/temp_api_restarting.txt")).toString();
     const isRestarting = (0.9 * channels.length) > Math.trunc((Date.now() - Number(restartData))/1000);
 
-
     res.send({
         "modules": {
             "remindersLastSeen": getModuleData('reminders'),
