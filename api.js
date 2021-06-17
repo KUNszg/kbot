@@ -1284,7 +1284,7 @@ app.get("/stats", async (req, res) => {
         "bot": {
             "isRestarting": isRestarting,
             "codeUptime": uptime,
-            "linsOfCode": Number(lines.toString().split(" ")[1]),
+            "linesOfCode": Number(lines.toString().split(" ")[1]),
             "usersLogged": usersLogged[0].count,
             "commandExecutions": executions[0].count
         },
