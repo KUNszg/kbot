@@ -1266,7 +1266,7 @@ app.get("/stats", async (req, res) => {
 
     const shell = require('child_process');
     const commits = shell.execSync('sudo git rev-list --count master');
-    const lines = shell.execSync(`find . -name '*.js' -not -path "./node_modules*" | xargs wc -l | tail -1`);
+    const lines = shell.execSync(`find . -name '*.js' -not -path "./node_modules*" | xargs wc -l | tail -1`).toString();
 
     const uptimeData = (fs.readFileSync("./data/temp_api_uptime.txt")).toString();
     const uptime = Date.now() - Math.trunc(Number(uptimeData) * 1000);
