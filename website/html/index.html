@@ -62,7 +62,7 @@
                             botUptime += 1
 
                             const botMeter = `
-                                <table style="font-size: 13px; margin-right: -1.2vw;">
+                                <table id="asdfx" style="font-size: 13px; margin-right: -1.2vw;">
                                     <colgroup>
                                         <col>
                                         <col style="width: 115px;">
@@ -109,6 +109,7 @@
                             document.getElementById("stats").innerHTML = botMeter;
                         }
                         updateStats();
+                        openDropdown.classList.remove('fadeAnimation');
 
                         setInterval(() => {
                             updateStats();
