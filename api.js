@@ -1254,15 +1254,11 @@ app.get("/stats", async (req, res) => {
         return Date.parse(moduleData[0].date)
     }
 
-    const executions = await utils.query(`
-        SELECT MAX(ID) AS count
-        FROM executions`);
-
-    const channels = await utils.query(`SELECT * FROM channels`);
+    const executions = await utils.query('SELECT count FROM stats WHERE type="statsApi" AND sha="commandExecs"');
+    const usersLogged = await utils.query('SELECT count FROM stats WHERE type="statsApi" AND sha="totalUsers"');
+    const channels = await utils.query("SELECT * FROM channels");
 
     const checkIfLive = channels.filter(i => i.channel === "kunszg")[0].status === "live";
-
-    const usersLogged = await utils.query("SELECT count(id) AS count FROM user_list");
 
     const shell = require('child_process');
     const commits = shell.execSync('sudo git rev-list --count master');
