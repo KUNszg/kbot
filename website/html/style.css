@@ -460,3 +460,34 @@ body {
     }
 }
 
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  background-color: none;
+  border: none;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  position: absolute;
+}
+
+.dropdown-content a {
+  line-height: 8px;
+  font-size: 17px;
+  color: white;
+  padding: 1px 15px;
+  text-decoration: none;
+  display: block;
+}
+
+.show {display: block; }
+
+.select:hover {
+    background-color: #262626;
+    text-align: center;
+
+}
