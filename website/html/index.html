@@ -4,14 +4,15 @@
         <link rel="stylesheet" type="text/css" href="https://kunszg.com/style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
+        <meta charset="utf-8">
+        <meta property="og:url" content="https://kunszg.com" />
+        <meta property="og:url" content="https://kunszg.com/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://i.nuuls.com/B320I.jpeg" />
+        <meta name="description" content="Website for my dank bot - kunszgbot" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <title>KUNszg</title>
     </head>
-    <meta charset="utf-8">
-    <meta property="og:url" content="https://kunszg.com" />
-    <meta property="og:url" content="https://kunszg.com/" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://i.nuuls.com/B320I.jpeg" />
-    <meta name="description" content="Website for my dank bot - kunszgbot" />
-    <title>KUNszg</title>
     <body onload="slideUp()" class="bd">
         <div id="sideNav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn"  onclick="closeNav()">&times;</a>
@@ -24,7 +25,8 @@
 
         <script type="text/javascript">
             if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-            } else {
+            }
+            else {
                 fetch('https://kunszg.com/api/stats')
                     .then(response => response.json())
                     .then(data => {
@@ -129,14 +131,15 @@
                 document.getElementById("sideNav").style.width = "0";
             }
         </script>
+
         <div id="loader"></div>
 
         <div style="display:none;" id="myDiv" class="animate-bottom">
             <script>
-                var myVar;
+                let timeout;
 
                 const slideUp = () => {
-                    myVar = setTimeout(showPage, 1);
+                    timeout = setTimeout(showPage, 1);
                 }
 
                 const showPage = () => {
@@ -150,29 +153,35 @@
                 </h1>
                 <div class="animate-bottom">
                     <div class="dropdown">
-                        <button style="margin-left: 20px;" onclick="drop()" class="button button1 dropbtn">
+                        <button style="margin-left: 20px;" onclick="drop('dropdwnProjects')" class="button button1 dropbtn">
                             <pre style="margin-bottom:17px">PROJECTS</pre>
                             <img class="res" src="img\logo.png">
-                            <div id="dropdwn" class="dropdown-content">
-                                <a class="github select" target="_blank" href="https://github.com/KUNszg/kbot">
-                                    <pre style="margin-bottom:17px">KUNSZGBOT</pre>
-                                </a>
-                                <a class="github select" target="_blank" href="https://github.com/KUNszg/vypyr-connector">
-                                    <pre style="margin-bottom:17px">VYPYR-CONNECTOR</pre>
-                                </a>
-                            </div>
                         </button>
+                        <div id="dropdwnProjects" class="dropdown-content" style="margin-left:22px">
+                            <a class="github select" target="_blank" href="https://github.com/KUNszg/kbot">
+                                <pre style="margin-bottom:17px">KUNSZGBOT</pre>
+                            </a>
+                            <a class="github select" target="_blank" href="https://github.com/KUNszg/vypyr-connector">
+                                <pre style="margin-bottom:17px">VYPYR-CONNECTOR</pre>
+                            </a>
+                        </div>
                     </div>
-                    <a class="commands" href="commands" target="_self">
-                        <button class="button button1">
-                            <div class="button1">
-                                <pre style="margin-bottom:17px">COMMANDS</pre>
-                                <img class="res" src="img\commands.png">
-                            </div>
+                    <div class="dropdown">
+                        <button onclick="drop('dropdwnCommands');" class="button button1 dropbtn">
+                            <pre style="margin-bottom:17px">BOT</pre>
+                            <img class="res" src="img\commands.png">
                         </button>
-                    </a>
+                        <div id="dropdwnCommands" class="dropdown-content" style="left:6px">
+                            <a class="commands select" target="_blank" href="commands">
+                                <pre style="margin-bottom:17px">COMMANDS</pre>
+                            </a>
+                            <a class="commands select" target="_blank" href="connections" style="background-image: url('https://dobrelajki.pl/wp-content/uploads/2019/12/spotify-download-logo-30.png'); background-size: 35px 35px; background-repeat: no-repeat; background-position: -12px;">
+                                <pre style="margin-bottom:17px">CONNECTIONS</pre>
+                            </a>
+                        </div>
+                    </div>
                     <a class="commands" href="emotes" target="_self">
-                        <button class="button button1">
+                        <button class="button button1" style="margin-left:12px">
                             <div class="button1">
                                 <pre style="margin-bottom:17px;">EMOTES</pre>
                                 <img class="res" src="img\emotes.png">
@@ -187,20 +196,23 @@
                             </div>
                         </button>
                     </a>
-                    <a class="commands" href="connections" target="_self">
-                        <button class="button button1" style="margin-left: -13px;">
-                            <div class="button1">
-                                <pre style="margin-bottom: 17px">CONNECTIONS</pre>
-                                <img class="res" src="img\spotify.png">
-                            </div>
-                        </button>
-                    </a>
                 </div>
             </div>
         </div>
         <script type="text/javascript">
-            function drop() {
-                document.getElementById("dropdwn").classList.toggle("show");
+            function drop(dropType) {
+                let dropdowns = [
+                    "dropdwnCommands",
+                    "dropdwnProjects"
+                ];
+
+                dropdowns = dropdowns.filter(i => i !== dropType);
+
+                for (let i = 0; i < dropdowns.length; i++) {
+                    document.getElementById(dropdowns[i]).classList.remove("show");
+                }
+
+                document.getElementById(dropType).classList.toggle("show");
             }
 
             // Close the dropdown if the user clicks outside of it

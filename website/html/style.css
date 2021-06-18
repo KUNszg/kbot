@@ -18,7 +18,7 @@
 .button {
     background-color: #4CAF50;  /* Green */
     color: white;
-    padding: 14px 28px;
+    padding: 14px 45px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -482,6 +482,7 @@ body {
   padding: 1px 15px;
   text-decoration: none;
   display: block;
+  width: 170px;
 }
 
 .show {display: block; }
@@ -490,4 +491,21 @@ body {
     background-color: #262626;
     text-align: center;
 
+}
+
+@keyframes fade {
+    from {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+      }
+    to {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+}
+
+.show {
+    animation: fade 0.4s linear forwards;
 }
