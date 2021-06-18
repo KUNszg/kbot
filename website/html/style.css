@@ -506,6 +506,6 @@ body {
     }
 }
 
-.show .fadeAnimation {
+.show #fadeAnimation {
     animation: fade 0.4s linear forwards;
 }
