@@ -14,7 +14,7 @@
         <title>KUNszg</title>
         <style type="text/css">
             #fadeAnimation {
-                animation: fade 0.4s linear forwards;
+                animation: fade 0.8s linear forwards;
             }
         </style>
     </head>
@@ -27,6 +27,11 @@
         <span class="animate-bottom channels-button" style="margin-left: 1.5vw;" onclick="openNav()">&#9776;
             <a style="font-size: 20px;" >CHANNELS</a>
         </span>
+
+        <div class="container" id="fadeAnimation">
+            <div class="topright" id="stats">
+            </div>
+        </div>
 
         <script type="text/javascript">
             if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
@@ -63,11 +68,14 @@
                             return input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
                         }
 
+                        let count = 0;
+
                         const updateStats = () => {
-                            botUptime += 1
+                            botUptime += 1;
+                            count += 1;
 
                             const botMeter = `
-                                <table id="fadeAnimation" style="font-size: 13px; margin-right: -1.2vw;">
+                                <table style="font-size: 13px; margin-right: -1.2vw;">
                                     <colgroup>
                                         <col>
                                         <col style="width: 115px;">
@@ -114,7 +122,6 @@
                             document.getElementById("stats").innerHTML = botMeter;
                         }
                         updateStats();
-                        openDropdown.classList.remove('fadeAnimation');
 
                         setInterval(() => {
                             updateStats();
@@ -122,11 +129,6 @@
                     });
                 }
         </script>
-
-        <div class="container">
-            <div class="topright" id="stats">
-            </div>
-        </div>
 
         <script>
             const openNav = () => {
