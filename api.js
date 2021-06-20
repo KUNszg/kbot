@@ -837,12 +837,12 @@ app.get("/api/channels", async (req, res) => {
     };
 
     const data = [];
-
+/*
     for (let i = 0; i < channels.count; i++) {
         data.push({
 
         });
-    }
+    }*/
 });
 
 app.get("/emotes", async (req, res) => {
