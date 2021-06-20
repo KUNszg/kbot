@@ -360,7 +360,8 @@ app.get("/api/channels", async (req, res) => {
                 WHERE channel=?`, [req.query.channel])
 
             if (!channels.length) {
-                res.send({error: "Channel not found", code: 404})
+                res.send({error: "Channel not found", code: 404});
+                res.status(404);
                 return;
             }
         }
@@ -423,10 +424,12 @@ app.get("/api/channels", async (req, res) => {
         }
 
         res.send(result);
+        return;
     }
-    else {
-        res.status(400);
-    }
+
+    res.send({error: "Bad request", code: 400});
+    res.status(400);
+    return;
 });
 
 app.get("/countdown", async (req, res) => {
