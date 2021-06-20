@@ -821,6 +821,30 @@ app.get("/randomemote", async (req, res) => {
     ])
 })
 
+app.get("/api/channels", async (req, res) => {
+    const Table = require('table-builder');
+
+    const headers = {
+        "channeInternalId": "Channel ID",
+        "channelName": "Name",
+        "channelUid": "Channel Twitch UID",
+        "channelStatus": "Status",
+        "channelAdded": "Joined",
+        "logTableSize": "Logs size",
+        "logStatus": "Logs status",
+        "commandsExecuted": "Commands used",
+        "isBanphraseApiActive": "Banphrase API"
+    };
+
+    const data = [];
+
+    for (let i = 0; i < channels.count; i++) {
+        data.push({
+
+        });
+    }
+});
+
 app.get("/emotes", async (req, res) => {
     const Table = require('table-builder');
 
@@ -981,8 +1005,8 @@ app.get("/emotes", async (req, res) => {
         }
         if (!emotes.length) {
                res.send(homepage);
-        } else {
-
+        }
+        else {
             for (let i=0; i<emotes.length; i++) {
                 const emoteName = new ModifyOutput(emotes[i].emote);
 
@@ -1311,8 +1335,8 @@ app.get("/commands/code", async (req, res) => {
 
 // kunszg.com/api/channels
 const apiDataChannels = () => {
-	app.get("/channels", async (req, res) => {
-        let channelList = await utils.query(`SELECT *FROM channels`);
+	app.get("/api/channels", async (req, res) => {
+        let channelList = await utils.query(`SELECT * FROM channels`);
 
         channelList = channelList.map(i => i.channel);
 
