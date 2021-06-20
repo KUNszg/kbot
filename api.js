@@ -1281,8 +1281,8 @@ app.get("/stats", async (req, res) => {
             "isRestarting": isRestarting,
             "codeUptime": uptime,
             "linesOfCode": Number(lines.toString().split(" ")[1]),
-            "usersLogged": usersLogged[0].count,
-            "commandExecutions": executions[0].count
+            "usersLogged": Number(usersLogged[0].count),
+            "commandExecutions": Number(executions[0].count)
         },
         "github": {
             "commits": Number(commits)
