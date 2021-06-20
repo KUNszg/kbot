@@ -344,7 +344,7 @@ app.get("/api/channels", async (req, res) => {
     if (Boolean(req.query.details)) {
         let channels, logs;
 
-        if (!req.query.channel)
+        if (!req.query.channel) {
             channels = await utils.query("SELECT * FROM channels");
             logs = await utils.query("SELECT * FROM channels_logger");
         }
