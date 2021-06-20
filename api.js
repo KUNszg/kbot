@@ -342,9 +342,28 @@ app.get("/api/channels", async (req, res) => {
     }
 
     if (Boolean(req.query.details)) {
-        const channels = await utils.query("SELECT * FROM channels");
+        let channels, logs;
 
-        const logs = await utils.query("SELECT * FROM channels_logger");
+        if (!req.query.channel)
+            channels = await utils.query("SELECT * FROM channels");
+            logs = await utils.query("SELECT * FROM channels_logger");
+        }
+        else {
+            channels = await utils.query(`
+                SELECT *
+                FROM channels
+                WHERE channel=?`, [req.query.channel])
+
+            logs = await utils.query(`
+                SELECT *
+                FROM channels_logger
+                WHERE channel=?`, [req.query.channel])
+
+            if (!channels.length) {
+                res.send({error: "Channel not found", code: 404})
+                return;
+            }
+        }
 
         const executions = await utils.query(`
             SELECT channel, COUNT(*) AS count
