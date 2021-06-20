@@ -8,6 +8,7 @@ const got = require('got');
 const creds = require('./lib/credentials/config.js');
 const utils = require('./lib/utils/utils.js');
 const bodyParser = require('body-parser');
+const shell = require('child_process');
 
 const app = express();
 
@@ -321,6 +322,89 @@ webhookHandler.on('*', async function (event, repo, data, head) {
         }
     }
 
+    return;
+});
+
+// kunszg.com/api/channels
+app.get("/api/channels", async (req, res) => {
+    if (typeof req.query.details === "undefined") {
+        let channelList = await utils.query("SELECT * FROM channels");
+
+        channelList = channelList.map(i => i.channel);
+
+        res.send({
+            "data": channelList
+        });
+
+        await conLog(req);
+
+        return;
+    }
+
+    if (Boolean(req.query.details)) {
+        const channels = await utils.query("SELECT * FROM channels");
+
+        const logs = await utils.query("SELECT * FROM channels_logger");
+
+        const executions = await utils.query(`
+            SELECT CHANNEL, COUNT(*) AS count
+            FROM executions
+            GROUP BY channel
+            ORDER BY count
+            DESC`);
+
+        const banphraseApis = await utils.query("SELECT * FROM channel_banphrase_apis");
+
+        const result = {};
+
+        for (let i = 0; i < channels.length; i++) {
+            const _channel = channels[i].channel;
+
+            const findExecutions = executions.find(i => i.channel === _channel);
+            const executionsCount = findExecutions ? Number(findExecutions.count) : 0;
+
+            const findLoggedChannel = logs.find(i => i.channel === _channel);
+            const isLogging = findLoggedChannel ? (findLoggedChannel.status === "enabled" ? true : false) : false;
+
+            const timestampBot = (new Date(channels[i].added)).getTime();
+            const timestampLogger = findLoggedChannel ? (new Date(findLoggedChannel.added)).getTime() : null;
+
+            const findBanphraseChannels = banphraseApis.find(i => i.channel === _channel);
+            const isBanphraseApiActive = findBanphraseChannels ? (findBanphraseChannels.status === "enabled" ? true : false) : false;
+            const banphraseApi = isBanphraseApiActive ? findBanphraseChannels.url : null;
+
+            const tableSize = findLoggedChannel ?
+                shell.execSync(`sudo du --apparent-size --block=M -s /opt/lampp/var/mysql/kbot/logs_${_channel}.ibd`).toString().split('/')[0].replace("M", "") : null;
+
+            Object.defineProperties(result,{
+                [_channel]: {
+                    value: {
+                        "ID": Number(channels[i].ID),
+                        "userId": Number(channels[i].userId),
+                        "liveStatus": channels[i].status,
+                        "isStrict": (channels[i].strict) === "Y" ? true : false,
+                        "created": new Date(timestampBot).toISOString(),
+                        "createdTimestamp": Number(timestampBot),
+                        "commandsUsed": executionsCount,
+                        "isBanphraseApiActive": isBanphraseApiActive,
+                        "banphraseApi": banphraseApi,
+                        "logger": {
+                            "ID": findLoggedChannel ? findLoggedChannel.ID : null,
+                            "isLogging": isLogging,
+                            "created": timestampLogger === null ? null : new Date(timestampLogger).toISOString(),
+                            "createdTimestamp": timestampLogger === null ? null : Number(timestampLogger),
+                            "tableSize": Number(tableSize)
+                        }
+                    },
+                    writable: true,
+                    enumerable: true,
+                    configurable: true
+                }
+            })
+        }
+
+        res.send(result);
+    }
     return;
 });
 
@@ -821,11 +905,13 @@ app.get("/randomemote", async (req, res) => {
     ])
 })
 
-/*app.get("/api/channels", async (req, res) => {
+app.get("/api/channels", async (req, res) => {
     const Table = require('table-builder');
 
+    const channels = await got("https://kunszg.com/api/channels?details=true").json()
+
     const headers = {
-        "channeInternalId": "Channel ID",
+        "channelInternalId": "Channel ID",
         "channelName": "Name",
         "channelUid": "Channel Twitch UID",
         "channelStatus": "Status",
@@ -843,7 +929,7 @@ app.get("/randomemote", async (req, res) => {
 
         });
     }
-});*/
+});
 
 app.get("/emotes", async (req, res) => {
     const Table = require('table-builder');
@@ -1284,7 +1370,6 @@ app.get("/stats", async (req, res) => {
 
     const checkIfLive = channels.filter(i => i.channel === "kunszg")[0].status === "live";
 
-    const shell = require('child_process');
     const commits = shell.execSync('sudo git rev-list --count master');
     const lines = shell.execSync(`find . -name '*.js' -not -path "./node_modules*" | xargs wc -l | tail -1`);
 
@@ -1321,6 +1406,9 @@ app.get("/stats", async (req, res) => {
     return;
 });
 
+
+
+
 // kunszg.com/commands/code
 app.get("/commands/code", async (req, res) => {
     res.send(`
@@ -1332,25 +1420,6 @@ app.get("/commands/code", async (req, res) => {
         </html>
         `);
 });
-
-// kunszg.com/api/channels
-const apiDataChannels = () => {
-	app.get("/api/channels", async (req, res) => {
-        let channelList = await utils.query(`SELECT * FROM channels`);
-
-        channelList = channelList.map(i => i.channel);
-
-	 	res.send({
-	 		"data": channelList
-        });
-
-        await conLog(req);
-
-        return;
-	});
-}
-apiDataChannels();
-setInterval(()=>{apiDataChannels()}, 600000);
 
 const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
     const port = server.address().port;
