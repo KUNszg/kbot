@@ -341,10 +341,10 @@ app.get("/api/channels", async (req, res) => {
         return;
     }
 
-    if (Boolean(req.query.details)) {
+    if (Boolean(req.query.details) && !Array.isArray(req.query.details)) {
         let channels, logs;
 
-        if (!req.query.channel) {
+        if (!req.query.channel || Array.isArray(req.query.channel)) {
             channels = await utils.query("SELECT * FROM channels");
             logs = await utils.query("SELECT * FROM channels_logger");
         }
@@ -424,7 +424,9 @@ app.get("/api/channels", async (req, res) => {
 
         res.send(result);
     }
-    return;
+    else {
+        res.status(400);
+    }
 });
 
 app.get("/countdown", async (req, res) => {
