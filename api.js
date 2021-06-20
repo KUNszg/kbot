@@ -347,7 +347,7 @@ app.get("/api/channels", async (req, res) => {
         const logs = await utils.query("SELECT * FROM channels_logger");
 
         const executions = await utils.query(`
-            SELECT CHANNEL, COUNT(*) AS count
+            SELECT channel, COUNT(*) AS count
             FROM executions
             GROUP BY channel
             ORDER BY count
