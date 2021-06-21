@@ -9,10 +9,19 @@ const creds = require('./lib/credentials/config.js');
 const utils = require('./lib/utils/utils.js');
 const bodyParser = require('body-parser');
 const shell = require('child_process');
+const rateLimit = require("express-rate-limit");
+
+const apiLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 100
+});
 
 const app = express();
 
-app.enable('trust proxy')
+app.enable('trust proxy');
+app.set('trust proxy', 1);
+
+app.use("/api/", apiLimiter);
 
 const con = mysql.createConnection({
 	host: "localhost",
@@ -219,7 +228,7 @@ const webhookHandler = GithubWebHook({ path: '/webhooks/github', secret: secret 
 app.use(bodyParser.json());
 app.use(webhookHandler);
 
-const rateLimit = new Set();
+const rateLimiter = new Set();
 
 webhookHandler.on('*', async function (event, repo, data, head) {
     if (event === "push") {
@@ -256,12 +265,12 @@ webhookHandler.on('*', async function (event, repo, data, head) {
     if (event === "star" && data.action === "created") {
         const key = "star-" + data.sender.login;
 
-        if (rateLimit.has(key)) { return; }
+        if (rateLimiter.has(key)) { return; }
 
-        rateLimit.add(key);
+        rateLimiter.add(key);
 
         setTimeout(() => {
-            rateLimit.delete(key);
+            rateLimiter.delete(key);
         }, 1200000);
 
         kb.say("kunszg", `[github webhook] ${data.sender.login} just starred the kunszgbot repository for the total
@@ -420,7 +429,7 @@ app.get("/api/channels", async (req, res) => {
                     enumerable: true,
                     configurable: true
                 }
-            })
+            });
         }
 
         res.send(result);
