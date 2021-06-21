@@ -402,13 +402,13 @@ app.get("/api/channels", async (req, res) => {
             const isBanphraseApiActive = findBanphraseChannels ? (findBanphraseChannels.status === "enabled" ? true : false) : false;
             const banphraseApi = isBanphraseApiActive ? findBanphraseChannels.url : null;
 
-            const tableSize = findLoggedChannel ?
-                shell.execSync(`sudo du --apparent-size --block=M -s /opt/lampp/var/mysql/kbot/logs_${_channel}.ibd`).toString().split('/')[0].replace("M", "") : null;
+            //const tableSize = findLoggedChannel ?
+             //   shell.execSync(`sudo du --apparent-size --block=M -s /opt/lampp/var/mysql/kbot/logs_${_channel}.ibd`).toString().split('/')[0].replace("M", "") : null;
 
             Object.defineProperties(result,{
                 [_channel]: {
                     value: {
-                        "ID": Number(channels[i].ID),
+                        "id": Number(channels[i].ID),
                         "userId": Number(channels[i].userId),
                         "liveStatus": channels[i].status,
                         "isStrict": (channels[i].strict) === "Y" ? true : false,
@@ -418,11 +418,11 @@ app.get("/api/channels", async (req, res) => {
                         "isBanphraseApiActive": isBanphraseApiActive,
                         "banphraseApi": banphraseApi,
                         "logger": {
-                            "ID": findLoggedChannel ? findLoggedChannel.ID : null,
+                            "id": findLoggedChannel ? findLoggedChannel.ID : null,
                             "isLogging": isLogging,
                             "created": timestampLogger === null ? null : new Date(timestampLogger).toISOString(),
                             "createdTimestamp": timestampLogger === null ? null : Number(timestampLogger),
-                            "tableSize": Number(tableSize)
+                            //"tableSize": Number(tableSize)
                         }
                     },
                     writable: true,
@@ -432,7 +432,13 @@ app.get("/api/channels", async (req, res) => {
             });
         }
 
-        res.send(result);
+
+
+        res.send({
+            code: 200,
+            count: channels.length,
+            channels: result
+        });
         return;
     }
 
@@ -1438,9 +1444,6 @@ app.get("/stats", async (req, res) => {
 
     return;
 });
-
-
-
 
 // kunszg.com/commands/code
 app.get("/commands/code", async (req, res) => {

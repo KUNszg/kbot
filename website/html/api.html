@@ -74,25 +74,25 @@
                 </blockquote>
                 <div class="highlight">
                     <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="p"><span class="nl">"modules"</span>: {</span><span class="w">
-    </span><span class="nl">"remindersLastSeen"</span><span class="p">:</span><span class="w"> </span><span class="mi">1624137483000</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"loggerLastSeen"</span><span class="p">:</span><span class="w"> </span><span class="mi">1624137541000</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"apiLastSeen"</span><span class="p">:</span><span class="w"> </span><span class="mi">1624137491000</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"botLastSeen"</span><span class="p">:</span><span class="w"> </span><span class="mi">1624137522000</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p"><span class="nl">"bot"</span>: {</span><span class="w">
-    </span><span class="nl">"isRestarting"</span><span class="p">:</span><span class="w"> </span><span class="nc">false</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"codeUptime"</span><span class="p">:</span><span class="w"> </span><span class="mi">1624037321476</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"linesOfCode"</span><span class="p">:</span><span class="w"> </span><span class="mi">10185</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"usersLogged"</span><span class="p">:</span><span class="w"> </span><span class="mi">209182</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"commandsExecutions"</span><span class="p">:</span><span class="w"> </span><span class="mi">2569546</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p"><span class="nl">"github"</span>: {</span><span class="w">
-    </span><span class="nl">"commits"</span><span class="p">:</span><span class="w"> </span><span class="mi">2707</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p"><span class="nl">"twitch"</span>: {</span><span class="w">
-    </span><span class="nl">"isAuthorLive"</span><span class="p">:</span><span class="w"> </span><span class="nc">false</span><span class="w">
-  </span><span class="p">},</span>
+  </span>  <span class="p"><span class="nl">"modules"</span>: {</span><span class="w">
+    </span>    <span class="nl">"remindersLastSeen"</span><span class="p">:</span><span class="w"> </span><span class="mi">1624137483000</span><span class="p">,</span><span class="w">
+    </span>    <span class="nl">"loggerLastSeen"</span><span class="p">:</span><span class="w"> </span><span class="mi">1624137541000</span><span class="p">,</span><span class="w">
+    </span>    <span class="nl">"apiLastSeen"</span><span class="p">:</span><span class="w"> </span><span class="mi">1624137491000</span><span class="p">,</span><span class="w">
+    </span>    <span class="nl">"botLastSeen"</span><span class="p">:</span><span class="w"> </span><span class="mi">1624137522000</span><span class="w">
+  </span>  <span class="p">},</span><span class="w">
+  </span>  <span class="p"><span class="nl">"bot"</span>: {</span><span class="w">
+    </span>    <span class="nl">"isRestarting"</span><span class="p">:</span><span class="w"> </span><span class="nc">false</span><span class="p">,</span><span class="w">
+    </span>    <span class="nl">"codeUptime"</span><span class="p">:</span><span class="w"> </span><span class="mi">1624037321476</span><span class="p">,</span><span class="w">
+    </span>    <span class="nl">"linesOfCode"</span><span class="p">:</span><span class="w"> </span><span class="mi">10185</span><span class="p">,</span><span class="w">
+    </span>    <span class="nl">"usersLogged"</span><span class="p">:</span><span class="w"> </span><span class="mi">209182</span><span class="p">,</span><span class="w">
+    </span>    <span class="nl">"commandsExecutions"</span><span class="p">:</span><span class="w"> </span><span class="mi">2569546</span><span class="w">
+  </span>  <span class="p">},</span><span class="w">
+  </span>  <span class="p"><span class="nl">"github"</span>: {</span><span class="w">
+    </span>    <span class="nl">"commits"</span><span class="p">:</span><span class="w"> </span><span class="mi">2707</span><span class="w">
+  </span>  <span class="p">},</span><span class="w">
+  </span>  <span class="p"><span class="nl">"twitch"</span>: {</span><span class="w">
+    </span>    <span class="nl">"isAuthorLive"</span><span class="p">:</span><span class="w"> </span><span class="nc">false</span><span class="w">
+  </span>  <span class="p">},</span>
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
                 </div>
@@ -120,7 +120,7 @@
                     200 - OK
                 </aside>
                 <h1 id='channels' style="font-size: 21px">Channels</h1>
-                <div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">-X </span>GET <span class="s2">"https://kunszg.com/api/channels"</span></code>
+                <div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">-X </span>GET <span class="s2">"https://kunszg.com/api/channels?details=true&channel=kunszg"</span></code>
                   </pre>
                 </div>
                 <blockquote>
@@ -128,14 +128,27 @@
                 </blockquote>
                 <div class="highlight">
                     <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="p"><span class="nl">"data"</span>: [</span>
-    <span class="s2">"kunszg"</span><span class="p">,</span><span class="w">
-  </span>  <span class="s2">"supinic"</span><span class="p">,</span><span class="w">
-  </span>  <span class="s2">"kunszgbot"</span><span class="p">,</span><span class="w">
-  </span>  <span class="s2">"nymn"</span><span class="p">,</span><span class="w">
-  </span>  <span class="s2">"pajlada"</span>,<span class="w">
-    <span style="color: gray;">...</span>
-</span><span class="p">  ]</span>
+  </span>  <span class="nl">"code"</span>:<span class="mi"> 200</span>,<span class="p">
+    <span class="nl">"count"</span>:<span class="mi"> 1</span>,<span class="p">
+    <span class="nl">"channels"</span>: {</span>
+        <span class="nl">"kunszg"</span>: {<span class="w">
+  </span>          <span class="nl">"id"</span>: <span class="mi">1</span>,<span class="w">
+  </span>          <span class="nl">"userId"</span>: <span class="mi">178087241</span>,<span class="w">
+  </span>          <span class="nl">"liveStatus"</span>: <span class="s2">"offline"</span>,<span class="w">
+  </span>          <span class="nl">"isStrict"</span>: <span class="nc">false</span>,<span class="w">
+  </span>          <span class="nl">"created"</span>: <span class="s2">"2020-01-16T17:19:39.000Z"</span>,<span class="w">
+  </span>          <span class="nl">"createdTimestamp"</span>: <span class="mi">1579195179000</span>,<span class="w">
+  </span>          <span class="nl">"commandsUsed"</span>: <span class="mi">4637</span>,<span class="w">
+  </span>          <span class="nl">"isBanphraseApiActive"</span>: <span class="nc">false</span>,<span class="w">
+  </span>          <span class="nl">"banphraseApi"</span>: <span style="color: lightgray;">null</span>,<span class="w">
+            <span class="nl">"logger"</span>: {<span class="w">
+                <span class="nl">"id"</span>: <span class="mi">1</span>,<span class="w">
+                <span class="nl">"isLogging"</span>: <span class="nc">true</span>,<span class="w">
+                <span class="nl">"created"</span>: <span class="s2">"2020-04-05T01:27:39.000Z"</span>,<span class="w">
+                <span class="nl">"createdTimestamp"</span>: <span class="mi">1586050059000</span><span class="w">
+          <span class="p">  }</span>
+</span>      <span class="p">  }</span>
+  <span class="p">  }</span>
 <span class="p">}</span><span class="w">
 </span></code></pre>
                 </div>
@@ -156,9 +169,14 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <td>details</td>
+                            <td>false</td>
+                            <td>Extends the returned data by details about the channels</td>
+                        </tr>
+                        <tr>
+                            <td>channel</td>
                             <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
+                            <td>retrieves the specified channel, works only when <code>details</code> parameter is set to <code>true</code></td>
                         </tr>
                     </tbody>
                 </table>
