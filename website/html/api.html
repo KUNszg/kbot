@@ -171,13 +171,96 @@
                         <tr>
                             <td>details</td>
                             <td>false</td>
-                            <td>Extends the returned data by details about the channels</td>
+                            <td>Extends the returned data by details about the channels.</td>
                         </tr>
                         <tr>
                             <td>channel</td>
                             <td>-</td>
-                            <td>retrieves the specified channel, works only when <code>details</code> parameter is set to <code>true</code></td>
+                            <td>retrieves the specified channel, works only when <code>details</code> parameter is set to <code>true</code>.</td>
                         </tr>
+                    </tbody>
+                </table>
+                <h3 id='response-fields'>Response Fields</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>code</code></td>
+                            <td>integer</td>
+                            <td>HTTP response status code, set to <code>200</code> on success.</td>
+                        </tr>
+                        <tr>
+                            <td><code>count</code></td>
+                            <td>integer</td>
+                            <td>Count of channels returned in the response.</td>
+                        </tr>
+                        <tr>
+                            <td><code>id</code></td>
+                            <td>integer</td>
+                            <td>Internal unique identification number of given channel in both standalone bot and logger. At the same time this number defines position at which the channel should be joined whenever the bot is launching (higher id's get to use the bot faster after restart). In object property of <code>logger</code> this field returns <code>null</code> when <code>isLogging</code> parameter is set to false.</td>
+                        </tr>
+                        <tr>
+                            <td><code>userId</code></td>
+                            <td>integer</td>
+                            <td>Twitch user id of the channel.</td>
+                        </tr>
+                        <tr>
+                            <td><code>liveStatus</code></td>
+                            <td>string</td>
+                            <td>States whether the channel is currently <code>"live"</code> or <code>"offline"</code>.</td>
+                        </tr>
+                        <tr>
+                            <td><code>isStrict</code></td>
+                            <td>boolean</td>
+                            <td>When set to <code>true</code> the bot is going to ignore incomming commands when given channel is <code>"live"</code> and the response message is going to be shortened.</td>
+                        </tr>
+                        <tr>
+                            <td><code>created</code></td>
+                            <td>string</td>
+                            <td>UTC date of standalone bot joining the channel.</td>
+                        </tr>
+                        <tr>
+                            <td><code>createdTimestamp</code></td>
+                            <td>integer</td>
+                            <td>Timestamp in milliseconds of standalone bot joining the channel.</td>
+                        </tr>
+                        <tr>
+                            <td><code>commandsUsed</code></td>
+                            <td>integer</td>
+                            <td>Amount of commands used in the channel.</td>
+                        </tr>
+                        <tr>
+                            <td><code>isBanphraseApiActive</code></td>
+                            <td>boolean</td>
+                            <td>States whether the banphrase API is assigned to the channel and is enabled on the bot's end.</td>
+                        </tr>
+                        <tr>
+                            <td><code>banphraseApi</code></td>
+                            <td>string</td>
+                            <td>Returns the channel assigned banphrase API (if there is one and it's enabled) as <code>string</code>, and returns <code>null</code> if none was assigned (or enabled).</td>
+                        </tr>
+                        <tr>
+                            <td><code>isLogging</code></td>
+                            <td>boolean</td>
+                            <td>If set to <code>true</code> the channel is currently being logged, if set to <code>false</code> logger is not operational in the given channel.</td>
+                        </tr>
+                        <tr>
+                            <td><code>created</code></td>
+                            <td>string</td>
+                            <td>UTC date of logger joining the channel. Returns <code>null</code> when <code>isLogging</code> parameter is set to false.</td>
+                        </tr>
+                        <tr>
+                            <td><code>createdTimestamp</code></td>
+                            <td>integer</td>
+                            <td>Timestamp in milliseconds of logger joining the channel. Returns <code>null</code> when <code>isLogging</code> parameter is set to false</td>
+                        </tr>
+
                     </tbody>
                 </table>
                 <aside class="success">
