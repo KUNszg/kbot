@@ -223,12 +223,12 @@
                         <tr>
                             <td><code>created</code></td>
                             <td>string</td>
-                            <td>UTC date of standalone bot joining the channel.</td>
+                            <td>UTC date of standalone bot joining the channel. In object property of <code>logger</code> this field returns <code>null</code> when <code>isLogging</code> parameter is set to false.</td>
                         </tr>
                         <tr>
                             <td><code>createdTimestamp</code></td>
                             <td>integer</td>
-                            <td>Timestamp in milliseconds of standalone bot joining the channel.</td>
+                            <td>Timestamp in milliseconds of standalone bot joining the channel. In object property of <code>logger</code> this field returns <code>null</code> when <code>isLogging</code> parameter is set to false.</td>
                         </tr>
                         <tr>
                             <td><code>commandsUsed</code></td>
@@ -250,17 +250,6 @@
                             <td>boolean</td>
                             <td>If set to <code>true</code> the channel is currently being logged, if set to <code>false</code> logger is not operational in the given channel.</td>
                         </tr>
-                        <tr>
-                            <td><code>created</code></td>
-                            <td>string</td>
-                            <td>UTC date of logger joining the channel. Returns <code>null</code> when <code>isLogging</code> parameter is set to false.</td>
-                        </tr>
-                        <tr>
-                            <td><code>createdTimestamp</code></td>
-                            <td>integer</td>
-                            <td>Timestamp in milliseconds of logger joining the channel. Returns <code>null</code> when <code>isLogging</code> parameter is set to false</td>
-                        </tr>
-
                     </tbody>
                 </table>
                 <aside class="success">
