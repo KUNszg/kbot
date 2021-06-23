@@ -146,6 +146,7 @@
                 <span class="nl">"isLogging"</span>: <span class="nc">true</span>,<span class="w">
                 <span class="nl">"created"</span>: <span class="s2">"2020-04-05T01:27:39.000Z"</span>,<span class="w">
                 <span class="nl">"createdTimestamp"</span>: <span class="mi">1586050059000</span><span class="w">
+                <span class="nl">"tableSize"</span>: <span class="mi">3156</span><span class="w">
           <span class="p">  }</span>
 </span>      <span class="p">  }</span>
   <span class="p">  }</span>
@@ -249,6 +250,11 @@
                             <td><code>isLogging</code></td>
                             <td>boolean</td>
                             <td>If set to <code>true</code> the channel is currently being logged, if set to <code>false</code> logger is not operational in the given channel.</td>
+                        </tr>
+                        <tr>
+                            <td><code>tableSize</code></td>
+                            <td>integer</td>
+                            <td>Returns the apparent size of logs file of given channel in MB. In object property of <code>logger</code> this field returns <code>null</code> when <code>isLogging</code> parameter is set to false.</td>
                         </tr>
                     </tbody>
                 </table>
