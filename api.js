@@ -402,8 +402,8 @@ app.get("/api/channels", async (req, res) => {
             const isBanphraseApiActive = findBanphraseChannels ? (findBanphraseChannels.status === "enabled" ? true : false) : false;
             const banphraseApi = isBanphraseApiActive ? findBanphraseChannels.url : null;
 
-            //const tableSize = findLoggedChannel ?
-             //   shell.execSync(`sudo du --apparent-size --block=M -s /opt/lampp/var/mysql/kbot/logs_${_channel}.ibd`).toString().split('/')[0].replace("M", "") : null;
+            const tableSize = findLoggedChannel ?
+                shell.execSync(`sudo du --apparent-size --block=M -s /opt/lampp/var/mysql/kbot/logs_${_channel}.ibd`).toString().split('/')[0].replace("M", "") : null;
 
             Object.defineProperties(result,{
                 [_channel]: {
@@ -422,7 +422,7 @@ app.get("/api/channels", async (req, res) => {
                             "isLogging": isLogging,
                             "created": timestampLogger === null ? null : new Date(timestampLogger).toISOString(),
                             "createdTimestamp": timestampLogger === null ? null : Number(timestampLogger),
-                            //"tableSize": Number(tableSize)
+                            "tableSize": Number(tableSize)
                         }
                     },
                     writable: true,
