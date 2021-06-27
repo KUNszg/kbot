@@ -336,6 +336,8 @@ webhookHandler.on('*', async function (event, repo, data, head) {
 
 // kunszg.com/api/channels
 app.get("/api/channels", async (req, res) => {
+    await conLog(req);
+
     if (typeof req.query.details === "undefined") {
         let channelList = await utils.query("SELECT * FROM channels");
 
@@ -344,8 +346,6 @@ app.get("/api/channels", async (req, res) => {
         res.send({
             "data": channelList
         });
-
-        await conLog(req);
 
         return;
     }
@@ -410,6 +410,7 @@ app.get("/api/channels", async (req, res) => {
                     value: {
                         "id": Number(channels[i].ID),
                         "userId": Number(channels[i].userId),
+                        "name": _channel,
                         "liveStatus": channels[i].status,
                         "isStrict": (channels[i].strict) === "Y" ? true : false,
                         "created": new Date(timestampBot).toISOString(),
@@ -431,8 +432,6 @@ app.get("/api/channels", async (req, res) => {
                 }
             });
         }
-
-
 
         res.send({
             code: 200,
