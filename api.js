@@ -1469,7 +1469,7 @@ setInterval(()=>{statusCheck()}, 60000);
 const httpServer = require("http").createServer(app);
 const io = require("socket.io")(httpServer,  { 
     'cors': { 
-        'methods': ['GET', 'PATCH', 'POST', 'PUT'], 
+        'methods': ['GET', 'PATCH', 'POST', 'PUT', 'HEAD'], 
          origin:["http://localhost:8080"]
     } 
 })
@@ -1486,4 +1486,4 @@ io.on("connection", (socket) => {
     console.log(socket.id); 
 });
 
-httpServer.listen(process.env.PORT);
+httpServer.listen(8080);
