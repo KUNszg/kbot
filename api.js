@@ -334,28 +334,6 @@ webhookHandler.on('*', async function (event, repo, data, head) {
     return;
 });
 
-const httpServer = require("http").createServer(app);
-const io = require("socket.io")(httpServer,  { 
-    'cors': { 
-        'methods': ['GET', 'PATCH', 'POST', 'PUT'], 
-         origin:["http://localhost:8080"]
-    } 
-})
-
-io.engine.on("connection_error", (err) => {
-    console.log(err.req);      // the request object
-    console.log(err.code);     // the error code, for example 1
-    console.log(err.message);  // the error message, for example "Session ID unknown"
-    console.log(err.context);  // some additional error context
-});
-
-// server-side
-io.on("connection", (socket) => {
-    console.log(socket.id); 
-});
-
-httpServer.listen(3000);
-
 // kunszg.com/api/channels
 app.get("/api/channels", async (req, res) => {
     await conLog(req);
@@ -1478,11 +1456,6 @@ app.get("/commands/code", async (req, res) => {
         `);
 });
 
-const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
-    const port = server.address().port;
-    console.log('app running on port', port);
-});
-
 const statusCheck = async() => {
 	await utils.query(`
 		UPDATE stats
@@ -1492,3 +1465,25 @@ const statusCheck = async() => {
 }
 statusCheck();
 setInterval(()=>{statusCheck()}, 60000);
+
+const httpServer = require("http").createServer(app);
+const io = require("socket.io")(httpServer,  { 
+    'cors': { 
+        'methods': ['GET', 'PATCH', 'POST', 'PUT'], 
+         origin:["http://localhost:8080"]
+    } 
+})
+
+io.engine.on("connection_error", (err) => {
+    console.log(err.req);      // the request object
+    console.log(err.code);     // the error code, for example 1
+    console.log(err.message);  // the error message, for example "Session ID unknown"
+    console.log(err.context);  // some additional error context
+});
+
+// server-side
+io.on("connection", (socket) => {
+    console.log(socket.id); 
+});
+
+httpServer.listen(process.env.PORT);
