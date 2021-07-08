@@ -1470,7 +1470,7 @@ const httpServer = require("http").createServer(app);
 const io = require("socket.io")(httpServer,  { 
     'cors': { 
         'methods': ['GET', 'PATCH', 'POST', 'PUT', 'HEAD'], 
-         origin:["http://localhost:8080"]
+         origin:["http://localhost:3000"]
     } 
 })
 

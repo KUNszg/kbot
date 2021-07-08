@@ -34,10 +34,10 @@
         </div>
         <script type="text/javascript">
             // client-side
-             const socket = io();
-socket.on("connect", () => {
-  console.log(socket.id); // x8WIv7-mJelg7on_ALbx
-});
+            const socket = io("https://kunszg.com");
+            socket.on("connect", () => {
+              console.log(socket.id); // x8WIv7-mJelg7on_ALbx
+            });
         </script>
         <script type="text/javascript">
             if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
