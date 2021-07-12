@@ -57,167 +57,7 @@ const tmi = require('tmi.js');
 const kb = new tmi.client(options);
 kb.connect();
 
-class Swapper {
-    constructor(html, repl) {
-        this.html = html;
-        this.value = repl[0];
-        this.valueKeys = Object.keys(repl[0]).map(i => `%{${i}}`);
-    }
-
-    template() {
-        for (let i = 0; i < this.valueKeys.length; i++) {
-            this.html = this.html.replace(
-                this.valueKeys[i], this.value[this.valueKeys[i].replace(/^%{/, '').replace(/}$/, '')]
-                );
-        }
-        return this.html;
-    }
-}
-
-const conLog = async(req) => {
-    await utils.query(`
-        INSERT INTO web_connections (url, method, protocol, date)
-        VALUES (?, ?, ?, CURRENT_TIMESTAMP)`,
-        [req.originalUrl, req.method, req.protocol]);
-}
-
-app.get("/connections", async (req, res) => {
-    const userCount = await utils.query(`
-        SELECT COUNT(*) AS count
-        FROM access_token
-        WHERE platform="spotify" AND user IS NOT NULL`);
-
-    const execCount = await utils.query(`
-        SELECT COUNT(*) AS count
-        FROM executions
-        WHERE command LIKE "%spotify%"`);
-
-    let html = fs.readFileSync('./website/html/express_pages/connections.html');
-
-    html = html.toString();
-
-    const page = new Swapper(html, [{
-        "execs": execCount[0].count,
-        "users": userCount[0].count
-    }]);
-
-    res.send(page.template());
-
-    await conLog(req);
-
-    return;
-});
-
-/*app.get("/chatguesser", async (req, res) => {
-    const randomChannel = "logs_nymn"
-
-    const maxId = await utils.query(`SELECT MAX(ID) as maxid FROM ??`, [randomChannel])
-    const randomId = Math.floor(Math.random() * Math.floor(maxId[0].maxid));
-
-    let messages = await utils.query(`
-        SELECT t.username, t.message, t.date
-        FROM (
-            SELECT id
-            FROM ??
-            ORDER BY id
-            LIMIT ?, 100
-            ) q
-        JOIN ?? t
-        ON t.id = q.id`,
-        [randomChannel, Number(randomId), randomChannel]);
-
-    const emotes = await utils.query(`
-        SELECT *
-        FROM emotes
-        WHERE channel=?`, [randomChannel.replace('logs_', '')]);
-
-    for (let i = 0; i<messages.length; i++) {
-        for (let j = 0; j<emotes.length; j++) {
-            const emoteRegex = new RegExp(`\\b${emotes[j].emote.toString()}\\b`, "g");
-            const replace = (emotes[j].url === null) ? emotes[j].emote : `<img style="vertical-align: middle; margin-top: -5px" src="${emotes[j].url}">`;
-            messages[i].message = messages[i].message.replace(emoteRegex, replace);
-        }
-    }
-
-    res.send(`<!DOCTYPE html>
-        <html>
-            <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <script
-                src="https://code.jquery.com/jquery-3.6.0.js"
-                integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-                crossorigin="anonymous"></script>
-            <style>
-            body {
-              margin: 0 auto;
-              max-width: 430px;
-              padding: 0 20px;
-            }
-
-            .container {
-              border-top: 1px solid #999a;
-              background-color: rgb(40,40,40);
-              padding: 6px;
-              margin: 1px 0;
-            }
-
-            .darker {
-              background-color: rgb(30,30,30);
-            }
-
-            .container::after {
-              content: "";
-              clear: both;
-              display: table;
-            }
-
-            .time-left {
-              float: left;
-              color: #999;
-            }
-
-            .chatbox {
-              margin-top: 5vh;
-              margin-bottom: 5vh;
-              padding: 3px;
-              word-break: break-word;
-              word-wrap: break-word;
-              overflow: scroll;
-              overflow-x: hidden;
-              height: 80vh;
-            }
-
-            .container:nth-child(odd) {
-                background-color: #202020;
-            }
-
-            .container:nth-child(even) {
-                background-color: #2c2c2c;
-            }
-
-            </style>
-            </head>
-            <body style="background-color: #1a1a1a;">
-                <div class="chatbox" id="chatbox"></div>
-                <script type="text/javascript">
-                    const chatData = ${JSON.stringify(messages)};
-                    for (let i = 0; i<${messages.length}; i++) {
-                        if (i === 0) {
-                            $("#chatbox").append('<div class="container"><span class="time-left">' + (new Date(chatData[i].date).toISOString().split('T')[1].split('.')[0]) + '<span style="color:white"><strong style="color: red"> '+ chatData[i].username +':</strong> ' + chatData[i].message + '</span></span></div>');
-                        } else {
-                        console.log((Date.parse(chatData[i].date) - Date.parse(chatData[i-1].date)));
-                            setTimeout(() => {
-                                $("#chatbox").append('<div class="container"><span class="time-left">' + (new Date(chatData[i].date).toISOString().split('T')[1].split('.')[0]) + '<span style="color:white"><strong style="color: red"> '+ chatData[i].username +':</strong> ' + chatData[i].message + '</span></span></div>');
-                                $("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
-                            }, 500);
-                        }
-                    }
-                </script>
-            </body>
-        </html>
-        `)
-})*/
-
+// github webhook
 const crypto = require("crypto");
 
 const secret = creds.webhook_github_secret;
@@ -333,6 +173,191 @@ webhookHandler.on('*', async function (event, repo, data, head) {
 
     return;
 });
+
+
+const WebSocket = require('ws');
+
+// local websockets
+const wssLocal = new WebSocket.Server({ port: 3001, path: "/wsl" });
+
+wssLocal.on('connection', function connection(ws) {
+    ws.on('message', function incoming(message) {
+        console.log(JSON.parse(message));
+    });
+});
+
+// public websockets
+const wssPublic = new WebSocket.Server({ port: 3000, path: "/ws" });
+
+wssPublic.on('connection', function connection(ws, req) {
+    ws.on('message', function incoming(message) {
+        console.log('received: %s', req);
+    });
+});
+
+// api handling
+class Swapper {
+    constructor(html, repl) {
+        this.html = html;
+        this.value = repl[0];
+        this.valueKeys = Object.keys(repl[0]).map(i => `%{${i}}`);
+    }
+
+    template() {
+        for (let i = 0; i < this.valueKeys.length; i++) {
+            this.html = this.html.replace(
+                this.valueKeys[i], this.value[this.valueKeys[i].replace(/^%{/, '').replace(/}$/, '')]
+                );
+        }
+        return this.html;
+    }
+}
+
+const conLog = async(req) => {
+    await utils.query(`
+        INSERT INTO web_connections (url, method, protocol, date)
+        VALUES (?, ?, ?, CURRENT_TIMESTAMP)`,
+        [req.originalUrl, req.method, req.protocol]);
+}
+
+app.get("/connections", async (req, res) => {
+    const userCount = await utils.query(`
+        SELECT COUNT(*) AS count
+        FROM access_token
+        WHERE platform="spotify" AND user IS NOT NULL`);
+
+    const execCount = await utils.query(`
+        SELECT COUNT(*) AS count
+        FROM executions
+        WHERE command LIKE "%spotify%"`);
+
+    let html = fs.readFileSync('./website/html/express_pages/connections.html');
+
+    html = html.toString();
+
+    const page = new Swapper(html, [{
+        "execs": execCount[0].count,
+        "users": userCount[0].count
+    }]);
+
+    res.send(page.template());
+
+    await conLog(req);
+
+    return;
+});
+
+// todo chatguesser game
+/*app.get("/chatguesser", async (req, res) => {
+    const randomChannel = "logs_nymn"
+
+    const maxId = await utils.query(`SELECT MAX(ID) as maxid FROM ??`, [randomChannel])
+    const randomId = Math.floor(Math.random() * Math.floor(maxId[0].maxid));
+
+    let messages = await utils.query(`
+        SELECT t.username, t.message, t.date
+        FROM (
+            SELECT id
+            FROM ??
+            ORDER BY id
+            LIMIT ?, 100
+            ) q
+        JOIN ?? t
+        ON t.id = q.id`,
+        [randomChannel, Number(randomId), randomChannel]);
+
+    const emotes = await utils.query(`
+        SELECT *
+        FROM emotes
+        WHERE channel=?`, [randomChannel.replace('logs_', '')]);
+
+    for (let i = 0; i<messages.length; i++) {
+        for (let j = 0; j<emotes.length; j++) {
+            const emoteRegex = new RegExp(`\\b${emotes[j].emote.toString()}\\b`, "g");
+            const replace = (emotes[j].url === null) ? emotes[j].emote : `<img style="vertical-align: middle; margin-top: -5px" src="${emotes[j].url}">`;
+            messages[i].message = messages[i].message.replace(emoteRegex, replace);
+        }
+    }
+
+    res.send(`<!DOCTYPE html>
+        <html>
+            <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <script
+                src="https://code.jquery.com/jquery-3.6.0.js"
+                integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+                crossorigin="anonymous"></script>
+            <style>
+            body {
+              margin: 0 auto;
+              max-width: 430px;
+              padding: 0 20px;
+            }
+
+            .container {
+              border-top: 1px solid #999a;
+              background-color: rgb(40,40,40);
+              padding: 6px;
+              margin: 1px 0;
+            }
+
+            .darker {
+              background-color: rgb(30,30,30);
+            }
+
+            .container::after {
+              content: "";
+              clear: both;
+              display: table;
+            }
+
+            .time-left {
+              float: left;
+              color: #999;
+            }
+
+            .chatbox {
+              margin-top: 5vh;
+              margin-bottom: 5vh;
+              padding: 3px;
+              word-break: break-word;
+              word-wrap: break-word;
+              overflow: scroll;
+              overflow-x: hidden;
+              height: 80vh;
+            }
+
+            .container:nth-child(odd) {
+                background-color: #202020;
+            }
+
+            .container:nth-child(even) {
+                background-color: #2c2c2c;
+            }
+
+            </style>
+            </head>
+            <body style="background-color: #1a1a1a;">
+                <div class="chatbox" id="chatbox"></div>
+                <script type="text/javascript">
+                    const chatData = ${JSON.stringify(messages)};
+                    for (let i = 0; i<${messages.length}; i++) {
+                        if (i === 0) {
+                            $("#chatbox").append('<div class="container"><span class="time-left">' + (new Date(chatData[i].date).toISOString().split('T')[1].split('.')[0]) + '<span style="color:white"><strong style="color: red"> '+ chatData[i].username +':</strong> ' + chatData[i].message + '</span></span></div>');
+                        } else {
+                        console.log((Date.parse(chatData[i].date) - Date.parse(chatData[i-1].date)));
+                            setTimeout(() => {
+                                $("#chatbox").append('<div class="container"><span class="time-left">' + (new Date(chatData[i].date).toISOString().split('T')[1].split('.')[0]) + '<span style="color:white"><strong style="color: red"> '+ chatData[i].username +':</strong> ' + chatData[i].message + '</span></span></div>');
+                                $("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
+                            }, 500);
+                        }
+                    }
+                </script>
+            </body>
+        </html>
+        `)
+})*/
+
 
 // kunszg.com/api/channels
 app.get("/api/channels", async (req, res) => {
@@ -1456,10 +1481,7 @@ app.get("/commands/code", async (req, res) => {
         `);
 });
 
-const server = app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
-    const port = server.address().port;
-    console.log('app running on port', port);
-});
+app.listen(process.env.PORT || 8080, '0.0.0.0');
 
 const statusCheck = async() => {
 	await utils.query(`

@@ -117,11 +117,26 @@
                         [data['username'], data['channel'], data['message'], data['date']]);
                 }
 
-                // insert a new user
-                await query(`
-                    INSERT INTO user_list (username, userId, firstSeen, color, added)
-                    VALUES (?, ?, ?, ?, ?)`,
-                    [data['username'], data['user-id'], data['channel'], data['color'], data['date']]);
+                const checkDuplicate = await query(`
+                    SELECT ID
+                    FROM user_list
+                    WHERE userId = ?`, [data['user-id']]);
+
+                if (!checkDuplicate.length) {
+                    // insert a new user
+                    await query(`
+                        INSERT INTO user_list (username, userId, firstSeen, color, added)
+                        VALUES (?, ?, ?, ?, ?)`,
+                        [data['username'], data['user-id'], data['channel'], data['color'], data['date']]);
+
+                    // send data to websocket
+                    new utils.WSocket("/wsl").emit(
+                        JSON.stringify({type: "usersTotal", data: 1})
+                        );
+                }
+
+
+
             })
         }
         setInterval(()=>{
@@ -234,7 +249,7 @@
                 [(process.memoryUsage().heapUsed/1024/1024).toFixed(2)]);
         }, 600000);
     } catch (err) {
-        console.log("-------------------------------------------------------------");
+        console.log("-------------------------------------------------------------\n");
         console.log(new Date().toISOString());
         console.log(err);
     }
