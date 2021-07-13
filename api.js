@@ -175,6 +175,7 @@ webhookHandler.on('*', async function (event, repo, data, head) {
 });
 
 
+/* WIP
 const WebSocket = require('ws');
 
 // local websockets
@@ -194,6 +195,7 @@ wssPublic.on('connection', function connection(ws, req) {
         console.log('received: %s', req);
     });
 });
+*/
 
 // api handling
 class Swapper {

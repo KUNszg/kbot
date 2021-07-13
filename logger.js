@@ -129,10 +129,12 @@
                         VALUES (?, ?, ?, ?, ?)`,
                         [data['username'], data['user-id'], data['channel'], data['color'], data['date']]);
 
+                   /* WIP 
                     // send data to websocket
                     new utils.WSocket("/wsl").emit(
                         JSON.stringify({type: "usersTotal", data: 1})
-                        );
+                    );
+                    */
                 }
 
 
