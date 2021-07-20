@@ -71,6 +71,18 @@ app.use(webhookHandler);
 const rateLimiter = new Set();
 
 webhookHandler.on('*', async function (event, repo, data, head) {
+    new utils.WSocket("wsl").emit(
+        {
+            type: "github", 
+            data: [
+                {"event": event},
+                {"repo": repo},
+                {"data": data},
+                {"head": head}
+            ]
+        }
+    );
+
     if (event === "push") {
         await utils.query(`
             UPDATE stats
@@ -100,6 +112,41 @@ webhookHandler.on('*', async function (event, repo, data, head) {
         kb.say("kunszg", `[github webhook] ⬆  New commit ${data.head_commit.id.slice(0, 7)} in
             kunszgbot's repository by ${data.sender.login} #⃣  "${data.head_commit.message}" 🔄
             changes in: ${files(data.head_commit.modified)}`);
+    }
+
+    if (event === "create") {
+        if (data.ref_type === "branch") {
+            kb.say("kunszg", `[github webhook] New branch "${data.ref}" has been created in 
+                kunszgbot's repository by ${data.sender.login}`);
+        }
+
+        if (data.ref_type === "tag") {
+            kb.say("kunszg", `[github webhook] New tag "${data.ref}" has been created in 
+                kunszgbot's repository by ${data.sender.login}`);
+        }
+    }
+
+    if (event === "delete") {
+        if (data.ref_type === "branch") {
+            kb.say("kunszg", `[github webhook] Branch "${data.ref}" has been deleted in 
+                kunszgbot's repository by ${data.sender.login}`);
+        }
+
+        if (data.ref_type === "tag") {
+            kb.say("kunszg", `[github webhook] Tag "${data.ref}" has been deleted in 
+                kunszgbot's repository by ${data.sender.login}`);
+        }
+    }
+
+    if (event === "commit_comment") {
+        if (data.action === "created") {
+            const trim = (data.comment.body.length > 350) ? 
+                data.comment.body.substring(0, 350) : 
+                data.comment.body;
+
+            kb.say("kunszg", `[github webhook] A commit comment has been created by ${data.comment.user.login} 
+                at line ${data.comment.line} ▶ "${trim}" ${data.comment.url}`);
+        }
     }
 
     if (event === "star" && data.action === "created") {
@@ -174,51 +221,7 @@ webhookHandler.on('*', async function (event, repo, data, head) {
     return;
 });
 
-
-const WebSocket = require('ws');
-
-// local websockets
-const wssLocal = new WebSocket.Server({ port: 3001, path: "/wsl" });
-
-wssLocal.on('connection', function connection(ws) {
-    ws.on('message', function incoming(message) {
-        console.log(JSON.parse(message));
-    });
-});
-
-// public websockets
-const wssPublic = new WebSocket.Server({ port: 3000, path: "/ws" });
-
-wssPublic.on('connection', function connection(ws, req) {
-    ws.on('message', function incoming(message) {
-        console.log('received: %s', req);
-    });
-});
-
 // api handling
-class Swapper {
-    constructor(html, repl) {
-        this.html = html;
-        this.value = repl[0];
-        this.valueKeys = Object.keys(repl[0]).map(i => `%{${i}}`);
-    }
-
-    template() {
-        for (let i = 0; i < this.valueKeys.length; i++) {
-            this.html = this.html.replace(
-                this.valueKeys[i], this.value[this.valueKeys[i].replace(/^%{/, '').replace(/}$/, '')]
-                );
-        }
-        return this.html;
-    }
-}
-
-const conLog = async(req) => {
-    await utils.query(`
-        INSERT INTO web_connections (url, method, protocol, date)
-        VALUES (?, ?, ?, CURRENT_TIMESTAMP)`,
-        [req.originalUrl, req.method, req.protocol]);
-}
 
 app.get("/connections", async (req, res) => {
     const userCount = await utils.query(`
@@ -235,14 +238,14 @@ app.get("/connections", async (req, res) => {
 
     html = html.toString();
 
-    const page = new Swapper(html, [{
+    const page = new utils.Swapper(html, [{
         "execs": execCount[0].count,
         "users": userCount[0].count
     }]);
 
     res.send(page.template());
 
-    await conLog(req);
+    await utils.conLog(req);
 
     return;
 });
@@ -361,7 +364,7 @@ app.get("/connections", async (req, res) => {
 
 // kunszg.com/api/channels
 app.get("/api/channels", async (req, res) => {
-    await conLog(req);
+    await utils.conLog(req);
 
     if (typeof req.query.details === "undefined") {
         let channelList = await utils.query("SELECT * FROM channels");
@@ -473,7 +476,7 @@ app.get("/api/channels", async (req, res) => {
 
 app.get("/countdown", async (req, res) => {
     try {
-        await conLog(req);
+        await utils.conLog(req);
 
         if (!req.query?.verifcode ?? false) {
             const verifCode = utils.genString();
@@ -542,7 +545,7 @@ app.get("/countdown", async (req, res) => {
 
         html = html.toString();
 
-        const page = new Swapper(html, [{
+        const page = new utils.Swapper(html, [{
             "seconds": seconds[0].seconds,
             "code": req.query.verifcode,
             "secValue": req.query.seconds,
@@ -571,7 +574,7 @@ app.get("/lastfmresolved", async (req, res) => {
 
     html = html.toString();
 
-    const page = new Swapper(html, [{
+    const page = new utils.Swapper(html, [{
         "code": req.query.verifcode
     }])
 
@@ -602,7 +605,7 @@ app.get("/lastfmresolved", async (req, res) => {
         }
     }
 
-    await conLog(req);
+    await utils.conLog(req);
 
     return;
 });
@@ -627,13 +630,13 @@ app.get("/lastfm", async (req, res) => {
 
     html = html.toString();
 
-    const page = new Swapper(html, [{
+    const page = new utils.Swapper(html, [{
         "code": verifCode
     }])
 
     res.send(page.template());
 
-    await conLog(req);
+    await utils.conLog(req);
 
     return;
 });
@@ -691,13 +694,13 @@ app.get("/resolved", async (req, res) => {
 
     html = html.toString();
 
-    const page = new Swapper(html, [{
+    const page = new utils.Swapper(html, [{
         "code": verifCode
     }])
 
     res.send(page.template());
 
-    await conLog(req);
+    await utils.conLog(req);
 
     return;
 });
@@ -875,7 +878,7 @@ app.get("/commands", async (req, res) => {
 	    `
     );
 
-   await conLog(req);
+   await utils.conLog(req);
 
    return;
 });
@@ -917,7 +920,7 @@ app.get("/commands/code/*", async (req, res) => {
         res.send('<h3>Error: command not found</h3>')
     }
 
-    await conLog(req);
+    await utils.conLog(req);
 
     return;
 });
@@ -949,7 +952,7 @@ app.get("/genres", async (req, res) => {
         </html>
         `);
 
-    await conLog(req);
+    await utils.conLog(req);
 
     return;
 });
@@ -997,7 +1000,7 @@ app.get("/api/channels", async (req, res) => {
 app.get("/emotes", async (req, res) => {
     const Table = require('table-builder');
 
-    await conLog(req);
+    await utils.conLog(req);
 
     const tableData = [];
     const tableDataRemoved = [];
@@ -1464,7 +1467,7 @@ app.get("/stats", async (req, res) => {
         }
     });
 
-    await conLog(req);
+    await utils.conLog(req);
 
     return;
 });

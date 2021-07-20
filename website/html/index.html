@@ -26,7 +26,41 @@
         <span class="animate-bottom channels-button" style="margin-left: 1.5vw;" onclick="openNav()">&#9776;
             <a style="font-size: 20px;" >CHANNELS</a>
         </span>
+    <body class="bd">
+        <div id="txt">loading...</div>
+        <div id="loader"></div>
+        <script>
+            let timeout;
 
+            const image = ['loader1.png', 'loader2.png', 'loader3.png', 
+                'loader4.png', 'loader5.png', 'loader6.png', 'loader7.png', 
+                'loader8.gif', 'loader9.gif', 'loader10.gif', 'loader11.gif',
+                'loader12.png']; 
+
+            const num = Math.floor( Math.random() * image.length);
+
+            const img = image[num];
+            
+            document.getElementById("loader").style["background-image"] = `url("./img/${img}")`;
+
+            setTimeout(() => {
+                $( document ).ready(function() {
+                    document.getElementById("loader").style.display = "none";
+                    document.getElementById("txt").style.display = "none";
+                    document.getElementById("main").style.display = "inherit";
+                    document.getElementById("inh").style.display = "block";
+                });
+            }, 300); 
+        </script>
+        <div id="main">
+            <div id="sideNav" class="sidenav">
+                <a href="javascript:void(0)" class="closebtn"  onclick="closeNav()">&times;</a>
+                <div id="box" style="margin-left: 20px; text-align: center;"></div>
+            </div>
+            <br>
+            <span class="animate-bottom channels-button" style="margin-left: 1.5vw;" onclick="openNav()">&#9776;
+                <a style="font-size: 20px;" >CHANNELS</a>
+            </span>
         <div class="container" id="fadeAnimation">
             <div class="topright" id="stats">
             </div>
