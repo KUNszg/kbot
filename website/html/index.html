@@ -31,7 +31,8 @@
             const num = Math.floor( Math.random() * image.length);
 
             const img = image[num];
-            document.getElementById("loader").style["background-image"] = `url("https://kunszg.com/img/${img}")`;
+            
+            document.getElementById("loader").style["background-image"] = `url("./img/${img}")`;
 
             setTimeout(() => {
                 $( document ).ready(function() {

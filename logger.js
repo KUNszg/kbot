@@ -5,6 +5,7 @@
     try {
         const creds = require('./lib/credentials/config.js');
         const mysql = require('mysql2');
+        const regex = require('./lib/utils/regex.js');
 
         const con = mysql.createConnection({
             host: "localhost",
@@ -75,7 +76,7 @@
                 return;
             }
 
-            const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '');
+            const msg = message.replace(regex.invisChar, '');
 
             const filterBots = ignoreList.filter(i => i === user['user-id']);
             if (filterBots.length != 0 || msg === '') {
@@ -93,6 +94,8 @@
             });
         })
 
+        const userCache = [];
+
         const updateLogs = () => {
             cache.forEach(async (data) => {
                 // log user's message
@@ -109,7 +112,7 @@
                     [`${data['date']}*${data['channel']}*${data['message']}`, data['username']]);
 
                 // matching bad words
-                const badWord = data['message'].match(/(?:(?:\b(?<![-=\.])|monka)(?:[Nnñ]|[Ii7]V)|[\/|]\\[\/|])[\s\.]*?[liI1y!j\/|]+[\s\.]*?(?:[GgbB6934Q🅱qğĜƃ၅5\*][\s\.]*?){2,}(?!arcS|l|Ktlw|ylul|ie217|64|\d? ?times)/);
+                const badWord = data['message'].match(regex.racism);
                 if (badWord) {
                     await query(`
                         INSERT INTO bruh (username, channel, message, date)
@@ -128,21 +131,31 @@
                         INSERT INTO user_list (username, userId, firstSeen, color, added)
                         VALUES (?, ?, ?, ?, ?)`,
                         [data['username'], data['user-id'], data['channel'], data['color'], data['date']]);
-
-                   /* WIP 
-                    // send data to websocket
-                    new utils.WSocket("/wsl").emit(
-                        JSON.stringify({type: "usersTotal", data: 1})
-                    );
-                    */
+                    
+                    userCache.push(1);
                 }
-
-
-
             })
         }
-        setInterval(()=>{
-            if (cache.length>200) {
+
+        const WSocket = require("./lib/utils/utils.js").WSocket;
+
+        setInterval(() => {
+            if (cache.length != 0) {
+                // send data to websocket
+                new WSocket("wsl").emit(
+                    {type: "mps", data: (cache.length / 7).toFixed(2)}
+                );
+            }
+
+            if (userCache.length != 0) {
+                // send data to websocket
+                new WSocket("wsl").emit(
+                    {type: "usersTotal", data: userCache.length}
+                );
+                userCache.length = 0;
+            }
+
+            if (cache.length > 200) {
                 updateLogs();
                 cache.length = 0;
             }
