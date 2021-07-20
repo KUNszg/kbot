@@ -268,151 +268,74 @@ div.col-sm-9 div {
     color: black;
 }
 
-
-/* page loader */
-
-#loader {
-    position: fixed;
-    left: 49%;
-    top: 300px;
-    z-index: 1;
-    width: 150px;
-    height: 150px;
-    margin: -75px 0 0 -75px;
-    border: 16px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 16px solid #3498db;
-    width: 120px;
-    height: 120px;
-    -webkit-animation: spin 1s linear infinite;
-    animation: spin 1s linear infinite;
+#main {
+    display: none;
 }
 
-@-webkit-keyframes spin {
-    0% {
-        -webkit-transform: rotate(0deg);
-    }
-    100% {
-        -webkit-transform: rotate(360deg);
-    }
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-
-/* Add animation to "page content" */
-
-.animate-bottom {
-    position: relative;
-    -webkit-animation-name: animatebottom;
-    -webkit-animation-duration: 1s;
-    animation-name: animatebottom;
-    animation-duration: 1s
-}
-
-@-webkit-keyframes animatebottom {
-    from {
-        bottom: -100px;
-        opacity: 0
-    }
-    to {
-        bottom: 0px;
-        opacity: 1
-    }
-}
-
-@keyframes animatebottom {
-    from {
-        bottom: -100px;
-        opacity: 0
-    }
-    to {
-        bottom: 0;
-        opacity: 1
-    }
-}
-
-#myDiv {
+#inh {
     display: none;
     text-align: center;
 }
 
-
 /* Center the loader */
-
 #loader {
     position: absolute;
-    left: 49%;
-    top: 300px;
+    left: 48vw;
+    top: 39vh;
     z-index: 1;
-    width: 150px;
-    height: 150px;
+    width: 220px;
+    height: 220px;
     margin: -75px 0 0 -75px;
-    border: 16px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 16px solid #3498db;
-    width: 120px;
-    height: 120px;
-    -webkit-animation: spin 1s linear infinite;
+    background-image: url("./img/loader.png");
+    background-size: 90px 90px;
+    background-repeat: no-repeat;
+    width: 230px;
+    height: 230px;
+    overflow: hidden;
     animation: spin 1s linear infinite;
 }
 
-@-webkit-keyframes spin {
-    0% {
-        -webkit-transform: rotate(0deg);
-    }
-    100% {
-        -webkit-transform: rotate(360deg);
-    }
+#txt {
+    position: fixed; 
+    color: white; 
+    left: 48vw; 
+    top: 42vh; 
+    font-family: Georgia;
+    animation: fade 1s linear reverse;
 }
 
 @keyframes spin {
     0% {
-        transform: rotate(0deg);
+        transform: rotate(0deg) transform: translateY(0);
+        opacity: 100%;
+        visibility: visible;
+    }
+    3% {
+        transform: rotate(2deg);
+    }
+    6% {
+        transform: rotate(20deg); 
+    }
+    20% {
+        transform: rotate(50deg);
+    }
+    50% {
+        transform: rotate(180deg) translateY(10px);
+        opacity: 0%;
     }
     100% {
-        transform: rotate(360deg);
+        transform: rotate(360deg) translateY(30px);
+        visibility: hidden;
     }
 }
-
 
 /* Add animation to "page content" */
 
 .animate-bottom {
     position: relative;
-    -webkit-animation-name: animatebottom;
     -webkit-animation-duration: 1s;
-    animation-name: animatebottom;
+    animation: fade 0.4s linear forwards;
     animation-duration: 1s
-}
-
-@-webkit-keyframes animatebottom {
-    from {
-        bottom: -100px;
-        opacity: 0
-    }
-    to {
-        bottom: 0px;
-        opacity: 1
-    }
-}
-
-@keyframes animatebottom {
-    from {
-        bottom: -100px;
-        opacity: 0
-    }
-    to {
-        bottom: 0;
-        opacity: 1
-    }
 }
 
 body {
