@@ -101,13 +101,6 @@
                     VALUES (?, ?, ?)`,
                     [data['username'], data['message'], data['date']])
 
-                // update last message of the user
-                await query(`
-                    UPDATE user_list
-                    SET lastSeen=?
-                    WHERE username=?`,
-                    [`${data['date']}*${data['channel']}*${data['message']}`, data['username']]);
-
                 // matching bad words
                 const badWord = data['message'].match(/(?:(?:\b(?<![-=\.])|monka)(?:[Nnñ]|[Ii7]V)|[\/|]\\[\/|])[\s\.]*?[liI1y!j\/|]+[\s\.]*?(?:[GgbB6934Q🅱qğĜƃ၅5\*][\s\.]*?){2,}(?!arcS|l|Ktlw|ylul|ie217|64|\d? ?times)/);
                 if (badWord) {
@@ -117,27 +110,19 @@
                         [data['username'], data['channel'], data['message'], data['date']]);
                 }
 
-                const checkDuplicate = await query(`
-                    SELECT ID
-                    FROM user_list
-                    WHERE userId = ?`, [data['user-id']]);
-
-                if (!checkDuplicate.length) {
-                    // insert a new user
-                    await query(`
+                // REMOVED the websocket integration because it was checking for user id's and filtering them out,
+                // which we need not unique to track namechanges
+                await query(`
                         INSERT INTO user_list (username, userId, firstSeen, color, added)
                         VALUES (?, ?, ?, ?, ?)`,
                         [data['username'], data['user-id'], data['channel'], data['color'], data['date']]);
 
-                   /* WIP 
-                    // send data to websocket
-                    new utils.WSocket("/wsl").emit(
-                        JSON.stringify({type: "usersTotal", data: 1})
-                    );
-                    */
-                }
-
-
+                // update last message of the user
+                await query(`
+                    UPDATE user_list
+                    SET lastSeen=?
+                    WHERE username=?`,
+                    [`${data['date']}*${data['channel']}*${data['message']}`, data['username']]);
 
             })
         }
