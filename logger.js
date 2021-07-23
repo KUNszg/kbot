@@ -95,35 +95,55 @@
 
         const updateLogs = () => {
             cache.forEach(async (data) => {
+                // update last message of the user
+                await query(`
+                    UPDATE user_list
+                    SET lastSeen=?
+                    WHERE userId=?`,
+                    [
+                        `${data['date']}*${data['channel']}*${data['message']}`, 
+                        data['user-id']
+                    ]);
+
                 // log user's message
                 await query(`
                     INSERT INTO logs_${data['channel']} (username, message, date)
-                    VALUES (?, ?, ?)`,
-                    [data['username'], data['message'], data['date']])
+                    VALUES (?, ?, ?)`, 
+                    [
+                        data['username'], 
+                        data['message'], 
+                        data['date']
+                    ])
 
                 // matching bad words
                 const badWord = data['message'].match(/(?:(?:\b(?<![-=\.])|monka)(?:[Nnñ]|[Ii7]V)|[\/|]\\[\/|])[\s\.]*?[liI1y!j\/|]+[\s\.]*?(?:[GgbB6934Q🅱qğĜƃ၅5\*][\s\.]*?){2,}(?!arcS|l|Ktlw|ylul|ie217|64|\d? ?times)/);
                 if (badWord) {
                     await query(`
                         INSERT INTO bruh (username, channel, message, date)
-                        VALUES (?, ?, ?, ?)`,
-                        [data['username'], data['channel'], data['message'], data['date']]);
+                        VALUES (?, ?, ?, ?)`, 
+                        [
+                            data['username'], 
+                            data['channel'], 
+                            data['message'], 
+                            data['date']
+                        ]);
                 }
 
                 // REMOVED the websocket integration because it was checking for user id's and filtering them out,
                 // which we need not unique to track namechanges
-                await query(`
-                        INSERT INTO user_list (username, userId, firstSeen, color, added)
-                        VALUES (?, ?, ?, ?, ?)`,
-                        [data['username'], data['user-id'], data['channel'], data['color'], data['date']]);
 
-                // update last message of the user
+                // no code should appear after this function
                 await query(`
-                    UPDATE user_list
-                    SET lastSeen=?
-                    WHERE username=?`,
-                    [`${data['date']}*${data['channel']}*${data['message']}`, data['username']]);
-
+                    INSERT INTO user_list (username, userId, firstSeen, lastSeen, color, added)
+                    VALUES (?, ?, ?, ?, ?)`, 
+                    [
+                        data['username'], 
+                        data['user-id'], 
+                        data['channel'], 
+                        `${data['date']}*${data['channel']}*${data['message']}`, 
+                        data['color'], 
+                        data['date']
+                    ]);
             })
         }
         setInterval(()=>{
