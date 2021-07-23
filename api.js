@@ -360,36 +360,6 @@ app.get("/connections", async (req, res) => {
         `)
 })*/
 
-app.post("/api/suggestions", async (req, res) => {
-    try {
-        if (!req.query.old || !req.query.new || !req.query.auth) {
-            res.status(400);
-            return;
-        }
-
-        const old = JSON.parse(req.query.old);
-        const changed = JSON.parse(req.query.new);
-
-        const auth = await utils.query("SELECT * FROM auth WHERE authToken=?", [req.query.auth]);
-
-        if (!auth.length) {
-            res.status(400);
-            return;
-        }
-
-        await utils.query("DELETE FROM auth WHERE authToken=?", [req.query.auth]);
-
-        const note = changed.note ? `, included note: ${changed.note}` : "";
-
-        kb.whisper("kunszg", `[suggestion update] status of your suggestion #${changed.ID} "${changed.message}" has been changed ${old.status}=>${changed.status}${note} `)
-        res.status(200);
-    }
-    catch (err) {
-        console.log(err)
-    }
-})
-
-
 // kunszg.com/api/channels
 app.get("/api/channels", async (req, res) => {
     await conLog(req);
