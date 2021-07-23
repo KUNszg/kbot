@@ -362,28 +362,26 @@ app.get("/connections", async (req, res) => {
 
 app.post("/api/suggestions", async (req, res) => {
     try {
-        console.log(req.headers)
-        const old = req.headers.old;
-        const changed = req.headers.new;
-
-        if (!old || !changed || !req.headers.auth) {
+        if (!req.query.old || !req.query.new || !req.query.auth) {
             res.status(400);
             return;
         }
 
-        const auth = await utils.query("SELECT * FROM auth WHERE authToken=?", [req.headers.auth]);
+        const old = JSON.parse(req.query.old);
+        const changed = JSON.parse(req.query.new);
+
+        const auth = await utils.query("SELECT * FROM auth WHERE authToken=?", [req.query.auth]);
 
         if (!auth.length) {
             res.status(400);
             return;
         }
 
-        await utils.query("DELETE FROM auth WHERE authToken=?", [req.headers.auth]);
+        await utils.query("DELETE FROM auth WHERE authToken=?", [req.query.auth]);
 
         const note = changed.note ? `, included note: ${changed.note}` : "";
-        const formatMessage = new ModifyOutput([changed.message], 300).trimmer()
 
-        kb.whisper("kunszg", `[suggestion update] status of your suggestion #${changed.ID} "${formatMessage}" has been changed ${old.status}=>${changed.status}${note} `)
+        kb.whisper("kunszg", `[suggestion update] status of your suggestion #${changed.ID} "${changed.message}" has been changed ${old.status}=>${changed.status}${note} `)
         res.status(200);
     }
     catch (err) {
