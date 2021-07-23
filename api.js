@@ -360,6 +360,29 @@ app.get("/connections", async (req, res) => {
         `)
 })*/
 
+// localhost/api/suggestions
+app.post("/api/suggestions", async (req, res) => {
+    const old = req.headers.old;
+    const changed = req.headers.new;
+
+    if (!old || !changed || !req.headers.auth) {
+        return;
+    }
+
+    const auth = await utils.query("SELECT * FROM auth WHERE authToken=?", [req.headers.auth]);
+
+    if (!auth.length) {
+        return;
+    }
+
+    await utils.query("DELETE FROM auth WHERE authToken=?", [req.headers.auth]);
+
+    const note = changed.note ? `, included note: ${changed.note}` : "";
+    const formatMessage = new ModifyOutput([changed.message], 300).trimmer()
+
+    kb.whisper("kunszg", `[suggestion update] status of your suggestion #${changed.ID} "${formatMessage}" has been changed ${old.status}=>${changed.status}${note} `)
+})
+
 
 // kunszg.com/api/channels
 app.get("/api/channels", async (req, res) => {
