@@ -366,12 +366,14 @@ app.post("/api/suggestions", async (req, res) => {
     const changed = req.headers.new;
 
     if (!old || !changed || !req.headers.auth) {
+        res.status(400);
         return;
     }
 
     const auth = await utils.query("SELECT * FROM auth WHERE authToken=?", [req.headers.auth]);
 
     if (!auth.length) {
+        res.status(400);
         return;
     }
 
@@ -381,6 +383,7 @@ app.post("/api/suggestions", async (req, res) => {
     const formatMessage = new ModifyOutput([changed.message], 300).trimmer()
 
     kb.whisper("kunszg", `[suggestion update] status of your suggestion #${changed.ID} "${formatMessage}" has been changed ${old.status}=>${changed.status}${note} `)
+    res.status(200);
 })
 
 
