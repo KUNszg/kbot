@@ -71,16 +71,14 @@ app.use(webhookHandler);
 const rateLimiter = new Set();
 
 webhookHandler.on('*', async function (event, repo, data, head) {
-    new utils.WSocket("wsl").emit(
-        {
-            type: "github", 
-            data: [
-                {"event": event},
-                {"repo": repo},
-                {"data": data},
-                {"head": head}
-            ]
-        }
+    new utils.WSocket("wsl").emit({
+        type: "github", 
+        data: [
+            {"event": event},
+            {"repo": repo},
+            {"data": data},
+            {"head": head}
+        ]}
     );
 
     if (event === "push") {
@@ -95,7 +93,7 @@ webhookHandler.on('*', async function (event, repo, data, head) {
 
             const result = [];
 
-            for (let i = 0; i<filenames.length; i++) {
+            for (let i = 0; i < filenames.length; i++) {
                 result.push(path.parse(filenames[i]).name);
             }
 
