@@ -31,7 +31,8 @@
             const num = Math.floor( Math.random() * image.length);
 
             const img = image[num];
-            document.getElementById("loader").style["background-image"] = `url("https://kunszg.com/img/${img}")`;
+            
+            document.getElementById("loader").style["background-image"] = `url("./img/${img}")`;
 
             setTimeout(() => {
                 $( document ).ready(function() {
@@ -54,7 +55,62 @@
 
             <div class="container" id="fadeAnimation">
                 <div class="topright" id="stats">
+                    <table style="font-size: 13px; margin-right: -1.2vw;">
+                        <colgroup>
+                            <col>
+                            <col style="width: 115px;">
+                        </colgroup>
+                        <tr>
+                            <td style="font-style: italic;">my stream is currently </td>
+                            <td style="padding:0 15px;" id="isAuthorLive"></td>
+                        </tr>
+                        <tr>
+                            <td style="font-style: italic;">total users tracked </td>
+                            <td style="padding:0 15px;" id="usersLogged"></td>
+                        </tr>
+                        <tr>
+                            <td style="font-style: italic;">command executions </td>
+                            <td style="padding:0 15px;" id="commandExecutions"></td>
+                        </tr>
+                        <tr>
+                            <td style="font-style: italic;">commits </td>
+                            <td style="padding:0 15px;" id="commits"></td>
+                        </tr>
+                        <tr>
+                            <td style="font-style: italic;">lines of code </td>
+                            <td style="padding:0 15px;" id="linesOfCode"></td>
+                        </tr>
+                        <tr>
+                            <td style="font-style: italic;">bot uptime </td>
+                            <td style="padding: 0 15px;" id="botUptime">
+                                <span title="offline" class="redDot"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-style: italic;">logger </td>
+                            <td style="padding:0 15px;" id="loggerUptime"></td>
+                        </tr>
+                        <tr>
+                            <td style="font-style: italic;">reminders </td>
+                            <td style="padding:0 15px;" id="remindersUptime"></td>
+                        </tr>
+                        <tr>
+                            <td style="font-style: italic;">API </td>
+                            <td style="padding:0 15px;" id="apiUptime"></td>
+                        </tr>
+                    </table>
+                    <br><br>
+                    <div id="github-push"  style="overflow: hidden; height: 100px;">
+                        <span style="font-size: 20px; font-family: 'Source Sans Pro', 'sans-serif';">changelog</span>
+                    </div>
                 </div>
+                    <!--.topright {
+    position: absolute;
+    top: -28px;
+    right: 16px;
+    color: white;
+    font-family: 'Source Sans Pro', 'sans-serif';
+}-->
             </div>
             <script type="text/javascript">
                 if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
@@ -63,7 +119,6 @@
                     fetch('https://kunszg.com/api/stats')
                         .then(response => response.json())
                         .then(data => {
-
                             const secondsToDhms = (seconds) => {
                                 seconds = Number(seconds);
                                 const d = Math.floor(seconds / (3600*24));
@@ -91,64 +146,70 @@
                                 return input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
                             }
 
-                            let count = 0;
+                            document.getElementById("isAuthorLive").innerHTML = `${data.twitch.isAuthoLive ? "live" : "offline"}`;
 
-                            const updateStats = () => {
-                                botUptime += 1;
-                                count += 1;
+                            document.getElementById("usersLogged").innerHTML = `${spreadNumbers(data.bot.usersLogged)}`;
 
-                                const botMeter = `
-                                    <table style="font-size: 13px; margin-right: -1.2vw;">
-                                        <colgroup>
-                                            <col>
-                                            <col style="width: 115px;">
-                                        </colgroup>
-                                        <tr>
-                                            <td style="font-style: italic;">my stream is currently </td>
-                                            <td style="padding:0 15px;">${data.twitch.isAuthoLive ? "live" : "offline"}</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-style: italic;">total users tracked </td>
-                                            <td style="padding:0 15px;">${spreadNumbers(data.bot.usersLogged)}</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-style: italic;">command executions </td>
-                                            <td style="padding:0 15px;">${spreadNumbers(data.bot.commandExecutions)}</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-style: italic;">commits </td>
-                                            <td style="padding:0 15px;">${spreadNumbers(data.github.commits)}</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-style: italic;">lines of code </td>
-                                            <td style="padding:0 15px;">${spreadNumbers(data.bot.linesOfCode)}</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-style: italic;">bot uptime </td>
-                                            <td style="padding: 0 15px;">${data.bot.isRestarting ? '🔄 restarting' : secondsToDhms(botUptime)}</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-style: italic;">logger </td>
-                                            <td style="padding:0 15px;">${loggerUptime > 70 ? '<span title="offline" class="redDot"></span>' : '<span title="online" class="greenDot"></span>'}</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-style: italic;">reminders </td>
-                                            <td style="padding:0 15px;">${remindersUptime > 70 ? '<span title="offline" class="redDot"></span>' : '<span title="online" class="greenDot"></span>'}</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-style: italic;">API </td>
-                                            <td style="padding:0 15px;">${apiUptime > 70 ? '<span title="offline" class="redDot"></span>' : '<span title="online" class="greenDot"></span>'}</td>
-                                        </tr>
-                                    </table>
-                                    `;
+                            document.getElementById("commandExecutions").innerHTML = `${spreadNumbers(data.bot.commandExecutions)}`;
 
-                                document.getElementById("stats").innerHTML = botMeter;
-                            }
-                            updateStats();
+                            document.getElementById("commits").innerHTML = `${spreadNumbers(data.github.commits)}`;
+
+                            document.getElementById("linesOfCode").innerHTML = `${spreadNumbers(data.bot.linesOfCode)}`;
+
+                            document.getElementById("loggerUptime").innerHTML = `${loggerUptime > 70 ? '<span title="offline" class="redDot"></span>' : '<span title="online" class="greenDot"></span>'}`;
+
+                            document.getElementById("remindersUptime").innerHTML = `${remindersUptime > 70 ? '<span title="offline" class="redDot"></span>' : '<span title="online" class="greenDot"></span>'}`;
+
+                            document.getElementById("apiUptime").innerHTML = `${apiUptime > 70 ? '<span title="offline" class="redDot"></span>' : '<span title="online" class="greenDot"></span>'}`;
+
+                            const socket = new WebSocket('ws://localhost:3000/ws');
+
+                            let refresh = 0;
 
                             setInterval(() => {
-                                updateStats();
+                                if (refresh > 5) {
+                                    document.getElementById("botUptime").innerHTML = `<span title="offline" class="redDot"></span>`;
+                                }
+                                
+                                refresh++;
                             }, 1000);
+
+                            socket.addEventListener('message', function (event) {
+                                const message = JSON.parse(event.data);
+
+                                // cached data
+                                if (message.cache) { 
+                                    if (message?.botUptime ?? false) {
+                                        document.getElementById("botUptime").innerHTML = `${data.bot.isRestarting ? '🔄 restarting' : secondsToDhms(Math.trunc(message.botUptime.data))}`;
+                                    }
+
+                                    if (message?.body.gitLatestCommits ?? false) {
+                                        const commits = message.body.gitLatestCommits;
+                                        for (let i = 0; i < commits.length) {
+                                            setTimeout(() => {
+                                                document.getElementById("github-push").innerHTML += `<a href="${commits[i].commit.url}"><div style="height: 20px;color: white;" class="button1">${commits[i].commit.message}</div></a>`;
+                                            }, 100);
+                                        }
+                                    } 
+                                }
+
+                                // streamed data
+                                if (message?.body ?? false) {
+                                    const hook = message.body.type;
+
+                                    if (hook === "botUptime") {
+                                        document.getElementById("botUptime").innerHTML = `${data.bot.isRestarting ? '🔄 restarting' : secondsToDhms(Math.trunc(message.body.data))}`;
+                                    }
+
+                                    if (hook === "github") {
+                                        if (message.body.event === "push") {
+                                            document.getElementById("github-push").innerHTML += `<a href="https://github.com/KUNszg/kbot/commit/${message.body.data.head_commit.id}"<div style="color: white;" class="button1">test</div></a>`;
+                                        } 
+                                    }
+                                }
+
+                                refresh = 0;
+                            });
                         });
                     }
             </script>

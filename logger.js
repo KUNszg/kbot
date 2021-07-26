@@ -5,6 +5,7 @@
     try {
         const creds = require('./lib/credentials/config.js');
         const mysql = require('mysql2');
+        const regex = require('./lib/utils/regex.js');
 
         const con = mysql.createConnection({
             host: "localhost",
@@ -75,7 +76,7 @@
                 return;
             }
 
-            const msg = message.replace(/[\u034f\u2800\u{E0000}\u180e\ufeff\u2000-\u200d\u206D]/gu, '');
+            const msg = message.replace(regex.invisChar, '');
 
             const filterBots = ignoreList.filter(i => i === user['user-id']);
             if (filterBots.length != 0 || msg === '') {
@@ -92,6 +93,8 @@
                 'date': new Date().toISOString().slice(0, 19).replace('T', ' ')
             });
         })
+
+        const userCache = [];
 
         const updateLogs = () => {
             cache.forEach(async (data) => {
@@ -116,7 +119,7 @@
                     ])
 
                 // matching bad words
-                const badWord = data['message'].match(/(?:(?:\b(?<![-=\.])|monka)(?:[Nnñ]|[Ii7]V)|[\/|]\\[\/|])[\s\.]*?[liI1y!j\/|]+[\s\.]*?(?:[GgbB6934Q🅱qğĜƃ၅5\*][\s\.]*?){2,}(?!arcS|l|Ktlw|ylul|ie217|64|\d? ?times)/);
+                const badWord = data['message'].match(regex.racism);
                 if (badWord) {
                     await query(`
                         INSERT INTO bruh (username, channel, message, date)
@@ -128,11 +131,17 @@
                             data['date']
                         ]);
                 }
+                
+                const checkIfUnique = await query(`
+                    SELECT *
+                    FROM user_list
+                    WHERE username=?`, [data['username']]);
+                
+                if (!checkIfUnique.length) {
+                    userCache.push(1);
+                }
 
-                // REMOVED the websocket integration because it was checking for user id's and filtering them out,
-                // which we need not unique to track namechanges
-
-                // no code should appear after this function
+                // no code should appear after this function in this block
                 await query(`
                     INSERT INTO user_list (username, userId, firstSeen, lastSeen, color, added)
                     VALUES (?, ?, ?, ?, ?)`, 
@@ -146,8 +155,26 @@
                     ]);
             })
         }
-        setInterval(()=>{
-            if (cache.length>200) {
+        
+        const WSocket = require("./lib/utils/utils.js").WSocket;
+
+        setInterval(() => {
+            if (cache.length != 0) {
+                // send data to websocket
+                new WSocket("wsl").emit(
+                    {type: "mps", data: (cache.length / 7).toFixed(2)}
+                );
+            }
+
+            if (userCache.length != 0) {
+                // send data to websocket
+                new WSocket("wsl").emit(
+                    {type: "usersTotal", data: userCache.length}
+                );
+                userCache.length = 0;
+            }
+
+            if (cache.length > 200) {
                 updateLogs();
                 cache.length = 0;
             }
