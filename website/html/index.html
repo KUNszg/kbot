@@ -183,8 +183,8 @@
                                         document.getElementById("botUptime").innerHTML = `${data.bot.isRestarting ? '🔄 restarting' : secondsToDhms(Math.trunc(message.botUptime.data))}`;
                                     }
 
-                                    if (message?.body.gitLatestCommits ?? false) {
-                                        const commits = message.body.gitLatestCommits;
+                                    if (message?.body.data.gitLatestCommits ?? false) {
+                                        const commits = message.body.data.gitLatestCommits;
                                         for (let i = 0; i < commits.length; i++) {
                                             setTimeout(() => {
                                                 document.getElementById("github-push").innerHTML += `<a href="${commits[i].commit.url}"><div style="height: 20px;color: white;" class="button1">${commits[i].commit.message}</div></a>`;
