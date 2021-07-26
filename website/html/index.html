@@ -162,7 +162,7 @@
 
                             document.getElementById("apiUptime").innerHTML = `${apiUptime > 70 ? '<span title="offline" class="redDot"></span>' : '<span title="online" class="greenDot"></span>'}`;
 
-                            const socket = new WebSocket('wss://kunszg.com:3000/ws');
+                            const socket = new WebSocket('wss://kunszg.com/ws');
 
                             let refresh = 0;
 
