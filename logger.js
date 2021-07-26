@@ -98,45 +98,64 @@
 
         const updateLogs = () => {
             cache.forEach(async (data) => {
-                // log user's message
-                await query(`
-                    INSERT INTO logs_${data['channel']} (username, message, date)
-                    VALUES (?, ?, ?)`,
-                    [data['username'], data['message'], data['date']])
-
                 // update last message of the user
                 await query(`
                     UPDATE user_list
                     SET lastSeen=?
-                    WHERE username=?`,
-                    [`${data['date']}*${data['channel']}*${data['message']}`, data['username']]);
+                    WHERE userId=?`,
+                    [
+                        `${data['date']}*${data['channel']}*${data['message']}`, 
+                        data['user-id']
+                    ]);
+
+                // log user's message
+                await query(`
+                    INSERT INTO logs_${data['channel']} (username, message, date)
+                    VALUES (?, ?, ?)`, 
+                    [
+                        data['username'], 
+                        data['message'], 
+                        data['date']
+                    ])
 
                 // matching bad words
                 const badWord = data['message'].match(regex.racism);
                 if (badWord) {
                     await query(`
                         INSERT INTO bruh (username, channel, message, date)
-                        VALUES (?, ?, ?, ?)`,
-                        [data['username'], data['channel'], data['message'], data['date']]);
+                        VALUES (?, ?, ?, ?)`, 
+                        [
+                            data['username'], 
+                            data['channel'], 
+                            data['message'], 
+                            data['date']
+                        ]);
                 }
-
-                const checkDuplicate = await query(`
-                    SELECT ID
+                
+                const checkIfUnique = await query(`
+                    SELECT *
                     FROM user_list
-                    WHERE userId = ?`, [data['user-id']]);
-
-                if (!checkDuplicate.length) {
-                    // insert a new user
-                    await query(`
-                        INSERT INTO user_list (username, userId, firstSeen, color, added)
-                        VALUES (?, ?, ?, ?, ?)`,
-                        [data['username'], data['user-id'], data['channel'], data['color'], data['date']]);
-                    
+                    WHERE username=?`, [data['username']]);
+                
+                if (!checkIfUnique.length) {
                     userCache.push(1);
                 }
+
+                // no code should appear after this function in this block
+                await query(`
+                    INSERT INTO user_list (username, userId, firstSeen, lastSeen, color, added)
+                    VALUES (?, ?, ?, ?, ?)`, 
+                    [
+                        data['username'], 
+                        data['user-id'], 
+                        data['channel'], 
+                        `${data['date']}*${data['channel']}*${data['message']}`, 
+                        data['color'], 
+                        data['date']
+                    ]);
             })
         }
-
+        
         const WSocket = require("./lib/utils/utils.js").WSocket;
 
         setInterval(() => {
