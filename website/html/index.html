@@ -185,7 +185,7 @@
 
                                     if (message?.body.gitLatestCommits ?? false) {
                                         const commits = message.body.gitLatestCommits;
-                                        for (let i = 0; i < commits.length) {
+                                        for (let i = 0; i < commits.length; i++) {
                                             setTimeout(() => {
                                                 document.getElementById("github-push").innerHTML += `<a href="${commits[i].commit.url}"><div style="height: 20px;color: white;" class="button1">${commits[i].commit.message}</div></a>`;
                                             }, 100);
