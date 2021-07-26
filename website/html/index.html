@@ -15,6 +15,14 @@
             #fadeAnimation {
                 animation: fade 0.8s linear forwards;
             }
+
+            .changelog {
+                background-color: none;
+            }
+
+            .changelog:hover {
+                background-color: dimgray;
+            }
         </style>
     </head>
     <body class="bd">
@@ -35,7 +43,7 @@
             document.getElementById("loader").style["background-image"] = `url("./img/${img}")`;
 
             setTimeout(() => {
-                $( document ).ready(function() {
+                $(document).ready(function() {
                     document.getElementById("loader").style.display = "none";
                     document.getElementById("txt").style.display = "none";
                     document.getElementById("main").style.display = "inherit";
@@ -52,6 +60,11 @@
             <span class="animate-bottom channels-button" style="margin-left: 1.5vw;" onclick="openNav()">&#9776;
                 <a style="font-size: 20px;" >CHANNELS</a>
             </span>
+<!--             <div id="fadeAnimation">
+                <div id="github-push">
+                    <span style="font-size: 20px; padding: 0 15px; color: white; font-family: 'Source Sans Pro', 'sans-serif';">changelog</span>
+                </div>
+            </div> -->
 
             <div class="container" id="fadeAnimation">
                 <div class="topright" id="stats">
@@ -99,18 +112,7 @@
                             <td style="padding:0 15px;" id="apiUptime"></td>
                         </tr>
                     </table>
-                    <br><br>
-                    <div id="github-push"  style="overflow: hidden; height: 100px;">
-                        <span style="font-size: 20px; font-family: 'Source Sans Pro', 'sans-serif';">changelog</span>
-                    </div>
                 </div>
-                    <!--.topright {
-    position: absolute;
-    top: -28px;
-    right: 16px;
-    color: white;
-    font-family: 'Source Sans Pro', 'sans-serif';
-}-->
             </div>
             <script type="text/javascript">
                 if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
@@ -173,6 +175,14 @@
                                 
                                 refresh++;
                             }, 1000);
+   /*                     
+                            fetch("https://api.github.com/repos/kunszg/kbot/commits?per_page=6")
+                                .then(response2 => response2.json())
+                                .then(github => {
+                                    for (let i = 0; i < github.length; i++) {
+                                        document.getElementById("github-push").innerHTML += `<a href="${github[i].html_url}"><div style="padding: 10px 15px 10px 15px; height: 20px;color: white;" class="button1 changelog">${github[i].commit.message}</div></a>`;
+                                    }
+                                })*/
 
                             socket.addEventListener('message', function (event) {
                                 const message = JSON.parse(event.data);
@@ -181,15 +191,6 @@
                                 if (message.cache) { 
                                     if (message?.botUptime ?? false) {
                                         document.getElementById("botUptime").innerHTML = `${data.bot.isRestarting ? '🔄 restarting' : secondsToDhms(Math.trunc(message.botUptime.data))}`;
-                                    }
-
-                                    if (message?.body.data.gitLatestCommits ?? false) {
-                                        const commits = message.body.data.gitLatestCommits;
-                                        for (let i = 0; i < commits.length; i++) {
-                                            setTimeout(() => {
-                                                document.getElementById("github-push").innerHTML += `<a href="${commits[i].commit.url}"><div style="height: 20px;color: white;" class="button1">${commits[i].commit.message}</div></a>`;
-                                            }, 100);
-                                        }
                                     } 
                                 }
 
@@ -201,11 +202,11 @@
                                         document.getElementById("botUptime").innerHTML = `${data.bot.isRestarting ? '🔄 restarting' : secondsToDhms(Math.trunc(message.body.data))}`;
                                     }
 
-                                    if (hook === "github") {
+             /*                       if (hook === "github") {
                                         if (message.body.event === "push") {
                                             document.getElementById("github-push").innerHTML += `<a href="https://github.com/KUNszg/kbot/commit/${message.body.data.head_commit.id}"<div style="color: white;" class="button1">test</div></a>`;
                                         } 
-                                    }
+                                    }*/
                                 }
 
                                 refresh = 0;
