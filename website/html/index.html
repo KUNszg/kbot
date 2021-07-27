@@ -148,7 +148,7 @@
                                 Math.trunc((Date.now() - data.modules.botLastSeen)/1000)
                                 ]
 
-                            const spreadNumbers = (input) => {
+                            function spreadNumbers (input) {
                                 return input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
                             }
 
