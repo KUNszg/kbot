@@ -206,10 +206,6 @@
 
                                 // streamed data
                                 if (message?.body ?? false) {
-                                    const spreadNumbers = (input) => {
-                                        return input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-                                    }
-                                    
                                     const hook = message.body.type;
 
                                     if (hook === "botUptime") {
@@ -225,7 +221,7 @@
                                     }
 
                                     if (hook === "usersTotal") {
-                                        document.getElementById("usersLogged").innerHTML = `${spredNumbers(data.bot.usersLogged + message.body)}`
+                                        document.getElementById("usersLogged").innerHTML = `${spreadNumbers(data.bot.usersLogged + message.body.data)}`
                                     }
 
                                     /*                       
