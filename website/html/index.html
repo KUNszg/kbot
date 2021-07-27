@@ -94,8 +94,8 @@
                             <td style="padding:0 15px;" id="linesOfCode"></td>
                         </tr>
                         <tr>
-                            <td style="font-style: italic;">receiving messages</td>
-                            <td style="padding: 0 15px;" id="mps">0 p/s</td>
+                            <td style="font-style: italic;">logging messages</td>
+                            <td style="padding: 0 15px;" id="mps">0/s</td>
                         </tr>
                         <tr>
                             <td style="font-style: italic;">bot uptime </td>
@@ -198,7 +198,7 @@
                                     } 
 
                                     if (message?.mps ?? false) {
-                                        document.getElementById("mps").innerHTML = `${message.mps.data} p/s`;
+                                        document.getElementById("mps").innerHTML = `${message.mps.data}/s`;
                                     }
                                 }
 
@@ -211,7 +211,7 @@
                                     }
 
                                     if (hook === "mps") {
-                                        document.getElementById("mps").innerHTML = `${message.body.data} p/s`;
+                                        document.getElementById("mps").innerHTML = `${message.body.data}/s`;
                                     }
 
                                     /*                       
