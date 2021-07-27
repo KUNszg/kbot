@@ -68,6 +68,8 @@
         const mpsCache = [];
 
         kb.on('message', (channel, user, message) => {
+            mpsCache.push(Date.now());
+            
             const channels = this.channelList.filter(i => i.channel === channel.replace('#', ''));
 
             if (!channels[0]?.status ?? true) {
@@ -94,8 +96,6 @@
                 'message': msg,
                 'date': new Date().toISOString().slice(0, 19).replace('T', ' ')
             });
-
-            mpsCache.push(Date.now());
         })
 
         const updateLogs = () => {
