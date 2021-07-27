@@ -95,7 +95,7 @@
                 'date': new Date().toISOString().slice(0, 19).replace('T', ' ')
             });
 
-            mpsCache.push(Date.now());
+            mpsCache.push(1);
         })
 
         const updateLogs = () => {
@@ -161,11 +161,9 @@
         const WSocket = require("./lib/utils/utils.js").WSocket;
 
         setInterval(() => {
-            const mps = mpsCache.filter(i => i < (Date.now() - 1500));
-
             // send data to websocket
             new WSocket("wsl").emit(
-                {type: "mps", data: (mps.length).toFixed(2)}
+                {type: "mps", data: (mpsCache.length / 3).toFixed(2)}
             );
 
             mpsCache.length = 0;
