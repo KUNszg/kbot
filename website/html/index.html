@@ -94,6 +94,10 @@
                             <td style="padding:0 15px;" id="linesOfCode"></td>
                         </tr>
                         <tr>
+                            <td style="font-style: italic;">logging </td>
+                            <td style="padding: 0 15px;" id="mps">0 messages p/s</td>
+                        </tr>
+                        <tr>
                             <td style="font-style: italic;">bot uptime </td>
                             <td style="padding: 0 15px;" id="botUptime">
                                 <span title="offline" class="redDot"></span>
@@ -192,6 +196,10 @@
                                     if (message?.botUptime ?? false) {
                                         document.getElementById("botUptime").innerHTML = `${data.bot.isRestarting ? '🔄 restarting' : secondsToDhms(Math.trunc(message.botUptime.data))}`;
                                     } 
+
+                                    if (message?.mps ?? false) {
+                                        document.getElementById("mps").innerHTML = `${message.mps.data} messages p/s`;
+                                    }
                                 }
 
                                 // streamed data
@@ -202,11 +210,17 @@
                                         document.getElementById("botUptime").innerHTML = `${data.bot.isRestarting ? '🔄 restarting' : secondsToDhms(Math.trunc(message.body.data))}`;
                                     }
 
-             /*                       if (hook === "github") {
+                                    if (hook === "mps") {
+                                        document.getElementById("mps").innerHTML = `${message.body.data} messages p/s`;
+                                    }
+
+                                    /*                       
+                                    if (hook === "github") {
                                         if (message.body.event === "push") {
                                             document.getElementById("github-push").innerHTML += `<a href="https://github.com/KUNszg/kbot/commit/${message.body.data.head_commit.id}"<div style="color: white;" class="button1">test</div></a>`;
                                         } 
-                                    }*/
+                                    }
+                                    */
                                 }
 
                                 refresh = 0;
