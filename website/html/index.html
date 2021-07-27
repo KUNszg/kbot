@@ -217,11 +217,11 @@
                                     }
 
                                     if (hook === "commandExecs") {
-                                        document.getElementById("commandExecutions").innerHTML =  `${spreadNumbers(data.bot.commandExecutions + message.body.data)}`;
+                                        document.getElementById("commandExecutions").innerHTML = `${spreadNumbers(message.body.data)}`;
                                     }
 
                                     if (hook === "usersTotal") {
-                                        document.getElementById("usersLogged").innerHTML = `${spreadNumbers(data.bot.usersLogged + message.body.data)}`
+                                        document.getElementById("usersLogged").innerHTML = `${spreadNumbers(message.body.data)}`
                                     }
 
                                     /*                       
