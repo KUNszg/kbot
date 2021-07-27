@@ -64,6 +64,8 @@
         con.on('error', (err) => {console.log(err)});
 
         const cache = [];
+        const userCache = [];
+        const mpsCache = [];
 
         kb.on('message', (channel, user, message) => {
             const channels = this.channelList.filter(i => i.channel === channel.replace('#', ''));
@@ -92,9 +94,9 @@
                 'message': msg,
                 'date': new Date().toISOString().slice(0, 19).replace('T', ' ')
             });
-        })
 
-        const userCache = [];
+            mpsCache.push(Date.now());
+        })
 
         const updateLogs = () => {
             cache.forEach(async (data) => {
@@ -159,13 +161,17 @@
         const WSocket = require("./lib/utils/utils.js").WSocket;
 
         setInterval(() => {
-            if (cache.length != 0) {
-                // send data to websocket
-                new WSocket("wsl").emit(
-                    {type: "mps", data: (cache.length / 7).toFixed(2)}
-                );
-            }
+            const mps = mpsCache.filter(i => i < (Date.now() - 1500));
 
+            // send data to websocket
+            new WSocket("wsl").emit(
+                {type: "mps", data: (mps.length).toFixed(2)}
+            );
+
+            mpsCache.length = 0;
+        }, 3000);
+
+        setInterval(() => {
             if (userCache.length != 0) {
                 // send data to websocket
                 new WSocket("wsl").emit(
