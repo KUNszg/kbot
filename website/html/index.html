@@ -95,7 +95,7 @@
                         </tr>
                         <tr>
                             <td style="font-style: italic;">logging messages</td>
-                            <td style="padding: 0 15px;" id="mps">0/s</td>
+                            <td style="padding: 0 15px;" id="mps"></td>
                         </tr>
                         <tr>
                             <td style="font-style: italic;">bot uptime </td>
@@ -166,6 +166,8 @@
 
                             document.getElementById("remindersUptime").innerHTML = `${remindersUptime > 70 ? '<span title="offline" class="redDot"></span>' : '<span title="online" class="greenDot"></span>'}`;
 
+                            document.getElementById("mps").innerHTML = "0/s";
+
                             document.getElementById("apiUptime").innerHTML = `${apiUptime > 70 ? '<span title="offline" class="redDot"></span>' : '<span title="online" class="greenDot"></span>'}`;
 
                             const socket = new WebSocket('wss://kunszg.com/ws');
@@ -212,6 +214,14 @@
 
                                     if (hook === "mps") {
                                         document.getElementById("mps").innerHTML = `${message.body.data}/s`;
+                                    }
+
+                                    if (hook === "commandExecs") {
+                                        document.getElementById("commandExecutions").innerHTML =  `${spreadNumbers(data.bot.commandExecutions + message.body.data)}`;
+                                    }
+
+                                    if (hook === "usersTotal") {
+                                        document.getElementById("usersLogged").innerHTML = `${spredNumbers(data.bot.usersLogged + message.body.data)}`
                                     }
 
                                     /*                       
