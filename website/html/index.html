@@ -206,22 +206,25 @@
 
                                 // streamed data
                                 if (message?.body ?? false) {
-                                    const hook = message.body.type;
+                                    const hook = message.body;
 
-                                    if (hook === "botUptime") {
-                                        document.getElementById("botUptime").innerHTML = `${data.bot.isRestarting ? '🔄 restarting' : secondsToDhms(Math.trunc(message.body.data))}`;
+                                    if (Array.isArray(message.body)) {
+                                        if (hook.find(i => i.type === "commandExecs")) {
+                                            document.getElementById("commandExecutions").innerHTML = `${spreadNumbers(message.body[1].data)}`;
+                                        }
+
+                                        if (hook.find(i => i.type === "usersTotal")) {
+                                            document.getElementById("usersLogged").innerHTML = `${spreadNumbers(message.body[0].data)}`
+                                        }
                                     }
+                                    else {
+                                        if (hook.type === "botUptime") {
+                                            document.getElementById("botUptime").innerHTML = `${data.bot.isRestarting ? '🔄 restarting' : secondsToDhms(Math.trunc(message.body.data))}`;
+                                        }
 
-                                    if (hook === "mps") {
-                                        document.getElementById("mps").innerHTML = `${message.body.data}/s`;
-                                    }
-
-                                    if (hook === "commandExecs") {
-                                        document.getElementById("commandExecutions").innerHTML = `${spreadNumbers(message.body.data)}`;
-                                    }
-
-                                    if (hook === "usersTotal") {
-                                        document.getElementById("usersLogged").innerHTML = `${spreadNumbers(message.body.data)}`
+                                        if (hook.type === "mps") {
+                                            document.getElementById("mps").innerHTML = `${message.body.data}/s`;
+                                        }
                                     }
 
                                     /*                       
