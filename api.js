@@ -219,8 +219,12 @@ webhookHandler.on('*', async function (event, repo, data, head) {
     return;
 });
 
-// api handling
+app.use(async function(req, res, next) {
+    await utils.conLog(req);
+    next();
+});
 
+// api handling
 app.get("/connections", async (req, res) => {
     const userCount = await utils.query(`
         SELECT COUNT(*) AS count
@@ -243,7 +247,6 @@ app.get("/connections", async (req, res) => {
 
     res.send(page.template());
 
-    await utils.conLog(req);
 
     return;
 });
@@ -361,7 +364,6 @@ app.get("/connections", async (req, res) => {
 
 // kunszg.com/api/channels
 app.get("/api/channels", async (req, res) => {
-    await utils.conLog(req);
 
     if (typeof req.query.details === "undefined") {
         let channelList = await utils.query("SELECT * FROM channels");
@@ -473,7 +475,7 @@ app.get("/api/channels", async (req, res) => {
 
 app.get("/countdown", async (req, res) => {
     try {
-        await utils.conLog(req);
+
 
         if (!req.query?.verifcode ?? false) {
             const verifCode = utils.genString();
@@ -602,7 +604,6 @@ app.get("/lastfmresolved", async (req, res) => {
         }
     }
 
-    await utils.conLog(req);
 
     return;
 });
@@ -632,8 +633,6 @@ app.get("/lastfm", async (req, res) => {
     }])
 
     res.send(page.template());
-
-    await utils.conLog(req);
 
     return;
 });
@@ -697,7 +696,6 @@ app.get("/resolved", async (req, res) => {
 
     res.send(page.template());
 
-    await utils.conLog(req);
 
     return;
 });
@@ -875,8 +873,6 @@ app.get("/commands", async (req, res) => {
 	    `
     );
 
-   await utils.conLog(req);
-
    return;
 });
 
@@ -917,7 +913,6 @@ app.get("/commands/code/*", async (req, res) => {
         res.send('<h3>Error: command not found</h3>')
     }
 
-    await utils.conLog(req);
 
     return;
 });
@@ -949,7 +944,6 @@ app.get("/genres", async (req, res) => {
         </html>
         `);
 
-    await utils.conLog(req);
 
     return;
 });
@@ -997,7 +991,6 @@ app.get("/api/channels", async (req, res) => {
 app.get("/emotes", async (req, res) => {
     const Table = require('table-builder');
 
-    await utils.conLog(req);
 
     const tableData = [];
     const tableDataRemoved = [];
@@ -1464,7 +1457,6 @@ app.get("/stats", async (req, res) => {
         }
     });
 
-    await utils.conLog(req);
 
     return;
 });
