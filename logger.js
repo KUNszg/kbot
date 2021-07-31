@@ -37,7 +37,7 @@
                 debug: false,
             },
             identity: {
-                username: 'kunszgbot',
+                username: 'ksyncbot',
                 password: creds.oauth,
             },
             channels: channelOptions,

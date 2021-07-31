@@ -48,7 +48,7 @@ const options = {
         cluster: 'aws',
     },
     identity: {
-        username: 'kunszgbot',
+        username: 'ksyncbot',
         password: creds.oauth,
     }
 };
@@ -102,37 +102,37 @@ webhookHandler.on('*', async function (event, repo, data, head) {
 
         if (data.commits.length > 1) {
             kb.say("kunszg", `[github webhook] ⬆  New push ${data.head_commit.id.slice(0, 7)} with
-                ${data.commits.length} commits in kunszgbot's repository by ${data.sender.login} #⃣
+                ${data.commits.length} commits in ksyncbot's repository by ${data.sender.login} #⃣
                 "${data.head_commit.message}" 🔄 changes in: ${files(data.head_commit.modified)}, `);
             return;
         }
 
         kb.say("kunszg", `[github webhook] ⬆  New commit ${data.head_commit.id.slice(0, 7)} in
-            kunszgbot's repository by ${data.sender.login} #⃣  "${data.head_commit.message}" 🔄
+            ksyncbot's repository by ${data.sender.login} #⃣  "${data.head_commit.message}" 🔄
             changes in: ${files(data.head_commit.modified)}`);
     }
 
     if (event === "create") {
         if (data.ref_type === "branch") {
             kb.say("kunszg", `[github webhook] New branch "${data.ref}" has been created in 
-                kunszgbot's repository by ${data.sender.login}`);
+                ksyncbot's repository by ${data.sender.login}`);
         }
 
         if (data.ref_type === "tag") {
             kb.say("kunszg", `[github webhook] New tag "${data.ref}" has been created in 
-                kunszgbot's repository by ${data.sender.login}`);
+                ksyncbot's repository by ${data.sender.login}`);
         }
     }
 
     if (event === "delete") {
         if (data.ref_type === "branch") {
             kb.say("kunszg", `[github webhook] Branch "${data.ref}" has been deleted in 
-                kunszgbot's repository by ${data.sender.login}`);
+                ksyncbot's repository by ${data.sender.login}`);
         }
 
         if (data.ref_type === "tag") {
             kb.say("kunszg", `[github webhook] Tag "${data.ref}" has been deleted in 
-                kunszgbot's repository by ${data.sender.login}`);
+                ksyncbot's repository by ${data.sender.login}`);
         }
     }
 
@@ -158,7 +158,7 @@ webhookHandler.on('*', async function (event, repo, data, head) {
             rateLimiter.delete(key);
         }, 1200000);
 
-        kb.say("kunszg", `[github webhook] ${data.sender.login} just starred the kunszgbot repository for the total
+        kb.say("kunszg", `[github webhook] ${data.sender.login} just starred the ksyncbot repository for the total
             of ${data.repository.stargazers_count} stars PogChamp <3 https://github.com/KUNszg/kbot`);
     }
 
@@ -1040,7 +1040,7 @@ app.get("/emotes", async (req, res) => {
                         </form>
                     <div>
                     <div class="footer">
-                        Emote checker is based on logs from Kunszgbot
+                        Emote checker is based on logs from ksyncbot
                     </div>
                     <div style="margin-top: 30%; margin-right: 10%; margin-left: 10%; margin-bottom: 10%">
                         <script>
@@ -1401,7 +1401,7 @@ app.get("/emotes", async (req, res) => {
                         });
                     </script>
                     <div class="footer">
-                        Emote checker is based on logs from Kunszgbot
+                        Emote checker is based on logs from ksyncbot
                     </div>
                 </body>
             </html>`
