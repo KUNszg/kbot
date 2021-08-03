@@ -133,7 +133,7 @@
                             data['date']
                         ]);
                 }
-                
+
                 const checkIfUnique = await query(`
                     SELECT *
                     FROM user_list
@@ -146,7 +146,7 @@
                 // no code should appear after this function in this block
                 await query(`
                     INSERT INTO user_list (username, userId, firstSeen, lastSeen, color, added)
-                    VALUES (?, ?, ?, ?, ?)`, 
+                    VALUES (?, ?, ?, ?, ?, ?)`,
                     [
                         data['username'], 
                         data['user-id'], 
@@ -163,7 +163,7 @@
         setInterval(() => {
             const mps = mpsCache.filter(i => i < (Date.now() - 1500));
 
-            // send data to websocket
+         // send data to websocket
             new WSocket("wsl").emit(
                 {type: "mps", data: (mps.length)}
             );
