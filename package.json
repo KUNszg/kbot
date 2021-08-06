@@ -16,7 +16,7 @@
     "got": "^11.8.2",
     "humanize-duration": "^3.27.0",
     "inquirer": "^8.1.2",
-    "mysql2": "^2.2.5",
+    "mysql2": "^2.3.0",
     "os": "^0.1.2",
     "require-dir": "^1.2.0",
     "table-builder": "^2.1.1",
