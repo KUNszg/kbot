@@ -20,7 +20,7 @@
     "os": "^0.1.2",
     "require-dir": "^1.2.0",
     "table-builder": "^2.1.1",
-    "tmi.js": "1.8.3",
+    "tmi.js": "1.8.4",
     "ytsearcher": "1.2.4"
   },
   "directories": {
