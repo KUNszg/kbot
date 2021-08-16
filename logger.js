@@ -37,7 +37,7 @@
                 debug: false,
             },
             identity: {
-                username: 'kunszgbot',
+                username: 'ksyncbot',
                 password: creds.oauth,
             },
             channels: channelOptions,
@@ -64,8 +64,12 @@
         con.on('error', (err) => {console.log(err)});
 
         const cache = [];
+        const userCache = [];
+        const mpsCache = [];
 
         kb.on('message', (channel, user, message) => {
+            mpsCache.push(Date.now());
+            
             const channels = this.channelList.filter(i => i.channel === channel.replace('#', ''));
 
             if (!channels[0]?.status ?? true) {
@@ -93,8 +97,6 @@
                 'date': new Date().toISOString().slice(0, 19).replace('T', ' ')
             });
         })
-
-        const userCache = [];
 
         const updateLogs = () => {
             cache.forEach(async (data) => {
@@ -131,7 +133,7 @@
                             data['date']
                         ]);
                 }
-                
+
                 const checkIfUnique = await query(`
                     SELECT *
                     FROM user_list
@@ -144,7 +146,7 @@
                 // no code should appear after this function in this block
                 await query(`
                     INSERT INTO user_list (username, userId, firstSeen, lastSeen, color, added)
-                    VALUES (?, ?, ?, ?, ?)`, 
+                    VALUES (?, ?, ?, ?, ?, ?)`,
                     [
                         data['username'], 
                         data['user-id'], 
@@ -159,13 +161,17 @@
         const WSocket = require("./lib/utils/utils.js").WSocket;
 
         setInterval(() => {
-            if (cache.length != 0) {
-                // send data to websocket
-                new WSocket("wsl").emit(
-                    {type: "mps", data: (cache.length / 7).toFixed(2)}
-                );
-            }
+            const mps = mpsCache.filter(i => i < (Date.now() - 1500));
 
+         // send data to websocket
+            new WSocket("wsl").emit(
+                {type: "mps", data: (mps.length)}
+            );
+
+            mpsCache.length = 0;
+        }, 3000);
+
+        setInterval(() => {
             if (userCache.length != 0) {
                 // send data to websocket
                 new WSocket("wsl").emit(

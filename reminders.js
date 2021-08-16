@@ -15,10 +15,10 @@ const options = {
         cluster: 'aws',
     },
     identity: {
-        username: 'kunszgbot',
+        username: 'ksyncbot',
         password: api.oauth,
     },
-    channels: ['kunszg', 'kunszgbot'],
+    channels: ['tombbie', 'ksyncbot'],
 };
 
 const tmi = require('tmi.js');

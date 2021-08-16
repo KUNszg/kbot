@@ -60,7 +60,7 @@
             <div class="dark-box"></div>
             <div class="content dark">
                 <h1 id='introduction'>Introduction</h1>
-                <p>This documentation is for <strong>kunszgbot</strong>'s API endpoints.</p>
+                <p>This documentation is for <strong>ksyncbot</strong>'s API endpoints.</p>
                 <p>Since the project is constantly growing, expect changes and updates in endpoints, but don't worry, everything is backwards compatible.</p>
                 <h1 id='contact'>Contact</h1>
                 <p>If you have any questions or requests regarding the API or the project in general, whisper me on <a href="https://twitch.tv/kunszg">Twitch</a> or create a suggestion in my bot by typing <code>kb suggest &#60;your_message&#62;</code> in Twitch chat, eventually you can email me at <a href="mailto:dev@kunszg.com">dev@kunszg.com</a></p>
@@ -96,7 +96,7 @@
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
                 </div>
-                <p>This endpoint retrieves statistics related to kunszgbot and its workspace.</p>
+                <p>This endpoint retrieves statistics related to ksyncbot and its workspace.</p>
                 <h3 id='http-request'>HTTP Request</h3>
                 <p><code><span style="color:green; font-size: 15px;">GET</span> https://kunszg.com/api/stats</code></p>
                 <h3 id='query-parameters'>Query Parameters</h3>
@@ -131,30 +131,30 @@
   </span>  <span class="nl">"code"</span>:<span class="mi"> 200</span>,<span class="p">
     <span class="nl">"count"</span>:<span class="mi"> 1</span>,<span class="p">
     <span class="nl">"channels"</span>: {</span>
-        <span class="nl">"kunszg"</span>: {<span class="w">
-  </span>          <span class="nl">"id"</span>: <span class="mi">1</span>,<span class="w">
-  </span>          <span class="nl">"userId"</span>: <span class="mi">178087241</span>,<span class="w">
-  </span>          <span class="nl">"name"</span>: <span class="s2">"kunszg"</span>,<span class="w">
-  </span>          <span class="nl">"liveStatus"</span>: <span class="s2">"offline"</span>,<span class="w">
+        <span class="nl">"nymn"</span>: {<span class="w">
+  </span>          <span class="nl">"id"</span>: <span class="mi">4</span>,<span class="w">
+  </span>          <span class="nl">"userId"</span>: <span class="mi">62300805</span>,<span class="w">
+  </span>          <span class="nl">"name"</span>: <span class="s2">"nymn"</span>,<span class="w">
+  </span>          <span class="nl">"liveStatus"</span>: <span class="s2">"live"</span>,<span class="w">
   </span>          <span class="nl">"isStrict"</span>: <span class="nc">false</span>,<span class="w">
-  </span>          <span class="nl">"created"</span>: <span class="s2">"2020-01-16T17:19:39.000Z"</span>,<span class="w">
-  </span>          <span class="nl">"createdTimestamp"</span>: <span class="mi">1579195179000</span>,<span class="w">
-  </span>          <span class="nl">"commandsUsed"</span>: <span class="mi">4637</span>,<span class="w">
-  </span>          <span class="nl">"isBanphraseApiActive"</span>: <span class="nc">false</span>,<span class="w">
-  </span>          <span class="nl">"banphraseApi"</span>: <span style="color: lightgray;">null</span>,<span class="w">
+  </span>          <span class="nl">"created"</span>: <span class="s2">"2020-10-19T17:37:44.000Z"</span>,<span class="w">
+  </span>          <span class="nl">"createdTimestamp"</span>: <span class="mi">1603129064000</span>,<span class="w">
+  </span>          <span class="nl">"commandsUsed"</span>: <span class="mi">54033</span>,<span class="w">
+  </span>          <span class="nl">"isBanphraseApiActive"</span>: <span class="nc">true</span>,<span class="w">
+  </span>          <span class="nl">"banphraseApi"</span>: <span class="s2">"https://nymn.pajbot.com/api/v1/banphrases/test"</span>,<span class="w">
             <span class="nl">"logger"</span>: {<span class="w">
-                <span class="nl">"id"</span>: <span class="mi">1</span>,<span class="w">
+                <span class="nl">"id"</span>: <span class="mi">3</span>,<span class="w">
                 <span class="nl">"isLogging"</span>: <span class="nc">true</span>,<span class="w">
-                <span class="nl">"created"</span>: <span class="s2">"2020-04-05T01:27:39.000Z"</span>,<span class="w">
-                <span class="nl">"createdTimestamp"</span>: <span class="mi">1586050059000</span><span class="w">
-                <span class="nl">"tableSize"</span>: <span class="mi">3156</span><span class="w">
+                <span class="nl">"created"</span>: <span class="s2">"2020-04-05T04:14:04.000Z"</span>,<span class="w">
+                <span class="nl">"createdTimestamp"</span>: <span class="mi">1586060044000</span><span class="w">
+                <span class="nl">"tableSize"</span>: <span class="mi">3444</span><span class="w">
           <span class="p">  }</span>
 </span>      <span class="p">  }</span>
   <span class="p">  }</span>
 <span class="p">}</span><span class="w">
 </span></code></pre>
                 </div>
-                <p>This endpoint retrieves channels in which kunszgbot is currently operational.</p>
+                <p>This endpoint retrieves channels in which ksyncbot is currently operational.</p>
                 <!-- red label
                   <aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
                 -->
@@ -273,7 +273,7 @@
                     This error section is stored in a separate file in <code>includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files...just save them to the <code>includes</code> folder and add them to the top of your <code>index.md</code>'s frontmatter. Files are included in the order listed.
                 </aside>
                 -->
-                <p>The kunszgbot API uses or will use in future the following error codes:</p>
+                <p>The ksyncbot API uses or will use in future the following error codes:</p>
                 <table>
                     <thead>
                         <tr>

@@ -10,10 +10,18 @@
         <meta property="og:image" content="https://i.nuuls.com/B320I.jpeg" />
         <meta name="description" content="Website for my dank projects" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <title>KUNszg</title>
+        <title>KsyncBot</title>
         <style type="text/css">
             #fadeAnimation {
                 animation: fade 0.8s linear forwards;
+            }
+
+            .changelog {
+                background-color: none;
+            }
+
+            .changelog:hover {
+                background-color: dimgray;
             }
         </style>
     </head>
@@ -35,7 +43,7 @@
             document.getElementById("loader").style["background-image"] = `url("./img/${img}")`;
 
             setTimeout(() => {
-                $( document ).ready(function() {
+                $(document).ready(function() {
                     document.getElementById("loader").style.display = "none";
                     document.getElementById("txt").style.display = "none";
                     document.getElementById("main").style.display = "inherit";
@@ -52,6 +60,11 @@
             <span class="animate-bottom channels-button" style="margin-left: 1.5vw;" onclick="openNav()">&#9776;
                 <a style="font-size: 20px;" >CHANNELS</a>
             </span>
+<!--             <div id="fadeAnimation">
+                <div id="github-push">
+                    <span style="font-size: 20px; padding: 0 15px; color: white; font-family: 'Source Sans Pro', 'sans-serif';">changelog</span>
+                </div>
+            </div> -->
 
             <div class="container" id="fadeAnimation">
                 <div class="topright" id="stats">
@@ -81,6 +94,10 @@
                             <td style="padding:0 15px;" id="linesOfCode"></td>
                         </tr>
                         <tr>
+                            <td style="font-style: italic;">logging messages</td>
+                            <td style="padding: 0 15px;" id="mps"></td>
+                        </tr>
+                        <tr>
                             <td style="font-style: italic;">bot uptime </td>
                             <td style="padding: 0 15px;" id="botUptime">
                                 <span title="offline" class="redDot"></span>
@@ -99,18 +116,7 @@
                             <td style="padding:0 15px;" id="apiUptime"></td>
                         </tr>
                     </table>
-                    <br><br>
-                    <div id="github-push"  style="overflow: hidden; height: 100px;">
-                        <span style="font-size: 20px; font-family: 'Source Sans Pro', 'sans-serif';">changelog</span>
-                    </div>
                 </div>
-                    <!--.topright {
-    position: absolute;
-    top: -28px;
-    right: 16px;
-    color: white;
-    font-family: 'Source Sans Pro', 'sans-serif';
-}-->
             </div>
             <script type="text/javascript">
                 if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
@@ -160,9 +166,11 @@
 
                             document.getElementById("remindersUptime").innerHTML = `${remindersUptime > 70 ? '<span title="offline" class="redDot"></span>' : '<span title="online" class="greenDot"></span>'}`;
 
+                            document.getElementById("mps").innerHTML = "0/s";
+
                             document.getElementById("apiUptime").innerHTML = `${apiUptime > 70 ? '<span title="offline" class="redDot"></span>' : '<span title="online" class="greenDot"></span>'}`;
 
-                            const socket = new WebSocket('ws://kunszg.com:3000/ws');
+                            const socket = new WebSocket('wss://kunszg.com/ws');
 
                             let refresh = 0;
 
@@ -173,6 +181,14 @@
                                 
                                 refresh++;
                             }, 1000);
+   /*                     
+                            fetch("https://api.github.com/repos/kunszg/kbot/commits?per_page=6")
+                                .then(response2 => response2.json())
+                                .then(github => {
+                                    for (let i = 0; i < github.length; i++) {
+                                        document.getElementById("github-push").innerHTML += `<a href="${github[i].html_url}"><div style="padding: 10px 15px 10px 15px; height: 20px;color: white;" class="button1 changelog">${github[i].commit.message}</div></a>`;
+                                    }
+                                })*/
 
                             socket.addEventListener('message', function (event) {
                                 const message = JSON.parse(event.data);
@@ -181,31 +197,43 @@
                                 if (message.cache) { 
                                     if (message?.botUptime ?? false) {
                                         document.getElementById("botUptime").innerHTML = `${data.bot.isRestarting ? '🔄 restarting' : secondsToDhms(Math.trunc(message.botUptime.data))}`;
-                                    }
-
-                                    if (message?.body.gitLatestCommits ?? false) {
-                                        const commits = message.body.gitLatestCommits;
-                                        for (let i = 0; i < commits.length) {
-                                            setTimeout(() => {
-                                                document.getElementById("github-push").innerHTML += `<a href="${commits[i].commit.url}"><div style="height: 20px;color: white;" class="button1">${commits[i].commit.message}</div></a>`;
-                                            }, 100);
-                                        }
                                     } 
+
+                                    if (message?.mps ?? false) {
+                                        document.getElementById("mps").innerHTML = `${message.mps.data}/s`;
+                                    }
                                 }
 
                                 // streamed data
                                 if (message?.body ?? false) {
-                                    const hook = message.body.type;
+                                    const hook = message.body;
 
-                                    if (hook === "botUptime") {
-                                        document.getElementById("botUptime").innerHTML = `${data.bot.isRestarting ? '🔄 restarting' : secondsToDhms(Math.trunc(message.body.data))}`;
+                                    if (Array.isArray(message.body)) {
+                                        if (hook.find(i => i.type === "commandExecs")) {
+                                            document.getElementById("commandExecutions").innerHTML = `${spreadNumbers(message.body[1].data)}`;
+                                        }
+
+                                        if (hook.find(i => i.type === "usersTotal")) {
+                                            document.getElementById("usersLogged").innerHTML = `${spreadNumbers(message.body[0].data)}`
+                                        }
+                                    }
+                                    else {
+                                        if (hook.type === "botUptime") {
+                                            document.getElementById("botUptime").innerHTML = `${data.bot.isRestarting ? '🔄 restarting' : secondsToDhms(Math.trunc(message.body.data))}`;
+                                        }
+
+                                        if (hook.type === "mps") {
+                                            document.getElementById("mps").innerHTML = `${message.body.data}/s`;
+                                        }
                                     }
 
+                                    /*                       
                                     if (hook === "github") {
                                         if (message.body.event === "push") {
                                             document.getElementById("github-push").innerHTML += `<a href="https://github.com/KUNszg/kbot/commit/${message.body.data.head_commit.id}"<div style="color: white;" class="button1">test</div></a>`;
                                         } 
                                     }
+                                    */
                                 }
 
                                 refresh = 0;
@@ -227,7 +255,7 @@
             <div id="inh" class="animate-bottom">
                 <div style="margin-top: 10%; vertical-align: middle; white-space: nowrap;">
                     <h1 class="inner" style="margin-left: -3px;">
-                        <a href="https://www.twitch.tv/kunszg" style="text-decoration: none;" class="button1">KUNszg</a>
+                        <a href="https://www.twitch.tv/ksyncbot" style="text-decoration: none;" class="button1">KsyncBot</a>
                     </h1>
                     <div class="animate-bottom">
                         <div class="dropdown">
@@ -237,7 +265,7 @@
                             </button>
                             <div id="dropdwnProjects" class="dropdown-content" style="margin-left:14px">
                                 <a class="github select" target="_blank" href="https://github.com/KUNszg/kbot">
-                                    <pre style="margin-bottom:17px">KUNSZGBOT</pre>
+                                    <pre style="margin-bottom:17px">KSYNCBOT</pre>
                                 </a>
                                 <a class="github select" target="_blank" href="https://github.com/KUNszg/vypyr-connector">
                                     <pre style="margin-bottom:17px">VYPYR-CONNECTOR</pre>

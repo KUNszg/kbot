@@ -10,17 +10,17 @@
   "license": "ISC",
   "dependencies": {
     "buffer-equal-constant-time": "^1.0.1",
-    "discord.js": "^12.5.3",
+    "discord.js": "^13.1.0",
     "express": "^4.17.1",
     "express-rate-limit": "^5.3.0",
     "got": "^11.8.2",
     "humanize-duration": "^3.27.0",
     "inquirer": "^8.1.2",
-    "mysql2": "^2.2.5",
+    "mysql2": "^2.3.0",
     "os": "^0.1.2",
     "require-dir": "^1.2.0",
     "table-builder": "^2.1.1",
-    "tmi.js": "1.8.3",
+    "tmi.js": "1.8.4",
     "ytsearcher": "1.2.4"
   },
   "directories": {
