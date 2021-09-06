@@ -52,14 +52,7 @@
             }, 300); 
         </script>
         <div id="main">
-            <div id="sideNav" class="sidenav">
-                <a href="javascript:void(0)" class="closebtn"  onclick="closeNav()">&times;</a>
-                <div id="box" style="margin-left: 20px; text-align: center;"></div>
-            </div>
-            <br>
-            <span class="animate-bottom channels-button" style="margin-left: 1.5vw;" onclick="openNav()">&#9776;
-                <a style="font-size: 20px;" >CHANNELS</a>
-            </span>
+            <br><br>
 <!--             <div id="fadeAnimation">
                 <div id="github-push">
                     <span style="font-size: 20px; padding: 0 15px; color: white; font-family: 'Source Sans Pro', 'sans-serif';">changelog</span>
@@ -242,16 +235,6 @@
                     }
             </script>
 
-            <script>
-                const openNav = () => {
-                    document.getElementById("sideNav").style.width = "230px";
-                }
-
-                const closeNav = () => {
-                    document.getElementById("sideNav").style.width = "0";
-                }
-            </script>
-
             <div id="inh" class="animate-bottom">
                 <div style="margin-top: 10%; vertical-align: middle; white-space: nowrap;">
                     <h1 class="inner" style="margin-left: -3px;">
@@ -334,21 +317,8 @@
                         }
                     }
                 }
-
-                fetch('https://kunszg.com/api/channels')
-                  .then(response => response.json())
-                  .then(rows => {
-                    var html = "<table><td style='color: green; border-bottom: solid dimgray 1px; font-weight: bold;'></td>";
-                    for (var i = 0; i < rows.data.length; i++) {
-                        html+="<tr>";
-                        html+="<td class='api'><a style='font-size: 15px;' href='https://twitch.tv/"+rows.data[i]+"'/>"+rows.data[i]+"</td>";
-
-                        html+="</tr>";
-                    }
-                    html+="</table><br><br><br><br>";
-                    document.getElementById("box").innerHTML = html;
-                })
             </script>
         </div>
     </body>
 </html>
+
