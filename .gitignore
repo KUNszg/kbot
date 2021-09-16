@@ -10,3 +10,5 @@ data/temp_api_restarting.txt
 data/temp_api_uptime.txt
 .idea/workspace.xml
 .idea/discord.xml
+.idea/.name
+.idea/vcs.xml
