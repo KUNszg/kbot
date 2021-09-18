@@ -72,7 +72,7 @@ const rateLimiter = new Set();
 
 webhookHandler.on('*', async function (event, repo, data, head) {
     new utils.WSocket("wsl").emit({
-        type: "github", 
+        type: "github",
         data: [
             {"event": event},
             {"repo": repo},
@@ -138,8 +138,8 @@ webhookHandler.on('*', async function (event, repo, data, head) {
 
     if (event === "commit_comment") {
         if (data.action === "created") {
-            const trim = (data.comment.body.length > 350) ? 
-                data.comment.body.substring(0, 350) : 
+            const trim = (data.comment.body.length > 350) ?
+                data.comment.body.substring(0, 350) :
                 data.comment.body;
 
             kb.say("ksyncbot", `[github webhook] A commit comment has been created
@@ -362,9 +362,96 @@ app.get("/connections", async (req, res) => {
         `)
 })*/
 
+app.get("/api/user", async(req, res) => {
+    const userid = req.headers["userid"] || req.query.userid;
+    const username = req.headers["username"] || req.query.username;
+
+    if (username) {
+        const user = await utils.Get.user().byUsername(username.toLowerCase());
+
+        if (!user.length) {
+            res.send({
+                "status": 404,
+                "message": "user not found"
+            });
+            return;
+        }
+
+        const users = await utils.Get.user().byId(user[0].userId);
+
+        const getOptedOut = await utils.Get.user().optout("namechange", users[0].userId, "userId");
+
+        if (getOptedOut.length && (user['user-id'] != users[0].userId)) {
+            res.send({
+                "status": 403,
+                "message": "user has opted out from being searched by this endpoint"
+            });
+            return;
+        }
+
+        const pastUsernames = users.map(({username, userId, color, added}) => ({
+            username: username,
+            color: color,
+            foundUTC: added,
+            foundTimestamp: Date.parse(added)
+        }));
+
+        res.send({
+            "status": 200,
+            "userid": user[0].userId,
+            "currentUsername": users[users.length-1].username,
+            "nameHistory": pastUsernames
+        });
+
+        return;
+    }
+
+    if (userid) {
+        const users = await utils.Get.user().byId(userid);
+
+        const getOptedOut = await utils.Get.user().optout("namechange", users[0].userId, "userId");
+
+        if (!users.length) {
+            res.send({
+                "status": 404,
+                "message": "user not found"
+            });
+            return;
+        }
+
+        if (getOptedOut.length && (user['user-id'] != users[0].userId)) {
+            res.send({
+                "status": 403,
+                "message": "user has opted out from being searched by this endpoint"
+            });
+            return;
+        }
+
+        const pastUsernames = users.map(({username, userId, color, added}) => ({
+            username: username,
+            color: color,
+            foundUTC: added,
+            foundTimestamp: Date.parse(added)
+        }));
+
+        res.send({
+            "status": 200,
+            "userid": userid,
+            "currentUsername": users[users.length-1].username,
+            "nameHistory": pastUsernames
+        });
+
+        return;
+    }
+
+    res.send({
+        "status": 400,
+        "message": "bad request"
+    });
+});
+
 // kunszg.com/api/channels
 app.get("/api/channels", async (req, res) => {
-
     if (typeof req.query.details === "undefined") {
         let channelList = await utils.query("SELECT * FROM channels");
 
@@ -373,7 +460,6 @@ app.get("/api/channels", async (req, res) => {
         res.send({
             "data": channelList
         });
-
         return;
     }
 
