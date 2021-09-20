@@ -52,16 +52,6 @@
 
         kb.connect();
 
-        // retry joining the channels
-        setInterval(() => {
-            for (let i = 0; i < channelOptions.length; i++) {
-                setTimeout(() => {
-                    kb.join(channelOptions)
-                }, i * 300);
-            }
-        }, channelOptions.length * 1000);
-
-
         con.connect((err) => {
             if (err) {
                 kb.say('kunszg', '@kunszg, database connection error monkaS')
