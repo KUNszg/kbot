@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "buffer-equal-constant-time": "^1.0.1",
-    "discord.js": "^13.1.0",
+    "discord.js": "^13.2.0",
     "express": "^4.17.1",
     "express-rate-limit": "^5.4.1",
     "got": "^11.8.2",
