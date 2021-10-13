@@ -561,8 +561,6 @@ app.get("/api/channels", async (req, res) => {
 
 app.get("/countdown", async (req, res) => {
     try {
-
-
         if (!req.query?.verifcode ?? false) {
             const verifCode = utils.genString();
 
@@ -1195,8 +1193,7 @@ app.get("/emotes", async (req, res) => {
                     </div>
                 </div>
             </body>
-        </html>
-        `;
+        </html>`;
 
     if (!req.query.search) {
         res.send(homepage)
@@ -1234,6 +1231,7 @@ app.get("/emotes", async (req, res) => {
                 return (this.input.length > 20) ? `${this.input.substr(0, 20)}(...)` : this.input;
             }
         }
+
         if (!emotes.length) {
                res.send(homepage);
         }
@@ -1341,6 +1339,16 @@ app.get("/emotes", async (req, res) => {
             );
         */
 
+        const emoteCount = await utils.query(`
+            SELECT COUNT(*) as count, type
+            FROM emotes
+            WHERE CHANNEL=?
+            GROUP BY type`, [req.query.search.toLowerCase()]);
+
+        const emoteCountBttv = !emoteCount.find(i => i.type === "bttv") ? 0 : emoteCount.find(i => i.type === "bttv").count;
+        const emoteCountFfz = !emoteCount.find(i => i.type === "ffz") ? 0 : emoteCount.find(i => i.type === "ffz").count;
+        const emoteCount7Tv = !emoteCount.find(i => i.type === "7tv") ? 0 : emoteCount.find(i => i.type === "7tv").count;
+
         res.send(`
             <!DOCTYPE html>
             <html>
@@ -1409,7 +1417,7 @@ app.get("/emotes", async (req, res) => {
                 </head>
                 <body style="background-color: #1a1a1a">
                     <br>
-                    <div style="text-align: center; color: white">
+                    <div style="text-align: center; color: white";>
                         <strong><a style="color: inherit;" href="https://twitch.tv/${req.query.search.toLowerCase()}">${req.query.search.toLowerCase()}'s</a> emotes</strong>
                     </div>
                     <br>
@@ -1421,10 +1429,13 @@ app.get("/emotes", async (req, res) => {
                             </button>
                         </form>
                     <div>
-                    <div style="text-align: center; margin-top: 15px;">
-                        <div id="timer">
-                        </div>
+                   <div style="color: white; text-align: left; font-size: 19px">
+                        <i>BTTV: ${emoteCountBttv}</i><br>
+                        <i>FFZ: ${emoteCountFfz}</i><br>
+                        <i>7TV: ${emoteCount7Tv}</i><br>
                     </div>
+                    <br>
+                    <div id="timer" style="text-align: left"></div>
                     <script>
                         function lastUpdate() {
                             return (Date.now() - (Date.parse("${(await utils.query(`SELECT emotesUpdate FROM channels_logger WHERE channel="${req.query.search.toLowerCase()}"`))[0]?.emotesUpdate ?? new Date()} UTC")))/1000;
@@ -1445,7 +1456,7 @@ app.get("/emotes", async (req, res) => {
                         }
 
                         setInterval(() => {
-                            const timer = '<i style="color:white">LAST UPDATE</i><div style="text-align: center; color: white; font-size: 20px;">'+secondsToDhms(lastUpdate())+'<i style="color:white; font-size:15px; font-family: "Noto Sans", sans-serif;"> AGO</i></div>';
+                            const timer = '<i style="color:white">LAST UPDATE</i><div style="color: white; font-size: 20px;">'+secondsToDhms(lastUpdate())+'<i style="color:white; font-size:15px; font-family: "Noto Sans", sans-serif;"> AGO</i></div>';
 
                             document.getElementById("timer").innerHTML = timer;
                         }, 1000)
