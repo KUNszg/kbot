@@ -58,63 +58,66 @@
                     <span style="font-size: 20px; padding: 0 15px; color: white; font-family: 'Source Sans Pro', 'sans-serif';">changelog</span>
                 </div>
             </div> -->
+            <div id="statsBox"></div>
 
-            <div class="container" id="fadeAnimation">
-                <div class="topright" id="stats">
-                    <table style="font-size: 13px; margin-right: -1.2vw;">
-                        <colgroup>
-                            <col>
-                            <col style="width: 115px;">
-                        </colgroup>
-                        <tr>
-                            <td style="font-style: italic;">my stream is currently </td>
-                            <td style="padding:0 15px;" id="isAuthorLive"></td>
-                        </tr>
-                        <tr>
-                            <td style="font-style: italic;">total users tracked </td>
-                            <td style="padding:0 15px;" id="usersLogged"></td>
-                        </tr>
-                        <tr>
-                            <td style="font-style: italic;">command executions </td>
-                            <td style="padding:0 15px;" id="commandExecutions"></td>
-                        </tr>
-                        <tr>
-                            <td style="font-style: italic;">commits </td>
-                            <td style="padding:0 15px;" id="commits"></td>
-                        </tr>
-                        <tr>
-                            <td style="font-style: italic;">lines of code </td>
-                            <td style="padding:0 15px;" id="linesOfCode"></td>
-                        </tr>
-                        <tr>
-                            <td style="font-style: italic;">logging messages</td>
-                            <td style="padding: 0 15px;" id="mps"></td>
-                        </tr>
-                        <tr>
-                            <td style="font-style: italic;">bot uptime </td>
-                            <td style="padding: 0 15px;" id="botUptime">
-                                <span title="offline" class="redDot"></span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="font-style: italic;">logger </td>
-                            <td style="padding:0 15px;" id="loggerUptime"></td>
-                        </tr>
-                        <tr>
-                            <td style="font-style: italic;">reminders </td>
-                            <td style="padding:0 15px;" id="remindersUptime"></td>
-                        </tr>
-                        <tr>
-                            <td style="font-style: italic;">API </td>
-                            <td style="padding:0 15px;" id="apiUptime"></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
             <script type="text/javascript">
                 if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
                 }
                 else {
+                    document.getElementById("statsBox").innerHTML = `
+                    <div class="container" id="fadeAnimation">
+                        <div class="topright" id="stats">
+                            <table style="font-size: 13px; margin-right: -1.2vw;">
+                                <colgroup>
+                                    <col>
+                                    <col style="width: 115px;">
+                                </colgroup>
+                                <tr>
+                                    <td style="font-style: italic;">my stream is currently </td>
+                                    <td style="padding:0 15px;" id="isAuthorLive"></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-style: italic;">total users tracked </td>
+                                    <td style="padding:0 15px;" id="usersLogged"></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-style: italic;">command executions </td>
+                                    <td style="padding:0 15px;" id="commandExecutions"></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-style: italic;">commits </td>
+                                    <td style="padding:0 15px;" id="commits"></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-style: italic;">lines of code </td>
+                                    <td style="padding:0 15px;" id="linesOfCode"></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-style: italic;">logging messages</td>
+                                    <td style="padding: 0 15px;" id="mps"></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-style: italic;">bot uptime </td>
+                                    <td style="padding: 0 15px;" id="botUptime">
+                                        <span title="offline" class="redDot"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-style: italic;">logger </td>
+                                    <td style="padding:0 15px;" id="loggerUptime"></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-style: italic;">reminders </td>
+                                    <td style="padding:0 15px;" id="remindersUptime"></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-style: italic;">API </td>
+                                    <td style="padding:0 15px;" id="apiUptime"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>`
+
                     fetch('https://kunszg.com/api/stats')
                         .then(response => response.json())
                         .then(data => {
