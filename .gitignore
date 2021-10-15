@@ -9,3 +9,4 @@ test.js
 data/aliases.json
 data/temp_api_restarting.txt
 data/temp_api_uptime.txt
+*.txt
