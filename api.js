@@ -72,7 +72,7 @@ const rateLimiter = new Set();
 
 webhookHandler.on('*', async function (event, repo, data, head) {
     new utils.WSocket("wsl").emit({
-        type: "github", 
+        type: "github",
         data: [
             {"event": event},
             {"repo": repo},
@@ -138,8 +138,8 @@ webhookHandler.on('*', async function (event, repo, data, head) {
 
     if (event === "commit_comment") {
         if (data.action === "created") {
-            const trim = (data.comment.body.length > 350) ? 
-                data.comment.body.substring(0, 350) : 
+            const trim = (data.comment.body.length > 350) ?
+                data.comment.body.substring(0, 350) :
                 data.comment.body;
 
             kb.say("ksyncbot", `[github webhook] A commit comment has been created
@@ -362,9 +362,96 @@ app.get("/connections", async (req, res) => {
         `)
 })*/
 
+app.get("/api/user", async(req, res) => {
+    const userid = req.headers["userid"] || req.query.userid;
+    const username = req.headers["username"] || req.query.username;
+
+    if (username) {
+        const user = await utils.Get.user().byUsername(username.toLowerCase());
+
+        if (!user.length) {
+            res.send({
+                "status": 404,
+                "message": "user not found"
+            });
+            return;
+        }
+
+        const users = await utils.Get.user().byId(user[0].userId);
+
+        const getOptedOut = await utils.Get.user().optout("namechange", users[0].userId, "userId");
+
+        if (getOptedOut.length && (user['user-id'] != users[0].userId)) {
+            res.send({
+                "status": 403,
+                "message": "user has opted out from being searched by this endpoint"
+            });
+            return;
+        }
+
+        const pastUsernames = users.map(({username, userId, color, added}) => ({
+            username: username,
+            color: color,
+            foundUTC: added,
+            foundTimestamp: Date.parse(added)
+        }));
+
+        res.send({
+            "status": 200,
+            "userid": user[0].userId,
+            "currentUsername": users[users.length-1].username,
+            "nameHistory": pastUsernames
+        });
+
+        return;
+    }
+
+    if (userid) {
+        const users = await utils.Get.user().byId(userid);
+
+        const getOptedOut = await utils.Get.user().optout("namechange", users[0].userId, "userId");
+
+        if (!users.length) {
+            res.send({
+                "status": 404,
+                "message": "user not found"
+            });
+            return;
+        }
+
+        if (getOptedOut.length && (user['user-id'] != users[0].userId)) {
+            res.send({
+                "status": 403,
+                "message": "user has opted out from being searched by this endpoint"
+            });
+            return;
+        }
+
+        const pastUsernames = users.map(({username, userId, color, added}) => ({
+            username: username,
+            color: color,
+            foundUTC: added,
+            foundTimestamp: Date.parse(added)
+        }));
+
+        res.send({
+            "status": 200,
+            "userid": userid,
+            "currentUsername": users[users.length-1].username,
+            "nameHistory": pastUsernames
+        });
+
+        return;
+    }
+
+    res.send({
+        "status": 400,
+        "message": "bad request"
+    });
+});
+
 // kunszg.com/api/channels
 app.get("/api/channels", async (req, res) => {
-
     if (typeof req.query.details === "undefined") {
         let channelList = await utils.query("SELECT * FROM channels");
 
@@ -373,7 +460,6 @@ app.get("/api/channels", async (req, res) => {
         res.send({
             "data": channelList
         });
-
         return;
     }
 
@@ -475,8 +561,6 @@ app.get("/api/channels", async (req, res) => {
 
 app.get("/countdown", async (req, res) => {
     try {
-
-
         if (!req.query?.verifcode ?? false) {
             const verifCode = utils.genString();
 
@@ -1109,8 +1193,7 @@ app.get("/emotes", async (req, res) => {
                     </div>
                 </div>
             </body>
-        </html>
-        `;
+        </html>`;
 
     if (!req.query.search) {
         res.send(homepage)
@@ -1148,6 +1231,7 @@ app.get("/emotes", async (req, res) => {
                 return (this.input.length > 20) ? `${this.input.substr(0, 20)}(...)` : this.input;
             }
         }
+
         if (!emotes.length) {
                res.send(homepage);
         }
@@ -1255,6 +1339,16 @@ app.get("/emotes", async (req, res) => {
             );
         */
 
+        const emoteCount = await utils.query(`
+            SELECT COUNT(*) as count, type
+            FROM emotes
+            WHERE CHANNEL=?
+            GROUP BY type`, [req.query.search.toLowerCase()]);
+
+        const emoteCountBttv = !emoteCount.find(i => i.type === "bttv") ? 0 : emoteCount.find(i => i.type === "bttv").count;
+        const emoteCountFfz = !emoteCount.find(i => i.type === "ffz") ? 0 : emoteCount.find(i => i.type === "ffz").count;
+        const emoteCount7Tv = !emoteCount.find(i => i.type === "7tv") ? 0 : emoteCount.find(i => i.type === "7tv").count;
+
         res.send(`
             <!DOCTYPE html>
             <html>
@@ -1323,7 +1417,7 @@ app.get("/emotes", async (req, res) => {
                 </head>
                 <body style="background-color: #1a1a1a">
                     <br>
-                    <div style="text-align: center; color: white">
+                    <div style="text-align: center; color: white";>
                         <strong><a style="color: inherit;" href="https://twitch.tv/${req.query.search.toLowerCase()}">${req.query.search.toLowerCase()}'s</a> emotes</strong>
                     </div>
                     <br>
@@ -1335,10 +1429,13 @@ app.get("/emotes", async (req, res) => {
                             </button>
                         </form>
                     <div>
-                    <div style="text-align: center; margin-top: 15px;">
-                        <div id="timer">
-                        </div>
+                   <div style="color: white; text-align: left; font-size: 19px">
+                        <i>BTTV: ${emoteCountBttv}</i><br>
+                        <i>FFZ: ${emoteCountFfz}</i><br>
+                        <i>7TV: ${emoteCount7Tv}</i><br>
                     </div>
+                    <br>
+                    <div id="timer" style="text-align: left"></div>
                     <script>
                         function lastUpdate() {
                             return (Date.now() - (Date.parse("${(await utils.query(`SELECT emotesUpdate FROM channels_logger WHERE channel="${req.query.search.toLowerCase()}"`))[0]?.emotesUpdate ?? new Date()} UTC")))/1000;
@@ -1359,7 +1456,7 @@ app.get("/emotes", async (req, res) => {
                         }
 
                         setInterval(() => {
-                            const timer = '<i style="color:white">LAST UPDATE</i><div style="text-align: center; color: white; font-size: 20px;">'+secondsToDhms(lastUpdate())+'<i style="color:white; font-size:15px; font-family: "Noto Sans", sans-serif;"> AGO</i></div>';
+                            const timer = '<i style="color:white">LAST UPDATE</i><div style="color: white; font-size: 20px;">'+secondsToDhms(lastUpdate())+'<i style="color:white; font-size:15px; font-family: "Noto Sans", sans-serif;"> AGO</i></div>';
 
                             document.getElementById("timer").innerHTML = timer;
                         }, 1000)

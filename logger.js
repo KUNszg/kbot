@@ -69,7 +69,7 @@
 
         kb.on('message', (channel, user, message) => {
             mpsCache.push(Date.now());
-            
+
             const channels = this.channelList.filter(i => i.channel === channel.replace('#', ''));
 
             if (!channels[0]?.status ?? true) {
@@ -104,19 +104,19 @@
                 await query(`
                     UPDATE user_list
                     SET lastSeen=?
-                    WHERE userId=?`,
+                    WHERE username=?`,
                     [
-                        `${data['date']}*${data['channel']}*${data['message']}`, 
-                        data['user-id']
+                        `${data['date']}*${data['channel']}*${data['message']}`,
+                        data['username']
                     ]);
 
                 // log user's message
                 await query(`
                     INSERT INTO logs_${data['channel']} (username, message, date)
-                    VALUES (?, ?, ?)`, 
+                    VALUES (?, ?, ?)`,
                     [
-                        data['username'], 
-                        data['message'], 
+                        data['username'],
+                        data['message'],
                         data['date']
                     ])
 
@@ -125,11 +125,11 @@
                 if (badWord) {
                     await query(`
                         INSERT INTO bruh (username, channel, message, date)
-                        VALUES (?, ?, ?, ?)`, 
+                        VALUES (?, ?, ?, ?)`,
                         [
-                            data['username'], 
-                            data['channel'], 
-                            data['message'], 
+                            data['username'],
+                            data['channel'],
+                            data['message'],
                             data['date']
                         ]);
                 }
@@ -138,7 +138,7 @@
                     SELECT *
                     FROM user_list
                     WHERE username=?`, [data['username']]);
-                
+
                 if (!checkIfUnique.length) {
                     userCache.push(1);
                 }
@@ -148,16 +148,16 @@
                     INSERT INTO user_list (username, userId, firstSeen, lastSeen, color, added)
                     VALUES (?, ?, ?, ?, ?, ?)`,
                     [
-                        data['username'], 
-                        data['user-id'], 
-                        data['channel'], 
-                        `${data['date']}*${data['channel']}*${data['message']}`, 
-                        data['color'], 
+                        data['username'],
+                        data['user-id'],
+                        data['channel'],
+                        `${data['date']}*${data['channel']}*${data['message']}`,
+                        data['color'],
                         data['date']
                     ]);
             })
         }
-        
+
         const WSocket = require("./lib/utils/utils.js").WSocket;
 
         setInterval(() => {
