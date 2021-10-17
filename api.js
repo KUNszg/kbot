@@ -1417,7 +1417,7 @@ app.get("/emotes", async (req, res) => {
                 </head>
                 <body style="background-color: #1a1a1a">
                     <br>
-                    <div style="text-align: center; color: white";>
+                    <div style="text-align: center; color: white">
                         <strong><a style="color: inherit;" href="https://twitch.tv/${req.query.search.toLowerCase()}">${req.query.search.toLowerCase()}'s</a> emotes</strong>
                     </div>
                     <br>
