@@ -192,7 +192,7 @@
                                 // cached data
                                 if (message.cache) { 
                                     if (message?.botUptime ?? false) {
-                                        document.getElementById("botUptime").innerHTML = `${data.bot.isRestarting ? '🔄 restarting' : secondsToDhms(Math.trunc(message.botUptime.data))}`;
+                                        document.getElementById("botUptime").innerHTML = secondsToDhms(Math.trunc(message.botUptime.data));
                                     } 
 
                                     if (message?.mps ?? false) {
@@ -215,7 +215,7 @@
                                     }
                                     else {
                                         if (hook.type === "botUptime") {
-                                            document.getElementById("botUptime").innerHTML = `${data.bot.isRestarting ? '🔄 restarting' : secondsToDhms(Math.trunc(message.body.data))}`;
+                                            document.getElementById("botUptime").innerHTML = secondsToDhms(Math.trunc(message.body.data));
                                         }
 
                                         if (hook.type === "mps") {
