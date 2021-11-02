@@ -11,7 +11,7 @@
   "dependencies": {
     "buffer-equal-constant-time": "^1.0.1",
     "dank-twitch-irc": "^4.3.0",
-    "discord.js": "^13.2.0",
+    "discord.js": "^13.3.1",
     "express": "^4.17.1",
     "express-rate-limit": "^5.5.0",
     "got": "^11.8.2",
