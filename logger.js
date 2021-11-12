@@ -153,7 +153,7 @@ kb.sqlConnect();
             await kb.query(`
                 UPDATE user_list
                 SET color="gray"
-                WHERE color IS null
+                WHERE color IS null OR color = ''
                 `);
 
             await kb.query(`
@@ -180,7 +180,7 @@ kb.sqlConnect();
                 const username = msg?.senderUsername ?? "anonymous";
                 const message = msg?.messageText ?? "";
                 const months = msg.eventParams?.cumulativeMonths ?? 0;
-                const giftRecipient = msg.eventParams?.recipientUsername ?? "";
+                const giftRecipient = msg.eventParams?.recipientUsername ?? "anonymous (somehow)";
 
                 if (msgID.includes("gift")) {
                     await kb.query(`
