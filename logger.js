@@ -5,11 +5,21 @@ const init = require('./lib/utils/connection.js');
 const creds = require('./lib/credentials/config.js');
 const regex = require('./lib/utils/regex.js');
 
-const kb = new init.IRC();
+/*const redis = init.Redis;
+redis.connect();*/
 
+const kb = new init.IRC();
 kb.tmiConnect();
 kb.sqlConnect();
+/*redis.set("key", ["yep"]);
 
+(async () => {
+    await redis.append("key", ["cock"])
+
+    //const x = await redis.get("key");
+    const x = await redis.size();
+    console.log(x)
+})();*/
 (async() => {
     try {
         this.channelList = await kb.query('SELECT * FROM channels_logger');
@@ -106,6 +116,8 @@ kb.sqlConnect();
                     }
                 })();
 
+                data['color'] = (data['color'] === '' || data['color'] === null) ? 'gray' : data['color'];
+
                 // no code should appear after this function in this block
                 await kb.query(`
                 INSERT IGNORE INTO user_list (username, userId, firstSeen, lastSeen, color, added)
@@ -126,7 +138,7 @@ kb.sqlConnect();
         setInterval(() => {
             const mps = mpsCache.filter(i => i < (Date.now() - 1500));
 
-         // send data to websocket
+            // send data to websocket
             new WSocket("wsl").emit(
                 {type: "mps", data: (mps.length)}
             );
@@ -150,16 +162,7 @@ kb.sqlConnect();
         }, 7000);
 
         setInterval(async() => {
-            await kb.query(`
-                UPDATE user_list
-                SET color="gray"
-                WHERE color IS null OR color = ''
-                `);
-
-            await kb.query(`
-                DELETE FROM user_list
-                WHERE username IS null
-                `);
+            await kb.query("DELETE FROM user_list WHERE username IS null OR username = ''");
         }, 1800000);
 
         const statusCheck = async() => {
