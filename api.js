@@ -3,13 +3,13 @@
 
 const express = require('express');
 const fs = require('fs');
-const mysql = require('mysql2');
 const got = require('got');
 const creds = require('./lib/credentials/config.js');
 const utils = require('./lib/utils/utils.js');
 const bodyParser = require('body-parser');
 const shell = require('child_process');
 const rateLimit = require("express-rate-limit");
+const init = require('./lib/utils/connection.js');
 
 const apiLimiter = rateLimit({
     windowMs: 60 * 1000, // 1 minute
@@ -23,39 +23,10 @@ app.set('trust proxy', 1);
 
 app.use("/api/", apiLimiter);
 
-const con = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: creds.db_pass,
-	database: "kbot"
-});
+const kb = new init.IRC();
 
-con.on('error', (err) => {
-    console.log(err);
-});
-
-con.connect((err) => {
-	if (err) {
-		console.log('Database connection error in express');
-	}
-});
-
-const options = {
-    options: {
-        debug: false,
-    },
-    connection: {
-        cluster: 'aws',
-    },
-    identity: {
-        username: 'ksyncbot',
-        password: creds.oauth,
-    }
-};
-
-const tmi = require('tmi.js');
-const kb = new tmi.client(options);
-kb.connect();
+kb.tmiConnect();
+kb.sqlConnect();
 
 // github webhook
 const crypto = require("crypto");
@@ -82,7 +53,7 @@ webhookHandler.on('*', async function (event, repo, data, head) {
     );
 
     if (event === "push") {
-        await utils.query(`
+        await kb.query(`
             UPDATE stats
             SET date=?, sha=?
             WHERE type="ping"`,
@@ -226,12 +197,12 @@ app.use(async function(req, res, next) {
 
 // api handling
 app.get("/connections", async (req, res) => {
-    const userCount = await utils.query(`
+    const userCount = await kb.query(`
         SELECT COUNT(*) AS count
         FROM access_token
         WHERE platform="spotify" AND user IS NOT NULL`);
 
-    const execCount = await utils.query(`
+    const execCount = await kb.query(`
         SELECT COUNT(*) AS count
         FROM executions
         WHERE command LIKE "%spotify%"`);
@@ -250,117 +221,6 @@ app.get("/connections", async (req, res) => {
 
     return;
 });
-
-// todo chatguesser game
-/*app.get("/chatguesser", async (req, res) => {
-    const randomChannel = "logs_nymn"
-
-    const maxId = await utils.query(`SELECT MAX(ID) as maxid FROM ??`, [randomChannel])
-    const randomId = Math.floor(Math.random() * Math.floor(maxId[0].maxid));
-
-    let messages = await utils.query(`
-        SELECT t.username, t.message, t.date
-        FROM (
-            SELECT id
-            FROM ??
-            ORDER BY id
-            LIMIT ?, 100
-            ) q
-        JOIN ?? t
-        ON t.id = q.id`,
-        [randomChannel, Number(randomId), randomChannel]);
-
-    const emotes = await utils.query(`
-        SELECT *
-        FROM emotes
-        WHERE channel=?`, [randomChannel.replace('logs_', '')]);
-
-    for (let i = 0; i<messages.length; i++) {
-        for (let j = 0; j<emotes.length; j++) {
-            const emoteRegex = new RegExp(`\\b${emotes[j].emote.toString()}\\b`, "g");
-            const replace = (emotes[j].url === null) ? emotes[j].emote : `<img style="vertical-align: middle; margin-top: -5px" src="${emotes[j].url}">`;
-            messages[i].message = messages[i].message.replace(emoteRegex, replace);
-        }
-    }
-
-    res.send(`<!DOCTYPE html>
-        <html>
-            <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <script
-                src="https://code.jquery.com/jquery-3.6.0.js"
-                integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-                crossorigin="anonymous"></script>
-            <style>
-            body {
-              margin: 0 auto;
-              max-width: 430px;
-              padding: 0 20px;
-            }
-
-            .container {
-              border-top: 1px solid #999a;
-              background-color: rgb(40,40,40);
-              padding: 6px;
-              margin: 1px 0;
-            }
-
-            .darker {
-              background-color: rgb(30,30,30);
-            }
-
-            .container::after {
-              content: "";
-              clear: both;
-              display: table;
-            }
-
-            .time-left {
-              float: left;
-              color: #999;
-            }
-
-            .chatbox {
-              margin-top: 5vh;
-              margin-bottom: 5vh;
-              padding: 3px;
-              word-break: break-word;
-              word-wrap: break-word;
-              overflow: scroll;
-              overflow-x: hidden;
-              height: 80vh;
-            }
-
-            .container:nth-child(odd) {
-                background-color: #202020;
-            }
-
-            .container:nth-child(even) {
-                background-color: #2c2c2c;
-            }
-
-            </style>
-            </head>
-            <body style="background-color: #1a1a1a;">
-                <div class="chatbox" id="chatbox"></div>
-                <script type="text/javascript">
-                    const chatData = ${JSON.stringify(messages)};
-                    for (let i = 0; i<${messages.length}; i++) {
-                        if (i === 0) {
-                            $("#chatbox").append('<div class="container"><span class="time-left">' + (new Date(chatData[i].date).toISOString().split('T')[1].split('.')[0]) + '<span style="color:white"><strong style="color: red"> '+ chatData[i].username +':</strong> ' + chatData[i].message + '</span></span></div>');
-                        } else {
-                        console.log((Date.parse(chatData[i].date) - Date.parse(chatData[i-1].date)));
-                            setTimeout(() => {
-                                $("#chatbox").append('<div class="container"><span class="time-left">' + (new Date(chatData[i].date).toISOString().split('T')[1].split('.')[0]) + '<span style="color:white"><strong style="color: red"> '+ chatData[i].username +':</strong> ' + chatData[i].message + '</span></span></div>');
-                                $("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
-                            }, 500);
-                        }
-                    }
-                </script>
-            </body>
-        </html>
-        `)
-})*/
 
 app.get("/api/user", async(req, res) => {
     const userid = req.headers["userid"] || req.query.userid;
@@ -453,7 +313,7 @@ app.get("/api/user", async(req, res) => {
 // kunszg.com/api/channels
 app.get("/api/channels", async (req, res) => {
     if (typeof req.query.details === "undefined") {
-        let channelList = await utils.query("SELECT * FROM channels");
+        let channelList = await kb.query("SELECT * FROM channels");
 
         channelList = channelList.map(i => i.channel);
 
@@ -467,16 +327,16 @@ app.get("/api/channels", async (req, res) => {
         let channels, logs;
 
         if (!req.query.channel || Array.isArray(req.query.channel)) {
-            channels = await utils.query("SELECT * FROM channels");
-            logs = await utils.query("SELECT * FROM channels_logger");
+            channels = await kb.query("SELECT * FROM channels");
+            logs = await kb.query("SELECT * FROM channels_logger");
         }
         else {
-            channels = await utils.query(`
+            channels = await kb.query(`
                 SELECT *
                 FROM channels
                 WHERE channel=?`, [req.query.channel])
 
-            logs = await utils.query(`
+            logs = await kb.query(`
                 SELECT *
                 FROM channels_logger
                 WHERE channel=?`, [req.query.channel])
@@ -488,14 +348,14 @@ app.get("/api/channels", async (req, res) => {
             }
         }
 
-        const executions = await utils.query(`
+        const executions = await kb.query(`
             SELECT channel, COUNT(*) AS count
             FROM executions
             GROUP BY channel
             ORDER BY count
             DESC`);
 
-        const banphraseApis = await utils.query("SELECT * FROM channel_banphrase_apis");
+        const banphraseApis = await kb.query("SELECT * FROM channel_banphrase_apis");
 
         const result = {};
 
@@ -587,7 +447,7 @@ app.get("/countdown", async (req, res) => {
                         </body>
                     </html>`;
 
-            await utils.query(`
+            await kb.query(`
                 INSERT INTO countdown (verifcode, date)
                 VALUES (?, CURRENT_TIMESTAMP)`,
                 [verifCode]);
@@ -600,7 +460,7 @@ app.get("/countdown", async (req, res) => {
             req.query.seconds = 120;
         }
 
-        const checkIfUpdated = await utils.query(`
+        const checkIfUpdated = await kb.query(`
             SELECT *
             FROM countdown
             WHERE verifcode=?`,
@@ -612,13 +472,13 @@ app.get("/countdown", async (req, res) => {
         }
 
         if (checkIfUpdated[0].seconds === null) {
-            await utils.query(`
+            await kb.query(`
                 UPDATE countdown SET seconds=?
                 WHERE verifcode=?`,
                 [Date.now()/1000 + Number(req.query.seconds), req.query.verifcode]);
         }
 
-        const seconds = await utils.query(`
+        const seconds = await kb.query(`
             SELECT *
             FROM countdown
             WHERE verifcode=?`,
@@ -665,7 +525,7 @@ app.get("/lastfmresolved", async (req, res) => {
         (async () => {
             res.send(page.template());
 
-            await utils.query(`
+            await kb.query(`
                 UPDATE access_token
                 SET access_token=?,
                     refresh_token="lastfm currently playing",
@@ -695,7 +555,7 @@ app.get("/lastfmresolved", async (req, res) => {
 app.get("/lastfm", async (req, res) => {
     const verifCode = utils.genString();
 
-    const accessToken = await utils.query(`
+    const accessToken = await kb.query(`
         SELECT *
         FROM access_token
         WHERE code="verifCode"`);
@@ -704,7 +564,7 @@ app.get("/lastfm", async (req, res) => {
         res.send('<body>error<body>');
     }
 
-    await utils.query(`
+    await kb.query(`
         INSERT INTO access_token (code)
         VALUES (?)`, [verifCode]);
 
@@ -728,7 +588,7 @@ app.get("/resolved", async (req, res) => {
 
     const verifCode = utils.genString();
 
-    const accessToken = await utils.query(`
+    const accessToken = await kb.query(`
         SELECT *
         FROM access_token
         WHERE code="verifCode"`);
@@ -755,7 +615,7 @@ app.get("/resolved", async (req, res) => {
                 },
             }).json();
 
-            await utils.query(`
+            await kb.query(`
                 INSERT INTO access_token (access_token, refresh_token, premium, code, platform)
                 VALUES (?, ?, ?, ?, "spotify")`,
                 [spotifyToken.access_token, spotifyToken.refresh_token, ((checkPremium.product === "open") ? "N" : "Y"), verifCode]);
@@ -793,7 +653,7 @@ kb.on("whisper", async (username, user, message, self) => {
 
     if (message.split(' ')[0] === "verify-lastfm") {
         // check if user is banned from bot
-        const checkBan = await utils.query(`
+        const checkBan = await kb.query(`
             SELECT *
             FROM ban_list
             WHERE user_id=?`,
@@ -803,7 +663,7 @@ kb.on("whisper", async (username, user, message, self) => {
             return;
         }
 
-        const checkCode = await utils.query(`
+        const checkCode = await kb.query(`
             SELECT *
             FROM access_token
             WHERE code=?`,
@@ -814,7 +674,7 @@ kb.on("whisper", async (username, user, message, self) => {
             return;
         }
 
-        const checkUser = await utils.query(`
+        const checkUser = await kb.query(`
             SELECT *
             FROM access_token
             WHERE user=? AND platform="lastfm"`,
@@ -822,14 +682,14 @@ kb.on("whisper", async (username, user, message, self) => {
 
         if (checkUser.length != 0) {
             kb.whisper(username, 'You are already registered for LastFM command.');
-            await utils.query(`
+            await kb.query(`
                 DELETE FROM access_token
                 WHERE code=?`,
                 [message.split(' ')[1]]);
             return;
         }
 
-        await utils.query(`
+        await kb.query(`
             UPDATE access_token
             SET userName=?, user=?, code="lastfm"
             WHERE code=?`,
@@ -841,7 +701,7 @@ kb.on("whisper", async (username, user, message, self) => {
 
     if (message.split(' ')[0] === "verify-spotify") {
         // check if user is banned from bot
-        const checkBan = await utils.query(`
+        const checkBan = await kb.query(`
             SELECT *
             FROM ban_list
             WHERE user_id=?`,
@@ -851,7 +711,7 @@ kb.on("whisper", async (username, user, message, self) => {
             return;
         }
 
-        const checkCode = await utils.query(`
+        const checkCode = await kb.query(`
             SELECT *
             FROM access_token
             WHERE code=?`,
@@ -862,7 +722,7 @@ kb.on("whisper", async (username, user, message, self) => {
             return;
         }
 
-        const checkUser = await utils.query(`
+        const checkUser = await kb.query(`
             SELECT *
             FROM access_token
             WHERE user=? AND platform="spotify"`,
@@ -870,7 +730,7 @@ kb.on("whisper", async (username, user, message, self) => {
 
         if (checkUser.length != 0) {
             kb.whisper(username, 'You are already registered for Spotify command.');
-            await utils.query(`
+            await kb.query(`
                 DELETE FROM access_token
                 WHERE code=?`,
                 [message.split(' ')[1]]);
@@ -879,7 +739,7 @@ kb.on("whisper", async (username, user, message, self) => {
 
         const timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-        await utils.query(`
+        await kb.query(`
             UPDATE access_token
             SET userName=?,
                 user=?,
@@ -899,7 +759,7 @@ kb.on("whisper", async (username, user, message, self) => {
 
 app.get("/commands", async (req, res) => {
     const Table = require('table-builder');
-    const commands = await utils.query(`
+    const commands = await kb.query(`
         SELECT *
         FROM commands
         WHERE permissions < 5
@@ -1036,7 +896,7 @@ app.get("/genres", async (req, res) => {
 });
 
 app.get("/randomemote", async (req, res) => {
-    const randomemote = await utils.query(`
+    const randomemote = await kb.query(`
         SELECT *
         FROM emotes
         ORDER BY RAND()
@@ -1201,7 +1061,7 @@ app.get("/emotes", async (req, res) => {
     }
 
     if ((await req.query?.search ?? false)) {
-        const emotes = await utils.query(`
+        const emotes = await kb.query(`
             SELECT *
             FROM emotes
             WHERE channel=?
@@ -1209,7 +1069,7 @@ app.get("/emotes", async (req, res) => {
             DESC`,
             [(!req.query.search ? "asdf" : req.query.search.toLowerCase())]);
 
-        const emotesRemoved = await utils.query(`
+        const emotesRemoved = await kb.query(`
             SELECT *
             FROM emotes_removed
             WHERE channel=?
@@ -1339,7 +1199,7 @@ app.get("/emotes", async (req, res) => {
             );
         */
 
-        const emoteCount = await utils.query(`
+        const emoteCount = await kb.query(`
             SELECT COUNT(*) as count, type
             FROM emotes
             WHERE CHANNEL=?
@@ -1438,7 +1298,7 @@ app.get("/emotes", async (req, res) => {
                     <div id="timer" style="text-align: left"></div>
                     <script>
                         function lastUpdate() {
-                            return (Date.now() - (Date.parse("${(await utils.query(`SELECT emotesUpdate FROM channels_logger WHERE channel="${req.query.search.toLowerCase()}"`))[0]?.emotesUpdate ?? new Date()} UTC")))/1000;
+                            return (Date.now() - (Date.parse("${(await kb.query(`SELECT emotesUpdate FROM channels_logger WHERE channel="${req.query.search.toLowerCase()}"`))[0]?.emotesUpdate ?? new Date()} UTC")))/1000;
                         }
 
                         const secondsToDhms = (seconds) => {
@@ -1513,16 +1373,16 @@ app.get("/emotes", async (req, res) => {
 
 // kunszg.com/api/stats
 app.get("/stats", async (req, res) => {
-    const modules = await utils.query(`SELECT * FROM stats`);
+    const modules = await kb.query(`SELECT * FROM stats`);
 
     const getModuleData = (input) => {
         const moduleData = modules.filter(i => i.type === 'module' && i.sha === input);
         return Date.parse(moduleData[0].date)
     }
 
-    const executions = await utils.query('SELECT count FROM stats WHERE type="statsApi" AND sha="commandExecs"');
-    const usersLogged = await utils.query('SELECT count FROM stats WHERE type="statsApi" AND sha="totalUsers"');
-    const channels = await utils.query("SELECT * FROM channels");
+    const executions = await kb.query('SELECT count FROM stats WHERE type="statsApi" AND sha="commandExecs"');
+    const usersLogged = await kb.query('SELECT count FROM stats WHERE type="statsApi" AND sha="totalUsers"');
+    const channels = await kb.query("SELECT * FROM channels");
 
     const checkIfLive = channels.filter(i => i.channel === "kunszg")[0].status === "live";
 
@@ -1576,7 +1436,7 @@ app.get("/commands/code", async (req, res) => {
 app.listen(process.env.PORT || 8080, '0.0.0.0');
 
 const statusCheck = async() => {
-	await utils.query(`
+	await kb.query(`
 		UPDATE stats
 		SET date=?
 		WHERE type="module" AND sha="api"`,
