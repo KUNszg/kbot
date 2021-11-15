@@ -650,7 +650,6 @@ kb.on("whisper", async (username, user, message, self) => {
     const owner = (await utils.Get.user().owner())[0].username;
 
     kb.whisper(owner, `whisper to kbot: ${username}: ${message}`);
-    console.log(message)
     if (message.split(' ')[0] === "verify-lastfm") {
         // check if user is banned from bot
         const checkBan = await kb.query(`
