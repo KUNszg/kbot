@@ -57,7 +57,10 @@ webhookHandler.on('*', async function (event, repo, data, head) {
             UPDATE stats
             SET date=?, sha=?
             WHERE type="ping"`,
-            [data.head_commit.timestamp, data.head_commit.id.slice(0, 7)]);
+            [
+                data.head_commit?.timestamp ?? new Date().toISOString().slice(0, 19).replace('T', ' '),
+                data.head_commit.id.slice(0, 7)
+            ]);
 
         const files = (filenames) => {
             const path = require('path');
@@ -1383,7 +1386,7 @@ app.get("/stats", async (req, res) => {
     const usersLogged = await kb.query('SELECT count FROM stats WHERE type="statsApi" AND sha="totalUsers"');
     const channels = await kb.query("SELECT * FROM channels");
 
-    const checkIfLive = channels.filter(i => i.channel === "kunszg")[0].status === "live";
+    const checkIfLive = channels.filter(i => i.channel === "ksyncbot")[0].status === "live";
 
     const commits = shell.execSync('sudo git rev-list --count master');
     const lines = shell.execSync(`find . -name '*.js' -not -path "./node_modules*" | xargs wc -l | tail -1`);
