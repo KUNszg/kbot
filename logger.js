@@ -25,7 +25,7 @@ kb.sqlConnect();
         redis.init("cache", "userCache", "mpsCache", "ignoreList");
 
         await Promise.all(
-            await kb.query("SELECT * FROM logger_ignore_list").map(async(i) => {
+            (await kb.query("SELECT * FROM logger_ignore_list")).map(async(i) => {
                 await redis.append("ignoreList", i.userId);
             })
         );
@@ -45,7 +45,7 @@ kb.sqlConnect();
 
             const msg = message.replace(regex.invisChar, '');
 
-            const filterBots = (await redis.get("ignoreList")).filter(i => i === user['user-id']);
+            const filterBots = JSON.parse((await redis.get("ignoreList"))).filter(i => i === user['user-id']);
             if (filterBots.length != 0 || msg === '') {
                 return;
             }
