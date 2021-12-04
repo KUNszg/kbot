@@ -84,7 +84,7 @@ kb.sqlConnect();
                     ])
 
                 // matching bad words
-                const badWord = data['message'].match(regex.racism);
+                const badWord = data['message'].match(regex.racism) && !data['message'].match(/\bnl\d\d\b/g);
                 if (badWord) {
                     await kb.query(`
                         INSERT INTO bruh (username, channel, message, date)
@@ -134,7 +134,7 @@ kb.sqlConnect();
                 {type: "mps", data: (mps.length)}
             );
 
-            redis.clearArray("mpsCache");
+            redis.arrayClear("mpsCache");
         }, 3000);
 
         setInterval(async() => {
@@ -145,7 +145,7 @@ kb.sqlConnect();
                 new WSocket("wsl").emit(
                     {type: "usersTotal", data: userCache.length}
                 );
-                redis.clearArray("userCache");
+                redis.arrayClear("userCache");
             }
 
             if (cache.length > 200) {
