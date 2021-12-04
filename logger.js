@@ -6,9 +6,9 @@ const creds = require('./lib/credentials/config.js');
 const regex = require('./lib/utils/regex.js');
 
 const redis = init.Redis;
-redis.connect();
-
 const kb = new init.IRC();
+
+redis.connect();
 kb.tmiConnect();
 kb.sqlConnect();
 
