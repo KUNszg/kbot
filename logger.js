@@ -4,7 +4,7 @@
 const init = require('./lib/utils/connection.js');
 const creds = require('./lib/credentials/config.js');
 const regex = require('./lib/utils/regex.js');
-const utils = require("./utils/utils.js");
+const utils = require("./lib/utils/utils.js");
 
 /*const redis = init.Redis;
 redis.connect();*/
