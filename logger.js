@@ -5,21 +5,13 @@ const init = require('./lib/utils/connection.js');
 const creds = require('./lib/credentials/config.js');
 const regex = require('./lib/utils/regex.js');
 
-/*const redis = init.Redis;
-redis.connect();*/
+const redis = init.Redis;
+redis.connect();
 
 const kb = new init.IRC();
 kb.tmiConnect();
 kb.sqlConnect();
-/*redis.set("key", ["yep"]);
 
-(async () => {
-    await redis.append("key", ["cock"])
-
-    //const x = await redis.get("key");
-    const x = await redis.size();
-    console.log(x)
-})();*/
 (async() => {
     try {
         this.channelList = await kb.query('SELECT * FROM channels_logger');
@@ -28,18 +20,18 @@ kb.sqlConnect();
             this.channelList = await kb.query('SELECT * FROM channels_logger');
         }, 600000);
 
-        const tmi = require('tmi.js');
-
-        const ignoreList = [];
-
-        (await kb.query("SELECT * FROM logger_ignore_list")).map(i => ignoreList.push(i.userId));
-
         const cache = [];
-        const userCache = [];
-        const mpsCache = [];
 
-        kb.on('message', (channel, user, message) => {
-            mpsCache.push(Date.now());
+        redis.init("cache", "userCache", "mpsCache", "ignoreList");
+
+        await Promise.all(
+            await kb.query("SELECT * FROM logger_ignore_list").map(async(i) => {
+                await redis.append("ignoreList", i.userId);
+            })
+        );
+
+        kb.on('message', async(channel, user, message) => {
+            await redis.append("mpsCache", Date.now());
 
             const channels = this.channelList.filter(i => i.channel === channel.replace('#', ''));
 
@@ -53,7 +45,7 @@ kb.sqlConnect();
 
             const msg = message.replace(regex.invisChar, '');
 
-            const filterBots = ignoreList.filter(i => i === user['user-id']);
+            const filterBots = (await redis.get("ignoreList")).filter(i => i === user['user-id']);
             if (filterBots.length != 0 || msg === '') {
                 return;
             }
@@ -105,16 +97,14 @@ kb.sqlConnect();
                         ]);
                 }
 
-                (async () => {
-                    const checkIfUnique = await kb.query(`
-                        SELECT *
-                        FROM user_list
-                        WHERE username=?`, [data['username']]);
+                const checkIfUnique = await kb.query(`
+                    SELECT *
+                    FROM user_list
+                    WHERE username=?`, [data['username']]);
 
-                    if (!checkIfUnique.length) {
-                        userCache.push(1);
-                    }
-                })();
+                if (!checkIfUnique.length) {
+                    await redis.append("userCache", 1);
+                }
 
                 data['color'] = (data['color'] === '' || data['color'] === null) ? 'gray' : data['color'];
 
@@ -135,7 +125,8 @@ kb.sqlConnect();
 
         const WSocket = require("./lib/utils/utils.js").WSocket;
 
-        setInterval(() => {
+        setInterval(async() => {
+            const mpsCache = JSON.parse(await redis.get("mpsCache"));
             const mps = mpsCache.filter(i => i < (Date.now() - 1500));
 
             // send data to websocket
@@ -143,16 +134,18 @@ kb.sqlConnect();
                 {type: "mps", data: (mps.length)}
             );
 
-            mpsCache.length = 0;
+            redis.clearArray("mpsCache");
         }, 3000);
 
-        setInterval(() => {
+        setInterval(async() => {
+            const userCache = JSON.parse(await redis.get("userCache"));
+
             if (userCache.length != 0) {
                 // send data to websocket
                 new WSocket("wsl").emit(
                     {type: "usersTotal", data: userCache.length}
                 );
-                userCache.length = 0;
+                redis.clearArray("userCache");
             }
 
             if (cache.length > 200) {
