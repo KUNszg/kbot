@@ -4,14 +4,21 @@
 const init = require('./lib/utils/connection.js');
 const creds = require('./lib/credentials/config.js');
 const regex = require('./lib/utils/regex.js');
+const utils = require("./utils/utils.js");
 
-const redis = init.Redis;
+/*const redis = init.Redis;
+redis.connect();*/
+
 const kb = new init.IRC();
-
-redis.connect();
 kb.tmiConnect();
 kb.sqlConnect();
-
+/*redis.set("key", ["yep"]);
+(async () => {
+    await redis.append("key", ["cock"])
+    //const x = await redis.get("key");
+    const x = await redis.size();
+    console.log(x)
+})();*/
 (async() => {
     try {
         this.channelList = await kb.query('SELECT * FROM channels_logger');
@@ -20,18 +27,18 @@ kb.sqlConnect();
             this.channelList = await kb.query('SELECT * FROM channels_logger');
         }, 600000);
 
+        const tmi = require('tmi.js');
+
+        const ignoreList = [];
+
+        (await kb.query("SELECT * FROM logger_ignore_list")).map(i => ignoreList.push(i.userId));
+
         const cache = [];
+        const userCache = [];
+        const mpsCache = [];
 
-        redis.init("cache", "userCache", "mpsCache", "ignoreList");
-
-        await Promise.all(
-            (await kb.query("SELECT * FROM logger_ignore_list")).map(async(i) => {
-                await redis.append("ignoreList", i.userId);
-            })
-        );
-
-        kb.on('message', async(channel, user, message) => {
-            await redis.append("mpsCache", Date.now());
+        kb.on('message', (channel, user, message) => {
+            mpsCache.push(Date.now());
 
             const channels = this.channelList.filter(i => i.channel === channel.replace('#', ''));
 
@@ -45,7 +52,7 @@ kb.sqlConnect();
 
             const msg = message.replace(regex.invisChar, '');
 
-            const filterBots = JSON.parse((await redis.get("ignoreList"))).filter(i => i === user['user-id']);
+            const filterBots = ignoreList.filter(i => i === user['user-id']);
             if (filterBots.length != 0 || msg === '') {
                 return;
             }
@@ -84,27 +91,50 @@ kb.sqlConnect();
                     ])
 
                 // matching bad words
-                const badWord = data['message'].match(regex.racism) && !data['message'].match(/\bnl\d\d\b/g);
+                const badWord = data['message'].match(regex.racism);
                 if (badWord) {
-                    await kb.query(`
-                        INSERT INTO bruh (username, channel, message, date)
-                        VALUES (?, ?, ?, ?)`,
-                        [
-                            data['username'],
-                            data['channel'],
-                            data['message'],
-                            data['date']
-                        ]);
+                    const activeApis = await kb.query(`
+                        SELECT *
+                        FROM channel_banphrase_apis
+                        WHERE channel=? AND status="enabled"`,
+                        [data['channel']]);
+
+                    if (activeApis.length) {
+                        if ((await utils.banphrasePass(data['username'], data['channel'])).banned) {
+                            await kb.query(`
+                                INSERT INTO bruh (username, channel, message, date)
+                                VALUES (?, ?, ?, ?)`,
+                                [
+                                    data['username'],
+                                    data['channel'],
+                                    data['message'],
+                                    data['date']
+                                ]);
+                        }
+                    }
+                    else {
+                        await kb.query(`
+                            INSERT INTO bruh (username, channel, message, date)
+                            VALUES (?, ?, ?, ?)`,
+                            [
+                                data['username'],
+                                data['channel'],
+                                data['message'],
+                                data['date']
+                            ]);
+                    }
                 }
 
-                const checkIfUnique = await kb.query(`
-                    SELECT *
-                    FROM user_list
-                    WHERE username=?`, [data['username']]);
+                (async () => {
+                    const checkIfUnique = await kb.query(`
+                        SELECT *
+                        FROM user_list
+                        WHERE username=?`, [data['username']]);
 
-                if (!checkIfUnique.length) {
-                    await redis.append("userCache", 1);
-                }
+                    if (!checkIfUnique.length) {
+                        userCache.push(1);
+                    }
+                })();
 
                 data['color'] = (data['color'] === '' || data['color'] === null) ? 'gray' : data['color'];
 
@@ -125,8 +155,7 @@ kb.sqlConnect();
 
         const WSocket = require("./lib/utils/utils.js").WSocket;
 
-        setInterval(async() => {
-            const mpsCache = JSON.parse(await redis.get("mpsCache"));
+        setInterval(() => {
             const mps = mpsCache.filter(i => i < (Date.now() - 1500));
 
             // send data to websocket
@@ -134,18 +163,16 @@ kb.sqlConnect();
                 {type: "mps", data: (mps.length)}
             );
 
-            redis.arrayClear("mpsCache");
+            mpsCache.length = 0;
         }, 3000);
 
-        setInterval(async() => {
-            const userCache = JSON.parse(await redis.get("userCache"));
-
+        setInterval(() => {
             if (userCache.length != 0) {
                 // send data to websocket
                 new WSocket("wsl").emit(
                     {type: "usersTotal", data: userCache.length}
                 );
-                redis.arrayClear("userCache");
+                userCache.length = 0;
             }
 
             if (cache.length > 200) {
