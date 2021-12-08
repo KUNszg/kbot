@@ -219,10 +219,10 @@
                                                 document.getElementById("botUptime").innerHTML = secondsToDhms(Math.trunc(message.body.data));
                                                 break;
                                             case "mps":
-                                                document.getElementById("mps").innerHTML = `${message.body.data}/s`;
+                                                document.getElementById("mps").innerHTML = `${spreadNumbers(message.body.data)}/s`;
                                                 break;
                                             case "totalViewCount":
-                                                document.getElementById("totalViewCount").innerHTML = secondsToDhms(message.body.data);
+                                                document.getElementById("totalViewCount").innerHTML = spreadNumbers(message.body.data);
                                                 break;
                                         }
                                     }
