@@ -31,15 +31,15 @@
         <script>
             let timeout;
 
-            const image = ['loader1.png', 'loader2.png', 'loader3.png', 
-                'loader4.png', 'loader5.png', 'loader6.png', 'loader7.png', 
+            const image = ['loader1.png', 'loader2.png', 'loader3.png',
+                'loader4.png', 'loader5.png', 'loader6.png', 'loader7.png',
                 'loader8.gif', 'loader9.gif', 'loader10.gif', 'loader11.gif',
-                'loader12.png']; 
+                'loader12.png'];
 
             const num = Math.floor( Math.random() * image.length);
 
             const img = image[num];
-            
+
             document.getElementById("loader").style["background-image"] = `url("./img/${img}")`;
 
             setTimeout(() => {
@@ -49,7 +49,7 @@
                     document.getElementById("main").style.display = "inherit";
                     document.getElementById("inh").style.display = "block";
                 });
-            }, 300); 
+            }, 300);
         </script>
         <div id="main">
             <br><br>
@@ -73,8 +73,8 @@
                                     <col style="width: 115px;">
                                 </colgroup>
                                 <tr>
-                                    <td style="font-style: italic;">my stream is currently </td>
-                                    <td style="padding:0 15px;" id="isAuthorLive"></td>
+                                    <td style="font-style: italic;">current live viewer count </td>
+                                    <td style="padding:0 15px;" id="totalViewCount"></td>
                                 </tr>
                                 <tr>
                                     <td style="font-style: italic;">total users tracked </td>
@@ -148,15 +148,15 @@
                                 return input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
                             }
 
-                            document.getElementById("isAuthorLive").innerHTML = `${data.twitch.isAuthoLive ? "live" : "offline"}`;
+                            document.getElementById("totalViewCount").innerHTML = spreadNumbers(data.twitch.totalViewCount);
 
-                            document.getElementById("usersLogged").innerHTML = `${spreadNumbers(data.bot.usersLogged)}`;
+                            document.getElementById("usersLogged").innerHTML = spreadNumbers(data.bot.usersLogged);
 
-                            document.getElementById("commandExecutions").innerHTML = `${spreadNumbers(data.bot.commandExecutions)}`;
+                            document.getElementById("commandExecutions").innerHTML = spreadNumbers(data.bot.commandExecutions);
 
-                            document.getElementById("commits").innerHTML = `${spreadNumbers(data.github.commits)}`;
+                            document.getElementById("commits").innerHTML = spreadNumbers(data.github.commits);
 
-                            document.getElementById("linesOfCode").innerHTML = `${spreadNumbers(data.bot.linesOfCode)}`;
+                            document.getElementById("linesOfCode").innerHTML = spreadNumbers(data.bot.linesOfCode);
 
                             document.getElementById("loggerUptime").innerHTML = `${loggerUptime > 70 ? '<span title="offline" class="redDot"></span>' : '<span title="online" class="greenDot"></span>'}`;
 
@@ -174,10 +174,10 @@
                                 if (refresh > 5) {
                                     document.getElementById("botUptime").innerHTML = `<span title="offline" class="redDot"></span>`;
                                 }
-                                
+
                                 refresh++;
                             }, 1000);
-   /*                     
+   /*
                             fetch("https://api.github.com/repos/kunszg/kbot/commits?per_page=6")
                                 .then(response2 => response2.json())
                                 .then(github => {
@@ -190,10 +190,10 @@
                                 const message = JSON.parse(event.data);
 
                                 // cached data
-                                if (message.cache) { 
+                                if (message.cache) {
                                     if (message?.botUptime ?? false) {
                                         document.getElementById("botUptime").innerHTML = secondsToDhms(Math.trunc(message.botUptime.data));
-                                    } 
+                                    }
 
                                     if (message?.mps ?? false) {
                                         document.getElementById("mps").innerHTML = `${message.mps.data}/s`;
@@ -214,20 +214,24 @@
                                         }
                                     }
                                     else {
-                                        if (hook.type === "botUptime") {
-                                            document.getElementById("botUptime").innerHTML = secondsToDhms(Math.trunc(message.body.data));
-                                        }
-
-                                        if (hook.type === "mps") {
-                                            document.getElementById("mps").innerHTML = `${message.body.data}/s`;
+                                        switch(hook.type) {
+                                            case "botUptime":
+                                                document.getElementById("botUptime").innerHTML = secondsToDhms(Math.trunc(message.body.data));
+                                                break;
+                                            case "mps":
+                                                document.getElementById("mps").innerHTML = `${message.body.data}/s`;
+                                                break;
+                                            case "totalViewCount":
+                                                document.getElementById("totalViewCount").innerHTML = secondsToDhms(message.body.data);
+                                                break;
                                         }
                                     }
 
-                                    /*                       
+                                    /*
                                     if (hook === "github") {
                                         if (message.body.event === "push") {
                                             document.getElementById("github-push").innerHTML += `<a href="https://github.com/KUNszg/kbot/commit/${message.body.data.head_commit.id}"<div style="color: white;" class="button1">test</div></a>`;
-                                        } 
+                                        }
                                     }
                                     */
                                 }

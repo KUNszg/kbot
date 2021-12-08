@@ -1386,7 +1386,10 @@ app.get("/stats", async (req, res) => {
     const usersLogged = await kb.query('SELECT count FROM stats WHERE type="statsApi" AND sha="totalUsers"');
     const channels = await kb.query("SELECT * FROM channels");
 
-    const checkIfLive = channels.filter(i => i.channel === "ksyncbot")[0].status === "live";
+    const totalViewCount = (
+            (channels.filter(i => Number(i.viewerCount) > 0))
+            .map(i => Number(i.viewerCount))
+        ).reduceRight((a,b) => { return a+b; });
 
     const commits = shell.execSync('sudo git rev-list --count master');
     const lines = shell.execSync(`find . -name '*.js' -not -path "./node_modules*" | xargs wc -l | tail -1`);
@@ -1415,7 +1418,7 @@ app.get("/stats", async (req, res) => {
             "commits": Number(commits)
         },
         "twitch": {
-            "isAuthorLive": checkIfLive
+            "totalViewCount": totalViewCount
         }
     });
 
