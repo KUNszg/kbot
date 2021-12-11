@@ -15,7 +15,7 @@
     "express": "^4.17.1",
     "express-rate-limit": "^5.5.1",
     "got": "^11.8.3",
-    "humanize-duration": "^3.27.0",
+    "humanize-duration": "^3.27.1",
     "inquirer": "^8.2.0",
     "mysql2": "^2.3.3",
     "os": "^0.1.2",
