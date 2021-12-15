@@ -1386,10 +1386,8 @@ app.get("/stats", async (req, res) => {
     const usersLogged = await kb.query('SELECT count FROM stats WHERE type="statsApi" AND sha="totalUsers"');
     const channels = await kb.query("SELECT * FROM channels");
 
-    const totalViewCount = (
-            (channels.filter(i => Number(i.viewerCount) > 0))
-            .map(i => Number(i.viewerCount))
-        ).reduceRight((a,b) => { return a+b; });
+    let totalViewCount = (channels.filter(i => Number(i.viewerCount) > 0)).map(i => Number(i.viewerCount));
+    totalViewCount = totalViewCount.reduce(function (x, y) { return x + y; }, 0);
 
     const commits = shell.execSync('sudo git rev-list --count master');
     const lines = shell.execSync(`find . -name '*.js' -not -path "./node_modules*" | xargs wc -l | tail -1`);
@@ -1421,7 +1419,6 @@ app.get("/stats", async (req, res) => {
             "totalViewCount": totalViewCount
         }
     });
-
 
     return;
 });
