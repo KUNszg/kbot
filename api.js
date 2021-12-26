@@ -909,37 +909,78 @@ app.get("/randomemote", async (req, res) => {
         {"emote": randomemote[1].emote, "emoteUrl": randomemote[1].url},
         {"emote": randomemote[2].emote, "emoteUrl": randomemote[2].url}
     ])
-})
+});
 
-app.get("/api/channels", async (req, res) => {
-    const Table = require('table-builder');
+let colors = false;
 
-    const channels = await got("https://kunszg.com/api/channels?details=true").json()
+const colorData = async function() {
+    colors = await kb.query(`
+        SELECT color, COUNT(*) AS count
+        FROM user_list
+        GROUP BY color
+        HAVING count >= 100
+        ORDER BY count DESC
+        LIMIT 100`);
 
-    const headers = {
-        "channelInternalId": "Channel ID",
-        "channelName": "Name",
-        "channelUid": "Channel Twitch UID",
-        "channelStatus": "Status",
-        "channelAdded": "Joined",
-        "logTableSize": "Logs size",
-        "logStatus": "Logs status",
-        "commandsExecuted": "Commands used",
-        "isBanphraseApiActive": "Banphrase API"
-    };
-
-    const data = [];
-
-    for (let i = 0; i < channels.count; i++) {
-        data.push({
-
-        });
+    colors = colors.map((i) => {
+        return {
+            name: i.color.replace("gray", "no color"),
+            color: i.color,
+            points: [{
+                x: i.color.replace("gray", "no color"),
+                y: Number(i.count)
+            }]
+        }
+    });
+    colors = {
+        type: 'horizontal column',
+        title: {
+            position: 'center',
+            label: {
+                text: '<span style="font-size: 24px">(work in progress) Total data for top 50 most popular user colors on twitch.tv</span>'
+            }
+        },
+        palette: colors.map(i => i.color),
+        legend: {
+            layout: 'vertical',
+            position: 'inside top right'
+        },
+        defaultPoint: {
+            tooltip: '%icon <span style="color:%color"><b>%value %name</b></span>',
+        },
+        series: colors
     }
+}
+colorData();
+setInterval(colorData, 10800);
+
+app.get("/colors", async (req, res) => {
+    if (!colors) {
+        return;
+    }
+
+    res.send(`
+        <html>
+            <head>
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                <title>colors</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+            </head>
+            <body style="color: #1a1a1a">
+                <div id="chartDiv" style="height: 10000px"></div>
+            </body>
+            <script src="https://code.jscharting.com/2.9.0/jscharting.js"></script>
+            <script>
+                JSC.Chart('chartDiv', ${JSON.stringify(colors)});
+                let elem = document.getElementById("brandingLogo");
+                elem.parentElement.removeChild(elem);
+            </script>
+        </html>
+    `)
 });
 
 app.get("/emotes", async (req, res) => {
     const Table = require('table-builder');
-
 
     const tableData = [];
     const tableDataRemoved = [];
