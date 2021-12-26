@@ -951,10 +951,10 @@ const colorData = async function() {
         series: colors
     }
 }
-colorData();
+
 setInterval(colorData, 10800);
 
-app.get("/colors", async (req, res) => {
+app.get("/colors", (req, res) => {
     if (!colors) {
         return;
     }
