@@ -912,9 +912,11 @@ app.get("/randomemote", async (req, res) => {
 });
 
 let colors = false;
+const alt = new init.IRC();
+alt.sqlConnect();
 
 const colorData = async function() {
-    colors = await kb.query(`
+    colors = await alt.query(`
         SELECT color, COUNT(*) AS count
         FROM user_list
         GROUP BY color
@@ -951,7 +953,6 @@ const colorData = async function() {
         series: colors
     }
 }
-setTimeout(() => {colorData()}, 30000);
 setInterval(colorData, 10800);
 
 app.get("/colors", (req, res) => {
