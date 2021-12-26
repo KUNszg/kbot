@@ -951,7 +951,7 @@ const colorData = async function() {
         series: colors
     }
 }
-colorData();
+setTimeout(() => {colorData()}, 30000);
 setInterval(colorData, 10800);
 
 app.get("/colors", (req, res) => {
