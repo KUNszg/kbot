@@ -911,7 +911,7 @@ app.get("/randomemote", async (req, res) => {
     ])
 });
 
-/*let colors = false;
+let colors = false;
 
 const colorData = async function() {
     colors = await kb.query(`
@@ -977,7 +977,7 @@ app.get("/colors", (req, res) => {
             </script>
         </html>
     `)
-});*/
+});
 
 app.get("/emotes", async (req, res) => {
     const Table = require('table-builder');
