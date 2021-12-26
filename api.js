@@ -939,7 +939,7 @@ const colorData = async function() {
         title: {
             position: 'center',
             label: {
-                text: '<span style="font-size: 24px">(work in progress) Total data for top 50 most popular user colors on twitch.tv</span>'
+                text: '<span style="font-size: 24px">(work in progress) Total data for top 100 most popular user colors on twitch.tv</span>'
             }
         },
         palette: colors.map(i => i.color),
