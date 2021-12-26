@@ -968,7 +968,7 @@ app.get("/colors", (req, res) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1">
             </head>
             <body style="color: #1a1a1a">
-                <div id="chartDiv" style="height: 500px"></div>
+                <div id="chartDiv" style="height: 5000px"></div>
             </body>
             <script src="https://code.jscharting.com/2.9.0/jscharting.js"></script>
             <script>
