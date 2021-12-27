@@ -924,33 +924,41 @@ const colorData = async function() {
         ORDER BY count DESC
         LIMIT 100`);
 
-    colors = colors.map((i) => {
-        return {
-            name: i.color.replace("gray", "no color"),
-            color: i.color,
-            points: [{
-                x: i.color.replace("gray", "no color"),
-                y: Number(i.count)
-            }]
-        }
-    });
     colors = {
         type: 'horizontal column',
         title: {
             position: 'center',
             label: {
-                text: '<span style="font-size: 24px">(work in progress) Total data for top 100 most popular user colors on twitch.tv</span>'
+                text: '<span style="font-size: 24px">Total data for top 100 most popular user colors on twitch.tv</span>'
             }
         },
         palette: colors.map(i => i.color),
         legend: {
             layout: 'vertical',
-            position: 'inside top right'
+            position: 'inside top right',
+            customEntries: colors.map((i) => {
+                const colorName = i.color.replace("gray", "no color");
+                return {
+                    name: colorName,
+                    icon: "none",
+                    value: String(i.count)
+                }
+            })
         },
         defaultPoint: {
-            tooltip: '%icon <span style="color:%color"><b>%value %name</b></span>',
+            tooltip: '<span style="color:%color"></span><b>%value %name</b>',
         },
-        series: colors
+        series: [{
+            points: colors.map((i) => {
+                const colorName = i.color.replace("gray", "no color");
+                return {
+                    name: colorName,
+                    color: i.color,
+                    x: colorName,
+                    y: Number(i.count)
+                }
+            })
+        }]
     }
 }
 colorData();
@@ -969,7 +977,7 @@ app.get("/colors", (req, res) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1">
             </head>
             <body style="color: #1a1a1a">
-                <div id="chartDiv" style="height: 10000px"></div>
+                <div id="chartDiv" style="height: 3000px"></div>
             </body>
             <script src="https://code.jscharting.com/2.9.0/jscharting.js"></script>
             <script>
