@@ -56,6 +56,10 @@ body {
     font-family: 'Noto Sans', sans-serif;
 }
 
+.footer-div {
+    text-align: center;
+}
+
 a:hover {
     transition-duration: 0.5s;
     filter: brightness(70%);
