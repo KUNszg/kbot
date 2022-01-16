@@ -10,7 +10,7 @@ body {
 
 .top-text {
     text-align: center;
-    margin-top: 16vh;
+    margin-top: 10vh;
     line-height: 32px;
 }
 
@@ -47,13 +47,8 @@ body {
     background: none;
     border: none;
     color: white;
-    font-size: 20px;
+    font-size: 15px;
     vertical-align: middle;
-}
-
-.footer-div {
-    text-align: center;
-    margin-top: 25vh;
 }
 
 .footer-text {

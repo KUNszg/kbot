@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>Connections</title>
+        <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif">
         <link rel="stylesheet" href="https://kunszg.com/reset.css">
@@ -11,28 +12,41 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
     <body>
-        <div class="top-text">
+        <div class="top-text" style="margin-top: 7vh">
             <span class="font">
                 Sign up with your preferred music streaming service to <br>enable
                 <span class="font" style="color: #5ce600">Spotify</span> or
                 <span class="font" style="color: #d20039">Lastfm</span> command for yourself
             </span>
         </div>
-        <div class="flex" style="margin-top: 20vh">
+        <div class="flex" style="margin-top: 7vh">
             <a href="https://accounts.spotify.com/authorize?client_id=0a53ae5438f24d0da272a2e663c615c3&response_type=code&redirect_uri=https://kunszg.com/resolved&scope=user-modify-playback-state%20user-read-playback-position%20user-top-read%20user-read-playback-state%20user-read-recently-played%20user-read-currently-playing%20user-read-email%20user-read-private">
                 <form target="_self" class="flex-item bttn spotify">
-                    <img src="https://i.imgur.com/XhNJzv0.png" height="40px" width="40px"><input class="inputtext" type="button" value="Sign up with your Spotify"/>
-                </form>
-            </a>
-            <a href="lastfm" style="margin-left: 50px">
-                <form class="flex-item bttn lastfm">
-                    <img src="https://i.imgur.com/MCrUEYp.png" height="40px" width="40px"><input style="float: right; margin-top: 7px;" class="inputtext" type="button" value="Sign up with your Last.fm"/>
+                    <img src="https://kunszg.com/img/lastfm_mini.png" height="40px" width="40px"><input class="inputtext" type="button" value="  Sign up with your Spotify"/>
                 </form>
             </a>
         </div>
-        <br>
-        <div class="footer-div">
-            <i class="footer-text">These commands have been used %{execs} times by %{users} users so far...</i>
+        <div class="flex">
+            <a href="lastfm">
+                <form class="flex-item bttn lastfm" style="margin-top: 2.5vh">
+                    <img src="https://kunszg.com/img/lastfm_mini.png" height="40px" width="40px"><input style="float: right; margin-top: 7px;" class="inputtext" type="button" value="Sign up with your Last.fm"/>
+                </form>
+            </a>
+        </div>
+        <div class="footer-div" style="margin-top: 7vh">
+            <i class="footer-text">Usage of music commands so far: %{execs} times by %{users} users</i>
+        </div>
+        <div class="top-text" style="margin-top: 7vh">
+            <span class="font">
+                OR...
+            </span>
+        </div>
+        <div class="flex">
+            <a href="https://discordapp.com/oauth2/authorize?client_id=627315343857025034&scope=bot">
+                <form class="flex-item bttn discord" style="background-color: #5865f2; margin-top: 7vh">
+                    <img src="https://kunszg.com/img/discord_mini.png" height="40px" width="40px"><input style="float: right; margin-top: 9px; font-size: 18px;" class="inputtext" type="button" value="Add the bot to Discord server"/>
+                </form>
+            </a>
         </div>
     </body>
 </html>
