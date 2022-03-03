@@ -2,6 +2,7 @@ const snoowrap = require('snoowrap');
 const got = require("got");
 const Discord = require('discord.js');
 
+const kb = require('../../lib/handler.js').kb;
 const config = require("../../lib/credentials/config.js");
 const regex = require("../../lib/utils/regex.js");
 
