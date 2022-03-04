@@ -30,6 +30,10 @@ setTimeout(async() => {
             return;
         }
 
+        if (!post[0].data) {
+            return;
+        }
+
         const postData = JSON.parse(post[0].data);
 
         let tweetURL = postData.body.match(regex.url);
