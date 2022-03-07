@@ -10,4 +10,3 @@ require('./lib/handler');
 require('./lib/misc/events');
 require('./lib/misc/loops');
 require('./lib/misc/chatters');
-require('./discord/scripts/reddit-livethread-autoposting');
