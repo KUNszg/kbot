@@ -3,40 +3,45 @@
 <head>
 <title>Error</title>
 <style>
-    body, html {
-      height: 99%;
-    }
-
     .bg {
-      background-image: url("../img/404.gif");
-      height: 100%;
-
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
+        height: 100%;
+        background-color: #1a1a1a;
     }
 
-    .blink_me {
-      animation: blinker 1s linear infinite;
-      color:white;
-      font-size: 50px
-    }
-
-    @keyframes blinker {
-      50% {
-        opacity: 0;
-      }
+    .text {
+        text-align: center;
+        color: white;
+        text-decoration: none;
     }
 </style>
 </head>
-<body>
-    <div class="bg">
-        <div class="blink_me">ERROR 404 - PAGE NOT FOUND</div>
+<body class="bg">
+    <h1 class="inner text" style="margin-left: -3px;">
+        <a href="https://kunszg.com" class="button1 text" id="main-text">KBot</a>
+        <script type="text/javascript">
+            const rand = () => {
+                return (Math.random() * 10) * 100;
+            }
+
+            setTimeout(() => {
+                document.getElementById("main-text").innerHTML = "KsBot";
+                setTimeout(() => {
+                    document.getElementById("main-text").innerHTML = "KsyBot";
+                    setTimeout(() => {
+                        document.getElementById("main-text").innerHTML = "KsynBot";
+                        setTimeout(() => {
+                            document.getElementById("main-text").innerHTML = "KsynBot";
+                            setTimeout(() => {
+                                document.getElementById("main-text").innerHTML = "KsyncBot";
+                            }, rand());
+                        }, rand());
+                    }, rand());
+                }, rand());
+            }, 1500);
+        </script>
+    </h1>
+    <div>
+        <div class="text">ERROR 404 - PAGE NOT FOUND</div>
     </div>
-    <audio src="../img/404.mp3" type="audio/mpeg"></audio>
-    <script type="text/javascript">
-        const _ = () => (document.querySelector('audio').play(),document.removeEventListener('click', _));
-        document.addEventListener('click', _);
-    </script>
 </body>
 </html>
