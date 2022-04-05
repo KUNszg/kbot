@@ -870,31 +870,17 @@ app.get("/commands/code/*", async (req, res) => {
 *
 *   credit to Musixmatch
 */
-app.get("/genres", async (req, res) => {
+app.get("/genres", (req, res) => {
     const genres = fs.readFileSync('./data/genres.json');
+    let html = fs.readFileSync('./website/html/express_pages/genres.html');
 
-    res.send(`
-        <!DOCTYPE html>
-        <html>
-            <head>
-                <meta name="viewport" content="width=device-width, initial-scale=1">
-                <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-                <link href="https://kunszg.com/prism.css" rel="stylesheet" />
-                <title>genres</title>
-            </head>
-            <body style="background-color: #272822;">
-                <h3 style="color: gray;">Genres list</h3><br>
-                <pre style="font-size: 13px; color: gray;">You can use either a genre name or ID</pre><br>
-                <pre style="font-size: 13px; color: gray;">example 1: kb rt 2</pre>
-                <pre style="font-size: 13px; color: gray;">example 2: kb rt blues</pre><br>
-                <pre><code style="font-size: 13px;" class="language-json">${genres}</code></pre>
-                <script src="https://kunszg.com/prism.js"></script>
-            </body>
-        </html>
-        `);
+    html = html.toString();
 
+    const page = new utils.Swapper(html, [{
+        "genres": genres
+    }]);
 
-    return;
+    res.send(page.template());
 });
 
 app.get("/randomemote", async (req, res) => {
@@ -969,24 +955,15 @@ app.get("/colors", (req, res) => {
         return;
     }
 
-    res.send(`
-        <html>
-            <head>
-                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-                <title>colors</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1">
-            </head>
-            <body style="color: #1a1a1a">
-                <div id="chartDiv" style="height: 3000px"></div>
-            </body>
-            <script src="https://code.jscharting.com/2.9.0/jscharting.js"></script>
-            <script>
-                JSC.Chart('chartDiv', ${JSON.stringify(colors)});
-                let elem = document.getElementById("brandingLogo");
-                elem.parentElement.removeChild(elem);
-            </script>
-        </html>
-    `)
+    let html = fs.readFileSync('./website/html/express_pages/colors.html');
+
+    html = html.toString();
+
+    const page = new utils.Swapper(html, [{
+        "colors": JSON.stringify(colors)
+    }]);
+
+    res.send(page.template());
 });
 
 app.get("/emotes", async (req, res) => {
@@ -1010,103 +987,9 @@ app.get("/emotes", async (req, res) => {
         "removed": " <div class='table-headers'>removed</div> "
     };
 
-    const homepage = `
-        <!DOCTYPE html>
-        <html>
-            <head>
-                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-                <title>emotes</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1">
+    let homepage = fs.readFileSync('./website/html/express_pages/emotes.html');
 
-                <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif">
-                <link rel="stylesheet" type="text/css" href="https://kunszg.com/style_emotes.css">
-                <link rel="stylesheet" href="https://kunszg.com/reset.css">
-                <link rel="preconnect" href="https://fonts.gstatic.com">
-                <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
-                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-            </head>
-            <body style="background-color: #1a1a1a" class="blockscroll">
-                <div class="content">
-                    <div class="logo">
-                        <h7 class="white__logo__word">Emote</h7>
-                        <h7 class="blue__logo__word"> checker</h7>
-                    </div>
-                    <div class="searchBox">
-                        <form action="/emotes" class="searchBox2">
-                            <input type="text" autofocus="autofocus" placeholder="Search for channel.." name="search" autocomplete="off" class="search__input">
-                            <button type="submit" class="search__button">
-                                <img src="./img/magnifier.png" height="20" width="20">
-                            </button>
-                        </form>
-                    <div>
-                    <div class="footer">
-                        Emote checker is based on logs from ksyncbot
-                    </div>
-                    <div style="margin-top: 30%; margin-right: 10%; margin-left: 10%; margin-bottom: 10%">
-                        <script>
-                            function show_image(src, alt) {
-                                const img = document.createElement("img");
-                                img.src = src;
-                                img.alt = alt;
-
-                                img.style.position = "absolute";
-                                img.style.top = document.body.clientHeight * Math.random()/1.2 + "px";
-                                img.style.left = document.body.clientWidth * Math.random()/1.2 + "px";
-
-                                document.body.appendChild(img);
-
-                                function fadeOut(element) {
-                                    let op = 1;  // initial opacity
-                                    let timer = setInterval(function () {
-                                        if (op <= 0.1){
-                                            clearInterval(timer);
-                                        }
-                                        element.style.opacity = op;
-                                        op -= 0.03;
-                                    }, 100);
-                                }
-
-                                fadeOut(img)
-
-                                setTimeout(() => {
-                                    document.body.removeChild(img)
-                                }, 3200);
-                            }
-
-                            fetch('https://kunszg.com/api/randomemote')
-                                .then(response => response.json())
-                                .then(data => {
-                                        show_image(data[0].emoteUrl, data[0].emote);
-
-                                        show_image(data[1].emoteUrl, data[1].emote);
-
-                                        show_image(data[2].emoteUrl, data[2].emote);
-                                })
-
-                            setInterval(() => {
-                                if (!document.hidden) {
-                                    fetch('https://kunszg.com/api/randomemote')
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            setTimeout(() => {
-                                                show_image(data[0].emoteUrl, data[0].emote);
-                                            }, Math.floor(Math.random()*10)*1000);
-
-                                            setTimeout(() => {
-                                                show_image(data[1].emoteUrl, data[1].emote);
-                                            }, Math.floor(Math.random()*10)*1000);
-
-                                            setTimeout(() => {
-                                                show_image(data[2].emoteUrl, data[2].emote);
-                                            }, Math.floor(Math.random()*10)*1000);
-                                        })
-                                }
-                            }, 3000);
-                        </script>
-                    </div>
-                </div>
-            </body>
-        </html>`;
+    homepage = homepage.toString();
 
     if (!req.query.search) {
         res.send(homepage)
@@ -1193,7 +1076,8 @@ app.get("/emotes", async (req, res) => {
                 "type": `<div class="table-contents" style="text-align: center;">-</div>`,
                 "removed": `<div class="table-contents" style="text-align: center;">-</div>`
             });
-        } else {
+        }
+        else {
             for (let i=0; i<emotesRemoved.length; i++) {
                 const emoteName = new ModifyOutput(emotesRemoved[i].emote);
 
@@ -1233,25 +1117,6 @@ app.get("/emotes", async (req, res) => {
     }
 
     if (req.query.search) {
-       /* res.send(
-            `
-            <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>emotes</title>
-                    <meta name="viewport" content="width=device-width, initial-scale=1">
-                    <meta charset="UTF-8">
-                    <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-                    <link rel="stylesheet" type="text/css" href="https://kunszg.com/style_emotes_table.css">
-                </head>
-                <body>
-                </body>
-            </html>
-            `
-            );
-        */
-
         const emoteCount = await kb.query(`
             SELECT COUNT(*) as count, type
             FROM emotes
@@ -1262,166 +1127,22 @@ app.get("/emotes", async (req, res) => {
         const emoteCountFfz = !emoteCount.find(i => i.type === "ffz") ? 0 : emoteCount.find(i => i.type === "ffz").count;
         const emoteCount7Tv = !emoteCount.find(i => i.type === "7tv") ? 0 : emoteCount.find(i => i.type === "7tv").count;
 
-        res.send(`
-            <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>emotes</title>
-                    <meta name="viewport" content="width=device-width, initial-scale=1">
-                    <meta charset="UTF-8">
-                    <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-                    <link rel="stylesheet" type="text/css" href="https://kunszg.com/style_emotes_table.css">
-                    <link rel="preconnect" href="https://fonts.gstatic.com">
-                    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
-                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-                    <style>
-                        * {
-                          font-family: "Noto Sans", sans-serif;
-                        }
+        let html = fs.readFileSync('./website/html/express_pages/emotesDataTables.html');
 
-                        .searchBox {
-                          text-align: center;
-                        }
+        html = html.toString();
 
-                        .search__input {
-                          background-color: white;
-                          padding: 13px 16px;
-                          font-weight: 700;
-                          color: #000;
-                          border-radius: 5px 0px 0px 5px;
-                          border-top-style: hidden;
-                          border-right-style: hidden;
-                          border-left-style: hidden;
-                          border-bottom-style: hidden;
-                        }
+        const page = new utils.Swapper(html, [{
+            "search": req.query.search.toLowerCase(),
+            "emoteCountBttv": emoteCountBttv,
+            "emoteCountFfz": emoteCountFfz,
+            "emoteCount7Tv": emoteCount7Tv,
+            "query": (await kb.query(`SELECT emotesUpdate FROM channels_logger WHERE channel="${req.query.search.toLowerCase()}"`))[0]?.emotesUpdate ?? new Date(),
+            "emotesAdded": (new Table({'class': 'table-context', 'id': "added-emotes-table"})).setHeaders(headers).setData(tableData).render(),
+            "emotesRemoved": (new Table({'class': 'table-context', 'id': "removed-emotes-table"})).setHeaders(headersRemoved).setData(tableDataRemoved).render()
+        }]);
 
-                        .search__button {
-                          background-color: #3e91f2;
-                          padding: 13px 13px 11px 13px;
-                          margin-left: -4px;
-                          border-top-style: hidden;
-                          border-right-style: hidden;
-                          border-left-style: hidden;
-                          border-bottom-style: hidden;
-                          border-radius: 0px 5px 5px 0px;
-                        }
-
-                        .footer {
-                            text-align: center;
-                            font-size: 12px;
-                            font-weight: 700;
-                            font-family: 'Noto Sans', sans-serif;
-                            position: fixed;
-                            text-align: center;
-                            bottom: 1%;
-                            width: 100%;
-                            color: #666666;
-                        }
-
-                        textarea:focus, input:focus {
-                            outline: none;
-                        }
-
-                        *:focus {
-                            outline: none;
-                        }
-                    </style>
-                </head>
-                <body style="background-color: #1a1a1a">
-                    <br>
-                    <div style="text-align: center; color: white">
-                        <strong><a style="color: inherit;" href="https://twitch.tv/${req.query.search.toLowerCase()}">${req.query.search.toLowerCase()}'s</a> emotes</strong>
-                    </div>
-                    <br>
-                    <div class="searchBox">
-                        <form action="/emotes" class="searchBox2">
-                            <input type="text" autofocus="autofocus" placeholder="Search for channel.." name="search" autocomplete="off" class="search__input">
-                            <button type="submit" class="search__button">
-                                <img style="vertical-align: middle;" src="https://i.imgur.com/gQPOwPT.png" height="20" width="20">
-                            </button>
-                        </form>
-                    <div>
-                   <div style="color: white; text-align: left; font-size: 19px">
-                        <i>BTTV: ${emoteCountBttv}</i><br>
-                        <i>FFZ: ${emoteCountFfz}</i><br>
-                        <i>7TV: ${emoteCount7Tv}</i><br>
-                    </div>
-                    <br>
-                    <div id="timer" style="text-align: left"></div>
-                    <script>
-                        function lastUpdate() {
-                            return (Date.now() - (Date.parse("${(await kb.query(`SELECT emotesUpdate FROM channels_logger WHERE channel="${req.query.search.toLowerCase()}"`))[0]?.emotesUpdate ?? new Date()} UTC")))/1000;
-                        }
-
-                        const secondsToDhms = (seconds) => {
-                            seconds = Number(seconds);
-                            const d = Math.floor(seconds / (3600*24));
-                            const h = Math.floor(seconds % (3600*24) / 3600);
-                            const m = Math.floor(seconds % 3600 / 60);
-                            const s = Math.floor(seconds % 60);
-
-                            const dDisplay = d > 0 ? d + " " : "";
-                            const hDisplay = h > 0 ? h + 'h' + " " : "";
-                            const mDisplay = m > 0 ? m + 'm' + " " : "";
-                            const sDisplay = s > 0 ? s + 's' : '0' + s + 's';
-                            return dDisplay + hDisplay + mDisplay + sDisplay;
-                        }
-
-                        setInterval(() => {
-                            const timer = '<i style="color:white">LAST UPDATE</i><div style="color: white; font-size: 20px;">'+secondsToDhms(lastUpdate())+'<i style="color:white; font-size:15px; font-family: "Noto Sans", sans-serif;"> AGO</i></div>';
-
-                            document.getElementById("timer").innerHTML = timer;
-                        }, 1000)
-                    </script>
-                    <div style="color: lightgray; float: left;">
-                        <strong style="color: white; text-align: center;">USABLE EMOTES</strong><br>
-                        <input type="text" id="search" placeholder="Type to search" autocomplete="off">
-                        <br>
-                        ${(new Table({'class': 'table-context', 'id': "added-emotes-table"}))
-                            .setHeaders(headers)
-                            .setData(tableData)
-                            .render()}
-                    </div>
-                    <div style="margin-top: -1px; color: lightgray; float: right;">
-                        <strong style="color: white; text-align: center;">REMOVED EMOTES</strong><br>
-                        <input type="text" id="search2" placeholder="Type to search" autocomplete="off">
-                        <br>
-                        ${(new Table({'class': 'table-context', 'id': "removed-emotes-table"}))
-                            .setHeaders(headersRemoved)
-                            .setData(tableDataRemoved)
-                            .render()}
-                    </div>
-                    <script>
-                        let $rows = $('#added-emotes-table tbody tr');
-                        $('#search').keyup(function() {
-                            let val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
-
-                            $rows.show().filter(function() {
-                                let text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
-                                return !~text.indexOf(val);
-                            }).hide();
-                        });
-
-                        let $rows2 = $('#removed-emotes-table tbody tr');
-                        $('#search2').keyup(function() {
-                            let val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
-
-                            $rows2.show().filter(function() {
-                                let text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
-                                return !~text.indexOf(val);
-                            }).hide();
-                        });
-                    </script>
-                    <div class="footer">
-                        Emote checker is based on logs from ksyncbot
-                    </div>
-                </body>
-            </html>`
-        );
+        res.send(page.template());
     }
-
-    return;
 });
 
 // kunszg.com/api/stats

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>emotes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif">
+    <link rel="stylesheet" type="text/css" href="https://kunszg.com/style_emotes.css">
+    <link rel="stylesheet" href="https://kunszg.com/reset.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body style="background-color: #1a1a1a" class="blockscroll">
+<div class="content">
+    <div class="logo">
+        <h7 class="white__logo__word">Emote</h7>
+        <h7 class="blue__logo__word"> checker</h7>
+    </div>
+    <div class="searchBox">
+        <form action="/emotes" class="searchBox2">
+            <input type="text" autofocus="autofocus" placeholder="Search for channel.." name="search" autocomplete="off" class="search__input">
+            <button type="submit" class="search__button">
+                <img src="https://kunszg.com/img/magnifier.png" height="20" width="20">
+            </button>
+        </form>
+        <div>
+            <div class="footer">
+                Emote checker is based on logs from ksyncbot
+            </div>
+            <div style="margin-top: 30%; margin-right: 10%; margin-left: 10%; margin-bottom: 10%">
+                <script>
+                    function show_image(src, alt) {
+                        const img = document.createElement("img");
+                        img.src = src;
+                        img.alt = alt;
+
+                        img.style.position = "absolute";
+                        img.style.top = document.body.clientHeight * Math.random()/1.2 + "px";
+                        img.style.left = document.body.clientWidth * Math.random()/1.2 + "px";
+
+                        document.body.appendChild(img);
+
+                        function fadeOut(element) {
+                            let op = 1;  // initial opacity
+                            let timer = setInterval(function () {
+                                if (op <= 0.1){
+                                    clearInterval(timer);
+                                }
+                                element.style.opacity = op;
+                                op -= 0.03;
+                            }, 100);
+                        }
+
+                        fadeOut(img)
+
+                        setTimeout(() => {
+                            document.body.removeChild(img)
+                        }, 3200);
+                    }
+
+                    fetch('https://kunszg.com/api/randomemote')
+                        .then(response => response.json())
+                        .then(data => {
+                            show_image(data[0].emoteUrl, data[0].emote);
+
+                            show_image(data[1].emoteUrl, data[1].emote);
+
+                            show_image(data[2].emoteUrl, data[2].emote);
+                        })
+
+                    setInterval(() => {
+                        if (!document.hidden) {
+                            fetch('https://kunszg.com/api/randomemote')
+                                .then(response => response.json())
+                                .then(data => {
+                                    setTimeout(() => {
+                                        show_image(data[0].emoteUrl, data[0].emote);
+                                    }, Math.floor(Math.random()*10)*1000);
+
+                                    setTimeout(() => {
+                                        show_image(data[1].emoteUrl, data[1].emote);
+                                    }, Math.floor(Math.random()*10)*1000);
+
+                                    setTimeout(() => {
+                                        show_image(data[2].emoteUrl, data[2].emote);
+                                    }, Math.floor(Math.random()*10)*1000);
+                                })
+                        }
+                    }, 3000);
+                </script>
+            </div>
+        </div>
+</body>
+</html>
