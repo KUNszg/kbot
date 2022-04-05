@@ -808,7 +808,7 @@ app.get("/commands", async (req, res) => {
           		<title>commands</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1">
 				<link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
-                <link rel="stylesheet" type="text/css" href="https://kunszg.com/style_commands.css">
+                <link rel="stylesheet" type="text/css" href="https://kunszg.com/express_pages/style/style_commands.css">
       		</head>
       		<body style="background-color: #1a1a1a">
                 <div style="color: lightgray;">
