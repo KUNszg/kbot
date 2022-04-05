@@ -960,7 +960,7 @@ app.get("/colors", (req, res) => {
     html = html.toString();
 
     const page = new utils.Swapper(html, [{
-        "colors": JSON.stringify(colors)
+        "colors": colors
     }]);
 
     res.send(page.template());
