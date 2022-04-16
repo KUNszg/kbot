@@ -9,12 +9,12 @@
   "author": "kunszg",
   "license": "ISC",
   "dependencies": {
+    "@green-code/music-track-data": "^2.0.3",
     "buffer-equal-constant-time": "^1.0.1",
     "dank-twitch-irc": "^4.3.0",
     "discord.js": "^13.6.0",
     "express": "^4.17.3",
     "express-rate-limit": "^6.3.0",
-    "genius-lyrics-api": "^3.2.0",
     "got": "^11.8.3",
     "humanize-duration": "^3.27.1",
     "inquirer": "^8.2.1",

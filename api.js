@@ -23,12 +23,6 @@ app.set('trust proxy', 1);
 
 app.use("/api/", apiLimiter);
 
-const cors = require("cors");
-
-app.options("*", cors({ origin: 'http://localhost:8000', optionsSuccessStatus: 200 }));
-
-app.use(cors({ origin: "http://localhost:8000", optionsSuccessStatus: 200 }));
-
 const kb = new init.IRC();
 
 kb.tmiConnect();
