@@ -23,6 +23,12 @@ app.set('trust proxy', 1);
 
 app.use("/api/", apiLimiter);
 
+const cors = require("cors");
+
+app.options("*", cors({ origin: 'http://localhost:8000', optionsSuccessStatus: 200 }));
+
+app.use(cors({ origin: "http://localhost:8000", optionsSuccessStatus: 200 }));
+
 const kb = new init.IRC();
 
 kb.tmiConnect();
@@ -864,6 +870,96 @@ app.get("/commands/code/*", async (req, res) => {
 
 
     return;
+});
+
+// bot request form
+
+app.get("/request", async (req, res) => {
+    const commands = await kb.query(`
+        SELECT *
+        FROM commands
+        WHERE permissions < 5
+        ORDER BY command
+        ASC`);
+
+    const createSelectAll = () => {
+        let selectSwitch = "";
+
+        for (let i = 0; i < commands.length; i++) {
+            selectSwitch += document.getElementById(`checkset${i}`).disabled = this.checked;
+        }
+
+        return selectSwitch
+    }
+
+    const createCommandList = () => {
+        let commandSwitch = `<div id="container">`;
+
+        for (let i = 0; i < commands.length; i++) {
+            commandSwitch += `
+            <div class="form-check form-switch item">
+                <input class="form-check-input" name="${i}" type="checkbox" id="checkset${i}">
+                <label class="form-check-label" for="checkset" style="color: white;">${commands[i].command}</label>
+            </div>`
+        }
+
+        return commandSwitch + "</div>";
+    }
+
+   const html = `
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+        <title>Add KsyncBot to your channel</title>
+        <style>
+            #container {
+                column-count: 3;
+            }
+            .item {
+                break-inside: avoid-column;
+            }
+            .item:nth-of-type(2){
+                break-after:column;
+                display:block;
+            }
+        </style>
+    </head>
+    <body style="background-color: #1a1a1a; margin-left: 5vw; margin-right: 5vw;">
+    <form>
+        <div class="form-row">
+            <div class="col-md-4 mb-3">
+                <label for="validationServerUsername" style="color: white">Username</label>
+                <div class="input-group" style="width: 10vw">
+                    <div class="input-group-prepend">
+                    </div>
+                    <input type="text" class="form-control is-invalid" name="username" id="validationServerUsername" placeholder="Username" aria-describedby="inputGroupPrepend3" required>
+                        <div class="invalid-feedback">
+                            Please choose a username.
+                        </div>
+                </div>
+            </div>
+        </div>
+        <hr style="background-color: white;">
+            ${createSelectAll()}
+            <br>
+            ${createCommandList()}
+            <br>
+            <button class="btn btn-primary" type="submit">Submit form</button>
+    </form>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+    </body>
+</html>`
+
+    res.send(html)
 });
 
 /*  Data for random track command
