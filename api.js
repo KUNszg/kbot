@@ -551,7 +551,6 @@ app.get("/lastfmresolved", async (req, res) => {
         }
     }
 
-
     return;
 });
 
@@ -1222,6 +1221,7 @@ app.get("/emotes", async (req, res) => {
         html = html.toString();
 
         const page = new utils.Swapper(html, [{
+            "search": req.query.search.toLowerCase(),
             "search": req.query.search.toLowerCase(),
             "emoteCountBttv": emoteCountBttv,
             "emoteCountFfz": emoteCountFfz,
