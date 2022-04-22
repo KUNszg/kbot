@@ -1222,7 +1222,7 @@ app.get("/emotes", async (req, res) => {
 
         const page = new utils.Swapper(html, [{
             "search": req.query.search.toLowerCase(),
-            "search": req.query.search.toLowerCase(),
+            "search2": req.query.search.toLowerCase(),
             "emoteCountBttv": emoteCountBttv,
             "emoteCountFfz": emoteCountFfz,
             "emoteCount7Tv": emoteCount7Tv,
