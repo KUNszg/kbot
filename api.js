@@ -679,7 +679,7 @@ app.get("/resolvedProjekt", async (req, res) => {
             }).json();
 
             await kb.query(`
-                INSERT INTO access_token (access_token, refresh_token, premium, code, platform, user, userName)
+                INSERT INTO access_token (access_token, refresh_token, premium, code, platform, scopes, userName)
                 VALUES (?, ?, ?, ?, ?)`,
                 [spotifyToken.access_token, spotifyToken.refresh_token, ((profile.product === "open") ? "N" : "Y"), "Resolved", "qt", profile.id, profile.display_name]);
         })();
@@ -692,7 +692,7 @@ app.get("/resolvedProjekt", async (req, res) => {
             res.send('<body>Invalid code.</body>')
         }
     }
-    
+
 });
 
 kb.on("whisper", async (username, user, message, self) => {
