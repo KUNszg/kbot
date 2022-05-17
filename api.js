@@ -679,9 +679,9 @@ app.get("/resolvedProjekt", async (req, res) => {
             }).json();
 
             await kb.query(`
-                INSERT INTO access_token (access_token, refresh_token, premium, code, platform, scopes, userName)
+                INSERT INTO access_token (access_token, refresh_token, premium, code, platform)
                 VALUES (?, ?, ?, ?, ?)`,
-                [spotifyToken.access_token, spotifyToken.refresh_token, ((profile.product === "open") ? "N" : "Y"), "Resolved", "qt", profile.id, profile.display_name]);
+                [spotifyToken.access_token, spotifyToken.refresh_token, ((profile.product === "open") ? "N" : "Y"), profile.id + ";" + profile.display_name, "qt"]);
         })();
     } catch (err) {
         if (err.message === "Response code 400 (Bad Request)") {
