@@ -609,7 +609,7 @@ app.get("/resolved", async (req, res) => {
                 },
             }).json();
 
-            const checkPremium = await got(`https://api.spotify.com/v1/me`, {
+            const profile = await got(`https://api.spotify.com/v1/me`, {
                 method: "GET",
                 headers: {
                     'Authorization': `Bearer ${spotifyToken.access_token}`,
@@ -620,7 +620,68 @@ app.get("/resolved", async (req, res) => {
             await kb.query(`
                 INSERT INTO access_token (access_token, refresh_token, premium, code, platform)
                 VALUES (?, ?, ?, ?, "spotify")`,
-                [spotifyToken.access_token, spotifyToken.refresh_token, ((checkPremium.product === "open") ? "N" : "Y"), verifCode]);
+                [spotifyToken.access_token, spotifyToken.refresh_token, ((profile.product === "open") ? "N" : "Y"), verifCode]);
+        })();
+    } catch (err) {
+        if (err.message === "Response code 400 (Bad Request)") {
+            res.send('<body>Your code has expired, repeat the process.</body>');
+        }
+
+        if (err.message === "no query") {
+            res.send('<body>Invalid code.</body>')
+        }
+    }
+
+    let html = fs.readFileSync('./website/html/express_pages/spotifyResolve.html');
+
+    html = html.toString();
+
+    const page = new utils.Swapper(html, [{
+        "code": verifCode
+    }])
+
+    res.send(page.template());
+
+
+    return;
+});
+
+app.get("/resolvedProjekt", async (req, res) => {
+    if (typeof req.query.code === "undefined") {
+        throw "no query"
+    }
+
+    const accessToken = await kb.query(`
+        SELECT *
+        FROM access_token
+        WHERE code="verifCode"`);
+
+    if (accessToken.length != 0) {
+        return;
+    }
+
+    try {
+        (async () => {
+            const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=0a53ae5438f24d0da272a2e663c615c3&client_secret=${creds.client_secret_spotify}&code=${req.query.code}&redirect_uri=https://kunszg.com/resolvedProjekt`
+            const spotifyToken = await got(api, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+            }).json();
+
+            const profile = await got(`https://api.spotify.com/v1/me`, {
+                method: "GET",
+                headers: {
+                    'Authorization': `Bearer ${spotifyToken.access_token}`,
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+            }).json();
+
+            await kb.query(`
+                INSERT INTO access_token (access_token, refresh_token, premium, code, platform, user, userName)
+                VALUES (?, ?, ?, ?, ?)`,
+                [spotifyToken.access_token, spotifyToken.refresh_token, ((profile.product === "open") ? "N" : "Y"), "Resolved", "qt", profile.id, profile.display_name]);
         })();
     } catch (err) {
         if (err.message === "Response code 400 (Bad Request)") {
