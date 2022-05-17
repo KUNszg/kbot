@@ -692,19 +692,7 @@ app.get("/resolvedProjekt", async (req, res) => {
             res.send('<body>Invalid code.</body>')
         }
     }
-
-    let html = fs.readFileSync('./website/html/express_pages/spotifyResolve.html');
-
-    html = html.toString();
-
-    const page = new utils.Swapper(html, [{
-        "code": verifCode
-    }])
-
-    res.send(page.template());
-
-
-    return;
+    
 });
 
 kb.on("whisper", async (username, user, message, self) => {
