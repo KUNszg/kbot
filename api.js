@@ -678,11 +678,21 @@ app.get("/resolvedProjekt", async (req, res) => {
                 },
             }).json();
 
-            await kb.query(`
+            const checkRepeats = await kb.query(`
+                SELECT *
+                FROM access_token
+                WHERE platform=?
+                    AND code=?"`, ["qt", profile.id + ";" + profile.display_name]);
+
+            if (!checkRepeats.length) {
+                await kb.query(`
                 INSERT INTO access_token (access_token, refresh_token, premium, code, platform)
                 VALUES (?, ?, ?, ?, ?)`,
-                [spotifyToken.access_token, spotifyToken.refresh_token, ((profile.product === "open") ? "N" : "Y"), profile.id + ";" + profile.display_name, "qt"]);
+                    [spotifyToken.access_token, spotifyToken.refresh_token, ((profile.product === "open") ? "N" : "Y"), profile.id + ";" + profile.display_name, "qt"]);
+            }
         })();
+
+        res.send("<h3>Pomyslnie zalogowano</h3>")
     } catch (err) {
         if (err.message === "Response code 400 (Bad Request)") {
             res.send('<body>Your code has expired, repeat the process.</body>');
@@ -806,6 +816,21 @@ kb.on("whisper", async (username, user, message, self) => {
     }
     return;
 });
+
+app.get("/qtTopSeretProject", async (req,res) => {
+    if (req.query.id && req.query.username) {
+        const user = await kb.query(`
+            SELECT *
+            FROM access_token
+            WHERE platform=?
+                AND code=?`, ["qt", req.query.id + ";" + req.query.username]);
+
+        res.send(user);
+    }
+    else {
+        res.code(404);
+    }
+})
 
 app.get("/commands", async (req, res) => {
     const Table = require('table-builder');
