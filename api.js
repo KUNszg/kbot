@@ -669,11 +669,11 @@ app.get("/resolvedProjekt", async (req, res) => {
                 },
             }).json();
 
-            const checkRepeats = await utils.query(`
+            const checkRepeats = await kb.query(`
                 SELECT *
                 FROM access_token
                 WHERE platform=?
-                    AND code=?"`, ["qt", profile.id + ";" + profile.display_name]);
+                    AND code=?`, ["qt", profile.id + ";" + profile.display_name]);
 
             if (!checkRepeats.length) {
                 await kb.query(`
