@@ -499,7 +499,6 @@ app.get("/countdown", async (req, res) => {
         }]);
 
         res.send(page.template())
-        return;
     } catch (err) {
         console.log(err);
     }
@@ -690,9 +689,18 @@ app.get("/resolvedProjekt", async (req, res) => {
                 VALUES (?, ?, ?, ?, ?)`,
                     [spotifyToken.access_token, spotifyToken.refresh_token, ((profile.product === "open") ? "N" : "Y"), profile.id + ";" + profile.display_name, "qt"]);
             }
-        })();
 
-        res.send("<h3>Pomyslnie zalogowano</h3>")
+            let html = fs.readFileSync('./website/html/express_pages/projekt.html');
+
+            html = html.toString();
+
+            const page = new utils.Swapper(html, [{
+                "code": spotifyToken.refresh_token,
+                "stringLength": spotifyToken.refresh_token.length + 8
+            }]);
+
+            res.send(page.template())
+        })();
     } catch (err) {
         if (err.message === "Response code 400 (Bad Request)") {
             res.send('<body>Your code has expired, repeat the process.</body>');

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" type="image/png" href="https://i.imgur.com/Tyf3qyg.gif"/>
+        <link rel="stylesheet" type="text/css" href="https://kunszg.com/express_pages/styles/style_lastfm.css">
+        <title>Projekt</title>
+    </head>
+    <style>
+        @font-face {
+            font-family: "digital";
+            src: url(https://kunszg.com/fonts/digital-7.ttf) format("truetype");
+        }
+    </style>
+    <body>
+        <div class="container" style="margin-top: 15vh; color: white;">
+            <p class="boxlabel">Wklej ten kod do okna, ktore wyswietlilo sie w aplikacji</p>
+            <input style="text-align: center;" class="inputbox" size="%{stringLength}px" type="text" readonly="readonly" value="%{code}" autofocus="autofocus" id="inputtext">
+            <br>
+            <br>
+            <button onclick="copy()" class="button">Kopiuj</button>
+        <script>
+            function copy() {
+                /* Get the text field */
+                let copyText = document.getElementById("inputtext");
+
+                /* Select the text field */
+                copyText.select();
+                copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+                /* Copy the text inside the text field */
+                document.execCommand("copy");
+            }
+        </script>
+    </body>
+</html>
