@@ -669,7 +669,7 @@ app.get("/resolvedProjekt", async (req, res) => {
                 },
             }).json();
 
-            const checkRepeats = await kb.query(`
+            const checkRepeats = await utils.query(`
                 SELECT *
                 FROM access_token
                 WHERE platform=?
