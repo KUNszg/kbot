@@ -647,15 +647,7 @@ app.get("/resolved", async (req, res) => {
 
 app.get("/resolvedProjekt", async (req, res) => {
     if (typeof req.query.code === "undefined") {
-        throw "no query"
-    }
-
-    const accessToken = await kb.query(`
-        SELECT *
-        FROM access_token
-        WHERE code="verifCode"`);
-
-    if (accessToken.length != 0) {
+        res.send("<h1>no code</h1>");
         return;
     }
 
@@ -704,10 +696,6 @@ app.get("/resolvedProjekt", async (req, res) => {
     } catch (err) {
         if (err.message === "Response code 400 (Bad Request)") {
             res.send('<body>Your code has expired, repeat the process.</body>');
-        }
-
-        if (err.message === "no query") {
-            res.send('<body>Invalid code.</body>')
         }
     }
 
