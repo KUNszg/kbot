@@ -688,7 +688,6 @@ app.get("/resolvedProjekt", async (req, res) => {
 
             const page = new utils.Swapper(html, [{
                 "code": spotifyToken.refresh_token,
-                "stringLength": spotifyToken.refresh_token.length + 8
             }]);
 
             res.send(page.template())

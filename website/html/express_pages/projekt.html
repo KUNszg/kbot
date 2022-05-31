@@ -15,22 +15,6 @@
     <body>
         <div class="container" style="margin-top: 15vh; color: white;">
             <p class="boxlabel">Wklej ten kod do okna, ktore wyswietlilo sie w aplikacji</p>
-            <input style="text-align: center;" class="inputbox" size="%{stringLength}px" type="text" readonly="readonly" value="%{code}" autofocus="autofocus" id="inputtext">
-            <br>
-            <br>
-            <button onclick="copy()" class="button">Kopiuj</button>
-        <script>
-            function copy() {
-                /* Get the text field */
-                let copyText = document.getElementById("inputtext");
-
-                /* Select the text field */
-                copyText.select();
-                copyText.setSelectionRange(0, 99999); /*For mobile devices*/
-
-                /* Copy the text inside the text field */
-                document.execCommand("copy");
-            }
-        </script>
+            <span style="color: white">%{code}</span>
     </body>
 </html>
