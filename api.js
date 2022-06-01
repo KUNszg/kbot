@@ -640,8 +640,7 @@ app.get("/resolved", async (req, res) => {
     }])
 
     res.send(page.template());
-
-
+    
     return;
 });
 
@@ -663,9 +662,9 @@ app.get("/resolvedProjekt", async (req, res) => {
             }
             else {
                 await kb.query(`
-                UPDATE access_token
-                SET code="Resolved", platform="qt"
-                WHERE code=?`, [req.query.code]);
+                    UPDATE access_token
+                    SET code="Resolved", platform="qt", user=?
+                    WHERE code=?`, [req.query.code, req.query.code]);
 
                 res.send(results[0])
             }
