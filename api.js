@@ -640,7 +640,7 @@ app.get("/resolved", async (req, res) => {
     }])
 
     res.send(page.template());
-    
+
     return;
 });
 
