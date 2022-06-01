@@ -647,50 +647,28 @@ app.get("/resolved", async (req, res) => {
 
 app.get("/resolvedProjekt", async (req, res) => {
     if (typeof req.query.code === "undefined") {
-        res.send("<h1>no code</h1>");
+        res.send({"error": "no code"});
         return;
     }
 
     try {
         (async () => {
-            const api = `https://accounts.spotify.com/api/token?grant_type=authorization_code&client_id=0a53ae5438f24d0da272a2e663c615c3&client_secret=${creds.client_secret_spotify}&code=${req.query.code}&redirect_uri=https://kunszg.com/resolvedProjekt`
-            const spotifyToken = await got(api, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-            }).json();
-
-            const profile = await got(`https://api.spotify.com/v1/me`, {
-                method: "GET",
-                headers: {
-                    'Authorization': `Bearer ${spotifyToken.access_token}`,
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-            }).json();
-
-            const checkRepeats = await kb.query(`
+            const results = await kb.query(`
                 SELECT *
                 FROM access_token
-                WHERE platform=?
-                    AND code=?`, ["qt", profile.id + ";" + profile.display_name]);
+                WHERE code=?`, [req.query.code]);
 
-            if (!checkRepeats.length) {
-                await kb.query(`
-                INSERT INTO access_token (access_token, refresh_token, premium, code, platform)
-                VALUES (?, ?, ?, ?, ?)`,
-                    [spotifyToken.access_token, spotifyToken.refresh_token, ((profile.product === "open") ? "N" : "Y"), profile.id + ";" + profile.display_name, "qt"]);
+            if (!results.length) {
+                res.send({"error": "no results"});
             }
+            else {
+                await kb.query(`
+                UPDATE access_token
+                SET code="Resolved", platform="qt"
+                WHERE code=?`, [req.query.code]);
 
-            let html = fs.readFileSync('./website/html/express_pages/projekt.html');
-
-            html = html.toString();
-
-            const page = new utils.Swapper(html, [{
-                "code": spotifyToken.refresh_token,
-            }]);
-
-            res.send(page.template())
+                res.send(results[0])
+            }
         })();
     } catch (err) {
         if (err.message === "Response code 400 (Bad Request)") {
@@ -811,21 +789,6 @@ kb.on("whisper", async (username, user, message, self) => {
     }
     return;
 });
-
-app.get("/qtTopSeretProject", async (req,res) => {
-    if (req.query.id && req.query.username) {
-        const user = await kb.query(`
-            SELECT *
-            FROM access_token
-            WHERE platform=?
-                AND code=?`, ["qt", req.query.id + ";" + req.query.username]);
-
-        res.send(user);
-    }
-    else {
-        res.code(404);
-    }
-})
 
 app.get("/commands", async (req, res) => {
     const Table = require('table-builder');
