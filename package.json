@@ -19,7 +19,7 @@
     "inquirer": "^8.2.4",
     "mysql2": "^2.3.3",
     "os": "^0.1.2",
-    "redis": "^4.1.0",
+    "redis": "^4.2.0",
     "require-dir": "^1.2.0",
     "snoowrap": "^1.23.0",
     "table-builder": "^2.1.1",
