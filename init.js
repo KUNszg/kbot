@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const fs = require('fs')
+const fs = require('fs');
 
 const files = ["temp_api_uptime.txt", "temp_api_restarting.txt", "aliases.json"];
 
