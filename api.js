@@ -210,7 +210,7 @@ app.get("/connections", async (req, res) => {
         FROM executions
         WHERE command LIKE "%spotify%"`);
 
-    let html = fs.readFileSync('./website/html/express_pages/connections.html');
+    let html = fs.readFileSync('../website/html/express_pages/connections.html');
 
     html = html.toString();
 
@@ -487,7 +487,7 @@ app.get("/countdown", async (req, res) => {
             WHERE verifcode=?`,
             [req.query.verifcode]);
 
-        let html = fs.readFileSync('./website/html/express_pages/countdown.html');
+        let html = fs.readFileSync('../website/html/express_pages/countdown.html');
 
         html = html.toString();
 
@@ -515,7 +515,7 @@ app.get("/lastfmresolved", async (req, res) => {
         return;
     }
 
-    let html = fs.readFileSync('./website/html/express_pages/lastfmResolve.html');
+    let html = fs.readFileSync('../website/html/express_pages/lastfmResolve.html');
 
     html = html.toString();
 
@@ -569,7 +569,7 @@ app.get("/lastfm", async (req, res) => {
         INSERT INTO access_token (code)
         VALUES (?)`, [verifCode]);
 
-    let html = fs.readFileSync('./website/html/express_pages/lastfm.html');
+    let html = fs.readFileSync('../website/html/express_pages/lastfm.html');
 
     html = html.toString();
 
@@ -631,7 +631,7 @@ app.get("/resolved", async (req, res) => {
         }
     }
 
-    let html = fs.readFileSync('./website/html/express_pages/spotifyResolve.html');
+    let html = fs.readFileSync('../website/html/express_pages/spotifyResolve.html');
 
     html = html.toString();
 
@@ -992,7 +992,7 @@ app.get("/request", async (req, res) => {
 */
 app.get("/genres", (req, res) => {
     const genres = fs.readFileSync('./data/genres.json');
-    let html = fs.readFileSync('./website/html/express_pages/genres.html');
+    let html = fs.readFileSync('../website/html/express_pages/genres.html');
 
     html = html.toString();
 
@@ -1075,7 +1075,7 @@ app.get("/colors", (req, res) => {
         return;
     }
 
-    let html = fs.readFileSync('./website/html/express_pages/colors.html');
+    let html = fs.readFileSync('../website/html/express_pages/colors.html');
 
     html = html.toString();
 
@@ -1107,7 +1107,7 @@ app.get("/emotes", async (req, res) => {
         "removed": " <div class='table-headers'>removed</div> "
     };
 
-    let homepage = fs.readFileSync('./website/html/express_pages/emotes.html');
+    let homepage = fs.readFileSync('../website/html/express_pages/emotes.html');
 
     homepage = homepage.toString();
 
@@ -1247,7 +1247,7 @@ app.get("/emotes", async (req, res) => {
         const emoteCountFfz = !emoteCount.find(i => i.type === "ffz") ? 0 : emoteCount.find(i => i.type === "ffz").count;
         const emoteCount7Tv = !emoteCount.find(i => i.type === "7tv") ? 0 : emoteCount.find(i => i.type === "7tv").count;
 
-        let html = fs.readFileSync('./website/html/express_pages/emotesDataTables.html');
+        let html = fs.readFileSync('../website/html/express_pages/emotesDataTables.html');
 
         html = html.toString();
 
