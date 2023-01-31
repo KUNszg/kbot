@@ -379,7 +379,7 @@ app.get("/api/channels", async (req, res) => {
             const banphraseApi = isBanphraseApiActive ? findBanphraseChannels.url : null;
 
             const tableSize = findLoggedChannel ?
-                shell.execSync(`sudo du --apparent-size --block=M -s /opt/lampp/var/mysql/kbot/logs_${_channel}.ibd`).toString().split('/')[0].replace("M", "") : null;
+                shell.execSync(`sudo du --apparent-size --block=M -s /var/lib/mysql/kbot/logs_${_channel}.ibd`).toString().split('/')[0].replace("M", "") : null;
 
             Object.defineProperties(result,{
                 [_channel]: {
