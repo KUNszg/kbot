@@ -225,6 +225,11 @@ app.get("/connections", async (req, res) => {
     return;
 });
 
+app.get("/cbtest", async (req, res) => {
+    console.log(req);
+    console.log(req.body);
+});
+
 app.get("/api/user", async(req, res) => {
     const userid = req.headers["userid"] || req.query.userid;
     const username = req.headers["username"] || req.query.username;
@@ -455,6 +460,7 @@ app.get("/countdown", async (req, res) => {
                 VALUES (?, CURRENT_TIMESTAMP)`,
                 [verifCode]);
 
+            
             res.send(html);
             return;
         }
