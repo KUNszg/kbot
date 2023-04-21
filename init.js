@@ -2,9 +2,9 @@
 
 const fs = require('fs');
 
-const files = ["temp_api_uptime.txt", "temp_api_restarting.txt", "aliases.json"];
+const files = ['temp_api_uptime.txt', 'temp_api_restarting.txt', 'aliases.json'];
 
-files.map(i => fs.existsSync(`./data/${i}`) ? "" : fs.writeFileSync(`./data/${i}`, "{}"));
+files.map(i => (fs.existsSync(`./data/${i}`) ? '' : fs.writeFileSync(`./data/${i}`, '{}')));
 
 require('./lib/handler');
 require('./lib/misc/events');
