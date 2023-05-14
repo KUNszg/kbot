@@ -131,7 +131,8 @@ kb.sqlConnect();
           }
         })();
 
-        data['color'] = data['color'] === '' || data['color'] === null ? 'gray' : data['color'];
+        data['color'] =
+          data['color'] === '' || data['color'] === null ? 'gray' : data['color'];
 
         // no code should appear after this function in this block
         await kb.query(

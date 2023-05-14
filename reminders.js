@@ -18,7 +18,7 @@ const options = {
     username: 'ksyncbot',
     password: api.oauth,
   },
-  channels: ['tombbie', 'ksyncbot'],
+  channels: ['ksyncbot'],
 };
 
 const tmi = require('tmi.js');
@@ -293,7 +293,10 @@ const reminder = async () => {
           limit.delete(userData[0].user_alias);
         }, 10000);
       } else {
-        kb.say(userData[0].channel, `(cookie reminder) ${getUsername[0].username}, eat cookie please :) 🍪`);
+        kb.say(
+          userData[0].channel,
+          `(cookie reminder) ${getUsername[0].username}, eat cookie please :) 🍪`
+        );
         setTimeout(() => {
           limit.delete(userData[0].user_alias);
         }, 10000);
