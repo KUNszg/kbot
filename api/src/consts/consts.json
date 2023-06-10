@@ -1,0 +1,23 @@
+{
+  "emoteHeaders": {
+    "ID": " <div class='table-headers'>ID</div> ",
+    "name": "<div class='table-headers'>name</div>",
+    "emote": " <div class='table-headers'>emote</div> ",
+    "type": " <div class='table-headers'>type</div> ",
+    "added": " <div class='table-headers'>added</div> "
+  },
+  "emoteHeadersRemoved": {
+    "ID": " <div class='table-headers'>ID</div> ",
+    "name": "<div class='table-headers'>name</div>",
+    "emote": " <div class='table-headers'>emote</div> ",
+    "type": " <div class='table-headers'>type</div> ",
+    "removed": " <div class='table-headers'>removed</div> "
+  },
+  "emoteHeadersEmptyResponse": {
+    "ID": "<div class='table-contents' style='text-align: center;'>-</div>",
+    "name": "<div class='table-contents' style='text-align: center;'>-</div>",
+    "emote": "<div class='table-contents' style='text-align: center;'>-</div>",
+    "type": "<div class='table-contents' style='text-align: center;'>-</div>",
+    "removed": "<div class='table-contents' style='text-align: center;'>-</div>"
+  }
+}
