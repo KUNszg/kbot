@@ -38,7 +38,7 @@ const statsGet = services => {
     const lines =
       process.platform === 'linux'
         ? shell.execSync(
-            `find . -name '*.js' -not -path "./node_modules*" | xargs wc -l | tail -1`
+            `find ../ -name '*.js' -not -path "../node_modules*" | xargs wc -l | tail -1`
           )
         : 0;
 
