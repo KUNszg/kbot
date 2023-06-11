@@ -55,7 +55,7 @@ const statsGet = services => {
     const isRestarting =
       0.9 * channels.length > Math.trunc(Date.now() - _.toInteger(restartData)) / 1000;
 
-    const linesOfCode = _.toInteger(_.first(_.split(_.toString(lines), ' ')));
+    const linesOfCode = _.toInteger(_.get(_.split(_.toString(lines), ' '), '2'));
     const _usersLogged = _.toInteger(_.get(_.first(usersLogged), 'count'));
     const commandExecutions = _.toInteger(_.get(_.first(executions), 'count'));
     const uptime = Date.now() - Math.trunc(_.toInteger(uptimeData) * 1000);
