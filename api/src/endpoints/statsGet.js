@@ -44,12 +44,12 @@ const statsGet = services => {
 
     const uptimeData =
       process.platform === 'linux'
-        ? _.toString(fs.readFileSync('./data/temp_api_uptime.txt'))
+        ? _.toString(fs.readFileSync('../data/temp_api_uptime.txt'))
         : 0;
 
     const restartData =
       process.platform === 'linux'
-        ? _.toString(fs.readFileSync('./data/temp_api_restarting.txt'))
+        ? _.toString(fs.readFileSync('../data/temp_api_restarting.txt'))
         : 0;
 
     const isRestarting =
