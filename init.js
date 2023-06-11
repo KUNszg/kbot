@@ -9,4 +9,4 @@ files.map(i => (fs.existsSync(`./data/${i}`) ? '' : fs.writeFileSync(`./data/${i
 require('./lib/handler');
 require('./lib/misc/events');
 require('./lib/misc/loops');
-require('./lib/misc/chatters');
+//require('./lib/misc/chatters');
