@@ -18,7 +18,7 @@ const webhookHandlerWildcard = services => {
     );
 
     if (githubWebhookTwitchResponse) {
-      kb.say(utils.Get.userData.botUsername, githubWebhookTwitchResponse);
+      await kb.tmiClient.say(utils.Get.userData.botUsername, githubWebhookTwitchResponse);
     }
   });
 };

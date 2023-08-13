@@ -31,7 +31,7 @@ const pageEmotes = services => {
     const headers = consts.emoteHeaders;
     const headersRemoved = consts.emoteHeadersRemoved;
 
-    const emotesAdded = await kb.query(
+    const emotesAdded = await kb.sqlClient.query(
       `
             SELECT *
             FROM emotes
@@ -41,7 +41,7 @@ const pageEmotes = services => {
       [search]
     );
 
-    const emotesRemoved = await kb.query(
+    const emotesRemoved = await kb.sqlClient.query(
       `
             SELECT *
             FROM emotes_removed

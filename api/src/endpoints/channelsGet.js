@@ -5,7 +5,6 @@ const userGet = services => {
   const { app, kb } = services;
 
   app.get('/api/channels', async (req, res) => {
-    console.log(`${req.protocol}://${req.hostname}${req.originalUrl}`)
     const details = _.get(req, 'query.details');
 
     if (details === 'true') {
