@@ -17,7 +17,7 @@ const colorsGet = services => {
     const stats = await redisClient.get('kb:api:colors:stats');
 
     if (!stats) {
-      const colorsData = await kb.query(`
+      const colorsData = await kb.sqlClient.query(`
         SELECT color, COUNT(*) AS count
         FROM user_list
         GROUP BY color

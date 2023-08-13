@@ -1,7 +1,11 @@
-const requireDir = require('require-dir');
 const _ = require('lodash');
 
-const services = requireDir('services');
+const services = {
+  rabbitClient: require('./services/rabbitClient'),
+  redisClient: require('./services/redisClient'),
+  sqlClient: require('./services/sqlClient'),
+  tmiClient: require('./services/tmiClient'),
+};
 
 exports.Connector = {
   async dependencies(deps, connectionArgs) {

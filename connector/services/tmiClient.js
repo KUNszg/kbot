@@ -8,13 +8,13 @@ const sleep = require('../utils/sleep');
 const prepareMessage = require('../utils/prepareMessage');
 const endecrypt = require('../utils/endecrypt');
 
-const init = require('../connector.js');
+const init = require('../serviceConnector.js');
 
 class TmiEmitter extends EventEmitter {}
 
 const tmiEmitter = new TmiEmitter();
 
-module.exports.tmiClient = {
+const tmiClient = {
   tmiEmitter,
 
   connect: async function (connectionArgs) {
@@ -29,6 +29,8 @@ module.exports.tmiClient = {
     }
 
     await this.client.connect();
+
+    tmiClient.native = this.client;
 
     let channels;
 
@@ -187,12 +189,6 @@ module.exports.tmiClient = {
     });
   },
 
-  messageCache(channel, message, timestamp) {
-    lastMessage.channel = channel;
-    lastMessage.message = message;
-    lastMessage.timestamp = timestamp;
-  },
-
   // join the channel (only for session)
   join(channel) {
     channel = channel.startsWith('#') ? channel : `#${channel}`;
@@ -316,3 +312,5 @@ module.exports.tmiClient = {
     }
   },
 };
+
+module.exports.tmiClient = tmiClient;

@@ -6,15 +6,17 @@ class RabbitEmitter extends EventEmitter {}
 
 const rabbitEmitter = new RabbitEmitter();
 
-module.exports.rabbitClient = {
+const rabbitClient = {
   rabbitEmitter,
 
   connect: async function () {
-    this.rabbitCon = await amqplib.connect(rabbitConfig);
+    this.client = await amqplib.connect(rabbitConfig);
+
+    rabbitClient.native = this.client;
   },
 
   async createRabbitChannel(queue) {
-    const consumer = await this.rabbitCon.createChannel();
+    const consumer = await this.client.createChannel();
     await consumer.assertQueue(queue);
 
     await consumer.consume(queue, msg => {
@@ -23,8 +25,10 @@ module.exports.rabbitClient = {
   },
 
   async sendToQueue(queue, message) {
-    const sender = await this.rabbitCon.createChannel();
+    const sender = await this.client.createChannel();
 
     sender.sendToQueue(queue, Buffer.from(message));
   },
 };
+
+module.exports.rabbitClient = rabbitClient;

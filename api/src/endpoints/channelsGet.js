@@ -5,16 +5,17 @@ const userGet = services => {
   const { app, kb } = services;
 
   app.get('/api/channels', async (req, res) => {
+    console.log(`${req.protocol}://${req.hostname}${req.originalUrl}`)
     const details = _.get(req, 'query.details');
 
     if (details === 'true') {
       let channels, logs;
 
       if (!_.get(req, 'query.channel')) {
-        channels = await kb.query('SELECT * FROM channels');
-        logs = await kb.query('SELECT * FROM channels_logger');
+        channels = await kb.sqlClient.query('SELECT * FROM channels');
+        logs = await kb.sqlClient.query('SELECT * FROM channels_logger');
       } else {
-        channels = await kb.query(
+        channels = await kb.sqlClient.query(
           `
                 SELECT *
                 FROM channels
@@ -22,7 +23,7 @@ const userGet = services => {
           [req.query.channel]
         );
 
-        logs = await kb.query(
+        logs = await kb.sqlClient.query(
           `
                 SELECT *
                 FROM channels_logger
@@ -37,14 +38,14 @@ const userGet = services => {
         }
       }
 
-      const executions = await kb.query(`
+      const executions = await kb.sqlClient.query(`
             SELECT channel, COUNT(*) AS count
             FROM executions
             GROUP BY channel
             ORDER BY count
             DESC`);
 
-      const banphraseApis = await kb.query('SELECT * FROM channel_banphrase_apis');
+      const banphraseApis = await kb.sqlClient.query('SELECT * FROM channel_banphrase_apis');
 
       const result = {};
 
@@ -117,7 +118,7 @@ const userGet = services => {
         channels: result,
       });
     } else {
-      let channelList = await kb.query('SELECT * FROM channels');
+      let channelList = await kb.sqlClient.query('SELECT * FROM channels');
 
       channelList = channelList.map(i => i.channel);
 

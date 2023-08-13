@@ -1,19 +1,21 @@
-const mysql = require("mysql2");
+const mysql = require("mysql2/promise");
 const _ = require('lodash');
 
 const { sqlConfig } = require('../consts/serviceConfigs');
 
 const sleep = require('../utils/sleep');
 
-module.exports.sqlClient = {
+const sqlClient = {
   connect: async function () {
     if (process.platform === 'linux') {
       this.sqlConfig.socketPath = '/var/run/mysqld/mysqld.sock';
     }
 
-    global.sqlClient = await mysql.createConnection(sqlConfig);
+    global._sqlClient = await mysql.createConnection(sqlConfig);
 
-    global.sqlClient.on('error', err => {
+    sqlClient.native = global._sqlClient;
+
+    global._sqlClient.on('error', err => {
       if (err.fatal) {
         console.log('CONNECTOR ERROR');
         console.log(err);
@@ -22,20 +24,20 @@ module.exports.sqlClient = {
   },
 
   query: async (query, data = []) => {
-    this.sqlClient = global.sqlClient;
+    this._sqlClient = global._sqlClient;
 
-    while (!this.sqlClient) {
+    while (!this._sqlClient) {
       await sleep(1000);
     }
 
     try {
       const formatQuery = mysql.format(query, data);
 
-      let result = await this.sqlClient.promise().execute(formatQuery);
+      let result = await this._sqlClient.execute(formatQuery);
 
       result = _.first(result);
 
-      this.sqlClient.unprepare(query);
+      this._sqlClient.unprepare(query);
 
       return result;
     } catch (err) {
@@ -44,3 +46,5 @@ module.exports.sqlClient = {
     }
   },
 };
+
+module.exports.sqlClient = sqlClient;

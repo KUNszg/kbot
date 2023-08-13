@@ -8,7 +8,7 @@ class RedisEmitter extends EventEmitter {}
 
 const redisEmitter = new RedisEmitter();
 
-module.exports.redisClient = {
+const redisClient = {
   redisEmitter,
 
   connect: async function () {
@@ -18,9 +18,11 @@ module.exports.redisClient = {
       this.client = redis.createClient();
     }
 
+    redisClient.native = this.client;
+
     await this.client.connect();
 
-    this.redisEmitter.on('error', function (error) {
+    redisEmitter.on('error', function (error) {
       console.log(error);
     });
   },
@@ -40,4 +42,10 @@ module.exports.redisClient = {
   multi() {
     return this.client.multi();
   },
+
+  async sendCommand(args, options) {
+    return await this.client.sendCommand(args, options)
+  }
 };
+
+module.exports.redisClient = redisClient;
