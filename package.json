@@ -22,7 +22,7 @@
     "moment": "^2.29.4",
     "mysql2":  "^3.3.5",
     "os": "^0.1.2",
-    "redis": "^4.6.7",
+    "redis": "^4.6.8",
     "require-dir": "^1.2.0",
     "snoowrap": "^1.23.0",
     "table-builder": "^2.1.1",
