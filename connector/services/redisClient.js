@@ -31,7 +31,7 @@ const redisClient = {
     return await this.client.get(key);
   },
 
-  async set(key, data = [], expire = 30) {
+  async set(key, data = {}, expire = 30) {
     return await this.client.set(key, JSON.stringify(data), { EX: expire });
   },
 

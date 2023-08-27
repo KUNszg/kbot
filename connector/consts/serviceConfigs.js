@@ -29,4 +29,14 @@ module.exports = {
     ignoreUnhandledPromiseRejections: true,
     rateLimits: 'verifiedBot',
   },
+  discordConfig: {
+    discordLogin: creds.discord
+  },
+  redditConfig: {
+    userAgent: 'linux:kunszgbot:2.0.0 (by /u/kunszg)',
+    clientId: creds.redditUID,
+    clientSecret: creds.redditSecret,
+    username: creds.redditUsername,
+    password: creds.redditPassword,
+  }
 };

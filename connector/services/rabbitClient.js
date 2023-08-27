@@ -20,7 +20,7 @@ const rabbitClient = {
     await consumer.assertQueue(queue);
 
     await consumer.consume(queue, msg => {
-      rabbitEmitter.emit('rabbitConsumer', msg.content.toString());
+      rabbitEmitter.emit(queue, msg.content.toString(), msg, consumer);
     });
   },
 

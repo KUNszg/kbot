@@ -1,10 +1,12 @@
 const _ = require('lodash');
 
 const services = {
-  rabbitClient: require('./services/rabbitClient'),
-  redisClient: require('./services/redisClient'),
-  sqlClient: require('./services/sqlClient'),
-  tmiClient: require('./services/tmiClient'),
+  rabbit: require('./services/rabbitClient'),
+  redis: require('./services/redisClient'),
+  sql: require('./services/sqlClient'),
+  tmi: require('./services/tmiClient'),
+  reddit: require('./services/redditClient'),
+  discord: require('./services/discordClient'),
 };
 
 exports.Connector = {
@@ -27,8 +29,5 @@ exports.Connector = {
       return clients;
     }
   },
-  sql: services.sqlClient,
-  rabbit: services.rabbitClient,
-  redis: services.redisClient,
-  tmi: services.tmiClient,
+  ...services
 };
