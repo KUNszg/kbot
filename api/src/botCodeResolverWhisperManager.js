@@ -5,13 +5,13 @@ const moment = require('moment');
 const botCodeResolverWhisperManager = services => {
   const { kb } = services;
 
-  kb.on('whisper', async (username, user, message, self) => {
+  kb.tmiClient.tmiEmitter.on('whisper', async (username, user, message, self) => {
     if (self) return;
 
     let owner = await utils.Get.user().owner();
     owner = _.get(_.first(owner), 'username');
 
-    kb.whisper(owner, `whisper to kbot: ${username}: ${message}`);
+    kb.tmiClient.whisper(owner, `whisper to kbot: ${username}: ${message}`);
 
     const codePrefix = _.first(_.split(message, ' '));
     const code = _.get(_.split(message, ' '), 1);
@@ -19,7 +19,7 @@ const botCodeResolverWhisperManager = services => {
     const userId = _.get(user, 'user-id');
 
     if (codePrefix === 'verify-lastfm') {
-      const checkBan = await kb.query(
+      const checkBan = await kb.sqlClient.query(
         `
             SELECT *
             FROM ban_list
@@ -29,7 +29,7 @@ const botCodeResolverWhisperManager = services => {
 
       if (!_.isEmpty(checkBan)) return;
 
-      const checkCode = await kb.query(
+      const checkCode = await kb.sqlClient.query(
         `
             SELECT *
             FROM access_token
@@ -38,11 +38,11 @@ const botCodeResolverWhisperManager = services => {
       );
 
       if (_.isEmpty(checkCode)) {
-        kb.whisper(username, 'Provided code is invalid.');
+        kb.tmiClient.whisper(username, 'Provided code is invalid.');
         return;
       }
 
-      const checkUser = await kb.query(
+      const checkUser = await kb.sqlClient.query(
         `
             SELECT *
             FROM access_token
@@ -51,8 +51,8 @@ const botCodeResolverWhisperManager = services => {
       );
 
       if (!_.isEmpty(checkUser)) {
-        kb.whisper(username, 'You are already registered for LastFM command.');
-        await kb.query(
+        kb.tmiClient.whisper(username, 'You are already registered for LastFM command.');
+        await kb.sqlClient.query(
           `
                 DELETE FROM access_token
                 WHERE code=?`,
@@ -61,7 +61,7 @@ const botCodeResolverWhisperManager = services => {
         return;
       }
 
-      await kb.query(
+      await kb.sqlClient.query(
         `
             UPDATE access_token
             SET userName=?, user=?, code="lastfm"
@@ -69,7 +69,7 @@ const botCodeResolverWhisperManager = services => {
         [username.replace('#', ''), userId, code]
       );
 
-      kb.whisper(
+      kb.tmiClient.whisper(
         username,
         'All done! You can now use the Lastfm command like that :) 👉 kb lastfm  or kb music. Aliases are: kb music [allow/disallow/unregister]'
       );
@@ -77,7 +77,7 @@ const botCodeResolverWhisperManager = services => {
     }
 
     if (codePrefix === 'verify-spotify') {
-      const checkBan = await kb.query(
+      const checkBan = await kb.sqlClient.query(
         `
             SELECT *
             FROM ban_list
@@ -87,7 +87,7 @@ const botCodeResolverWhisperManager = services => {
 
       if (!_.isEmpty(checkBan)) return;
 
-      const checkCode = await kb.query(
+      const checkCode = await kb.sqlClient.query(
         `
             SELECT *
             FROM access_token
@@ -96,11 +96,11 @@ const botCodeResolverWhisperManager = services => {
       );
 
       if (_.isEmpty(checkCode)) {
-        kb.whisper(username, 'Provided code is invalid.');
+        kb.tmiClient.whisper(username, 'Provided code is invalid.');
         return;
       }
 
-      const checkUser = await kb.query(
+      const checkUser = await kb.sqlClient.query(
         `
             SELECT *
             FROM access_token
@@ -109,8 +109,8 @@ const botCodeResolverWhisperManager = services => {
       );
 
       if (!_.isEmpty(checkUser)) {
-        kb.whisper(username, 'You are already registered for Spotify command.');
-        await kb.query(
+        kb.tmiClient.whisper(username, 'You are already registered for Spotify command.');
+        await kb.sqlClient.query(
           `
                 DELETE FROM access_token
                 WHERE code=?`,
@@ -119,7 +119,7 @@ const botCodeResolverWhisperManager = services => {
         return;
       }
 
-      await kb.query(
+      await kb.sqlClient.query(
         `
             UPDATE access_token
             SET userName=?,
@@ -130,7 +130,7 @@ const botCodeResolverWhisperManager = services => {
         [username.replace('#', ''), userId, moment().format('YYYY-MM-DD hh:mm:ss'), code]
       );
 
-      kb.whisper(
+      kb.tmiClient.whisper(
         username,
         `All done! You can now use the Spotify command. If you have Spotify premium,
             check out command parameters under kb help spotify. Note that you can use these parameters

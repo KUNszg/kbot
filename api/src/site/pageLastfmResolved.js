@@ -36,7 +36,7 @@ const pageLastfmResolved = services => {
       await (async () => {
         res.send(page.template());
 
-        await kb.query(
+        await kb.sqlClient.query(
           `
                 UPDATE access_token
                 SET access_token=?,

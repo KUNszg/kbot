@@ -4,10 +4,13 @@ const _ = require('lodash');
 
 const createColorsGetResponse = require('../../utils/createColorsGetResponse');
 
-const colorsGet = services => {
+const pageColors = services => {
   const { app, kb, redisClient } = services;
 
   app.get('/colors', async (req, res) => {
+    res.send("Page is under maintenance.");
+    return;
+
     const html = _.toString(
       fs.readFileSync('../../kbot-website/html/express_pages/colors.html')
     );
@@ -17,7 +20,7 @@ const colorsGet = services => {
     const stats = await redisClient.get('kb:api:colors:stats');
 
     if (!stats) {
-      const colorsData = await kb.query(`
+      const colorsData = await kb.sqlClient.query(`
         SELECT color, COUNT(*) AS count
         FROM user_list
         GROUP BY color
@@ -34,7 +37,7 @@ const colorsGet = services => {
 
     const page = new utils.Swapper(html, [
       {
-        colors: colors,
+        colors,
       },
     ]);
 
@@ -42,4 +45,4 @@ const colorsGet = services => {
   });
 };
 
-module.exports = colorsGet;
+module.exports = pageColors;

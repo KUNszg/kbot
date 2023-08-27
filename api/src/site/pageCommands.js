@@ -10,7 +10,7 @@ const pageCommands = services => {
   const { app, kb } = services;
 
   app.get('/commands', async (req, res) => {
-    const commands = await kb.query(`
+    const commands = await kb.sqlClient.query(`
         SELECT *
         FROM commands
         WHERE permissions < 5

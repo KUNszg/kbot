@@ -5,10 +5,10 @@ const userGet = services => {
   const { app } = services;
 
   app.get('/api/user', async (req, res) => {
-    const userid = _.get(req, 'headers.userid') || _.get(req, 'query.userid');
+    const receivedUserId = _.get(req, 'headers.userid') || _.get(req, 'query.userid');
     const username = _.get(req, 'headers.username') || _.get(req, 'query.username');
 
-    if (!userid && !username) {
+    if (!receivedUserId && !username) {
       res.send({
         status: 400,
         message: 'bad request',
@@ -29,19 +29,22 @@ const userGet = services => {
         return null;
       }
 
-      const users = await utils.Get.user().byId(user[0].userId);
+      const users = await utils.Get.user().byId(_.get(user, "0.userId"));
+
+      const userId = _.get(users, "0.userId");
 
       const getOptedOut = await utils.Get.user().optout(
         'namechange',
-        users[0].userId,
+        userId,
         'userId'
       );
 
-      if (getOptedOut.length && user['user-id'] !== users[0].userId) {
+      if (getOptedOut.length) {
         res.send({
           status: 403,
           message: 'user has opted out from being searched by this endpoint',
         });
+
         return null;
       }
 
@@ -54,7 +57,7 @@ const userGet = services => {
 
       res.send({
         status: 200,
-        userid: user[0].userId,
+        userid: userId,
         currentUsername: users[users.length - 1].username,
         nameHistory: pastUsernames,
       });
@@ -62,12 +65,14 @@ const userGet = services => {
       return null;
     }
 
-    if (userid) {
-      const users = await utils.Get.user().byId(userid);
+    if (receivedUserId) {
+      const users = await utils.Get.user().byId(receivedUserId);
+
+      const userId = _.get(users, "0.userId");
 
       const getOptedOut = await utils.Get.user().optout(
         'namechange',
-        users[0].userId,
+        userId,
         'userId'
       );
 
@@ -80,7 +85,7 @@ const userGet = services => {
         return null;
       }
 
-      if (getOptedOut.length && user['user-id'] !== users[0].userId) {
+      if (getOptedOut.length) {
         res.send({
           status: 403,
           message: 'user has opted out from being searched by this endpoint',
@@ -98,7 +103,7 @@ const userGet = services => {
 
       res.send({
         status: 200,
-        userid: userid,
+        userid: userId,
         currentUsername: users[users.length - 1].username,
         nameHistory: pastUsernames,
       });
