@@ -7,6 +7,7 @@ const services = {
   tmi: require('./services/tmiClient'),
   reddit: require('./services/redditClient'),
   discord: require('./services/discordClient'),
+  websocket: require('./services/websocketClient'),
 };
 
 exports.Connector = {
@@ -29,5 +30,5 @@ exports.Connector = {
       return clients;
     }
   },
-  ...services
+  ...services,
 };

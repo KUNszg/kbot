@@ -8,7 +8,7 @@ const sleep = require('../utils/sleep');
 const prepareMessage = require('../utils/prepareMessage');
 const endecrypt = require('../utils/endecrypt');
 
-const init = require('../serviceConnector.js');
+const serviceConnector = require('../serviceConnector.js');
 
 class TmiEmitter extends EventEmitter {}
 
@@ -20,7 +20,7 @@ const tmiClient = {
   connect: async function (connectionArgs) {
     const { config, type } = connectionArgs || {};
 
-    this.service = await init.Connector.dependencies(['sql', 'redis']);
+    this.service = await serviceConnector.Connector.dependencies(['sql', 'redis']);
 
     if (config) {
       this.client = new ChatClient(config);
@@ -221,13 +221,15 @@ const tmiClient = {
   },
 
   // whisper user with message
-  whisper(username, message) {
+  async whisper(username, message) {
     message = message.replace(/(\r\n|\n|\r)/gm, '');
-    this.client.whisper(username, message);
-    this.query(
+
+    await this.client.whisper(username, message);
+
+    await this.service.sqlClient.query(
       `
-            INSERT INTO whispers_sent (username, message, date)
-            VALUES (?, ?, CURRENT_TIMESTAMP)`,
+      INSERT INTO whispers_sent (username, message, date)
+      VALUES (?, ?, CURRENT_TIMESTAMP)`,
       [username, message]
     );
   },

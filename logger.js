@@ -1,43 +1,30 @@
-#!/usr/bin/env node
-'use strict';
+const serviceConnector = require("./connector/serviceConnector");
 
-const init = require('./lib/utils/connection.js');
-const creds = require('./lib/credentials/config.js');
 const regex = require('./lib/utils/regex.js');
 const utils = require('./lib/utils/utils.js');
 
-/*const redis = init.Redis;
-redis.connect();*/
 
-const kb = new init.IRC();
-kb.tmiConnect();
-kb.sqlConnect();
-/*redis.set("key", ["yep"]);
 (async () => {
-    await redis.append("key", ["cock"])
-    //const x = await redis.get("key");
-    const x = await redis.size();
-    console.log(x)
-})();*/
-(async () => {
+  const kb = await serviceConnector.Connector.dependencies(["sql", "websocket"]);
+
   try {
-    this.channelList = await kb.query('SELECT * FROM channels_logger');
+    this.channelList = await kb.sqlClient.query('SELECT * FROM channels_logger');
 
     setInterval(async () => {
-      this.channelList = await kb.query('SELECT * FROM channels_logger');
+      this.channelList = await kb.sqlClient.query('SELECT * FROM channels_logger');
     }, 600000);
 
     const tmi = require('tmi.js');
 
     const ignoreList = [];
 
-    (await kb.query('SELECT * FROM logger_ignore_list')).map(i => ignoreList.push(i.userId));
+    (await kb.sqlClient.query('SELECT * FROM logger_ignore_list')).map(i => ignoreList.push(i.userId));
 
     const cache = [];
     const userCache = [];
     const mpsCache = [];
 
-    kb.on('message', (channel, user, message) => {
+    kb.websocketClient.websocketEmitter.on('message', (channel, user, message) => {
       mpsCache.push(Date.now());
 
       const channels = this.channelList.filter(i => i.channel === channel.replace('#', ''));
@@ -71,7 +58,7 @@ kb.sqlConnect();
     const updateLogs = () => {
       cache.forEach(async data => {
         // update last message of the user
-        await kb.query(
+        await kb.sqlClient.query(
           `
                     UPDATE user_list
                     SET lastSeen=?
@@ -80,7 +67,7 @@ kb.sqlConnect();
         );
 
         // log user's message
-        await kb.query(
+        await kb.sqlClient.query(
           `
                     INSERT INTO logs_${data['channel']} (username, message, date)
                     VALUES (?, ?, ?)`,
@@ -90,7 +77,7 @@ kb.sqlConnect();
         // matching bad words
         const badWord = data['message'].match(regex.racism);
         if (badWord) {
-          const activeApis = await kb.query(
+          const activeApis = await kb.sqlClient.query(
             `
                         SELECT *
                         FROM channel_banphrase_apis
@@ -100,7 +87,7 @@ kb.sqlConnect();
 
           if (activeApis.length) {
             if ((await utils.banphrasePass(data['username'], data['channel'])).banned) {
-              await kb.query(
+              await kb.sqlClient.query(
                 `
                                 INSERT INTO bruh (username, channel, message, date)
                                 VALUES (?, ?, ?, ?)`,
@@ -108,7 +95,7 @@ kb.sqlConnect();
               );
             }
           } else {
-            await kb.query(
+            await kb.sqlClient.query(
               `
                             INSERT INTO bruh (username, channel, message, date)
                             VALUES (?, ?, ?, ?)`,
@@ -118,7 +105,7 @@ kb.sqlConnect();
         }
 
         (async () => {
-          const checkIfUnique = await kb.query(
+          const checkIfUnique = await kb.sqlClient.query(
             `
                         SELECT *
                         FROM user_list
@@ -135,7 +122,7 @@ kb.sqlConnect();
           data['color'] === '' || data['color'] === null ? 'gray' : data['color'];
 
         // no code should appear after this function in this block
-        await kb.query(
+        await kb.sqlClient.query(
           `
                 INSERT IGNORE INTO user_list (username, userId, firstSeen, lastSeen, color, added)
                 VALUES (?, ?, ?, ?, ?, ?)`,
@@ -176,11 +163,11 @@ kb.sqlConnect();
     }, 7000);
 
     setInterval(async () => {
-      await kb.query("DELETE FROM user_list WHERE username IS null OR username = ''");
+      await kb.sqlClient.query("DELETE FROM user_list WHERE username IS null OR username = ''");
     }, 1800000);
 
     const statusCheck = async () => {
-      await kb.query(
+      await kb.sqlClient.query(
         `
                 UPDATE stats
                 SET date=?
@@ -193,7 +180,7 @@ kb.sqlConnect();
       statusCheck();
     }, 60000);
 
-    kb.on('usernotice', async msg => {
+    kb.websocketClient.websocketEmitter.on('usernotice', async msg => {
       const msgID = msg.messageTypeID;
       const channel = msg.channelName;
 
@@ -204,14 +191,14 @@ kb.sqlConnect();
         const giftRecipient = msg.eventParams?.recipientUsername ?? 'anonymous (somehow)';
 
         if (msgID.includes('gift')) {
-          await kb.query(
+          await kb.sqlClient.query(
             `
                     INSERT INTO subs (username, gifter, channel, months, subMessage, type, date)
                     VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
             [giftRecipient, username, channel, months, message, msgID]
           );
         } else {
-          await kb.query(
+          await kb.sqlClient.query(
             `
                     INSERT INTO subs (username, channel, months, subMessage, type, date)
                     VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
@@ -224,7 +211,7 @@ kb.sqlConnect();
           return;
         }
 
-        await kb.query(
+        await kb.sqlClient.query(
           `
                     INSERT INTO notice (msgid, message, channel, module, date)
                     VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)`,
@@ -233,13 +220,13 @@ kb.sqlConnect();
       }
     });
 
-    kb.on('notice', async (channel, msgID, message) => {
+    kb.websocketClient.websocketEmitter.on('notice', async (channel, msgID, message) => {
       // notice messages from twitch
       if (msgID === 'host_target_went_offline' || msgID === 'host_on') {
         return;
       }
 
-      await kb.query(
+      await kb.sqlClient.query(
         `
                 INSERT INTO notice (msgid, message, channel, module, date)
                 VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)`,
@@ -248,7 +235,7 @@ kb.sqlConnect();
     });
 
     setInterval(async () => {
-      await kb.query(
+      await kb.sqlClient.query(
         `
                 UPDATE memory
                 SET memory=?
