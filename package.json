@@ -1,10 +1,13 @@
 {
   "name": "kunszgbot",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Utility and entertainment bot providing commands with a goal to have more fun in offline chats.",
   "main": "init.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
+  },
+  "jest": {
+    "verbose": true
   },
   "author": "kunszg",
   "license": "ISC",
@@ -20,7 +23,7 @@
     "inquirer": "^8.2.4",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "mysql2":  "^3.6.2",
+    "mysql2": "^3.6.2",
     "os": "^0.1.2",
     "redis": "^4.6.10",
     "require-dir": "^1.2.0",
@@ -39,5 +42,8 @@
   "bugs": {
     "url": "https://github.com/KUNszg/kbot/issues"
   },
-  "homepage": "https://github.com/KUNszg/kbot#readme"
+  "homepage": "https://github.com/KUNszg/kbot#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }
