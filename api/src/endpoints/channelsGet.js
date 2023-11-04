@@ -11,8 +11,8 @@ const userGet = services => {
       let channels, logs;
 
       if (!_.get(req, 'query.channel')) {
-        channels = await kb.sqlClient.query('SELECT * FROM channels');
-        logs = await kb.sqlClient.query('SELECT * FROM channels_logger');
+        channels = await kb.redisClient.get('kb:global:channel-list');
+        logs = await kb.redisClient.get('kb:global:channel-logger-list');
       } else {
         channels = await kb.sqlClient.query(
           `

@@ -11,7 +11,7 @@ const botCodeResolverWhisperManager = services => {
     let owner = await utils.Get.user().owner();
     owner = _.get(_.first(owner), 'username');
 
-    kb.tmiClient.whisper(owner, `whisper to kbot: ${username}: ${message}`);
+    await kb.tmiClient.whisper(owner, `whisper to kbot: ${username}: ${message}`);
 
     const codePrefix = _.first(_.split(message, ' '));
     const code = _.get(_.split(message, ' '), 1);
@@ -38,7 +38,7 @@ const botCodeResolverWhisperManager = services => {
       );
 
       if (_.isEmpty(checkCode)) {
-        kb.tmiClient.whisper(username, 'Provided code is invalid.');
+        await kb.tmiClient.whisper(username, 'Provided code is invalid.');
         return;
       }
 
@@ -51,7 +51,7 @@ const botCodeResolverWhisperManager = services => {
       );
 
       if (!_.isEmpty(checkUser)) {
-        kb.tmiClient.whisper(username, 'You are already registered for LastFM command.');
+        await kb.tmiClient.whisper(username, 'You are already registered for LastFM command.');
         await kb.sqlClient.query(
           `
                 DELETE FROM access_token
@@ -69,7 +69,7 @@ const botCodeResolverWhisperManager = services => {
         [username.replace('#', ''), userId, code]
       );
 
-      kb.tmiClient.whisper(
+      await kb.tmiClient.whisper(
         username,
         'All done! You can now use the Lastfm command like that :) 👉 kb lastfm  or kb music. Aliases are: kb music [allow/disallow/unregister]'
       );
@@ -96,7 +96,7 @@ const botCodeResolverWhisperManager = services => {
       );
 
       if (_.isEmpty(checkCode)) {
-        kb.tmiClient.whisper(username, 'Provided code is invalid.');
+        await kb.tmiClient.whisper(username, 'Provided code is invalid.');
         return;
       }
 
@@ -109,7 +109,7 @@ const botCodeResolverWhisperManager = services => {
       );
 
       if (!_.isEmpty(checkUser)) {
-        kb.tmiClient.whisper(username, 'You are already registered for Spotify command.');
+        await kb.tmiClient.whisper(username, 'You are already registered for Spotify command.');
         await kb.sqlClient.query(
           `
                 DELETE FROM access_token
@@ -130,7 +130,7 @@ const botCodeResolverWhisperManager = services => {
         [username.replace('#', ''), userId, moment().format('YYYY-MM-DD hh:mm:ss'), code]
       );
 
-      kb.tmiClient.whisper(
+      await kb.tmiClient.whisper(
         username,
         `All done! You can now use the Spotify command. If you have Spotify premium,
             check out command parameters under kb help spotify. Note that you can use these parameters

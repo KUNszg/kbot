@@ -23,6 +23,7 @@
     "inquirer": "^8.2.4",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
+    "moment-timezone": "^0.5.43",
     "mysql2": "^3.6.2",
     "os": "^0.1.2",
     "redis": "^4.6.10",

@@ -44,6 +44,8 @@ const sqlClient = {
       console.log('CONNECTOR ERROR');
       console.log(err);
     }
+
+    return null;
   },
 };
 
