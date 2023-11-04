@@ -12,10 +12,8 @@ const serviceConnector = require('../serviceConnector.js');
 
 class TmiEmitter extends EventEmitter {}
 
-const tmiEmitter = new TmiEmitter();
-
 const tmiClient = {
-  tmiEmitter,
+  tmiEmitter: new TmiEmitter(),
 
   connect: async function (connectionArgs) {
     const { config, type } = connectionArgs || {};
@@ -55,6 +53,7 @@ const tmiClient = {
     // Called on incoming messages whose command is PRIVMSG.
     // The message parameter is always instanceof PrivmsgMessage.
     this.client.on('PRIVMSG', msg => {
+
       const oldFormat = {
         color: msg.colorRaw,
         username: msg.senderUsername,
@@ -75,9 +74,9 @@ const tmiClient = {
       );
 
       if (getAction) {
-        tmiEmitter.emit('action', `#${msg.channelName}`, msg, msg.messageText, self);
+        this.tmiEmitter.emit('action', `#${msg.channelName}`, msg, msg.messageText, self);
       } else {
-        tmiEmitter.emit('message', `#${msg.channelName}`, msg, msg.messageText, self);
+        this.tmiEmitter.emit('message', `#${msg.channelName}`, msg, msg.messageText, self);
       }
     });
 
@@ -86,23 +85,23 @@ const tmiClient = {
     // OAuth token (failure to login), or when client.close() or client.destroy()
     // was called. error is only non-null if the client was closed by a call to client.close().
     this.client.on('close', error => {
-      tmiEmitter.emit('close', error);
+      this.tmiEmitter.emit('close', error);
     });
 
     // Called when the client becomes ready for the first time (login to the chat server is successful.)
     this.client.on('ready', () => {
-      tmiEmitter.emit('connected', true);
+      this.tmiEmitter.emit('connected', true);
     });
 
     // Called when any command is executed by the client.
     this.client.on('rawCommand', cmd => {
-      tmiEmitter.emit('rawCommand', cmd);
+      this.tmiEmitter.emit('rawCommand', cmd);
     });
 
     // Timeout and ban messages
     this.client.on('CLEARCHAT', msg => {
       if (msg.targetUsername) {
-        tmiEmitter.emit(
+        this.tmiEmitter.emit(
           'timeout',
           '#' + msg.channelName,
           msg.targetUsername,
@@ -111,49 +110,49 @@ const tmiClient = {
           msg
         );
       } else {
-        tmiEmitter.emit('clearchat', '#' + msg.channelName);
+        this.tmiEmitter.emit('clearchat', '#' + msg.channelName);
       }
     });
 
     // Single message deletions (initiated by /delete)
     this.client.on('CLEARMSG', clearmsgMessage => {
-      tmiEmitter.emit('clearmsg', clearmsgMessage);
+      this.tmiEmitter.emit('clearmsg', clearmsgMessage);
     });
 
     // A channel entering or exiting host mode.
     this.client.on('HOSTTARGET', hosttargetMessage => {
-      tmiEmitter.emit('host', hosttargetMessage);
+      this.tmiEmitter.emit('host', hosttargetMessage);
     });
 
     // Various notices, such as when you /help, a command fails,
     // the error response when you are timed out, etc.
     this.client.on('NOTICE', msg => {
-      tmiEmitter.emit('notice', '#' + msg.channelName, msg.messageID, msg?.messageText ?? '');
+      this.tmiEmitter.emit('notice', '#' + msg.channelName, msg.messageID, msg?.messageText ?? '');
     });
 
     // A change to a channel's followers mode, subscribers-only mode,
     // r9k mode, followers mode, slow mode etc.
     this.client.on('ROOMSTATE', roomstateMessage => {
-      tmiEmitter.emit('roomstate', roomstateMessage);
+      this.tmiEmitter.emit('roomstate', roomstateMessage);
     });
 
     // Subs, resubs, sub gifts, rituals, raids, etc.
     this.client.on('USERNOTICE', usernoticeMessage => {
-      tmiEmitter.emit('usernotice', usernoticeMessage);
+      this.tmiEmitter.emit('usernotice', usernoticeMessage);
     });
 
     // Your own state (e.g. badges, color, display name, emote
     // sets, mod status), sent on every time you join a channel or
     // send a PRIVMSG to a channel
     this.client.on('USERSTATE', userstateMessage => {
-      tmiEmitter.emit('userstate', userstateMessage);
+      this.tmiEmitter.emit('userstate', userstateMessage);
     });
 
     // Logged in user's "global state", sent once on every login
     // (Note that due to the used connection pool you can receive
     // this multiple times during your bot's runtime)
     this.client.on('GLOBALUSERSTATE', globaluserstateMessage => {
-      tmiEmitter.emit('globaluserstate', globaluserstateMessage);
+      this.tmiEmitter.emit('globaluserstate', globaluserstateMessage);
     });
 
     this.client.on('WHISPER', msg => {
@@ -173,19 +172,19 @@ const tmiClient = {
       const message = msg.messageText;
       const self = msg['user-id'] === '229225576';
 
-      tmiEmitter.emit('whisper', username, msg, message, self);
+      this.tmiEmitter.emit('whisper', username, msg, message, self);
     });
 
     this.client.on('JOIN', joinMessage => {
-      tmiEmitter.emit('join', joinMessage);
+      this.tmiEmitter.emit('join', joinMessage);
     });
 
     this.client.on('PART', partMessage => {
-      tmiEmitter.emit('part', partMessage);
+      this.tmiEmitter.emit('part', partMessage);
     });
 
     this.client.on('CAP', capMessage => {
-      tmiEmitter.emit('cap', capMessage);
+      this.tmiEmitter.emit('cap', capMessage);
     });
   },
 

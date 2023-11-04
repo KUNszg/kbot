@@ -5,10 +5,8 @@ const _ = require('lodash');
 
 class RabbitEmitter extends EventEmitter {}
 
-const rabbitEmitter = new RabbitEmitter();
-
 const rabbitClient = {
-  rabbitEmitter,
+  rabbitEmitter: new RabbitEmitter(),
 
   connect: async function () {
     this.client = await amqplib.connect(rabbitConfig);
@@ -21,7 +19,7 @@ const rabbitClient = {
     await consumer.assertQueue(queue);
 
     await consumer.consume(queue, msg => {
-      rabbitEmitter.emit(queue, JSON.parse(msg.content.toString()), msg, consumer);
+      this.rabbitEmitter.emit(queue, JSON.parse(msg.content.toString()), msg, consumer);
     });
   },
 

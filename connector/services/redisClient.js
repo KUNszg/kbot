@@ -6,10 +6,8 @@ const { redisConfigLocal } = require('../consts/serviceConfigs');
 
 class RedisEmitter extends EventEmitter {}
 
-const redisEmitter = new RedisEmitter();
-
 const redisClient = {
-  redisEmitter,
+  redisEmitter: new RedisEmitter(),
 
   connect: async function () {
     if (process.platform === 'win32') {
@@ -22,7 +20,7 @@ const redisClient = {
 
     await this.client.connect();
 
-    redisEmitter.on('error', function (error) {
+    this.redisEmitter.on('error', function (error) {
       console.log(error);
     });
   },

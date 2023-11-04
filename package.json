@@ -24,13 +24,14 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",
-    "mysql2": "^3.6.2",
+    "mysql2": "^3.6.3",
     "os": "^0.1.2",
     "redis": "^4.6.10",
     "require-dir": "^1.2.0",
     "snoowrap": "^1.23.0",
     "table-builder": "^2.1.1",
     "tmi.js": "1.8.5",
+    "ws": "^8.14.2",
     "ytsearcher": "1.2.4"
   },
   "directories": {
