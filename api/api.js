@@ -12,7 +12,7 @@ const initializeMethodRecurse = require('./utils/initializeMethodRecurse');
 
 const creds = require('../lib/credentials/config');
 
-const GithubWebHook = require('../lib/utils/git-webhook-middleware');
+const GithubWebHook = require('../lib/utils/gitWebhookMiddleware');
 
 const app = express();
 
@@ -55,3 +55,5 @@ const endpoints = requireDir('src', {
     setTimeout(statusCheck, 60000);
   };
 })();
+
+// TODO: healthcheck with expressjs

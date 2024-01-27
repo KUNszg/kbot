@@ -32,11 +32,11 @@ const tmiClient = {
 
     let channels;
 
-    if (process.platform === 'win32') {
+    if (!process.platform === 'win32') {
       const owner = await this.service.sqlClient.query(
         `SELECT * FROM trusted_users WHERE ID="75"`
       );
-      channels = [_.get(owner, '0.username')];
+      channels = [_.get(owner, '0.username'), 'nymn', 'forsen'];
     } else {
       if (type) {
         channels = await this.service.sqlClient.query('SELECT * FROM channels_logger');
@@ -53,7 +53,6 @@ const tmiClient = {
     // Called on incoming messages whose command is PRIVMSG.
     // The message parameter is always instanceof PrivmsgMessage.
     this.client.on('PRIVMSG', msg => {
-
       const oldFormat = {
         color: msg.colorRaw,
         username: msg.senderUsername,
@@ -127,7 +126,12 @@ const tmiClient = {
     // Various notices, such as when you /help, a command fails,
     // the error response when you are timed out, etc.
     this.client.on('NOTICE', msg => {
-      this.tmiEmitter.emit('notice', '#' + msg.channelName, msg.messageID, msg?.messageText ?? '');
+      this.tmiEmitter.emit(
+        'notice',
+        '#' + msg.channelName,
+        msg.messageID,
+        _.get(msg, 'messageText', _.stubString())
+      );
     });
 
     // A change to a channel's followers mode, subscribers-only mode,

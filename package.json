@@ -31,7 +31,7 @@
     "snoowrap": "^1.23.0",
     "table-builder": "^2.1.1",
     "tmi.js": "1.8.5",
-    "ws": "^8.14.2",
+    "ws": "^8.16.0",
     "ytsearcher": "1.2.4"
   },
   "directories": {
