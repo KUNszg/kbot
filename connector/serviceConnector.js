@@ -1,5 +1,7 @@
 const _ = require('lodash');
 
+const healthcheckMiddleware = require('../lib/utils/healthcheckMiddleware');
+
 const services = {
   rabbit: require('./services/rabbitClient'),
   redis: require('./services/redisClient'),
@@ -15,14 +17,18 @@ exports.Connector = {
     if (!_.isEmpty(deps) && !_.isNil(deps)) {
       const clients = {};
 
+      if (_.get(connectionArgs, 'enableHealthcheck')) {
+        const service = _.get(connectionArgs, 'service');
+
+        if (service) {
+          healthcheckMiddleware(service);
+        }
+      }
+
       for (let dep of deps) {
         const client = _.get(this[dep], `${dep}Client`);
 
-        if (connectionArgs) {
-          await client.connect(connectionArgs);
-        } else {
-          await client.connect();
-        }
+        await client.connect();
 
         clients[`${dep}Client`] = client;
       }

@@ -18,7 +18,8 @@ const rabbitClient = {
   },
 
   async createRabbitChannel(queue, messageCallback, config) {
-    const { prefetchCount, delayProcessing } = config;
+    const prefetchCount = _.get(config, "prefetchCount");
+    const delayProcessing = _.get(config, "delayProcessing");
 
     const consumer = await this.client.createChannel();
     await consumer.assertQueue(queue);

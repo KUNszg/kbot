@@ -1,0 +1,47 @@
+{
+  "healthcheckPath": "/healthcheck/",
+  "services": {
+    "twitchChatNoticeLogger": {
+      "name": "twitchChatNoticeLogger",
+      "queues": {
+        "KB_TWITCH_CHAT_NOTICE": "KB_TWITCH_CHAT_NOTICE"
+      },
+      "port": 30001
+    },
+    "twitchChatMessageLogger": {
+      "name": "twitchChatMessageLogger",
+      "queues": {
+        "KB_TWITCH_CHAT_MESSAGES": "KB_TWITCH_CHAT_MESSAGES",
+        "KB_DETECTED_BANPHRASE": "KB_DETECTED_BANPHRASE"
+      },
+      "port": 30002
+    },
+    "twitchChatQueueFiller": {
+      "name": "twitchChatQueueFiller",
+      "queues": {
+        "KB_TWITCH_CHAT_MESSAGES": "KB_TWITCH_CHAT_MESSAGES",
+        "KB_TWITCH_CHAT_NOTICE": "KB_TWITCH_CHAT_NOTICE"
+      },
+      "port": 30003
+    },
+    "redditLiveThreadToDiscord": {
+      "name": "redditLiveThreadToDiscord",
+      "queues": {
+        "KB_HANDLER_REDDIT_LIVETHREADS": "KB_HANDLER_REDDIT_LIVETHREADS"
+      },
+      "port": 30004
+    },
+    "twitchChatBanphrasedMessageLogger": {
+      "name": "twitchChatBanphrasedMessageLogger",
+      "queues": {
+        "KB_DETECTED_BANPHRASE": "KB_DETECTED_BANPHRASE"
+      },
+      "port": 30005
+    },
+    "api": {
+      "name": "api",
+      "port": 30006
+    }
+  }
+}
+
