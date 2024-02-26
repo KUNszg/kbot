@@ -19,7 +19,7 @@ const pageLastfm = services => {
 
     await redisClient.set(`kb:site:lastfm:code:${verifCode}`)
 
-    await kb.query(
+    await kb.sqlClient.query(
       `
         INSERT INTO access_token (code)
         VALUES (?)`,

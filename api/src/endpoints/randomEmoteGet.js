@@ -2,7 +2,7 @@ const randomEmoteGet = services => {
   const { app, kb } = services;
 
   app.get('/randomemote', async (req, res) => {
-    const randomemote = await kb.query(`
+    const randomemote = await kb.sqlClient.query(`
         SELECT *
         FROM emotes
         ORDER BY RAND()

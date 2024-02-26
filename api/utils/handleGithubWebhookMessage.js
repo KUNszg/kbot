@@ -4,7 +4,7 @@ const handleGithubWebhookMessage = async (services, event, repo, data) => {
   const { kb, redisClient } = services;
 
   if (event === 'push') {
-    await kb.query(
+    await kb.sqlClient.query(
       `    
             UPDATE stats
             SET date=?, sha=?

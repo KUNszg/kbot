@@ -32,7 +32,7 @@ const pageSpotifyResolved = services => {
           },
         }).json();
 
-        await kb.query(
+        await kb.sqlClient.query(
           `
                 INSERT INTO access_token (access_token, refresh_token, premium, code, platform)
                 VALUES (?, ?, ?, ?, "spotify")`,

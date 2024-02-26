@@ -8,14 +8,14 @@ const statsGet = services => {
   const { app, kb } = services;
 
   app.get('/api/stats', async (req, res) => {
-    const modules = await kb.query(`SELECT * FROM stats`);
-    const channels = await kb.query('SELECT * FROM channels');
+    const modules = await kb.redisClient.get(`kb:global:stats`);
+    const channels = await kb.redisClient.get('kb:global:channel-list');
 
-    const executions = await kb.query(
+    const executions = await kb.sqlClient.query(
       'SELECT count FROM stats WHERE type="statsApi" AND sha="commandExecs"'
     );
 
-    const usersLogged = await kb.query(
+    const usersLogged = await kb.sqlClient.query(
       'SELECT count FROM stats WHERE type="statsApi" AND sha="totalUsers"'
     );
 

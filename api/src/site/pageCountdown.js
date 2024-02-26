@@ -20,7 +20,7 @@ const pageCountdown = services => {
           },
         ]);
 
-        await kb.query(
+        await kb.sqlClient.query(
           `
                 INSERT INTO countdown (verifcode, date)
                 VALUES (?, CURRENT_TIMESTAMP)`,
@@ -35,7 +35,7 @@ const pageCountdown = services => {
         req.query.seconds = 120;
       }
 
-      const checkIfUpdated = await kb.query(
+      const checkIfUpdated = await kb.sqlClient.query(
         `
             SELECT *
             FROM countdown
@@ -51,7 +51,7 @@ const pageCountdown = services => {
       }
 
       if (_.get(checkIfUpdated, '0.seconds') === null) {
-        await kb.query(
+        await kb.sqlClient.query(
           `
                 UPDATE countdown SET seconds=?
                 WHERE verifcode=?`,
@@ -59,7 +59,7 @@ const pageCountdown = services => {
         );
       }
 
-      const seconds = await kb.query(
+      const seconds = await kb.sqlClient.query(
         `
             SELECT *
             FROM countdown
