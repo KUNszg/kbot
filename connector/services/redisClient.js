@@ -20,6 +20,8 @@ const redisClient = {
 
     await this.client.connect();
 
+    console.log('Redis connected');
+
     this.redisEmitter.on('error', function (error) {
       console.log(error);
     });
@@ -42,8 +44,8 @@ const redisClient = {
   },
 
   async sendCommand(args, options) {
-    return await this.client.sendCommand(args, options)
-  }
+    return await this.client.sendCommand(args, options);
+  },
 };
 
 module.exports.redisClient = redisClient;

@@ -9,7 +9,9 @@ class WebsocketEmitter extends EventEmitter {}
 const websocketClient = {
   websocketEmitter: new WebsocketEmitter(),
 
-  connect: () => {},
+  connect: () => {
+    console.log('Websockets connected');
+  },
 
   //
   // connect: async function () {

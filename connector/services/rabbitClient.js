@@ -3,7 +3,7 @@ const EventEmitter = require('events');
 const amqplib = require('amqplib');
 const _ = require('lodash');
 
-const sleep = require("../../connector/utils/sleep");
+const sleep = require('../../connector/utils/sleep');
 const { rabbitConfig } = require('../consts/serviceConfigs');
 
 class RabbitEmitter extends EventEmitter {}
@@ -18,22 +18,22 @@ const rabbitClient = {
   },
 
   async createRabbitChannel(queue, messageCallback, config) {
-    const prefetchCount = _.get(config, "prefetchCount");
-    const delayProcessing = _.get(config, "delayProcessing");
+    const prefetchCount = _.get(config, 'prefetchCount');
+    const delayProcessing = _.get(config, 'delayProcessing');
 
     const consumer = await this.client.createChannel();
     await consumer.assertQueue(queue);
 
     if (prefetchCount) {
-      await consumer.prefetch(prefetchCount)
+      await consumer.prefetch(prefetchCount);
     }
 
-    await consumer.consume(queue, async (rawMsg) => {
+    await consumer.consume(queue, async rawMsg => {
       if (delayProcessing) {
-        await sleep(delayProcessing)
+        await sleep(delayProcessing);
       }
 
-      const parsedMessage = JSON.parse(_.toString(_.get(rawMsg, "content")));
+      const parsedMessage = JSON.parse(_.toString(_.get(rawMsg, 'content')));
 
       if (_.isFunction(messageCallback)) {
         messageCallback(parsedMessage, consumer, rawMsg);
@@ -44,8 +44,11 @@ const rabbitClient = {
   async sendToQueue(queue, message = {}) {
     const sender = await this.client.createChannel();
 
-    await sender.assertQueue(queue);
+    const { messageCount } = await sender.assertQueue(queue, { durable: true });
 
+    if (messageCount >= 50_000) {
+      return false;
+    }
     if (!_.isNil(message)) {
       message = JSON.stringify(message);
       sender.sendToQueue(queue, Buffer.from(message));

@@ -6,6 +6,8 @@ const redditClient = {
     this.native = new snoowrap(redditConfig);
 
     global.redditClient = this.native;
+
+    console.log('Reddit connected');
   },
 };
 

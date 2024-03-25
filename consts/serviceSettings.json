@@ -41,6 +41,13 @@
     "api": {
       "name": "api",
       "port": 30006
+    },
+    "updateEmotesList": {
+      "name": "updateEmotesList",
+      "queues": {
+        "KB_TASK_MANAGER_CHANNEL_TO_UPDATE_EMOTES": "KB_TASK_MANAGER_CHANNEL_TO_UPDATE_EMOTES"
+      },
+      "port": 30007
     }
   }
 }
