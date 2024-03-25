@@ -1,4 +1,4 @@
-const mysql = require("mysql2/promise");
+const mysql = require('mysql2/promise');
 const _ = require('lodash');
 
 const { sqlConfig } = require('../consts/serviceConfigs');
@@ -21,6 +21,8 @@ const sqlClient = {
         console.log(err);
       }
     });
+
+    console.log('SQL connected');
   },
 
   query: async (query, data = []) => {

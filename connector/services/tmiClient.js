@@ -190,6 +190,8 @@ const tmiClient = {
     this.client.on('CAP', capMessage => {
       this.tmiEmitter.emit('cap', capMessage);
     });
+
+    console.log('TMI connected');
   },
 
   // join the channel (only for session)
