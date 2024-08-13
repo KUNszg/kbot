@@ -2,7 +2,7 @@ const redis = require('redis');
 
 const EventEmitter = require('events');
 
-const { redisConfigLocal } = require('../consts/serviceConfigs');
+const { redisConfig } = require('../consts/serviceConfigs');
 
 class RedisEmitter extends EventEmitter {}
 
@@ -10,11 +10,7 @@ const redisClient = {
   redisEmitter: new RedisEmitter(),
 
   connect: async function () {
-    if (process.platform === 'win32') {
-      this.client = await redis.createClient(redisConfigLocal);
-    } else {
-      this.client = redis.createClient();
-    }
+    this.client = redis.createClient(redisConfig);
 
     redisClient.native = this.client;
 

@@ -1,8 +1,11 @@
 const shell = require('child_process');
 const fs = require('fs');
+const _ = require('lodash');
+const got = require('got');
+
+const creds = require('../../../lib/credentials/config');
 
 const getModuleData = require('../../utils/getModuleData');
-const _ = require('lodash');
 
 const statsGet = services => {
   const { app, kb } = services;
@@ -30,30 +33,44 @@ const statsGet = services => {
       0
     );
 
-    const commits =
-      process.platform === 'linux'
-        ? _.toInteger(shell.execSync('sudo git rev-list --count master'))
-        : 0;
+    const githubResponse = await got(
+      'https://api.github.com/repos/kunszg/kbot/commits?per_page=1&page=1',
+      {
+        headers: {
+          Authorization: process.githubAppAccessToken || creds.githubAppAccessToken,
+        },
+      }
+    );
 
+    const commits =
+      _.toNumber(
+        _.last(_.split(_.get(githubResponse, 'headers.link'), '&')).replace(/[^0-9]/g, '')
+      ) || 0;
+
+    // todo
     const lines =
       process.platform === 'linux'
-        ? shell.execSync(
+        ? null /*shell.execSync(
             `find ../ -name '*.js' -not -path "../node_modules*" | xargs wc -l | tail -1`
-          )
+          )*/
         : 0;
 
-    const uptimeData =
+    /*const uptimeData =
       process.platform === 'linux'
         ? _.toString(fs.readFileSync('../data/temp_api_uptime.txt'))
-        : 0;
+        : 0;*/
 
-    const restartData =
+    const uptimeData = process.uptime();
+
+    /*const restartData =
       process.platform === 'linux'
         ? _.toString(fs.readFileSync('../data/temp_api_restarting.txt'))
-        : 0;
+        : 0;*/
 
-    const isRestarting =
+    /*
+      const isRestarting =
       0.9 * channels.length > Math.trunc(Date.now() - _.toInteger(restartData)) / 1000;
+      */
 
     const linesOfCode = _.toInteger(_.get(_.split(_.toString(lines), ' '), '1'));
     const _usersLogged = _.toInteger(_.get(_.first(usersLogged), 'count'));
@@ -68,7 +85,7 @@ const statsGet = services => {
         botLastSeen: getModuleData('bot', modules),
       },
       bot: {
-        isRestarting,
+        isRestarting: false,
         codeUptime: uptime,
         linesOfCode,
         usersLogged: _usersLogged,

@@ -3,40 +3,43 @@ const creds = require('../../lib/credentials/config');
 module.exports = {
   rabbitConfig: {
     protocol: 'amqp',
-    hostname: 'localhost',
-    port: creds.rabbitPort,
-    username: creds.rabbitUsername,
-    password: creds.rabbitPassword,
+    hostname: 'kbot',
+    port: process.env.rabbitPort || creds.rabbitPort,
+    username: process.env.rabbitUsername || creds.rabbitUsername,
+    password: process.env.rabbitPassword || creds.rabbitPassword,
     locale: 'en_US',
     frameMax: 0,
     heartbeat: 0,
-    vhost: creds.rabbitVhost,
+    vhost: process.env.rabbitVhost || creds.rabbitVhost,
   },
   sqlConfig: {
-    host: creds.db_host,
-    user: creds.db_server_user,
-    password: creds.db_pass,
-    database: creds.db_name,
+    host: process.env.db_host || creds.db_host,
+    user: process.env.db_server_user || creds.db_server_user,
+    password: process.env.db_pass || creds.db_pass,
+    database: process.env.db_name || creds.db_name,
+    port: process.env.db_port || 3306,
   },
-  redisConfigLocal: {
+  redisConfig: {
     socket: {
-      port: 12100,
+      host: process.env.redisHost,
+      port: process.env.redisPort || 12100,
     },
+    //url: `redis://${process.env.redisHost}:${process.env.redisPort || 12100}`,
   },
   tmiConfig: {
     username: 'ksyncbot',
-    password: creds.oauth,
+    password: process.env.oauth || creds.oauth,
     ignoreUnhandledPromiseRejections: true,
     rateLimits: 'verifiedBot',
   },
   discordConfig: {
-    discordLogin: creds.discord
+    discordLogin: process.env.discord || creds.discord,
   },
   redditConfig: {
-    userAgent: 'linux:kunszgbot:2.0.0 (by /u/kunszg)',
-    clientId: creds.redditUID,
-    clientSecret: creds.redditSecret,
-    username: creds.redditUsername,
-    password: creds.redditPassword,
-  }
+    userAgent: 'linux:kunszgbot:3.0.0 (by /u/kunszg)',
+    clientId: process.env.redditUID || creds.redditUID,
+    clientSecret: process.env.redditSecret || creds.redditSecret,
+    username: process.env.redditUsername || creds.redditUsername,
+    password: process.env.redditPassword || creds.redditPassword,
+  },
 };

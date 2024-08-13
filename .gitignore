@@ -11,3 +11,4 @@ data/temp_api_restarting.txt
 data/temp_api_uptime.txt
 *.txt
 /coverage/
+manifests/jobs/kubernetes-startup-scripts.sh

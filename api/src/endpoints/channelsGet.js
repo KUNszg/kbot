@@ -71,7 +71,8 @@ const userGet = services => {
         let tableSize = 0;
 
         if (process.platform !== 'win32') {
-          tableSize = findLoggedChannel
+          // todo
+          tableSize = 0; /*findLoggedChannel
             ? shell
                 .execSync(
                   `sudo du --apparent-size --block=M -s /var/lib/mysql/kbot/logs_${_channel}.ibd`
@@ -79,7 +80,7 @@ const userGet = services => {
                 .toString()
                 .split('/')[0]
                 .replace('M', '')
-            : null;
+            : null;*/
         }
 
         Object.defineProperties(result, {

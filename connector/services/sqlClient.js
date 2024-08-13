@@ -7,10 +7,6 @@ const sleep = require('../utils/sleep');
 
 const sqlClient = {
   connect: async function () {
-    if (process.platform === 'linux') {
-      this.sqlConfig.socketPath = '/var/run/mysqld/mysqld.sock';
-    }
-
     global._sqlClient = await mysql.createConnection(sqlConfig);
 
     sqlClient.native = global._sqlClient;

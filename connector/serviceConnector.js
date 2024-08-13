@@ -28,9 +28,13 @@ exports.Connector = {
       for (let dep of deps) {
         const client = _.get(this[dep], `${dep}Client`);
 
+        console.log(`Connecting to ${dep}`);
+
         await client.connect();
 
         clients[`${dep}Client`] = client;
+
+        console.log(`${dep} connection established`);
       }
 
       return clients;

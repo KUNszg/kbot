@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mysql-backup
+  namespace: services
+spec:
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: mysql-backup
+              image: docker-registry.kunszg.com/kbot-cron-mysql-backup:latest
+              volumeMounts:
+                - name: node-modules-volume
+                  mountPath: /usr/src/app/mysql-backup/node_modules
+              envFrom:
+                - configMapRef:
+                    name: mysql-backup-config
+          imagePullSecrets:
+            - name: regcred-v1
+          restartPolicy: OnFailure
+          volumes:
+            - name: node-modules-volume
+              hostPath:
+                path: /home/docker/kbot/node_modules
+            - name: mysqld-volume
