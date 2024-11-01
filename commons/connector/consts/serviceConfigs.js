@@ -1,9 +1,9 @@
-const creds = require('../../lib/credentials/config');
+const creds = require('../../../lib/credentials/config');
 
 module.exports = {
   rabbitConfig: {
     protocol: 'amqp',
-    hostname: 'kbot',
+    hostname: process.env.rabbitHostname || 'localhost',
     port: process.env.rabbitPort || creds.rabbitPort,
     username: process.env.rabbitUsername || creds.rabbitUsername,
     password: process.env.rabbitPassword || creds.rabbitPassword,

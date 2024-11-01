@@ -1,9 +1,8 @@
 const fs = require('fs');
 const _ = require('lodash');
-const utils = require('../../../lib/utils/utils');
 
 const pageCommandsCode = services => {
-  const { app } = services;
+  const { app, Commons } = services;
 
   app.get('/commands/code/*', async (req, res) => {
     const query = _.get(_.split(_.get(req, 'url'), '/'), '3');
@@ -12,19 +11,18 @@ const pageCommandsCode = services => {
       try {
         const requestedFile = fs.readFileSync(`../lib/commands/${query}.js`);
 
-
         let html = _.toString(
           fs.readFileSync('../../kbot-website/html/express_pages/commandCode.html')
         );
 
-        const page = new utils.Swapper(html, [
+        const page = Commons.UtilityRepository().htmlPageCompiler(html, [
           {
             requestedFile,
             query,
           },
         ]);
 
-        res.send(page.template());
+        res.send(page);
       } catch (err) {
         res.send('<h3>Error: command not found</h3>');
       }

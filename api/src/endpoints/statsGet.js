@@ -8,7 +8,9 @@ const creds = require('../../../lib/credentials/config');
 const getModuleData = require('../../utils/getModuleData');
 
 const statsGet = services => {
-  const { app, kb } = services;
+  const { app, Commons } = services;
+
+  const kb = Commons.ServiceConnector.Connector;
 
   app.get('/api/stats', async (req, res) => {
     const modules = await kb.redisClient.get(`kb:global:stats`);

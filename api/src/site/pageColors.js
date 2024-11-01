@@ -1,14 +1,15 @@
 const fs = require('fs');
-const utils = require('../../../lib/utils/utils');
 const _ = require('lodash');
 
 const createColorsGetResponse = require('../../utils/createColorsGetResponse');
 
 const pageColors = services => {
-  const { app, kb, redisClient } = services;
+  const { app, Commons } = services;
+
+  const kb = Commons.ServiceConnector.Connector;
 
   app.get('/colors', async (req, res) => {
-    res.send("Page is under maintenance.");
+    res.send('Page is under maintenance.');
     return;
 
     const html = _.toString(
@@ -17,7 +18,7 @@ const pageColors = services => {
 
     let colors;
 
-    const stats = await redisClient.get('kb:api:colors:stats');
+    const stats = await kb.redisClient.get('kb:api:colors:stats');
 
     if (!stats) {
       const colorsData = await kb.sqlClient.query(`
@@ -30,18 +31,18 @@ const pageColors = services => {
 
       colors = createColorsGetResponse(colorsData);
 
-      await redisClient.set('kb:api:colors:stats', colors, 10800);
+      await kb.redisClient.set('kb:api:colors:stats', colors, 10800);
     } else {
       colors = stats;
     }
 
-    const page = new utils.Swapper(html, [
+    const page = Commons.UtilityRepository().htmlPageCompiler(html, [
       {
         colors,
       },
     ]);
 
-    res.send(page.template());
+    res.send(page);
   });
 };
 

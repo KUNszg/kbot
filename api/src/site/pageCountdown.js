@@ -1,9 +1,10 @@
-const utils = require('../../../lib/utils/utils');
 const fs = require('fs');
 const _ = require('lodash');
 
 const pageCountdown = services => {
-  const { app, kb } = services;
+  const { app, Commons } = services;
+
+  const kb = Commons.ServiceConnector.Connector;
 
   app.get('/countdown', async (req, res) => {
     try {
@@ -14,7 +15,7 @@ const pageCountdown = services => {
           fs.readFileSync('../../kbot-website/html/express_pages/countdownAlternative.html')
         );
 
-        const page = new utils.Swapper(html, [
+        const page = Commons.UtilityRepository().htmlPageCompiler(html, [
           {
             verifCode,
           },
@@ -27,7 +28,7 @@ const pageCountdown = services => {
           [verifCode]
         );
 
-        res.send(page.template());
+        res.send(page);
         return;
       }
 
@@ -82,7 +83,7 @@ const pageCountdown = services => {
         },
       ]);
 
-      res.send(page.template());
+      res.send(page);
     } catch (err) {
       console.log(err);
     }

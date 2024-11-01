@@ -20,6 +20,17 @@ spec:
           ports:
             - containerPort: 5672  # RabbitMQ main port
             - containerPort: 15672 # Management dashboard port
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-admin
+                  key: RABBITMQ_DEFAULT_USER
+            - name: RABBITMQ_DEFAULT_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-admin
+                  key: RABBITMQ_DEFAULT_PASS
           volumeMounts:
             - name: rabbitmq-data
               mountPath: /var/lib/rabbitmq

@@ -1,10 +1,11 @@
-const utils = require('../../../lib/utils/utils');
 const creds = require('../../../lib/credentials/config');
 const got = require('got');
 const fs = require('fs');
 const _ = require('lodash');
 const pageSpotifyResolved = services => {
-  const { app, kb } = services;
+  const { app, Commons } = services;
+
+  const kb = Commons.ServiceConnector.Connector;
 
   app.get('/resolved', async (req, res) => {
     if (!_.get(req, 'query.code')) {
@@ -12,7 +13,7 @@ const pageSpotifyResolved = services => {
       return;
     }
 
-    const verifCode = utils.genString();
+    const verifCode = Commons.UtilityRepository().stringGenerator();
 
     try {
       await (async () => {
@@ -54,13 +55,13 @@ const pageSpotifyResolved = services => {
       fs.readFileSync('../../kbot-website/html/express_pages/spotifyResolve.html')
     );
 
-    const page = new utils.Swapper(html, [
+    const page = Commons.UtilityRepository().htmlPageCompiler(html, [
       {
         code: verifCode,
       },
     ]);
 
-    res.send(page.template());
+    res.send(page);
   });
 };
 

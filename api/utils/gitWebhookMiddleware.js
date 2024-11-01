@@ -1,5 +1,3 @@
-'use strict';
-
 const EventEmitter = require('events').EventEmitter;
 const crypto = require('crypto');
 const bufferEq = require('buffer-equal-constant-time');

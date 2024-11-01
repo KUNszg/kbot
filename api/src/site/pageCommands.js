@@ -2,12 +2,12 @@ const Table = require('table-builder');
 const _ = require('lodash');
 const fs = require('fs');
 
-const utils = require('../../../lib/utils/utils');
-
 const prepareCommandsRow = require('../../utils/prepareCommandsRow');
 
 const pageCommands = services => {
-  const { app, kb } = services;
+  const { app, Commons } = services;
+
+  const kb = Commons.ServiceConnector.Connector;
 
   app.get('/commands', async (req, res) => {
     const commands = await kb.sqlClient.query(`
@@ -38,13 +38,13 @@ const pageCommands = services => {
       fs.readFileSync('../../kbot-website/html/express_pages/commands.html')
     );
 
-    const page = new utils.Swapper(html, [
+    const page = Commons.UtilityRepository().htmlPageCompiler(html, [
       {
         table,
       },
     ]);
 
-    res.send(page.template());
+    res.send(page);
   });
 };
 

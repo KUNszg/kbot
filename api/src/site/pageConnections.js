@@ -1,12 +1,13 @@
 const fs = require('fs');
-const utils = require('../../../lib/utils/utils');
 const _ = require('lodash');
 
 const pageConnections = services => {
-  const { app, redisClient } = services;
+  const { app, Commons } = services;
+
+  const kb = Commons.ServiceConnector.Connector;
 
   app.get('/connections', async (req, res) => {
-    const [commandExecutionsCount, spotifyAndLastfmUserLoggedInCount] = await redisClient
+    const [commandExecutionsCount, spotifyAndLastfmUserLoggedInCount] = await kb
       .multi()
       .get('kb:api:website-pages:command-executions-count')
       .get('kb:api:website-pages:spotify-and-lastfm-user-logged-in-count')
@@ -16,14 +17,14 @@ const pageConnections = services => {
       fs.readFileSync('../../kbot-website/html/express_pages/connections.html')
     );
 
-    const page = new utils.Swapper(html, [
+    const page = Commons.UtilityRepository().htmlPageCompiler(html, [
       {
         execs: commandExecutionsCount,
         users: spotifyAndLastfmUserLoggedInCount,
       },
     ]);
 
-    res.send(page.template());
+    res.send(page);
   });
 };
 

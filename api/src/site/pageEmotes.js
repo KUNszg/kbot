@@ -2,16 +2,15 @@ const fs = require('fs');
 const Table = require('table-builder');
 const _ = require('lodash');
 
-const utils = require('../../../lib/utils/utils');
-
 const consts = require('../consts/consts.json');
 
 const prepareEmotesRow = require('../../utils/prepareEmotesRow');
 const getAllPlatformsEmoteCount = require('../../utils/getAllPlatformsEmoteCount');
 
-
 const pageEmotes = services => {
-  const { app, kb } = services;
+  const { app, Commons } = services;
+
+  const kb = Commons.ServiceConnector.Connector;
 
   app.get('/emotes', async (req, res) => {
     const tableData = [];
@@ -55,7 +54,7 @@ const pageEmotes = services => {
       res.send(homepage);
       return;
     } else {
-      const preparedRows = prepareEmotesRow(emotesAdded, "added");
+      const preparedRows = prepareEmotesRow(emotesAdded, 'added');
 
       _.forEach(preparedRows, row => {
         tableData.push(row);
@@ -65,7 +64,7 @@ const pageEmotes = services => {
     if (!emotesRemoved.length) {
       tableDataRemoved.push(consts.emoteHeadersEmptyResponse);
     } else {
-      const preparedRows = prepareEmotesRow(emotesRemoved, "removed");
+      const preparedRows = prepareEmotesRow(emotesRemoved, 'removed');
 
       _.forEach(preparedRows, row => {
         tableDataRemoved.push(row);
@@ -75,11 +74,11 @@ const pageEmotes = services => {
     let html = fs.readFileSync('../../kbot-website/html/express_pages/emotesDataTables.html');
     html = html.toString();
 
-    let emotesUpdate = await kb.query(
+    let emotesUpdate = await kb.sqlClient.query(
       `SELECT emotesUpdate FROM channels_logger WHERE channel=?`,
       [search]
     );
-    emotesUpdate = _.get(_.first(emotesUpdate), "emotesUpdate");
+    emotesUpdate = _.get(_.first(emotesUpdate), 'emotesUpdate');
 
     const emotesAddedHTMLTable = new Table({
       class: 'table-context',
@@ -97,7 +96,7 @@ const pageEmotes = services => {
       .setData(tableDataRemoved)
       .render();
 
-    const page = new utils.Swapper(html, [
+    const page = Commons.UtilityRepository().htmlPageCompiler(html, [
       {
         search,
         search2: search,
@@ -110,7 +109,7 @@ const pageEmotes = services => {
       },
     ]);
 
-    res.send(page.template());
+    res.send(page);
   });
 };
 

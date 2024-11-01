@@ -2,8 +2,7 @@ FROM node:20.12.2-alpine
 
 WORKDIR /usr/src/app
 
-COPY ./connector ./connector
-COPY ./lib/utils ./lib/utils
+COPY ./commons ./commons
 COPY ./data ./data/
 
 COPY ./consts/serviceSettings.json ./consts/serviceSettings.json

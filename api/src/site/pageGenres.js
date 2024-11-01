@@ -1,9 +1,8 @@
 const fs = require('fs');
-const utils = require('../../../lib/utils/utils');
 const _ = require('lodash');
 
 const pageGenres = services => {
-  const { app } = services;
+  const { app, Commons } = services;
 
   app.get('/genres', (req, res) => {
     const genres = fs.readFileSync('../data/genres.json');
@@ -12,13 +11,13 @@ const pageGenres = services => {
       fs.readFileSync('../../kbot-website/html/express_pages/genres.html')
     );
 
-    const page = new utils.Swapper(html, [
+    const page = Commons.UtilityRepository().htmlPageCompiler(html, [
       {
         genres,
       },
     ]);
 
-    res.send(page.template());
+    res.send(page);
   });
 };
 

@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const modifyOutput = require('./modifyOutput');
-const formatDate = require('./formatDate');
+const formatEmotesDate = require('./formatEmotesDate');
 
 const prepareEmotesRow = (emotes, emoteState) => {
   const tableData = [];
@@ -40,27 +40,26 @@ const prepareEmotesRow = (emotes, emoteState) => {
             <img style="vertical-align: middle; margin-top: 4px; margin-bottom: 4px;" loading="lazy" src="${emoteUrl}" alt="${emoteName}">
           </span></a>`;
 
-    if (emoteState === "removed") {
+    if (emoteState === 'removed') {
       tableData.push({
         ID: `<div ${inline}>${id + 1}</div>`,
         name: `<div ${inline}>${emoteClickableName}</div>`,
         emote: `<div ${inline}>${emoteClickablePicture}</div>`,
         type: `<div ${inline}>${emoteType}</div>`,
-        removed: `<div ${inline}>${formatDate(emoteDate)}</div>`,
+        removed: `<div ${inline}>${formatEmotesDate(emoteDate)}</div>`,
       });
-    }
-    else {
+    } else {
       tableData.push({
         ID: `<div ${inline}>${id + 1}</div>`,
         name: `<div ${inline}>${emoteClickableName}</div>`,
         emote: `<div ${inline}>${emoteClickablePicture}</div>`,
         type: `<div ${inline}>${emoteType}</div>`,
-        added: `<div ${inline}>${formatDate(emoteDate)}</div>`,
+        added: `<div ${inline}>${formatEmotesDate(emoteDate)}</div>`,
       });
     }
   });
 
   return tableData;
-}
+};
 
 module.exports = prepareEmotesRow;

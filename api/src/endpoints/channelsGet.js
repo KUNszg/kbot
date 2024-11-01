@@ -2,7 +2,9 @@ const _ = require('lodash');
 const shell = require('child_process');
 
 const userGet = services => {
-  const { app, kb } = services;
+  const { app, Commons } = services;
+
+  const kb = Commons.ServiceConnector.Connector;
 
   app.get('/api/channels', async (req, res) => {
     const details = _.get(req, 'query.details');
@@ -38,11 +40,11 @@ const userGet = services => {
       }
 
       const executions = await kb.sqlClient.query(`
-            SELECT channel, COUNT(*) AS count
-            FROM executions
-            GROUP BY channel
-            ORDER BY count
-            DESC`);
+        SELECT channel, COUNT(*) AS count
+        FROM executions
+        GROUP BY channel
+        ORDER BY count
+        DESC`);
 
       const banphraseApis = await kb.sqlClient.query('SELECT * FROM channel_banphrase_apis');
 
@@ -71,16 +73,13 @@ const userGet = services => {
         let tableSize = 0;
 
         if (process.platform !== 'win32') {
-          // todo
-          tableSize = 0; /*findLoggedChannel
+          tableSize = findLoggedChannel
             ? shell
                 .execSync(
-                  `sudo du --apparent-size --block=M -s /var/lib/mysql/kbot/logs_${_channel}.ibd`
+                  `sudo du --apparent-size --block-size=M -s /var/lib/mysql/kbot/logs_${_channel}.ibd | awk '{print $1}' | sed 's/M//'`
                 )
                 .toString()
-                .split('/')[0]
-                .replace('M', '')
-            : null;*/
+            : null;
         }
 
         Object.defineProperties(result, {
@@ -92,7 +91,6 @@ const userGet = services => {
               liveStatus: channels[i].status,
               isStrict: channels[i].strict === 'Y',
               created: new Date(timestampBot).toISOString(),
-              createdTimestamp: Number(timestampBot),
               commandsUsed: executionsCount,
               isBanphraseApiActive: isBanphraseApiActive,
               banphraseApi: banphraseApi,
@@ -101,7 +99,6 @@ const userGet = services => {
                 isLogging: isLogging,
                 created:
                   timestampLogger === null ? null : new Date(timestampLogger).toISOString(),
-                createdTimestamp: timestampLogger === null ? null : Number(timestampLogger),
                 tableSize: Number(tableSize),
               },
             },
