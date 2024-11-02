@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kbot-task-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kbot-task-manager
+  template:
+    metadata:
+      labels:
+        app: kbot-task-manager
+    spec:
+      containers:
+        - name: kbot-task-manager
+          image: docker-registry.kunszg.com/kbot-task-manager:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: node-modules-volume
+              mountPath: /usr/src/app/node_modules
+          envFrom:
+            - configMapRef:
+                name: kbot-config
+      imagePullSecrets:
+        - name: regcred-v1
+      volumes:
+        - name: node-modules-volume
+          hostPath:
+            path: /home/docker/node_modules
+            type: Directory

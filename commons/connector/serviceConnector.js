@@ -1,7 +1,6 @@
 const _ = require('lodash');
 
-const healthcheckMiddleware = require('../../lib/utils/healthcheckMiddleware');
-const sleep = require('./utils/sleep');
+const healthcheckMiddleware = require('./services/healthcheckMiddleware');
 
 const services = {
   rabbit: require('./services/rabbitClient'),

@@ -4,17 +4,18 @@ WORKDIR /usr/src/app
 
 COPY ./commons ./commons
 COPY ./consts ./consts
-COPY ./data ./data/
 
 COPY ./consts/serviceSettings.json ./consts/serviceSettings.json
 COPY ./lib/credentials/config.js ./lib/credentials/config.js
 
-WORKDIR /usr/src/app/kbot-api
+WORKDIR /usr/src/app/kbot-task-manager
 
-COPY ./api .
+COPY ./lib/task-manager ./lib
+
+WORKDIR /usr/src/app/kbot-task-manager/lib
 
 EXPOSE 8080
 
-CMD [ "node", "api.js" ]
+CMD [ "node", "taskManager.js" ]
 
 # for local development manual mount of node_modules in config is required

@@ -1,7 +1,7 @@
 const express = require('express');
 const _ = require('lodash');
 
-const { healthcheckPath } = require('../../consts/serviceSettings.json');
+const { healthcheckPath } = require('../../../consts/serviceSettings.json');
 
 const healthcheckMiddleware = serviceSettings => {
   const serviceName = _.get(serviceSettings, 'name');
