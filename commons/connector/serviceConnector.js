@@ -104,8 +104,10 @@ class ServiceConnector {
 
       deps = _.uniq(deps);
 
-      _.pull(deps, 'tmi');
-      deps.push('tmi');
+      if (_.includes(deps, 'tmi')) {
+        _.pull(deps, 'tmi');
+        deps.push('tmi');
+      }
 
       for (let dep of deps) {
         if (this.connectedClients[dep]) {

@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const shell = require('child_process');
 
 const userGet = services => {
   const { app, Commons } = services;
@@ -13,8 +12,8 @@ const userGet = services => {
       let channels, logs;
 
       if (!_.get(req, 'query.channel')) {
-        channels = await kb.redisClient.get('kb:global:channel-list');
-        logs = await kb.redisClient.get('kb:global:channel-logger-list');
+        channels = (await kb.redisClient.get('kb:global:channel-list')) || [];
+        logs = (await kb.redisClient.get('kb:global:channel-logger-list')) || [];
       } else {
         channels = await kb.sqlClient.query(
           `
@@ -70,18 +69,6 @@ const userGet = services => {
           : false;
         const banphraseApi = isBanphraseApiActive ? findBanphraseChannels.url : null;
 
-        let tableSize = 0;
-
-        if (process.platform !== 'win32') {
-          tableSize = findLoggedChannel
-            ? shell
-                .execSync(
-                  `sudo du --apparent-size --block-size=M -s /var/lib/mysql/kbot/logs_${_channel}.ibd | awk '{print $1}' | sed 's/M//'`
-                )
-                .toString()
-            : null;
-        }
-
         Object.defineProperties(result, {
           [_channel]: {
             value: {
@@ -99,7 +86,6 @@ const userGet = services => {
                 isLogging: isLogging,
                 created:
                   timestampLogger === null ? null : new Date(timestampLogger).toISOString(),
-                tableSize: Number(tableSize),
               },
             },
             writable: true,

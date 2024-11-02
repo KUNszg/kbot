@@ -1,6 +1,7 @@
 const UserRepository = require('./repositories/UserRepository');
 const ChannelRepository = require('./repositories/ChannelRepository');
 const UtilityRepository = require('./repositories/UtilityRepository');
+
 const CommonRepository = require('./repositories/CommonRepository');
 
 const ServiceConnector = require('./connector/serviceConnector');
@@ -9,16 +10,16 @@ let instances = {};
 
 /**
  * Returns a singleton instance of the specified repository class.
- * If the instance does not exist, it creates a new one with the provided sqlClient.
+ * If the instance does not exist, it creates a new one with the provided serviceConnector.
  * @param {UserRepository|{}} RepositoryClass - The repository class to instantiate.
- * @param {Object} sqlClient - The SQL client to pass to the repository constructor.
+ * @param {Object} serviceConnector - Client connection manager.
  * @returns The singleton instance of the specified repository.
  */
-function getRepositoryInstance(RepositoryClass, sqlClient) {
+function getRepositoryInstance(RepositoryClass, serviceConnector) {
   const className = RepositoryClass.name;
 
   if (!instances[className]) {
-    instances[className] = RepositoryClass.getInstance(sqlClient);
+    instances[className] = RepositoryClass.getInstance(serviceConnector);
   }
 
   return instances[className];
@@ -26,29 +27,29 @@ function getRepositoryInstance(RepositoryClass, sqlClient) {
 
 /**
  * Gets the singleton instance of UserRepository.
- * @param {Object} [sqlClient] - The SQL client to pass to the UserRepository constructor.
+ * @param {Object} [serviceConnector] - Client connection manager.
  * @returns The singleton instance of UserRepository.
  */
-function getUserRepositoryInstance(sqlClient) {
-  return getRepositoryInstance(UserRepository, sqlClient);
+function getUserRepositoryInstance(serviceConnector) {
+  return getRepositoryInstance(UserRepository, serviceConnector);
 }
 
 /**
  * Gets the singleton instance of ChannelRepository.
- * @param {Object} [sqlClient] - The SQL client to pass to the ChannelRepository constructor.
+ * @param {Object} [serviceConnector] - Client connection manager.
  * @returns The singleton instance of ChannelRepository.
  */
-function getChannelRepositoryInstance(sqlClient) {
-  return getRepositoryInstance(ChannelRepository, sqlClient);
+function getChannelRepositoryInstance(serviceConnector) {
+  return getRepositoryInstance(ChannelRepository, serviceConnector);
 }
 
 /**
  * Gets the singleton instance of ChannelRepository.
- * @param {Object} [sqlClient] - The SQL client to pass to the ChannelRepository constructor.
+ * @param {Object} [serviceConnector] - Client connection manager.
  * @returns The singleton instance of ChannelRepository.
  */
-function getUtilityRepositoryInstance(sqlClient) {
-  return getRepositoryInstance(UtilityRepository, sqlClient);
+function getUtilityRepositoryInstance(serviceConnector) {
+  return getRepositoryInstance(UtilityRepository, serviceConnector);
 }
 
 module.exports = {

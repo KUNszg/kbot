@@ -8,8 +8,6 @@ COPY ./data ./data/
 COPY ./consts/serviceSettings.json ./consts/serviceSettings.json
 COPY ./lib/credentials/config.js ./lib/credentials/config.js
 
-RUN echo "{}" > ./data/aliases.json
-
 WORKDIR /usr/src/app/kbot-api
 
 COPY ./api .

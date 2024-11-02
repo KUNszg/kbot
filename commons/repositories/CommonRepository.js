@@ -20,10 +20,10 @@ class CommonRepository {
 
   /**
    * Creates an instance of CommonRepository.
-   * @param sqlClient - An SQL client instance for executing queries.
+   * @param serviceConnector - Client connection manager.
    */
-  constructor(sqlClient) {
-    this.sqlClient = sqlClient;
+  constructor(serviceConnector) {
+    this.serviceConnector = serviceConnector;
   }
 
   /**
@@ -34,7 +34,7 @@ class CommonRepository {
    * @returns Resolves to the result set of the query.
    */
   async _getByField(tableName, fieldName, fieldValue) {
-    return await this.sqlClient.query(
+    return await this.serviceConnector.sqlClient.query(
       `
       SELECT *
       FROM ${tableName}
@@ -59,7 +59,7 @@ class CommonRepository {
       .join(' AND ');
     const values = _.values(fields);
 
-    const queryResult = await this.sqlClient.query(
+    const queryResult = await this.serviceConnector.sqlClient.query(
       `
       SELECT EXISTS(
         SELECT 1

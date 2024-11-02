@@ -10,26 +10,21 @@ let instance = null;
 class ChannelRepository extends CommonRepository {
   /**
    * Creates an instance of ChannelRepository.
-   * @param {Object} sqlClient - An SQL client instance for executing queries.
-   * @throws Will throw an error if no sqlClient is provided.
+   * @param {Object} serviceConnector - Client connection manager.
    */
-  constructor(sqlClient) {
-    if (!sqlClient) {
-      throw new Error('no sqlClient provided');
-    }
-
-    super(sqlClient);
+  constructor(serviceConnector = {}) {
+    super(serviceConnector);
   }
 
   /**
    * Returns the singleton instance of ChannelRepository.
-   * If an instance does not exist, it creates one using the provided sqlClient.
-   * @param {Object} sqlClient - An SQL client instance for executing queries.
+   * If an instance does not exist, it creates one using the provided serviceConnector.
+   * @param {Object} serviceConnector - Client connection manager.
    * @returns {ChannelRepository} The singleton instance of ChannelRepository.
    */
-  static getInstance(sqlClient) {
+  static getInstance(serviceConnector) {
     if (!instance) {
-      instance = new ChannelRepository(sqlClient);
+      instance = new ChannelRepository(serviceConnector);
     }
     return instance;
   }
@@ -39,12 +34,36 @@ class ChannelRepository extends CommonRepository {
    * @param {string} channelName - The name of the channel to retrieve.
    * @returns {Promise<Object|null>} The channel data if found, otherwise null.
    */
-  channel(channelName) {
+  async channel(channelName) {
     if (channelName) {
-      return this._getByField(
+      return await this._getByField(
         CommonRepository.table.channels,
         'channel',
         channelName.replace('#', '')
+      );
+    }
+
+    return null;
+  }
+
+  /**
+   * Retrieves a boolean indicating whether the channel is live and strict.
+   * @param {string} channelName - The name of the channel to retrieve.
+   * @returns {Promise<boolean|null>} The result if found, otherwise null.
+   */
+  async isStrictAndLive(channelName) {
+    if (channelName) {
+      const channels = await this._getByField(
+        CommonRepository.table.channels,
+        'channel',
+        channelName.replace('#', '')
+      );
+
+      const firstChannel = _.first(channels);
+
+      return (
+        _.get(firstChannel, 'status') === 'live' &&
+        _.toLower(_.get(firstChannel, 'strict')) === 'y'
       );
     }
 

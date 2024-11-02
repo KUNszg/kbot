@@ -50,9 +50,7 @@ const userGet = services => {
       return sendErrorResponse(res, 400, 'bad request');
     }
 
-    const userRepository = Commons.UserRepository(
-      Commons.ServiceConnector.Connector.sqlClient
-    );
+    const userRepository = Commons.UserRepository(Commons.ServiceConnector.Connector);
 
     if (receivedUsername) {
       const user = await userRepository.getUser({ username: receivedUsername });

@@ -59,7 +59,16 @@ class RedisClient {
    * @returns {Promise<string|null>} The value associated with the key, or null if not found.
    */
   async get(key) {
-    return await this.client.get(key);
+    const value = await this.client.get(key);
+
+    if (value && typeof value === 'string' && value.trim() !== '') {
+      try {
+        return JSON.parse(value);
+      } catch (error) {
+        console.error('Error parsing Redis value:', error);
+      }
+    }
+    return value;
   }
 
   /**

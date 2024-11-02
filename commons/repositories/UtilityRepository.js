@@ -1,7 +1,9 @@
 const humanize = require('humanize-duration');
+const _ = require('lodash');
 
 const regex = require('../../consts/regex');
 
+const customHttpStatus = require('./utils/customHttpStatus');
 const CommonRepository = require('./CommonRepository');
 
 let instance = null;
@@ -22,17 +24,31 @@ class UtilityRepository extends CommonRepository {
     },
   });
 
-  constructor(sqlClient = {}) {
-    super(sqlClient);
+  constructor(serviceConnector = {}) {
+    super(serviceConnector);
   }
 
-  static getInstance(sqlClient) {
+  /**
+   * Returns the singleton instance of UtilityRepository.
+   * If an instance does not exist, it creates one using the provided sqlClient.
+   * @param {Object} serviceConnector - Client connection manager.
+   * @returns {UtilityRepository} The singleton instance of UtilityRepository.
+   */
+  static getInstance(serviceConnector) {
     if (!instance) {
-      instance = new UtilityRepository(sqlClient);
+      instance = new UtilityRepository(serviceConnector);
     }
     return instance;
   }
 
+  /**
+   * @description
+   * Replaces all %{key} in `html` with values from `repl[0]`.
+   * @param {string} html - The HTML to replace values in.
+   * @param {Object[]} repl - An array of objects where the first object's values
+   * should be used as replacement values.
+   * @returns {string} The modified HTML.
+   */
   htmlPageCompiler(html, repl) {
     this.html = html;
     this.value = repl[0];
@@ -48,6 +64,11 @@ class UtilityRepository extends CommonRepository {
     return this.html;
   }
 
+  /**
+   * Generates a random string of characters.
+   * @param {number} [length=15] - The length of the string to generate.
+   * @return {string} A random string of characters.
+   */
   stringGenerator(length = 15) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -57,52 +78,117 @@ class UtilityRepository extends CommonRepository {
     return result;
   }
 
+  /**
+   * @description
+   * Randomly select an element from the given array.
+   * @param {any[]} array - The array to select from.
+   * @returns {any} - A randomly selected element from `array`.
+   */
+  randomElement(array) {
+    return array[Math.floor(Math.random() * array.length)];
+  }
+
+  /**
+   * Convert given number of seconds into human readable duration.
+   * @param {number} seconds - The number of seconds to convert.
+   * @returns {string} - The human readable duration.
+   * @example
+   * humanizeDuration(60) // '1m '
+   * humanizeDuration(3661) // '1h 1m 1s'
+   */
   humanizeDuration(seconds) {
-    const options = {
+    return UtilityRepository.shortHumanize(seconds * 1000, {
       units: ['y', 'mo', 'd', 'h', 'm', 's'],
       largest: 3,
       round: true,
       spacer: '',
-    };
-    return UtilityRepository.shortHumanize(seconds * 1000, options);
+    });
   }
 
-  async url(command_name) {
-    const Alias = new utils.Alias(command_name);
-    const input = command_name
-      .replace(Alias.getRegex(), Alias.getReplacement())
-      .replace(regex.invisChar, '');
+  /**
+   * Given a command name, this function returns the URL associated with it.
+   * The command name is processed to remove any invisible characters and
+   * any text that is enclosed by curly braces.
+   * @param {string} command_name - The command name to look up the URL for.
+   * @return {string|string[]} The URL associated with the given command name.
+   * If the associated URL is a list of URLs, an array of strings is returned.
+   */
+  // todo: REPLACE utils.Get.api().url() with this
+  async getExternalApiUrlByCommandName(command_name) {
+    const { detectedCommand } = await this.convertTextContainingAlias(command_name);
 
-    this.data = await db.query(
+    const apiData = await this.serviceConnector.sqlClient.query(
       `
-                SELECT *
-                FROM api_data
-                WHERE tags LIKE ?`,
-      [`%${input.split(' ')[1]}%`]
+              SELECT *
+              FROM api_data
+              WHERE tags LIKE ?`,
+      [`%${detectedCommand}%`]
     );
 
-    if (this.data[0].url.split(' ').length > 1) {
-      return this.data[0].url.split(' ');
+    return _.split(_.get(_.first(apiData), 'url'), ' ') || null;
+  }
+
+  /**
+   * Given a command name, this function returns the API key associated with it.
+   * The command name is processed to remove any invisible characters and
+   * any text that is enclosed by curly braces.
+   * @param {string} command_name - The command name to look up the API key for.
+   * @return {string} The API key associated with the given command name.
+   */
+  // todo: REPLACE utils.Get.api().key() with this
+  async getExternalApiKeyByCommandName(command_name) {
+    const { detectedCommand } = await this.convertTextContainingAlias(command_name);
+
+    const apiData = await this.serviceConnector.sqlClient.query(
+      `
+              SELECT *
+              FROM api_data
+              WHERE tags LIKE ?`,
+      [`%${detectedCommand}%`]
+    );
+
+    return _.get(_.first(apiData), 'key') || null;
+  }
+
+  /**
+   * @function customHttpStatus
+   * @description Returns a custom HTTP status message based on the code provided.
+   * @param {number} code - The HTTP status code.
+   * @return {string} The custom HTTP status message.
+   */
+  customHttpStatus(code) {
+    return customHttpStatus(code);
+  }
+
+  getCommandNameFromText(text) {
+    return _.first(_.tail(_.split(_.replace(text, regex.invisChar, ''), ' ')));
+  }
+
+  async convertTextContainingAlias(text) {
+    if (_.isEmpty(text)) {
+      return _.stubString();
     }
 
-    return this.data[0].url;
-  }
+    const command = this.getCommandNameFromText(text);
+    const aliases = (await this.serviceConnector.redisClient.get('kb:global:aliases')) || [];
 
-  async key(command_name) {
-    const Alias = new utils.Alias(command_name);
-    const input = command_name
-      .replace(Alias.getRegex(), Alias.getReplacement())
-      .replace(regex.invisChar, '');
+    let detectedAlias = null;
 
-    this.data = await db.query(
-      `
-                SELECT *
-                FROM api_data
-                WHERE tags LIKE ?`,
-      [`%${input.split(' ')[1]}%`]
-    );
+    try {
+      detectedAlias = _.find(aliases, detectedAlias => detectedAlias[command]);
+    } catch (error) {
+      console.error('Error while parsing aliases: ', error);
+    }
 
-    return this.data[0].key;
+    const detectedCommand = _.first(_.values(detectedAlias));
+    const aliasAsRegexp = new RegExp(`\\b${_.keys(detectedAlias)}\\b`, 'i');
+
+    return {
+      convertedText: _.replace(text, aliasAsRegexp, detectedCommand),
+      detectedCommand,
+      detectedAlias,
+      aliasAsRegexp,
+    };
   }
 }
 

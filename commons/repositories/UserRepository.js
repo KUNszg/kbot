@@ -1,4 +1,3 @@
-const regex = require('../../consts/regex');
 const CommonRepository = require('./CommonRepository');
 
 let instance = null;
@@ -11,26 +10,21 @@ let instance = null;
 class UserRepository extends CommonRepository {
   /**
    * Creates an instance of UserRepository.
-   * @param {Object} sqlClient - An SQL client instance for executing queries.
-   * @throws Will throw an error if no sqlClient is provided.
+   * @param {Object} serviceConnector - Client connection manager.
    */
-  constructor(sqlClient) {
-    if (!sqlClient) {
-      throw new Error('no sqlClient provided');
-    }
-
-    super(sqlClient);
+  constructor(serviceConnector = {}) {
+    super(serviceConnector);
   }
 
   /**
    * Returns the singleton instance of UserRepository.
-   * If an instance does not exist, it creates one using the provided sqlClient.
-   * @param {Object} sqlClient - An SQL client instance for executing queries.
+   * If an instance does not exist, it creates one using the provided serviceConnector.
+   * @param {Object} serviceConnector - Client connection manager.
    * @returns {UserRepository} The singleton instance of UserRepository.
    */
-  static getInstance(sqlClient) {
+  static getInstance(serviceConnector) {
     if (!instance) {
-      instance = new UserRepository(sqlClient);
+      instance = new UserRepository(serviceConnector);
     }
     return instance;
   }
@@ -59,7 +53,7 @@ class UserRepository extends CommonRepository {
    * @returns {Promise<Object>} The bot owner's data.
    */
   async getBotOwner() {
-    return await this.sqlClient.query(
+    return await this.serviceConnector.sqlClient.query(
       `
       SELECT *
       FROM trusted_users

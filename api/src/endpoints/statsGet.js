@@ -1,5 +1,3 @@
-const shell = require('child_process');
-const fs = require('fs');
 const _ = require('lodash');
 const got = require('got');
 
@@ -13,8 +11,10 @@ const statsGet = services => {
   const kb = Commons.ServiceConnector.Connector;
 
   app.get('/api/stats', async (req, res) => {
-    const modules = await kb.redisClient.get(`kb:global:stats`);
-    const channels = await kb.redisClient.get('kb:global:channel-list');
+    const modules = (await kb.redisClient.get(`kb:global:stats`)) || [];
+    const channels = (await kb.redisClient.get('kb:global:channel-list')) || [];
+    const lines = (await kb.redisClient.get('kb:task-manager:estimatedRepoLines')) || 0;
+    const uptimeData = (await kb.redisClient.get('kb:command-manager:botUptime')) || process.uptime();
 
     const executions = await kb.sqlClient.query(
       'SELECT count FROM stats WHERE type="statsApi" AND sha="commandExecs"'
@@ -36,48 +36,22 @@ const statsGet = services => {
     );
 
     const githubResponse = await got(
-      'https://api.github.com/repos/kunszg/kbot/commits?per_page=1&page=1',
       {
+        url: 'https://api.github.com/repos/kunszg/kbot/commits?per_page=1&page=1',
         headers: {
           Authorization: process.githubAppAccessToken || creds.githubAppAccessToken,
         },
       }
-    );
+    ).json();
 
     const commits =
       _.toNumber(
         _.last(_.split(_.get(githubResponse, 'headers.link'), '&')).replace(/[^0-9]/g, '')
       ) || 0;
 
-    // todo
-    const lines =
-      process.platform === 'linux'
-        ? null /*shell.execSync(
-            `find ../ -name '*.js' -not -path "../node_modules*" | xargs wc -l | tail -1`
-          )*/
-        : 0;
-
-    /*const uptimeData =
-      process.platform === 'linux'
-        ? _.toString(fs.readFileSync('../data/temp_api_uptime.txt'))
-        : 0;*/
-
-    const uptimeData = process.uptime();
-
-    /*const restartData =
-      process.platform === 'linux'
-        ? _.toString(fs.readFileSync('../data/temp_api_restarting.txt'))
-        : 0;*/
-
-    /*
-      const isRestarting =
-      0.9 * channels.length > Math.trunc(Date.now() - _.toInteger(restartData)) / 1000;
-      */
-
     const linesOfCode = _.toInteger(_.get(_.split(_.toString(lines), ' '), '1'));
     const _usersLogged = _.toInteger(_.get(_.first(usersLogged), 'count'));
     const commandExecutions = _.toInteger(_.get(_.first(executions), 'count'));
-    const uptime = Date.now() - Math.trunc(_.toInteger(uptimeData) * 1000);
 
     res.send({
       modules: {
@@ -88,7 +62,7 @@ const statsGet = services => {
       },
       bot: {
         isRestarting: false,
-        codeUptime: uptime,
+        codeUptime:  Date.now() - Math.trunc(_.toInteger(uptimeData) * 1000),
         linesOfCode,
         usersLogged: _usersLogged,
         commandExecutions,
