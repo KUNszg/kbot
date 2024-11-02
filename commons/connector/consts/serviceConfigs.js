@@ -36,7 +36,7 @@ module.exports = {
     discordLogin: process.env.discord || creds.discord,
   },
   redditConfig: {
-    userAgent: 'linux:kunszgbot:3.0.0 (by /u/kunszg)',
+    userAgent: 'linux:kunszgbot:3.2.2 (by /u/kunszg)',
     clientId: process.env.redditUID || creds.redditUID,
     clientSecret: process.env.redditSecret || creds.redditSecret,
     username: process.env.redditUsername || creds.redditUsername,
