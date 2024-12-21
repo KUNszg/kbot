@@ -7,6 +7,8 @@ test.js
 .vscode
 .idea
 data/temp_api_restarting.txt
+data/temp_api_uptime.txt
+data/aliases.json
 *.txt
 /coverage/
 manifests/jobs/kubernetes-startup-scripts.sh
