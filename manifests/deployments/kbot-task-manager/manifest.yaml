@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kbot-task-manager
+  name: kbot-job-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kbot-task-manager
+      app: kbot-job-manager
   template:
     metadata:
       labels:
-        app: kbot-task-manager
+        app: kbot-job-manager
     spec:
       containers:
-        - name: kbot-task-manager
-          image: docker-registry.kunszg.com/kbot-task-manager:latest
+        - name: kbot-job-manager
+          image: docker-registry.kunszg.com/kbot-job-manager:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: node-modules-volume

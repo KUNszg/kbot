@@ -13,7 +13,7 @@ const statsGet = services => {
   app.get('/api/stats', async (req, res) => {
     const modules = (await kb.redisClient.get(`kb:global:stats`)) || [];
     const channels = (await kb.redisClient.get('kb:global:channel-list')) || [];
-    const lines = (await kb.redisClient.get('kb:task-manager:estimatedRepoLines')) || 0;
+    const lines = (await kb.redisClient.get('kb:job-manager:estimatedRepoLines')) || 0;
     const uptimeData = (await kb.redisClient.get('kb:command-manager:botUptime')) || process.uptime();
 
     const executions = await kb.sqlClient.query(

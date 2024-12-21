@@ -31,6 +31,7 @@ module.exports = {
     password: process.env.oauth || creds.oauth,
     ignoreUnhandledPromiseRejections: true,
     rateLimits: 'verifiedBot',
+    maxChannelCountPerConnection: 30
   },
   discordConfig: {
     discordLogin: process.env.discord || creds.discord,

@@ -1,11 +1,18 @@
-FROM openjdk:11-jre-slim
+FROM python:3.10-slim
 
 WORKDIR /usr/src/app
 
-COPY musicBot-0.3.9.jar ./music-bot/
+RUN apt-get update && apt-get install -y \
+    git \
+    ffmpeg \
+    && apt-get clean
 
-WORKDIR /usr/src/app/music-bot
+RUN git clone https://github.com/KUNszg/MusicBot
 
-EXPOSE 8080
+WORKDIR /usr/src/app/MusicBot
 
-CMD ["java", "-Dnogui=true", "-jar", "musicBot-0.3.9.jar"]
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ["python", "run.py"]
+
+

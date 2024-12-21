@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: j-music-bot
-  namespace: services
+  name: kbot-music-bot
+  namespace: default
 spec:
   replicas: 1
   selector:
@@ -18,23 +18,37 @@ spec:
           image: docker-registry.kunszg.com/kbot-depl-music-bot:latest
           imagePullPolicy: Always
           volumeMounts:
-            - name: config-volume
-              mountPath: /usr/src/app/music-bot/config.txt
-            - name: server-settings-volume
-              mountPath: /usr/src/app/music-bot/serversettings.json
-            - name: playlists-volume
-              mountPath: /usr/src/app/music-bot/Playlists
+            - name: options-volume
+              mountPath: /usr/src/app/MusicBot/config/options.ini
+            - name: permissions-volume
+              mountPath: /usr/src/app/MusicBot/config/permissions.ini
+            - name: cookies-volume
+              mountPath: /usr/src/app/MusicBot/data/cookies.txt
+            - name: playlist-volume
+              mountPath: /usr/src/app/MusicBot/config/playlists/default.txt
+            - name: requirements-volume
+              mountPath: /usr/src/app/MusicBot/requirements.txt
       imagePullSecrets:
         - name: regcred-v1
       volumes:
-        - name: config-volume
+        - name: options-volume
           hostPath:
-            path: /home/docker/musicbot/config.txt
+            path: /home/docker/musicbot/options.ini
             type: File
-        - name: server-settings-volume
+        - name: permissions-volume
           hostPath:
-            path: /home/docker/musicbot/serversettings.json
+            path: /home/docker/musicbot/permissions.ini
             type: File
-        - name: playlists-volume
+        - name: cookies-volume
           hostPath:
-            path: /home/docker/musicbot/Playlists
+            path: /home/docker/musicbot/cookies.txt
+            type: File
+        - name: playlist-volume
+          hostPath:
+            path: /home/docker/musicbot/playlists/default.txt
+            type: File
+        - name: requirements-volume
+          hostPath:
+            path: /home/docker/musicbot/requirements.txt
+            type: File
+
