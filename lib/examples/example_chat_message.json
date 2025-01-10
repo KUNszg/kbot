@@ -1,0 +1,69 @@
+{
+  "badge-info": "subscriber/66",
+  "badges": [
+    {
+      "name": "vip",
+      "version": "1"
+    },
+    {
+      "name": "subscriber",
+      "version": "12"
+    },
+    {
+      "name": "bits-charity",
+      "version": "1"
+    }
+  ],
+  "color": "#9ACD32",
+  "display-name": "Leppunen",
+  "emotes": [],
+  "first-msg": "0",
+  "flags": [],
+  "id": "6cddefd1-97f0-4784-a8ac-f0b20c9a6538",
+  "mod": "0",
+  "returning-chatter": "0",
+  "room-id": "31400525",
+  "subscriber": "1",
+  "tmi-sent-ts": "1734961284882",
+  "turbo": "0",
+  "user-id": "42239452",
+  "user-type": "",
+  "vip": "1",
+  "username": "leppunen",
+  "message-type": "chat",
+  "rawSource": "@badge-info=subscriber/66;badges=vip/1,subscriber/12,bits-charity/1;color=#9ACD32;display-name=Leppunen;emotes=;first-msg=0;flags=;id=6cddefd1-97f0-4784-a8ac-f0b20c9a6538;mod=0;returning-chatter=0;room-id=31400525;subscriber=1;tmi-sent-ts=1734961284882;turbo=0;user-id=42239452;user-type=;vip=1 :leppunen!leppunen@leppunen.tmi.twitch.tv PRIVMSG #supinic :and now it's going away",
+  "ircPrefixRaw": "leppunen!leppunen@leppunen.tmi.twitch.tv",
+  "ircPrefix": {
+    "nickname": "leppunen",
+    "username": "leppunen",
+    "hostname": "leppunen.tmi.twitch.tv"
+  },
+  "ircCommand": "PRIVMSG",
+  "ircParameters": [
+    "#supinic",
+    "and now it's going away"
+  ],
+  "channelName": "supinic",
+  "messageText": "and now it's going away",
+  "isAction": false,
+  "senderUsername": "leppunen",
+  "channelID": "31400525",
+  "senderUserID": "42239452",
+  "badgeInfo": [
+    {
+      "name": "subscriber",
+      "version": "66"
+    }
+  ],
+  "badgeInfoRaw": "subscriber/66",
+  "badgesRaw": "vip/1,subscriber/12,bits-charity/1",
+  "colorRaw": "#9ACD32",
+  "displayName": "Leppunen",
+  "emotesRaw": "",
+  "flagsRaw": "",
+  "messageID": "6cddefd1-97f0-4784-a8ac-f0b20c9a6538",
+  "isMod": false,
+  "isModRaw": "0",
+  "serverTimestamp": "2024-12-23T13:41:24.882Z",
+  "serverTimestampRaw": "1734961284882"
+}

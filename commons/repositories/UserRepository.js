@@ -1,5 +1,8 @@
 const CommonRepository = require('./CommonRepository');
 
+const USER_GLOBAL_COOLDOWN_EXPIRATION_SEC =
+  process.env.USER_GLOBAL_COOLDOWN_EXPIRATION_SEC || 5;
+
 let instance = null;
 
 /**
@@ -14,6 +17,8 @@ class UserRepository extends CommonRepository {
    */
   constructor(serviceConnector = {}) {
     super(serviceConnector);
+
+    this._userActivity = new Map();
   }
 
   /**
@@ -124,6 +129,56 @@ class UserRepository extends CommonRepository {
     }
 
     return isOptedOut;
+  }
+
+  async isUserOnCooldown(command, userstate) {
+    const userId = userstate['user-id'];
+    const now = Date.now();
+
+    if (this._userActivity.has(userId) && this._userActivity.get(userId).cooldown) {
+      return true;
+    }
+
+    const activity = this._userActivity.get(userId) || { timestamps: [], cooldown: false };
+
+    activity.timestamps = activity.timestamps.filter(timestamp => now - timestamp <= 1000);
+
+    activity.timestamps.push(now);
+
+    if (activity.timestamps.length > 3) {
+      activity.cooldown = true;
+      this._userActivity.set(userId, activity);
+
+      setTimeout(() => {
+        const currentActivity = this._userActivity.get(userId);
+        if (currentActivity) {
+          currentActivity.cooldown = false;
+        }
+      }, USER_GLOBAL_COOLDOWN_EXPIRATION_SEC);
+
+      return true;
+    }
+
+    this._userActivity.set(userId, activity);
+
+    const globalUserCooldown = await this.serviceConnector.redisClient.get(
+      `kb:cooldown:global:${userId}`
+    );
+    const commandUserCooldown = await this.serviceConnector.redisClient.get(
+      `kb:cooldown:local:${command}:${userId}`
+    );
+
+    if (globalUserCooldown || commandUserCooldown) {
+      return true;
+    } else {
+      await this.serviceConnector.redisClient.set(
+        `kb:cooldown:global:${userId}`,
+        1,
+        USER_GLOBAL_COOLDOWN_EXPIRATION_SEC
+      );
+
+      return false;
+    }
   }
 }
 

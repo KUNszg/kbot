@@ -115,7 +115,7 @@ class UtilityRepository extends CommonRepository {
    */
   // todo: REPLACE utils.Get.api().url() with this
   async getExternalApiUrlByCommandName(command_name) {
-    const { detectedCommand } = await this.convertTextContainingAlias(command_name);
+    const { detectedCommand } = await this.standarizeUserInput(command_name);
 
     const apiData = await this.serviceConnector.sqlClient.query(
       `
@@ -137,7 +137,7 @@ class UtilityRepository extends CommonRepository {
    */
   // todo: REPLACE utils.Get.api().key() with this
   async getExternalApiKeyByCommandName(command_name) {
-    const { detectedCommand } = await this.convertTextContainingAlias(command_name);
+    const { detectedCommand } = await this.standarizeUserInput(command_name);
 
     const apiData = await this.serviceConnector.sqlClient.query(
       `
@@ -161,34 +161,50 @@ class UtilityRepository extends CommonRepository {
   }
 
   getCommandNameFromText(text) {
-    return _.first(_.tail(_.split(_.replace(text, regex.invisChar, ''), ' ')));
+    const textWithoutPrefix = _.tail(_.split(text, ' '));
+    return _.first(textWithoutPrefix);
   }
 
-  async convertTextContainingAlias(text) {
+  async standarizeUserInput(text) {
     if (_.isEmpty(text)) {
       return _.stubString();
     }
 
-    const command = this.getCommandNameFromText(text);
+    const textWithoutInvisibleCharacters = _.replace(text, regex.invisChar, '');
+    const textWithSingleSpace = _.replace(
+      textWithoutInvisibleCharacters,
+      regex.moreThanOneSpace,
+      ' '
+    );
+
+    const command = this.getCommandNameFromText(textWithSingleSpace);
     const aliases = (await this.serviceConnector.redisClient.get('kb:global:aliases')) || [];
 
-    let detectedAlias = null;
+    const detectedAliasGroup = _.find(aliases, detectedAlias => detectedAlias.key === command);
+    const detectedAlias = _.get(detectedAliasGroup, 'key');
+    const detectedCommand = _.get(detectedAliasGroup, 'value') || command;
 
-    try {
-      detectedAlias = _.find(aliases, detectedAlias => detectedAlias[command]);
-    } catch (error) {
-      console.error('Error while parsing aliases: ', error);
+    let aliasAsRegexp = null;
+    let convertedText = textWithSingleSpace;
+
+    if (detectedAlias) {
+      aliasAsRegexp = new RegExp(`\\b${detectedAlias}\\b`, 'i');
+      convertedText = _.replace(textWithSingleSpace, aliasAsRegexp, detectedCommand);
     }
 
-    const detectedCommand = _.first(_.values(detectedAlias));
-    const aliasAsRegexp = new RegExp(`\\b${_.keys(detectedAlias)}\\b`, 'i');
-
     return {
-      convertedText: _.replace(text, aliasAsRegexp, detectedCommand),
+      convertedText,
       detectedCommand,
       detectedAlias,
       aliasAsRegexp,
     };
+  }
+
+  // todo: for stats command etc..
+  async isBlockingCommandProcessing(command) {
+    return await this.serviceConnector.redisClient.get(
+      `kb:cooldown:command:${command}:processing`
+    );
   }
 }
 

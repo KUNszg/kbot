@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const got = require('got');
+
 const CommonRepository = require('./CommonRepository');
 
 let instance = null;
@@ -46,28 +48,51 @@ class ChannelRepository extends CommonRepository {
     return null;
   }
 
-  /**
-   * Retrieves a boolean indicating whether the channel is live and strict.
-   * @param {string} channelName - The name of the channel to retrieve.
-   * @returns {Promise<boolean|null>} The result if found, otherwise null.
-   */
-  async isStrictAndLive(channelName) {
-    if (channelName) {
-      const channels = await this._getByField(
-        CommonRepository.table.channels,
-        'channel',
-        channelName.replace('#', '')
-      );
+  async isMasspingInText(channelName, text) {
+    const chatters = await this.serviceConnector.redisClient.get(
+      `kb:channel:${channelName}:chatters`
+    );
 
-      const firstChannel = _.first(channels);
-
-      return (
-        _.get(firstChannel, 'status') === 'live' &&
-        _.toLower(_.get(firstChannel, 'strict')) === 'y'
-      );
+    if (_.isEmpty(chatters)) {
+      return false;
     }
 
-    return null;
+    const normalizedText = _.toLower(text);
+    const mentionRegex = /\b(@?[a-zA-Z0-9_]+)\b/g;
+
+    let mentions = [];
+    let match;
+
+    while ((match = mentionRegex.exec(normalizedText)) !== null) {
+      mentions.push(_.toLower(_.replace(match[1], /[^a-zA-Z0-9_]/g, '')));
+    }
+
+    const normalizedChatters = _.map(chatters, _.toLower);
+    const massPinged = _.intersection(mentions, normalizedChatters);
+
+    return massPinged.length >= 3;
+  }
+
+  async checkBanphraseInText(channelName, text) {
+    const data = await this.serviceConnector.sqlClient.query(
+      `
+      SELECT *
+      FROM channel_banphrase_apis
+      WHERE channel=? AND status=?`,
+      [channelName, 'enabled']
+    );
+
+    if (!_.size(data)) {
+      return { banned: false };
+    }
+
+    return got(encodeURI(_.get(_.first(data), 'url')), {
+      method: 'POST',
+      body: `message=${encodeURIComponent(text)}`,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    }).json();
   }
 }
 

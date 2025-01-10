@@ -31,13 +31,13 @@ module.exports = {
     password: process.env.oauth || creds.oauth,
     ignoreUnhandledPromiseRejections: true,
     rateLimits: 'verifiedBot',
-    maxChannelCountPerConnection: 30
+    maxChannelCountPerConnection: 30,
   },
   discordConfig: {
     discordLogin: process.env.discord || creds.discord,
   },
   redditConfig: {
-    userAgent: 'linux:ksyncbot:3.2.4 (by /u/kunszg)',
+    userAgent: 'linux:ksyncbot:3.2.5 (by /u/kunszg)',
     clientId: process.env.redditUID || creds.redditUID,
     clientSecret: process.env.redditSecret || creds.redditSecret,
     username: process.env.redditUsername || creds.redditUsername,

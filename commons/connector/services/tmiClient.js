@@ -6,6 +6,8 @@ const sleep = require('../utils/sleep');
 const prepareMessage = require('../utils/prepareMessage');
 const endecrypt = require('../utils/endecrypt');
 
+const MODE = process.env.MODE || 'production';
+
 class TmiEmitter extends EventEmitter {}
 
 /**
@@ -82,7 +84,13 @@ class TmiClient {
 
       this.isConnected = true;
 
-      console.log(`TMI connected, beginning to join ${_.size(channels)} channels...`);
+      if (MODE === 'production') {
+        console.log(`TMI connected, beginning to join ${_.size(channels)} channels...`);
+      } else {
+        console.log(
+          `TMI connected in development mode, beginning to join #ksyncbot channel...`
+        );
+      }
     });
 
     await this.client.connect();
@@ -96,9 +104,13 @@ class TmiClient {
       console.log('TMI connection closed');
     });
 
-    await this.client.joinAll(channels).catch(err => {
-      console.log(err);
-    });
+    if (MODE === 'production') {
+      await this.client.joinAll(channels).catch(err => {
+        console.log(err);
+      });
+    } else {
+      await this.client.join('#ksyncbot');
+    }
 
     this._setupEventHandlers();
 
