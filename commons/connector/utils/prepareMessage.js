@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const regex = require('../../../consts/regex');
 
 const endecrypt = require("./endecrypt");
 
@@ -7,7 +8,7 @@ const prepareMessage = (messageChunk, lastMessage) => {
 
   const messageHash = _.get(endecrypt.encrypt(messageChunk), 'encryptedData');
 
-  if (messageHash === JSON.parse(lastMessage)) {
+  if (messageHash === lastMessage) {
     messageChunk += '\u{E0000}';
   }
 

@@ -380,7 +380,7 @@ class TmiClient {
    * @param {string} message - The message to send.
    * @returns {Promise<void>} A promise that resolves when the message has been sent.
    */
-  async say(channel, message) {
+  say = async (channel, message) => {
     await this._ensureConnected();
     channel = channel[0] === '#' ? channel : `#${channel}`;
     message = message.replace(/\n|\r/g, '');

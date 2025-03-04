@@ -37,7 +37,7 @@ class UserRepository extends CommonRepository {
   /**
    * Retrieves user data based on the provided user state.
    * @param {Object} userstate - The user state object containing user details.
-   * @param {string} [userstate.user-id] - The user's ID.
+   * @param {string} [userstate.userId] - The user's ID.
    * @param {string} [userstate.username] - The user's username.
    * @returns {Promise<Object|null>} The user data if found, otherwise null.
    */
@@ -70,7 +70,7 @@ class UserRepository extends CommonRepository {
   /**
    * Checks if the user is banned based on the provided user state.
    * @param {Object} userstate - The user state object containing user details.
-   * @param {string} [userstate.user-id] - The user's ID.
+   * @param {string} [userstate.userId] - The user's ID.
    * @param {string} [userstate.username] - The user's username.
    * @returns {Promise<boolean>} True if the user is banned, otherwise false.
    */
@@ -91,7 +91,7 @@ class UserRepository extends CommonRepository {
   /**
    * Checks if the user is mention-banned based on the provided user state.
    * @param {Object} userstate - The user state object containing user details.
-   * @param {string} [userstate.user-id] - The user's ID.
+   * @param {string} [userstate.userId] - The user's ID.
    * @param {string} [userstate.username] - The user's username.
    * @returns {Promise<boolean>} True if the user is mention-banned, otherwise false.
    */
@@ -113,7 +113,7 @@ class UserRepository extends CommonRepository {
    * Checks if the user has opted out of a specific command based on the provided user state.
    * @param {string} command - The command to check.
    * @param {Object} userstate - The user state object containing user details.
-   * @param {string} [userstate.user-id] - The user's ID.
+   * @param {string} [userstate.userId] - The user's ID.
    * @param {string} [userstate.username] - The user's username.
    * @returns {Promise<boolean>} True if the user has opted out, otherwise false.
    */

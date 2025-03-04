@@ -39,7 +39,7 @@ const statsGet = services => {
       {
         url: 'https://api.github.com/repos/kunszg/kbot/commits?per_page=1&page=1',
         headers: {
-          Authorization: process.githubAppAccessToken || creds.githubAppAccessToken,
+          Authorization: process.env.githubAppAccessToken || creds.githubAppAccessToken,
         },
       }
     ).json();
