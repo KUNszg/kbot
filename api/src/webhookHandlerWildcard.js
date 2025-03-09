@@ -1,5 +1,3 @@
-const Commons = require('../../commons/Commons');
-
 const handleGithubWebhookMessage = require('../utils/handleGithubWebhookMessage');
 
 const webhookHandlerWildcard = services => {
@@ -21,7 +19,7 @@ const webhookHandlerWildcard = services => {
     );
 
     if (githubWebhookTwitchResponse) {
-      await kb.tmiClient.say(
+      await kb.tmiClient.sender.say(
         Commons.CommonRepository.botUsername,
         githubWebhookTwitchResponse
       );

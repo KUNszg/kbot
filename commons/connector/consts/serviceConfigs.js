@@ -27,11 +27,15 @@ module.exports = {
     //url: `redis://${process.env.redisHost}:${process.env.redisPort || 12100}`,
   },
   tmiConfig: {
-    username: 'ksyncbot',
-    password: process.env.oauth || creds.oauth,
-    ignoreUnhandledPromiseRejections: true,
-    rateLimits: 'verifiedBot',
-    maxChannelCountPerConnection: 30,
+    anonymous: {
+      maxChannelCountPerConnection: 100,
+      ignoreUnhandledPromiseRejections: true
+    },
+    authorized: {
+      username: 'ksyncbot',
+      password: process.env.oauth || creds.oauth,
+      ignoreUnhandledPromiseRejections: true,
+    },
   },
   discordConfig: {
     discordLogin: process.env.discord || creds.discord,

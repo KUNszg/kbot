@@ -1,4 +1,4 @@
-const { ChatClient } = require('dank-twitch-irc');
+const { ChatClient } = require('@mastondzn/dank-twitch-irc');
 const _ = require('lodash');
 const EventEmitter = require('events');
 const { tmiConfig } = require('../consts/serviceConfigs');
@@ -17,53 +17,389 @@ class TmiClient {
   constructor() {
     if (!TmiClient.instance) {
       TmiClient.instance = this;
-      this.client = null;
-      this.tmiEmitter = new TmiEmitter();
+      this.consumer = this._createConsumer();
+      this.sender = this._createSender();
       this.service = null;
-      this.isConnected = false;
-      this.connectionPromise = null;
+      this.isConsumerConnected = false;
+      this.isSenderConnected = false;
+      this.consumerConnectionPromise = null;
+      this.senderConnectionPromise = null;
     }
 
     return TmiClient.instance;
   }
 
+  get isConnected() {
+    return this.isConsumerConnected || this.isSenderConnected;
+  }
+
+  /**
+   * Ensures that a client is connected before executing operations
+   * @returns {Promise<void>}
+   */
+  async _ensureConnected() {
+    const instance = TmiClient.instance;
+
+    if (this.clientType === 'sender') {
+      if (instance.senderConnectionPromise) {
+        await instance.senderConnectionPromise;
+      } else if (!instance.isSenderConnected) {
+        throw new Error('Sender TMI client is not connected');
+      }
+    } else if (this.clientType === 'consumer') {
+      if (instance.consumerConnectionPromise) {
+        await instance.consumerConnectionPromise;
+      } else if (!instance.isConsumerConnected) {
+        throw new Error('Consumer TMI client is not connected');
+      }
+    } else {
+      throw new Error('Unknown client type');
+    }
+  }
+
+  /**
+   * Creates the consumer part of the Twitch chat client with anonymous config
+   * @private
+   * @returns {Object} Consumer instance with event handling capabilities
+   */
+  _createConsumer() {
+    const tmiEmitter = new TmiEmitter();
+
+    const consumer = {
+      client: null,
+      tmiEmitter,
+
+      /**
+       * Sets up event handlers for the Twitch chat client
+       * @param {Object} client - The Twitch chat client instance
+       */
+      setupEventHandlers(client) {
+        client.on('PRIVMSG', msg => {
+          const oldFormat = {
+            color: msg.colorRaw,
+            username: msg.senderUsername,
+            'message-type': 'chat',
+          };
+
+          delete msg.color;
+
+          msg = { ...msg.ircTags, ...oldFormat, ...msg };
+
+          delete msg.ircTags;
+
+          const self = msg['user-id'] === '229225576';
+          const getAction = _.includes(
+            _.get(_.split(_.get(msg, 'ircParameters.1'), ' '), '0'),
+            'ACTION'
+          );
+
+          if (getAction) {
+            tmiEmitter.emit('action', `#${msg.channelName}`, msg, msg.messageText, self);
+          } else {
+            tmiEmitter.emit('message', `#${msg.channelName}`, msg, msg.messageText, self);
+          }
+        });
+
+        client.on('rawCommand', cmd => tmiEmitter.emit('rawCommand', cmd));
+        client.on('CLEARCHAT', msg => {
+          if (msg.targetUsername) {
+            tmiEmitter.emit(
+              'timeout',
+              `#${msg.channelName}`,
+              msg.targetUsername,
+              'timeout',
+              msg.banDuration,
+              msg
+            );
+          } else {
+            tmiEmitter.emit('clearchat', `#${msg.channelName}`);
+          }
+        });
+        client.on('CLEARMSG', clearmsgMessage =>
+          tmiEmitter.emit('clearmsg', clearmsgMessage)
+        );
+        client.on('HOSTTARGET', hosttargetMessage =>
+          tmiEmitter.emit('host', hosttargetMessage)
+        );
+        client.on('NOTICE', msg => {
+          tmiEmitter.emit(
+            'notice',
+            `#${msg.channelName}`,
+            msg.messageID,
+            _.get(msg, 'messageText', _.stubString())
+          );
+        });
+        client.on('ROOMSTATE', roomstateMessage =>
+          tmiEmitter.emit('roomstate', roomstateMessage)
+        );
+        client.on('USERNOTICE', usernoticeMessage =>
+          tmiEmitter.emit('usernotice', usernoticeMessage)
+        );
+        client.on('USERSTATE', userstateMessage =>
+          tmiEmitter.emit('userstate', userstateMessage)
+        );
+        client.on('GLOBALUSERSTATE', globaluserstateMessage =>
+          tmiEmitter.emit('globaluserstate', globaluserstateMessage)
+        );
+        client.on('WHISPER', msg => {
+          const oldFormat = {
+            color: msg.colorRaw,
+            username: msg.senderUsername,
+            'message-type': 'chat',
+          };
+
+          delete msg.color;
+
+          msg = { ...msg.ircTags, ...oldFormat, ...msg };
+
+          delete msg.ircTags;
+
+          const username = msg.senderUsername;
+          const message = msg.messageText;
+          const self = msg['user-id'] === '229225576';
+
+          tmiEmitter.emit('whisper', username, msg, message, self);
+        });
+        client.on('JOIN', joinMessage => tmiEmitter.emit('join', joinMessage));
+        client.on('PART', partMessage => tmiEmitter.emit('part', partMessage));
+        client.on('CAP', capMessage => tmiEmitter.emit('cap', capMessage));
+      },
+
+      /**
+       * Gets the event emitter for listening to Twitch chat events
+       * @returns {TmiEmitter} The event emitter
+       */
+      getEmitter() {
+        return tmiEmitter;
+      },
+
+      /**
+       * Joins a Twitch channel
+       * @param {string} channel - The channel to join
+       * @returns {Promise<void>}
+       */
+      async join(channel) {
+        if (!this.client) {
+          throw new Error('Consumer client is not initialized');
+        }
+
+        await this._ensureConnected.call(this);
+
+        channel = channel.startsWith('#') ? channel : `#${channel}`;
+        await this.client.join(channel);
+      },
+
+      /**
+       * Leaves a Twitch channel
+       * @param {string} channel - The channel to leave
+       * @returns {Promise<void>}
+       */
+      async part(channel) {
+        if (!this.client) {
+          throw new Error('Consumer client is not initialized');
+        }
+
+        await this._ensureConnected.call(this);
+
+        channel = channel.startsWith('#') ? channel : `#${channel}`;
+        await this.client.part(channel);
+      }
+    };
+
+    consumer.clientType = 'consumer';
+    consumer._ensureConnected = this._ensureConnected.bind(consumer);
+
+    return consumer;
+  }
+
+  /**
+   * Creates the sender part of the Twitch chat client with authorized config
+   * @private
+   * @returns {Object} Sender instance with message sending capabilities
+   */
+  _createSender() {
+    const sender = {
+      client: null,
+      service: null,
+
+      /**
+       * Sends a message to a channel with throttling and message splitting
+       * @param {string} channel - The channel to send the message to
+       * @param {string} message - The message to send
+       * @returns {Promise<void>}
+       */
+      async say(channel, message) {
+        if (!this.client) {
+          throw new Error('Sender client is not initialized');
+        }
+
+        await this._ensureConnected.call(this);
+
+        channel = channel[0] === '#' ? channel : `#${channel}`;
+        message = message.replace(/\n|\r/g, '');
+
+        if (!_.isString(message)) {
+          message = JSON.stringify(message);
+        }
+
+        const lastMessage = await this.service.redisClient.get(`kbot:lastMessage:${channel}`);
+
+        const lastMessageTimeoutLock = await this.service.redisClient.get(
+          `kbot:lastMessageTimeoutLock:${channel}`
+        );
+
+        if (lastMessageTimeoutLock) {
+          await sleep(4500);
+        }
+
+        const sayMessage = async (channel, message) => {
+          await this.client.say(channel, message);
+
+          const messageHash = _.get(endecrypt.encrypt(message), 'encryptedData');
+
+          await this.service.redisClient.set(`kbot:lastMessage:${channel}`, messageHash, 30);
+          await this.service.redisClient.set(
+            `kbot:lastMessageTimeoutLock:${channel}`,
+            ['true'],
+            4
+          );
+        };
+
+        if (message.length > 500) {
+          const _message = _.chunk(_.split(message, ''), 500);
+
+          for (let messageChunk of _message) {
+            messageChunk = prepareMessage(messageChunk, lastMessage);
+
+            if (_message.length > 1500) {
+              await sayMessage(channel, 'Response too long (1500+ characters)');
+              return null;
+            }
+
+            await sayMessage(channel, messageChunk);
+          }
+        } else {
+          const _message = prepareMessage(message, lastMessage);
+          await sayMessage(channel, _message);
+        }
+      },
+
+      /**
+       * Posts a /me message in the given channel
+       * @param {string} channel - The channel to send the message to
+       * @param {string} message - The message to send
+       * @returns {Promise<void>}
+       */
+      async action(channel, message) {
+        if (!this.client) {
+          throw new Error('Sender client is not initialized');
+        }
+
+        await this._ensureConnected.call(this);
+
+        channel = channel.startsWith('#') ? channel : `#${channel}`;
+        await this.client.me(channel, message);
+      },
+
+      /**
+       * Timeouts a user in a channel
+       * @param {string} channel - The channel in which to timeout the user
+       * @param {string} username - The username of the person to timeout
+       * @param {number} length - The duration of the timeout in seconds
+       * @param {string} [reason=''] - The reason for the timeout
+       * @returns {Promise<void>}
+       */
+      async timeout(channel, username, length, reason = '') {
+        if (!this.client) {
+          throw new Error('Sender client is not initialized');
+        }
+
+        await this._ensureConnected.call(this);
+
+        await this.client.timeout(channel.replace('#', ''), username, length, reason);
+      },
+
+      /**
+       * Sends a whisper to a user
+       * @param {string} username - The username of the person to whisper
+       * @param {string} message - The message to send
+       * @returns {Promise<void>}
+       */
+      async whisper(username, message) {
+        if (!this.client) {
+          throw new Error('Sender client is not initialized');
+        }
+
+        await this._ensureConnected.call(this);
+
+        message = message.replace(/(\r\n|\n|\r)/gm, '');
+
+        await this.client.whisper(username, message);
+
+        await this.service.sqlClient.query(
+          `
+          INSERT INTO whispers_sent (username, message, date)
+          VALUES (?, ?, CURRENT_TIMESTAMP)`,
+          [username, message]
+        );
+      },
+    };
+
+    sender.clientType = 'sender';
+    sender._ensureConnected = this._ensureConnected.bind(sender);
+
+    return sender;
+  }
+
+  /**
+   * Sets the service connector for database operations
+   * @param {Object} serviceConnector - The service connector
+   */
   setServiceConnector(serviceConnector) {
     this.service = serviceConnector;
   }
 
   /**
-   * Establishes a connection to the Twitch chat using dank-twitch-irc.
-   * @param {Object} connectionArgs - Connection arguments containing config and type.
-   * @param {Object} [connectionArgs.config] - Optional custom configuration for the chat client.
-   * @param {string} [connectionArgs.type] - Type of connection, used for selecting channels.
+   * Establishes connections for both consumer and sender
+   * @param {Object} connectionArgs - Connection arguments
    * @returns {Promise<void>}
-   * @throws {Error} If there is an error during connection.
    */
   async connect(connectionArgs) {
-    if (this.isConnected) return; // If already connected, do nothing
-
-    // Ensure that any method waits for the connection to complete before executing
-    this.connectionPromise = this._connectInternal(connectionArgs);
-    await this.connectionPromise;
-  }
-
-  /**
-   * Internal method to handle the actual connection process.
-   * @private
-   * @param {Object} connectionArgs - Connection arguments containing config and type.
-   * @returns {Promise<void>}
-   */
-  async _connectInternal(connectionArgs) {
-    const { config, type } = connectionArgs || {};
+    const { isLogger = false, isSender = true, isConsumer = true } = connectionArgs || {};
 
     const serviceConnector = require('../serviceConnector');
+
     this.service =
       this.service ||
       (await serviceConnector.Connector.dependencies(['sql', 'redis', 'rabbit']));
 
-    this.client = config ? new ChatClient(config) : new ChatClient(tmiConfig);
+    if (isConsumer) {
+      this.consumerConnectionPromise = this._connectConsumer(isLogger);
+    }
 
-    let channels;
+    if (isSender) {
+      this.senderConnectionPromise = this._connectSender();
+    }
+
+    await Promise.all(_.compact([this.consumerConnectionPromise, this.senderConnectionPromise]));
+
+    this.consumerConnectionPromise = null;
+    this.senderConnectionPromise = null;
+  }
+
+  /**
+   * Connects the consumer client with anonymous config and joins channels
+   * @private
+   * @param {Boolean} [isLogger] - Process type for channel selection
+   * @returns {Promise<void>}
+   */
+  async _connectConsumer(isLogger) {
+    if (this.isConsumerConnected) return;
+
+    const consumerClient = new ChatClient(tmiConfig.anonymous);
+    this.consumer.client = consumerClient;
+
+    let channels = [];
 
     if (process.platform !== 'win32') {
       const owner = await this.service.sqlClient.query(
@@ -71,7 +407,7 @@ class TmiClient {
       );
       channels = [_.get(owner, '0.username'), 'nymn', 'forsen'];
     } else {
-      if (type) {
+      if (isLogger) {
         channels = await this.service.sqlClient.query('SELECT * FROM channels_logger');
       } else {
         channels = await this.service.sqlClient.query('SELECT * FROM channels');
@@ -79,46 +415,51 @@ class TmiClient {
       channels = channels.map(i => i.channel);
     }
 
-    this.client.on('connect', () => {
-      this.tmiEmitter.emit('connected', true);
-
-      this.isConnected = true;
+    consumerClient.on('connect', () => {
+      this.consumer.getEmitter().emit('connected', true);
+      this.isConsumerConnected = true
 
       if (MODE === 'production') {
-        console.log(`TMI connected, beginning to join ${_.size(channels)} channels...`);
+        console.log(`Consumer TMI connected, beginning to join ${_.size(channels)} channels...`);
       } else {
         console.log(
-          `TMI connected in development mode, beginning to join #ksyncbot channel...`
+          `Consumer TMI connected in development mode, beginning to join #ksyncbot channel...`
         );
       }
     });
 
-    await this.client.connect();
-    TmiClient.instance.native = this.client;
+    await consumerClient.connect();
 
-    this.client.on('close', error => {
-      this.tmiEmitter.emit('close', error);
+    consumerClient.on('close', error => {
+      this.consumer.getEmitter().emit('close', error);
 
-      this.isConnected = false;
+      this.isConsumerConnected = false
 
-      console.log('TMI connection closed');
+      console.log('Consumer TMI connection closed');
     });
 
-    if (MODE === 'production') {
-      await this.client.joinAll(channels).catch(err => {
-        console.log(err);
-      });
-    } else {
-      await this.client.join('#ksyncbot');
+    this.consumer.setupEventHandlers(consumerClient);
+
+    for (let channel of channels) {
+      if (MODE === "development") {
+        await consumerClient.join('#ksyncbot');
+        break;
+      }
+
+      try {
+        await consumerClient.join(channel);
+      } catch (err) {
+        console.log(err.message)
+      }
+
+      await sleep(500);
     }
 
-    this._setupEventHandlers();
-
-    console.log('TMI ready');
+    console.log('Consumer TMI ready');
 
     let notJoinedChannels = [];
 
-    for (let connection of this.client.connections) {
+    for (let connection of consumerClient.connections) {
       notJoinedChannels.push(
         ..._.difference([...connection.wantedChannels], [...connection.joinedChannels])
       );
@@ -126,7 +467,7 @@ class TmiClient {
 
     if (!!_.size(notJoinedChannels)) {
       console.log(
-        `TMI failed to join ${`${_.size(notJoinedChannels)}/${_.size(channels)}`} channels.`
+        `Consumer TMI failed to join ${_.size(notJoinedChannels)}/${_.size(channels)} channels.`
       );
 
       await this.service.rabbitClient.sendToQueue(
@@ -137,299 +478,30 @@ class TmiClient {
   }
 
   /**
-   * Ensures that the connection is established before executing any method.
+   * Connects the sender client with authorized config
    * @private
    * @returns {Promise<void>}
    */
-  async _ensureConnected() {
-    if (this.connectionPromise) {
-      await this.connectionPromise;
-    } else if (!this.isConnected) {
-      throw new Error('TMI client is not connected. Please call "connect" first.');
-    }
-  }
+  async _connectSender() {
+    if (this.isSenderConnected) return;
 
-  /**
-   * Sets up all event handlers for the Twitch chat client.
-   * @private
-   */
-  _setupEventHandlers() {
-    this.client.on('PRIVMSG', msg => {
-      const oldFormat = {
-        color: msg.colorRaw,
-        username: msg.senderUsername,
-        'message-type': 'chat',
-      };
+    const senderClient = new ChatClient(tmiConfig.authorized);
+    this.sender.client = senderClient;
+    this.sender.service = this.service;
 
-      delete msg.color;
-
-      msg = { ...msg.ircTags, ...oldFormat, ...msg };
-
-      delete msg.ircTags;
-
-      const self = msg['user-id'] === '229225576';
-      const getAction = _.includes(
-        _.get(_.split(_.get(msg, 'ircParameters.1'), ' '), '0'),
-        'ACTION'
-      );
-
-      if (getAction) {
-        this.tmiEmitter.emit('action', `#${msg.channelName}`, msg, msg.messageText, self);
-      } else {
-        this.tmiEmitter.emit('message', `#${msg.channelName}`, msg, msg.messageText, self);
-      }
+    senderClient.on('connect', () => {
+      this.isSenderConnected = true;
+      console.log('Sender TMI connected');
     });
 
-    this.client.on('rawCommand', cmd => this.tmiEmitter.emit('rawCommand', cmd));
-    this.client.on('CLEARCHAT', msg => {
-      if (msg.targetUsername) {
-        this.tmiEmitter.emit(
-          'timeout',
-          `#${msg.channelName}`,
-          msg.targetUsername,
-          'timeout',
-          msg.banDuration,
-          msg
-        );
-      } else {
-        this.tmiEmitter.emit('clearchat', `#${msg.channelName}`);
-      }
+    await senderClient.connect();
+
+    senderClient.on('close', error => {
+      this.isSenderConnected = false;
+      console.log('Sender TMI connection closed');
     });
-    this.client.on('CLEARMSG', clearmsgMessage =>
-      this.tmiEmitter.emit('clearmsg', clearmsgMessage)
-    );
-    this.client.on('HOSTTARGET', hosttargetMessage =>
-      this.tmiEmitter.emit('host', hosttargetMessage)
-    );
-    this.client.on('NOTICE', msg => {
-      this.tmiEmitter.emit(
-        'notice',
-        `#${msg.channelName}`,
-        msg.messageID,
-        _.get(msg, 'messageText', _.stubString())
-      );
-    });
-    this.client.on('ROOMSTATE', roomstateMessage =>
-      this.tmiEmitter.emit('roomstate', roomstateMessage)
-    );
-    this.client.on('USERNOTICE', usernoticeMessage =>
-      this.tmiEmitter.emit('usernotice', usernoticeMessage)
-    );
-    this.client.on('USERSTATE', userstateMessage =>
-      this.tmiEmitter.emit('userstate', userstateMessage)
-    );
-    this.client.on('GLOBALUSERSTATE', globaluserstateMessage =>
-      this.tmiEmitter.emit('globaluserstate', globaluserstateMessage)
-    );
-    this.client.on('WHISPER', msg => {
-      const oldFormat = {
-        color: msg.colorRaw,
-        username: msg.senderUsername,
-        'message-type': 'chat',
-      };
 
-      delete msg.color;
-
-      msg = { ...msg.ircTags, ...oldFormat, ...msg };
-
-      delete msg.ircTags;
-
-      const username = msg.senderUsername;
-      const message = msg.messageText;
-      const self = msg['user-id'] === '229225576';
-
-      this.tmiEmitter.emit('whisper', username, msg, message, self);
-    });
-    this.client.on('JOIN', joinMessage => this.tmiEmitter.emit('join', joinMessage));
-    this.client.on('PART', partMessage => this.tmiEmitter.emit('part', partMessage));
-    this.client.on('CAP', capMessage => this.tmiEmitter.emit('cap', capMessage));
-  }
-
-  /**
-   * Joins a Twitch channel (for session).
-   * @param {string} channel - The channel to join.
-   * @returns {Promise<void>}
-   */
-  async join(channel) {
-    await this._ensureConnected();
-    channel = channel.startsWith('#') ? channel : `#${channel}`;
-    this.client.join(channel);
-  }
-
-  /**
-   * Leaves a Twitch channel (for session).
-   * @param {string} channel - The channel to leave.
-   * @returns {Promise<void>}
-   */
-  async part(channel) {
-    await this._ensureConnected();
-    channel = channel.startsWith('#') ? channel : `#${channel}`;
-    this.client.part(channel);
-  }
-
-  /**
-   * Posts a /me message in the given channel.
-   * @param {string} channel - The channel to send the message to.
-   * @param {string} message - The message to send.
-   * @returns {Promise<void>}
-   */
-  async action(channel, message) {
-    await this._ensureConnected();
-    channel = channel.startsWith('#') ? channel : `#${channel}`;
-    this.client.me(channel, message);
-  }
-
-  /**
-   * Timeouts a user in a channel.
-   * @param {string} channel - The channel in which to timeout the user.
-   * @param {string} username - The username of the person to timeout.
-   * @param {number} length - The duration of the timeout in seconds.
-   * @param {string} [reason=''] - The reason for the timeout.
-   * @returns {Promise<void>}
-   */
-  async timeout(channel, username, length, reason = '') {
-    await this._ensureConnected();
-    this.client.timeout(channel.replace('#', ''), username, length, reason);
-  }
-
-  /**
-   * Bans a user in a channel.
-   * @param {string} channel - The channel in which to ban the user.
-   * @param {string} username - The username of the person to ban.
-   * @param {string} [reason=''] - The reason for the ban.
-   * @returns {Promise<void>}
-   */
-  async ban(channel, username, reason = '') {
-    await this._ensureConnected();
-    this.client.ban(channel.replace('#', ''), username, reason);
-  }
-
-  /**
-   * Sends a whisper to a user.
-   * @param {string} username - The username of the person to whisper.
-   * @param {string} message - The message to send.
-   * @returns {Promise<void>}
-   */
-  async whisper(username, message) {
-    await this._ensureConnected();
-    message = message.replace(/(\r\n|\n|\r)/gm, '');
-
-    await this.client.whisper(username, message);
-
-    await this.service.sqlClient.query(
-      `
-      INSERT INTO whispers_sent (username, message, date)
-      VALUES (?, ?, CURRENT_TIMESTAMP)`,
-      [username, message]
-    );
-  }
-
-  /**
-   * Sets the bot's color.
-   * @param {string} color - The color to set.
-   * @returns {Promise<void>}
-   */
-  async setColor(color) {
-    await this._ensureConnected();
-    this.client.setColor(color);
-  }
-
-  /**
-   * Gets the list of mods in a channel.
-   * @param {string} channel - The channel to get the mods from.
-   * @returns {Promise<Array<string>>} A promise that resolves to an array of mod usernames.
-   */
-  async getMods(channel) {
-    await this._ensureConnected();
-    return this.client.getMods(channel);
-  }
-
-  /**
-   * Gets the list of VIPs in a channel.
-   * @param {string} channel - The channel to get the VIPs from.
-   * @returns {Promise<Array<string>>} A promise that resolves to an array of VIP usernames.
-   */
-  async getVips(channel) {
-    await this._ensureConnected();
-    return this.client.getVips(channel);
-  }
-
-  /**
-   * Sends a ping to the Twitch IRC server.
-   * @returns {Promise<void>} A promise that resolves when the ping is sent.
-   */
-  async ping() {
-    await this._ensureConnected();
-    return this.client.ping();
-  }
-
-  /**
-   * Sends a raw PRIVMSG to the given channel.
-   * @param {string} channel - The channel to send the message to.
-   * @param {string} message - The message to send.
-   * @returns {Promise<void>}
-   */
-  async sayRaw(channel, message) {
-    await this._ensureConnected();
-    this.client.privmsg(channel, message);
-  }
-
-  /**
-   * Sends a message to a channel, handling throttling and message splitting.
-   * @param {string} channel - The channel to send the message to.
-   * @param {string} message - The message to send.
-   * @returns {Promise<void>} A promise that resolves when the message has been sent.
-   */
-  say = async (channel, message) => {
-    await this._ensureConnected();
-    channel = channel[0] === '#' ? channel : `#${channel}`;
-    message = message.replace(/\n|\r/g, '');
-
-    if (!_.isString(message)) {
-      message = JSON.stringify(message);
-    }
-
-    const lastMessage = await this.service.redisClient.get(`kbot:lastMessage:${channel}`);
-
-    const lastMessageTimeoutLock = await this.service.redisClient.get(
-      `kbot:lastMessageTimeoutLock:${channel}`
-    );
-
-    if (lastMessageTimeoutLock) {
-      await sleep(4500);
-    }
-
-    const sayMessage = async (channel, message) => {
-      await this.client.say(channel, message);
-
-      const messageHash = _.get(endecrypt.encrypt(message), 'encryptedData');
-
-      await this.service.redisClient.set(`kbot:lastMessage:${channel}`, messageHash, 30);
-      await this.service.redisClient.set(
-        `kbot:lastMessageTimeoutLock:${channel}`,
-        ['true'],
-        4
-      );
-    };
-
-    // Split the message in separate chunks if it exceeds 500 characters
-    if (message.length > 500) {
-      const _message = _.chunk(_.split(message, ''), 500);
-
-      for (let messageChunk of _message) {
-        messageChunk = prepareMessage(messageChunk, lastMessage);
-
-        if (_message.length > 1500) {
-          await sayMessage(channel, 'Response too long (1500+ characters)');
-          return null;
-        }
-
-        await sayMessage(channel, messageChunk);
-      }
-    } else {
-      const _message = prepareMessage(message, lastMessage);
-      await sayMessage(channel, _message);
-    }
+    console.log('Sender TMI ready');
   }
 }
 
