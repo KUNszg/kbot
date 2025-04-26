@@ -15,11 +15,11 @@ const pageCommandsCode = services => {
           fs.readFileSync('../../kbot-website/html/express_pages/commandCode.html')
         );
 
-        const page = Commons.UtilityRepository().htmlPageCompiler(html, [
+        const page = Commons.UtilityRepository().complementHtmlPageTemplates(html, [
           {
             requestedFile,
-            query,
-          },
+            query
+          }
         ]);
 
         res.send(page);

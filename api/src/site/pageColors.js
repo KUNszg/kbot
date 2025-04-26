@@ -36,10 +36,10 @@ const pageColors = services => {
       colors = stats;
     }
 
-    const page = Commons.UtilityRepository().htmlPageCompiler(html, [
+    const page = Commons.UtilityRepository().complementHtmlPageTemplates(html, [
       {
-        colors,
-      },
+        colors
+      }
     ]);
 
     res.send(page);

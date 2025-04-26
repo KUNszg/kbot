@@ -31,10 +31,10 @@ const pageLastfm = services => {
       fs.readFileSync('../../kbot-website/html/express_pages/lastfm.html')
     );
 
-    const page = Commons.UtilityRepository().htmlPageCompiler(html, [
+    const page = Commons.UtilityRepository().complementHtmlPageTemplates(html, [
       {
-        code: verifCode,
-      },
+        code: verifCode
+      }
     ]);
 
     res.send(page);

@@ -76,7 +76,6 @@ const userGet = services => {
               userId: Number(channels[i].userId),
               name: _channel,
               liveStatus: channels[i].status,
-              isStrict: channels[i].strict === 'Y',
               created: new Date(timestampBot).toISOString(),
               commandsUsed: executionsCount,
               isBanphraseApiActive: isBanphraseApiActive,

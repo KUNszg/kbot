@@ -26,7 +26,7 @@ const pageCommands = services => {
       'opt-out': ` <div class='table-headers'>opt-out</div> `,
       code: ` <div class='table-headers'>code</div> `,
       usage: ` <div class='table-headers'>usage</div> `,
-      description: ` <div class='table-headers'>description</div> `,
+      description: ` <div class='table-headers'>description</div> `
     };
 
     const table = new Table({ class: 'table-context' })
@@ -38,10 +38,10 @@ const pageCommands = services => {
       fs.readFileSync('../../kbot-website/html/express_pages/commands.html')
     );
 
-    const page = Commons.UtilityRepository().htmlPageCompiler(html, [
+    const page = Commons.UtilityRepository().complementHtmlPageTemplates(html, [
       {
-        table,
-      },
+        table
+      }
     ]);
 
     res.send(page);

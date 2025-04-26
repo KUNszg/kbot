@@ -82,7 +82,7 @@ const pageEmotes = services => {
 
     const emotesAddedHTMLTable = new Table({
       class: 'table-context',
-      id: 'added-emotes-table',
+      id: 'added-emotes-table'
     })
       .setHeaders(headers)
       .setData(tableData)
@@ -90,13 +90,13 @@ const pageEmotes = services => {
 
     const emotesRemovedHTMLTable = new Table({
       class: 'table-context',
-      id: 'removed-emotes-table',
+      id: 'removed-emotes-table'
     })
       .setHeaders(headersRemoved)
       .setData(tableDataRemoved)
       .render();
 
-    const page = Commons.UtilityRepository().htmlPageCompiler(html, [
+    const page = Commons.UtilityRepository().complementHtmlPageTemplates(html, [
       {
         search,
         search2: search,
@@ -105,8 +105,8 @@ const pageEmotes = services => {
         emoteCount7Tv: getAllPlatformsEmoteCount(emotesAdded, '7tv'),
         query: emotesUpdate,
         emotesAdded: emotesAddedHTMLTable,
-        emotesRemoved: emotesRemovedHTMLTable,
-      },
+        emotesRemoved: emotesRemovedHTMLTable
+      }
     ]);
 
     res.send(page);

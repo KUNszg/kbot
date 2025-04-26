@@ -19,9 +19,9 @@ class UtilityRepository extends CommonRepository {
         d: () => 'd',
         h: () => 'h',
         m: () => 'm',
-        s: () => 's',
-      },
-    },
+        s: () => 's'
+      }
+    }
   });
 
   constructor(serviceConnector = {}) {
@@ -49,7 +49,7 @@ class UtilityRepository extends CommonRepository {
    * should be used as replacement values.
    * @returns {string} The modified HTML.
    */
-  htmlPageCompiler(html, repl) {
+  complementHtmlPageTemplates(html, repl) {
     this.html = html;
     this.value = repl[0];
     this.valueKeys = Object.keys(repl[0]).map(i => `%{${i}}`);
@@ -101,7 +101,7 @@ class UtilityRepository extends CommonRepository {
       units: ['y', 'mo', 'd', 'h', 'm', 's'],
       largest: 3,
       round: true,
-      spacer: '',
+      spacer: ''
     });
   }
 
@@ -160,6 +160,29 @@ class UtilityRepository extends CommonRepository {
     return customHttpStatus(code);
   }
 
+  /**
+   * Limits multiple string inputs to a specified maximum number of characters
+   * and adds "(...)" indicator when truncation occurs
+   * @param {number} [maxLength=30] - Maximum allowed length (default: 30)
+   * @param {Array} inputs - One or more inputs to limit
+   * @returns {Array} Array of limited strings
+   */
+  limitInputLength(inputs = [], maxLength = 30) {
+    return _.map(inputs, input => {
+      const str = String(input);
+
+      if (!str) {
+        return input;
+      }
+
+      if (_.size(str) > maxLength) {
+        return `${_.join(_.slice(str, 0, maxLength), '')}(...)`;
+      }
+
+      return str;
+    });
+  }
+
   getCommandNameFromText(text) {
     const textWithoutPrefix = _.tail(_.split(text, ' '));
     return _.first(textWithoutPrefix);
@@ -196,7 +219,7 @@ class UtilityRepository extends CommonRepository {
       convertedText,
       detectedCommand,
       detectedAlias,
-      aliasAsRegexp,
+      aliasAsRegexp
     };
   }
 
@@ -205,6 +228,24 @@ class UtilityRepository extends CommonRepository {
     return await this.serviceConnector.redisClient.get(
       `kb:cooldown:command:${command}:processing`
     );
+  }
+
+  findUsernameInUserInputParts(userInputParts, { trimSubCommand = false } = {}) {
+    if (trimSubCommand) {
+      userInputParts = _.tail(userInputParts);
+    }
+
+    const username = _.replace(
+      _.find(userInputParts, part => _.startsWith(part, '@')) || '',
+      /[@,]/,
+      ''
+    );
+
+    if (!_.isEmpty(username)) {
+      return username;
+    }
+
+    return _.first(userInputParts) || null;
   }
 }
 

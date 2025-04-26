@@ -27,10 +27,10 @@ const pageLastfmResolved = services => {
       fs.readFileSync('../../kbot-website/html/express_pages/lastfmResolve.html')
     );
 
-    const page = Commons.UtilityRepository.htmlPageCompiler(html, [
+    const page = Commons.UtilityRepository.complementHtmlPageTemplates(html, [
       {
-        code: _.get(req, 'query.verifcode'),
-      },
+        code: _.get(req, 'query.verifcode')
+      }
     ]);
 
     try {

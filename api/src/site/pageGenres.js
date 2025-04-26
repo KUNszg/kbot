@@ -11,10 +11,10 @@ const pageGenres = services => {
       fs.readFileSync('../../kbot-website/html/express_pages/genres.html')
     );
 
-    const page = Commons.UtilityRepository().htmlPageCompiler(html, [
+    const page = Commons.UtilityRepository().complementHtmlPageTemplates(html, [
       {
-        genres,
-      },
+        genres
+      }
     ]);
 
     res.send(page);

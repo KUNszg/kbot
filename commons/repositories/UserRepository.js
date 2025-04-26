@@ -1,4 +1,9 @@
+const _ = require('lodash');
+const moment = require('moment');
+
 const CommonRepository = require('./CommonRepository');
+const got = require('got');
+const creds = require('../../lib/credentials/config');
 
 const USER_GLOBAL_COOLDOWN_EXPIRATION_SEC =
   process.env.USER_GLOBAL_COOLDOWN_EXPIRATION_SEC || 5;
@@ -141,7 +146,7 @@ class UserRepository extends CommonRepository {
 
     const activity = this._userActivity.get(userId) || { timestamps: [], cooldown: false };
 
-    activity.timestamps = activity.timestamps.filter(timestamp => now - timestamp <= 1000);
+    activity.timestamps = _.filter(activity.timestamps, timestamp => now - timestamp <= 1000);
 
     activity.timestamps.push(now);
 
@@ -179,6 +184,136 @@ class UserRepository extends CommonRepository {
 
       return false;
     }
+  }
+
+  _getOauthAccessToken = async (userId, platform = 'spotify') => {
+    if (_.isEmpty(userId)) return null;
+
+    const tokenResults = await this.serviceConnector.sqlClient.query(
+      `SELECT access_token AS accessToken, 
+              refresh_token AS refreshToken, 
+              lastRenew, 
+              allowLookup
+       FROM access_token
+       WHERE platform=? AND user=?`,
+      [platform, userId]
+    );
+
+    return _.first(tokenResults);
+  };
+
+  _fetchAndRefreshSpotifyOauthToken = async refreshToken => {
+    return got(`https://accounts.spotify.com/api/token`, {
+      method: 'POST',
+      searchParams: {
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_secret: creds.client_secret_spotify || process.client_secret_spotify,
+        client_id: creds.client_id_spotify || process.client_id_spotify
+      },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }).json();
+  };
+
+  _createSpotifyAuthorizedRequester = accessToken => {
+    return async (method, endpoint, payload) => {
+      return got(`https://api.spotify.com${endpoint}`, {
+        method,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        json: payload
+      }).json();
+    };
+  };
+
+  async spotifyFetchWithOauth(method = 'GET', endpoint, userId, isSender = true, payload) {
+    const refreshOauthAccessToken = await this._getOauthAccessToken(userId);
+
+    if (!refreshOauthAccessToken) {
+      throw new Error('Spotify Oauth token not found');
+    }
+
+    let { lastRenew, accessToken, refreshToken, allowLookup } = refreshOauthAccessToken;
+
+    if (allowLookup === 'N' && !isSender) {
+      throw new Error('Spotify lookup not allowed');
+    }
+
+    if (moment(lastRenew).isBefore(moment().subtract(59, 'minutes'))) {
+      const spotifyOauthResult = await this._fetchAndRefreshSpotifyOauthToken(refreshToken);
+
+      if (_.isEmpty(spotifyOauthResult)) {
+        throw new Error('Spotify Oauth token could not be refreshed');
+      }
+
+      await this.serviceConnector.sqlClient.query(
+        `UPDATE access_token
+         SET access_token=?,
+            scopes=?,
+            lastRenew=?
+         WHERE platform="spotify" AND user=?`,
+        [
+          spotifyOauthResult.access_token,
+          spotifyOauthResult.scope,
+          moment().format('YYYY-MM-DD HH:mm:ss'),
+          userId
+        ]
+      );
+
+      accessToken = spotifyOauthResult.access_token;
+    }
+
+    const spotifyRequest = this._createSpotifyAuthorizedRequester(accessToken);
+
+    let isPremium;
+    let profileResponse;
+
+    try {
+      profileResponse = await spotifyRequest('GET', '/v1/me');
+      isPremium = _.get(profileResponse, 'product') === 'open' ? 'N' : 'Y';
+
+      await this.serviceConnector.sqlClient.query(
+        `UPDATE access_token
+         SET premium=?, lastRenew = CURRENT_DATE()
+         WHERE platform="spotify" AND user=?`,
+        [isPremium, userId]
+      );
+    } catch (err) {
+      const error = JSON.parse(err.response.body);
+
+      if (
+        error.error === 'invalid_grant' &&
+        error.error_description === 'Refresh token revoked'
+      ) {
+        await this.serviceConnector.sqlClient.query(
+          `DELETE FROM access_token
+           WHERE platform="spotify" AND user=?`,
+          [userId]
+        );
+      }
+    }
+
+    let endpointResponse = null;
+
+    if (!!endpoint) {
+      endpointResponse = await spotifyRequest(method, endpoint, payload);
+    }
+
+    return {
+      spotifyUser: {
+        lastRenew,
+        accessToken,
+        refreshToken,
+        allowLookup,
+        isPremium: isPremium === 'Y'
+      },
+      profileResponse,
+      endpointResponse
+    };
   }
 }
 

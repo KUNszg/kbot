@@ -21,16 +21,16 @@ const pageSpotifyResolved = services => {
         const spotifyToken = await got(api, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
         }).json();
 
         const profile = await got(`https://api.spotify.com/v1/me`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${spotifyToken.access_token}`,
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
         }).json();
 
         await kb.sqlClient.query(
@@ -41,7 +41,7 @@ const pageSpotifyResolved = services => {
             spotifyToken.access_token,
             spotifyToken.refresh_token,
             profile.product === 'open' ? 'N' : 'Y',
-            verifCode,
+            verifCode
           ]
         );
       })();
@@ -55,10 +55,10 @@ const pageSpotifyResolved = services => {
       fs.readFileSync('../../kbot-website/html/express_pages/spotifyResolve.html')
     );
 
-    const page = Commons.UtilityRepository().htmlPageCompiler(html, [
+    const page = Commons.UtilityRepository().complementHtmlPageTemplates(html, [
       {
-        code: verifCode,
-      },
+        code: verifCode
+      }
     ]);
 
     res.send(page);

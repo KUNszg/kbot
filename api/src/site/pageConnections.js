@@ -17,11 +17,11 @@ const pageConnections = services => {
       fs.readFileSync('../../kbot-website/html/express_pages/connections.html')
     );
 
-    const page = Commons.UtilityRepository().htmlPageCompiler(html, [
+    const page = Commons.UtilityRepository().complementHtmlPageTemplates(html, [
       {
         execs: commandExecutionsCount,
-        users: spotifyAndLastfmUserLoggedInCount,
-      },
+        users: spotifyAndLastfmUserLoggedInCount
+      }
     ]);
 
     res.send(page);
