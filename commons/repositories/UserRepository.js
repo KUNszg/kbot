@@ -230,7 +230,7 @@ class UserRepository extends CommonRepository {
     };
   };
 
-  async spotifyFetchWithOauth(method = 'GET', endpoint, userId, isSender = true, payload) {
+  async spotifyFetchWithOauth(method = 'GET', endpoint, { userId, isSender = true, payload }) {
     const refreshOauthAccessToken = await this._getOauthAccessToken(userId);
 
     if (!refreshOauthAccessToken) {

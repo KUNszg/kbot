@@ -1,6 +1,7 @@
 const UserRepository = require('./repositories/UserRepository');
 const ChannelRepository = require('./repositories/ChannelRepository');
 const UtilityRepository = require('./repositories/UtilityRepository');
+const ResponseRepository = require('./repositories/ResponseRepository');
 
 const CommonRepository = require('./repositories/CommonRepository');
 
@@ -44,18 +45,28 @@ function getChannelRepositoryInstance(serviceConnector) {
 }
 
 /**
- * Gets the singleton instance of ChannelRepository.
+ * Gets the singleton instance of UtilityRepository.
  * @param {Object} [serviceConnector] - Client connection manager.
- * @returns The singleton instance of ChannelRepository.
+ * @returns The singleton instance of UtilityRepository.
  */
 function getUtilityRepositoryInstance(serviceConnector) {
   return getRepositoryInstance(UtilityRepository, serviceConnector);
+}
+
+/**
+ * Gets the singleton instance of ResponseRepository.
+ * @param {Object} [serviceConnector] - Client connection manager.
+ * @returns The singleton instance of ResponseRepository.
+ */
+function getResponseRepositoryInstance(serviceConnector) {
+  return getRepositoryInstance(ResponseRepository, serviceConnector);
 }
 
 module.exports = {
   UserRepository: getUserRepositoryInstance,
   ChannelRepository: getChannelRepositoryInstance,
   UtilityRepository: getUtilityRepositoryInstance,
+  ResponseRepository: getResponseRepositoryInstance,
   CommonRepository,
-  ServiceConnector,
+  ServiceConnector
 };
