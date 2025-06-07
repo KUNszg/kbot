@@ -71,7 +71,13 @@ module.exports = {
 
   REGISTER: {
     SUCCESS: {
-      REGISTER_LINK: `You can connect your apps with KsyncBot at https://kunszg.com/commands/register`
+      REGISTER_LINK: `you can connect your apps with KsyncBot at https://kunszg.com/account/connected-apps`
+    }
+  },
+
+  UNREGISTER: {
+    SUCCESS: {
+      UNREGISTER_LINK: `to remove connections with KsyncBot please visit https://kunszg.com/account/connected-apps`
     }
   }
 };

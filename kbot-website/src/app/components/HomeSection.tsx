@@ -1,8 +1,13 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import React from 'react';
 
-export default function HomeSection({ botName }) {
+interface HomeSectionProps {
+  botName: React.ReactNode;
+}
+
+export default function HomeSection({ botName }: HomeSectionProps) {
   return (
     <div className="text-center">
       <motion.h1

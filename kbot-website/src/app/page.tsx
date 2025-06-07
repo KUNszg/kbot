@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { motion } from 'framer-motion';
-import { FiMenu } from 'react-icons/fi'; // React Icons
+import { FiMenu } from 'react-icons/fi';
 import SessionProvider from './providers/SessionProvider';
 import Sidebar from './components/Sidebar';
 import StatsBox from './components/StatsBox';
@@ -51,7 +51,6 @@ function HomeContent() {
 
   return (
     <div className="flex min-h-screen relative">
-      {/* Mobile Menu Button */}
       <button
         className="absolute top-4 left-4 md:hidden z-50 p-2 bg-gray-800 text-white rounded"
         onClick={() => setSidebarOpen(true)}
@@ -59,7 +58,6 @@ function HomeContent() {
         <FiMenu size={24} />
       </button>
 
-      {/* Sidebar */}
       <Sidebar
         activeSection={activeSection}
         setActiveSection={setActiveSection}
@@ -68,7 +66,6 @@ function HomeContent() {
         setSidebarOpen={setSidebarOpen}
       />
 
-      {/* Overlay when Sidebar is Open on Mobile */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
@@ -76,11 +73,9 @@ function HomeContent() {
         ></div>
       )}
 
-      {/* Mobile Stats Bubble & Desktop Stats Box */}
       <StatsBox stats={stats} />
 
-      {/* Main Content Section */}
-      <main className="flex-1 p-6 md:p-8 bg-gray-800 overflow-auto">
+      <main className="flex-1 p-6 md:p-8 bg-gray-800 overflow-auto text-white">
         {activeSection === 'home' && (
           <HomeSection
             botName={

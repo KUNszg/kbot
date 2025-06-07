@@ -1,15 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiBarChart2, FiUsers, FiMessageSquare, FiClock } from 'react-icons/fi';
 
-export default function StatsBox({ stats }) {
+interface Stats {
+  users: number;
+  messages: number;
+  uptime: string;
+}
+
+interface StatsBoxProps {
+  stats: Stats;
+}
+
+interface StatItemProps {
+  icon: React.ReactNode;
+  label: string;
+  value: string | number;
+}
+
+export default function StatsBox({ stats }: StatsBoxProps) {
   const [showStats, setShowStats] = useState(false);
 
   return (
     <>
-      {/* Bubble Button for Mobile */}
       <button
         onClick={() => setShowStats(true)}
         className="md:hidden fixed bottom-4 right-4 bg-[#9146FF] text-white p-4 rounded-full shadow-lg flex items-center justify-center"
@@ -17,7 +32,6 @@ export default function StatsBox({ stats }) {
         <FiBarChart2 size={24} />
       </button>
 
-      {/* Desktop Stats Box */}
       <div className="hidden md:block absolute top-4 right-4 bg-gray-800 p-4 rounded-lg shadow-lg w-64 text-left">
         <h2 className="text-lg font-semibold text-center">Live Stats</h2>
         <div className="flex justify-between border-b border-gray-600 py-1">
@@ -31,7 +45,6 @@ export default function StatsBox({ stats }) {
         </div>
       </div>
 
-      {/* Mobile Stats Modal */}
       <AnimatePresence>
         {showStats && (
           <motion.div
@@ -68,8 +81,7 @@ export default function StatsBox({ stats }) {
   );
 }
 
-// Stat item component
-const StatItem = ({ icon, label, value }) => (
+const StatItem = ({ icon, label, value }: StatItemProps) => (
   <div className="flex items-center bg-gray-700 p-3 rounded-lg shadow">
     <span className="text-[#9146FF] mr-2">{icon}</span>
     <p className="text-lg">

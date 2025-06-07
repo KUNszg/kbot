@@ -11,15 +11,29 @@ class SqlClient {
   /**
    * Creates an instance of SqlClient or returns the existing instance.
    * @constructor
+   * @param {Object} [customConfig] - Optional custom configuration to override default config
    */
-  constructor() {
+  constructor(customConfig = null) {
     if (!SqlClient.instance) {
       SqlClient.instance = this;
       this._sqlClient = null;
       this.isConnected = false;
+      this.customConfig = customConfig;
+    } else if (customConfig && !_.isEqual(SqlClient.instance.customConfig, customConfig)) {
+      SqlClient.instance._sqlClient = null;
+      SqlClient.instance.isConnected = false;
+      SqlClient.instance.customConfig = customConfig;
     }
 
     return SqlClient.instance;
+  }
+
+  /**
+   * Get the configuration to use for the connection
+   * @returns {Object} The SQL configuration object
+   */
+  getConfig() {
+    return this.customConfig || sqlConfig;
   }
 
   /**
@@ -31,10 +45,15 @@ class SqlClient {
   async connect() {
     if (!this._sqlClient) {
       try {
-        this._sqlClient = await mysql.createConnection(sqlConfig);
+        const config = this.getConfig();
+        this._sqlClient = await mysql.createConnection(config);
 
         this.isConnected = true;
-        console.log('SQL connected');
+        console.log('SQL connected with config:', {
+          host: config.host,
+          database: config.database,
+          user: config.user
+        });
 
         this._sqlClient.on('error', error => {
           if (error.fatal) {
@@ -81,6 +100,16 @@ class SqlClient {
 
     return null;
   }
+
+  /**
+   * Static method to create a new SqlClient instance with custom configuration
+   * @param {Object} customConfig - Custom SQL configuration
+   * @returns {SqlClient} New SqlClient instance with custom config
+   */
+  static withCustomConfig(customConfig) {
+    SqlClient.instance = null;
+    return new SqlClient(customConfig);
+  }
 }
 
 /**
@@ -89,4 +118,5 @@ class SqlClient {
  */
 module.exports = {
   sqlClient: new SqlClient(),
+  SqlClient
 };

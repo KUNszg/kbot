@@ -9,7 +9,7 @@ const services = {
   tmi: require('./services/tmiClient'),
   reddit: require('./services/redditClient'),
   discord: require('./services/discordClient'),
-  websocket: require('./services/websocketClient'),
+  websocket: require('./services/websocketClient')
 };
 
 /**
@@ -20,9 +20,22 @@ class ServiceConnector {
     if (!ServiceConnector.instance) {
       ServiceConnector.instance = this;
       this.connectedClients = {};
+      this.customConfigs = {};
     }
 
     return ServiceConnector.instance;
+  }
+
+  /**
+   * Set custom SQL configuration
+   * @param {Object} customSqlConfig - Custom SQL configuration object
+   */
+  setCustomSqlConfig(customSqlConfig) {
+    this.customConfigs.sql = customSqlConfig;
+
+    if (this.connectedClients.sql) {
+      delete this.connectedClients.sql;
+    }
   }
 
   /**
@@ -30,6 +43,10 @@ class ServiceConnector {
    * @returns {SqlClient} The singleton instance of SqlClient.
    */
   get sqlClient() {
+    if (this.customConfigs.sql) {
+      const { SqlClient } = services.sql;
+      return SqlClient.withCustomConfig(this.customConfigs.sql);
+    }
     return services.sql.sqlClient;
   }
 
@@ -85,11 +102,16 @@ class ServiceConnector {
    * Establishes connections to specified service dependencies.
    * @param {Array<string>} deps - The list of dependencies to connect to.
    * @param {Object} [connectionArgs] - Arguments for connection, such as enabling health checks.
+   * @param {Object} [connectionArgs.customSqlConfig] - Custom SQL configuration
    * @returns {Promise<Object>} A promise that resolves to an object containing connected clients.
    */
   async dependencies(deps, connectionArgs) {
     if (!_.isEmpty(deps) && !_.isNil(deps)) {
       const clients = {};
+
+      if (_.get(connectionArgs, 'customSqlConfig')) {
+        this.setCustomSqlConfig(connectionArgs.customSqlConfig);
+      }
 
       if (_.get(connectionArgs, 'enableHealthcheck')) {
         const service = _.get(connectionArgs, 'service');
@@ -109,12 +131,16 @@ class ServiceConnector {
       }
 
       for (let dep of deps) {
-        if (this.connectedClients[dep]) {
+        const needsNewConnection = dep === 'sql' && this.customConfigs.sql;
+
+        if (this.connectedClients[dep] && !needsNewConnection) {
           clients[`${dep}Client`] = this.connectedClients[dep];
         } else {
           const client = _.get(this, `${dep}Client`);
 
-          console.log(`Connecting to ${dep}`);
+          console.log(
+            `Connecting to ${dep}${this.customConfigs[dep] ? ' (custom config)' : ''}`
+          );
 
           if (
             dep === 'tmi' &&
@@ -154,5 +180,5 @@ class ServiceConnector {
 }
 
 module.exports = {
-  Connector: new ServiceConnector(),
+  Connector: new ServiceConnector()
 };
