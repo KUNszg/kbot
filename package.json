@@ -17,8 +17,6 @@
   "author": "kunszg",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/voice": "^0.18.0",
-    "@distube/ytdl-core": "^4.15.1",
     "@mastondzn/dank-twitch-irc": "^7.2.0",
     "@nextui-org/react": "^2.2.10",
     "amqplib": "^0.10.3",

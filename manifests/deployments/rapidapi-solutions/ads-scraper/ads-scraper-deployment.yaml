@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ads-scraper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ads-scraper
+  template:
+    metadata:
+      labels:
+        app: ads-scraper
+    spec:
+      containers:
+        - name: ads-scraper
+          image: docker-registry.kunszg.com/ads-scraper:latest
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: regcred-v1

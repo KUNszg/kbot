@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: ads-scraper
+  labels:
+    app: ads-scraper
+spec:
+  ports:
+    - protocol: TCP
+      port: 8510
+      targetPort: 3000
+  selector:
+    app: ads-scraper
+  type: NodePort
+
