@@ -28,9 +28,9 @@ class RedditClient {
       try {
         await this.client.getMe();
         this.isConnected = true;
-        console.log('Reddit connected');
+        console.log('[Connector-Reddit] Connected');
       } catch (error) {
-        console.error('Reddit connection error:', error);
+        console.error('[Connector-Reddit] Connection error:', error);
         this.isConnected = false;
         this.client = null;
       }
@@ -38,8 +38,17 @@ class RedditClient {
 
     return this.client;
   }
+
+  async close() {
+    if (this.client) {
+      console.log('[Connector-Reddit] Closing connection...');
+      this.client = null;
+      this.isConnected = false;
+      console.log('[Connector-Reddit] Connection closed');
+    }
+  }
 }
 
 module.exports = {
-  redditClient: new RedditClient(),
+  redditClient: new RedditClient()
 };

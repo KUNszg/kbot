@@ -12,24 +12,71 @@ const services = {
   websocket: require('./services/websocketClient')
 };
 
-/**
- * Singleton class for managing service connections.
- */
 class ServiceConnector {
   constructor() {
     if (!ServiceConnector.instance) {
       ServiceConnector.instance = this;
       this.connectedClients = {};
       this.customConfigs = {};
+      this.shutdownInitiated = false;
+
+      this._setupShutdownHandlers();
     }
 
     return ServiceConnector.instance;
   }
 
-  /**
-   * Set custom SQL configuration
-   * @param {Object} customSqlConfig - Custom SQL configuration object
-   */
+  _setupShutdownHandlers() {
+    const gracefulShutdown = async signal => {
+      if (this.shutdownInitiated) {
+        console.log(`[Connector] ${signal} received again, forcing exit...`);
+        process.exit(1);
+      }
+
+      this.shutdownInitiated = true;
+      console.log(`[Connector] ${signal} received, initiating graceful shutdown...`);
+
+      try {
+        await this.closeAllConnections();
+        console.log('[Connector] All connections closed successfully');
+        process.exit(0);
+      } catch (error) {
+        console.error('[Connector] Error during graceful shutdown:', error);
+        process.exit(1);
+      }
+    };
+
+    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+    process.on('uncaughtException', error => {
+      console.error('[Connector] Uncaught Exception:', error);
+      gracefulShutdown('UNCAUGHT_EXCEPTION');
+    });
+
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('[Connector] Unhandled Rejection at:', promise, 'reason:', reason);
+    });
+  }
+
+  async closeAllConnections() {
+    const closePromises = [];
+
+    for (const [serviceName, client] of Object.entries(this.connectedClients)) {
+      if (client && typeof client.close === 'function') {
+        console.log(`[Connector] Closing ${serviceName} connection...`);
+        closePromises.push(
+          client.close().catch(error => {
+            console.error(`[Connector] Error closing ${serviceName}:`, error);
+          })
+        );
+      }
+    }
+
+    await Promise.all(closePromises);
+    this.connectedClients = {};
+  }
+
   setCustomSqlConfig(customSqlConfig) {
     this.customConfigs.sql = customSqlConfig;
 
@@ -38,10 +85,6 @@ class ServiceConnector {
     }
   }
 
-  /**
-   * Getter for the SQL client singleton.
-   * @returns {SqlClient} The singleton instance of SqlClient.
-   */
   get sqlClient() {
     if (this.customConfigs.sql) {
       const { SqlClient } = services.sql;
@@ -50,62 +93,56 @@ class ServiceConnector {
     return services.sql.sqlClient;
   }
 
-  /**
-   * Getter for the RabbitMQ client singleton.
-   * @returns {RabbitClient} The singleton instance of RabbitClient.
-   */
   get rabbitClient() {
     return services.rabbit.rabbitClient;
   }
 
-  /**
-   * Getter for the Redis client singleton.
-   * @returns {RedisClient} The singleton instance of RedisClient.
-   */
   get redisClient() {
     return services.redis.redisClient;
   }
 
-  /**
-   * Getter for the TMI client singleton.
-   * @returns {TmiClient} The singleton instance of TmiClient.
-   */
   get tmiClient() {
     return services.tmi.tmiClient;
   }
 
-  /**
-   * Getter for the Reddit client singleton.
-   * @returns {RedditClient} The singleton instance of RedditClient.
-   */
   get redditClient() {
     return services.reddit.redditClient;
   }
 
-  /**
-   * Getter for the Discord client singleton.
-   * @returns {DiscordClient} The singleton instance of DiscordClient.
-   */
   get discordClient() {
     return services.discord.discordClient;
   }
 
-  /**
-   * Getter for the WebSocket client singleton.
-   * @returns {WebsocketClient} The singleton instance of WebSocketClient.
-   */
   get websocketClient() {
     return services.websocket.websocketClient;
   }
 
-  /**
-   * Establishes connections to specified service dependencies.
-   * @param {Array<string>} deps - The list of dependencies to connect to.
-   * @param {Object} [connectionArgs] - Arguments for connection, such as enabling health checks.
-   * @param {Object} [connectionArgs.customSqlConfig] - Custom SQL configuration
-   * @returns {Promise<Object>} A promise that resolves to an object containing connected clients.
-   */
+  async getHealthStatus() {
+    const healthStatus = {};
+
+    for (const [serviceName, client] of Object.entries(this.connectedClients)) {
+      try {
+        if (typeof client.isHealthy === 'function') {
+          healthStatus[serviceName] = await client.isHealthy();
+        } else if (typeof client.isConnected !== 'undefined') {
+          healthStatus[serviceName] = client.isConnected;
+        } else {
+          healthStatus[serviceName] = 'unknown';
+        }
+      } catch (error) {
+        healthStatus[serviceName] = false;
+        console.warn(`[Connector] Health check failed for ${serviceName}:`, error.message);
+      }
+    }
+
+    return healthStatus;
+  }
+
   async dependencies(deps, connectionArgs) {
+    if (this.shutdownInitiated) {
+      throw new Error('Cannot establish new connections during shutdown');
+    }
+
     if (!_.isEmpty(deps) && !_.isNil(deps)) {
       const clients = {};
 
@@ -131,51 +168,64 @@ class ServiceConnector {
       }
 
       for (let dep of deps) {
-        const needsNewConnection = dep === 'sql' && this.customConfigs.sql;
+        try {
+          const needsNewConnection = dep === 'sql' && this.customConfigs.sql;
 
-        if (this.connectedClients[dep] && !needsNewConnection) {
-          clients[`${dep}Client`] = this.connectedClients[dep];
-        } else {
-          const client = _.get(this, `${dep}Client`);
+          if (this.connectedClients[dep] && !needsNewConnection) {
+            clients[`${dep}Client`] = this.connectedClients[dep];
+          } else {
+            const client = _.get(this, `${dep}Client`);
 
-          console.log(
-            `Connecting to ${dep}${this.customConfigs[dep] ? ' (custom config)' : ''}`
-          );
+            console.log(
+              `[Connector] Connecting to ${dep}${this.customConfigs[dep] ? ' (custom config)' : ''}`
+            );
 
-          if (
-            dep === 'tmi' &&
-            'redisClient' in clients &&
-            'sqlClient' in clients &&
-            'rabbitClient' in clients
-          ) {
-            client.setServiceConnector(clients);
+            if (
+              dep === 'tmi' &&
+              'redisClient' in clients &&
+              'sqlClient' in clients &&
+              'rabbitClient' in clients
+            ) {
+              client.setServiceConnector(clients);
+            }
+
+            await client.connect();
+
+            this.connectedClients[dep] = client;
+            clients[`${dep}Client`] = client;
+          }
+        } catch (error) {
+          console.error(`[Connector] Failed to connect to ${dep}:`, error.message);
+
+          if (dep === 'rabbit') {
+            console.warn('[Connector] RabbitMQ connection failed, continuing without it...');
+            continue;
           }
 
-          await client.connect();
-
-          this.connectedClients[dep] = client;
-          clients[`${dep}Client`] = client;
+          console.error(`[Connector] Critical service ${dep} failed to connect. Aborting...`);
+          await this.closeAllConnections();
+          return {};
         }
       }
 
       if (!_.every(clients, client => client.isConnected)) {
         console.error(
-          `Failed to connect to ${_.size(
+          `[Connector] Failed to connect to ${_.size(
             _.filter(clients, client => !client.isConnected)
-          )} client`
+          )} client(s)`
         );
 
         return {};
       } else {
         console.log(
-          `Connected to ${_.size(deps)} clients in ${((Date.now() - startTime) / 1000).toFixed(
-            2
-          )}s`
+          `[Connector] Connected to ${_.size(Object.keys(clients))} clients in ${((Date.now() - startTime) / 1000).toFixed(2)}s`
         );
 
         return clients;
       }
     }
+
+    return {};
   }
 }
 

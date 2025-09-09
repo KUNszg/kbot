@@ -4,8 +4,8 @@ const _ = require('lodash');
 const pageCommandsCode = services => {
   const { app, Commons } = services;
 
-  app.get('/commands/code/*', async (req, res) => {
-    const query = _.get(_.split(_.get(req, 'url'), '/'), '3');
+  app.get('/commands/code/:commandName', async (req, res) => {
+    const query = req.params.commandName;
 
     if (query) {
       try {

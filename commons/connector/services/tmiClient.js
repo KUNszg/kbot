@@ -78,7 +78,7 @@ class TmiClient {
           const oldFormat = {
             color: msg.colorRaw,
             username: msg.senderUsername,
-            'message-type': 'chat',
+            'message-type': 'chat'
           };
 
           delete msg.color;
@@ -115,9 +115,7 @@ class TmiClient {
             tmiEmitter.emit('clearchat', `#${msg.channelName}`);
           }
         });
-        client.on('CLEARMSG', clearmsgMessage =>
-          tmiEmitter.emit('clearmsg', clearmsgMessage)
-        );
+        client.on('CLEARMSG', clearmsgMessage => tmiEmitter.emit('clearmsg', clearmsgMessage));
         client.on('HOSTTARGET', hosttargetMessage =>
           tmiEmitter.emit('host', hosttargetMessage)
         );
@@ -145,7 +143,7 @@ class TmiClient {
           const oldFormat = {
             color: msg.colorRaw,
             username: msg.senderUsername,
-            'message-type': 'chat',
+            'message-type': 'chat'
           };
 
           delete msg.color;
@@ -338,11 +336,11 @@ class TmiClient {
 
         await this.service.sqlClient.query(
           `
-          INSERT INTO whispers_sent (username, message, date)
-          VALUES (?, ?, CURRENT_TIMESTAMP)`,
+              INSERT INTO whispers_sent (username, message, date)
+              VALUES (?, ?, CURRENT_TIMESTAMP)`,
           [username, message]
         );
-      },
+      }
     };
 
     sender.clientType = 'sender';
@@ -381,7 +379,9 @@ class TmiClient {
       this.senderConnectionPromise = this._connectSender();
     }
 
-    await Promise.all(_.compact([this.consumerConnectionPromise, this.senderConnectionPromise]));
+    await Promise.all(
+      _.compact([this.consumerConnectionPromise, this.senderConnectionPromise])
+    );
 
     this.consumerConnectionPromise = null;
     this.senderConnectionPromise = null;
@@ -401,7 +401,7 @@ class TmiClient {
 
     let channels = [];
 
-    if (process.platform !== 'win32') {
+    if (process.platform === 'win32') {
       const owner = await this.service.sqlClient.query(
         `SELECT * FROM trusted_users WHERE ID="75"`
       );
@@ -417,13 +417,15 @@ class TmiClient {
 
     consumerClient.on('connect', () => {
       this.consumer.getEmitter().emit('connected', true);
-      this.isConsumerConnected = true
+      this.isConsumerConnected = true;
 
       if (MODE === 'production') {
-        console.log(`Consumer TMI connected, beginning to join ${_.size(channels)} channels...`);
+        console.log(
+          `[Connector-TMI] Consumer connected, beginning to join ${_.size(channels)} channels...`
+        );
       } else {
         console.log(
-          `Consumer TMI connected in development mode, beginning to join #ksyncbot channel...`
+          `[Connector-TMI] Consumer connected in development mode, beginning to join #ksyncbot channel...`
         );
       }
     });
@@ -433,15 +435,15 @@ class TmiClient {
     consumerClient.on('close', error => {
       this.consumer.getEmitter().emit('close', error);
 
-      this.isConsumerConnected = false
+      this.isConsumerConnected = false;
 
-      console.log('Consumer TMI connection closed');
+      console.log('[Connector-TMI] Consumer connection closed');
     });
 
     this.consumer.setupEventHandlers(consumerClient);
 
     for (let channel of channels) {
-      if (MODE === "development") {
+      if (MODE === 'development') {
         await consumerClient.join('#ksyncbot');
         break;
       }
@@ -449,13 +451,13 @@ class TmiClient {
       try {
         await consumerClient.join(channel);
       } catch (err) {
-        console.log(err.message)
+        console.log('[Connector-TMI]', err.message);
       }
 
       await sleep(500);
     }
 
-    console.log('Consumer TMI ready');
+    console.log('[Connector-TMI] Consumer ready');
 
     let notJoinedChannels = [];
 
@@ -467,7 +469,7 @@ class TmiClient {
 
     if (!!_.size(notJoinedChannels)) {
       console.log(
-        `Consumer TMI failed to join ${_.size(notJoinedChannels)}/${_.size(channels)} channels.`
+        `[Connector-TMI] Consumer failed to join ${_.size(notJoinedChannels)}/${_.size(channels)} channels.`
       );
 
       await this.service.rabbitClient.sendToQueue(
@@ -491,20 +493,36 @@ class TmiClient {
 
     senderClient.on('connect', () => {
       this.isSenderConnected = true;
-      console.log('Sender TMI connected');
+      console.log('[Connector-TMI] Sender connected');
     });
 
     await senderClient.connect();
 
     senderClient.on('close', error => {
       this.isSenderConnected = false;
-      console.log('Sender TMI connection closed');
+      console.log('[Connector-TMI] Sender connection closed');
     });
 
-    console.log('Sender TMI ready');
+    console.log('[Connector-TMI] Sender ready');
+  }
+
+  async close() {
+    console.log('[Connector-TMI] Closing connections...');
+
+    if (this.consumer.client) {
+      await this.consumer.client.close();
+      this.isConsumerConnected = false;
+    }
+
+    if (this.sender.client) {
+      await this.sender.client.close();
+      this.isSenderConnected = false;
+    }
+
+    console.log('[Connector-TMI] Connections closed');
   }
 }
 
 module.exports = {
-  tmiClient: new TmiClient(),
+  tmiClient: new TmiClient()
 };

@@ -15,11 +15,11 @@ class WebsocketClient {
       this.websocketEmitter = new WebsocketEmitter();
       this.clients = {
         ws: {
-          isOpen: false,
+          isOpen: false
         },
         wsl: {
-          isOpen: false,
-        },
+          isOpen: false
+        }
       };
       this.emittersLaunched = false;
       this.isConnected = false;
@@ -48,7 +48,7 @@ class WebsocketClient {
         });
 
         ws.on('error', msg => {
-          console.log(msg);
+          console.log('[Connector-WebSocket]', msg);
         });
       }
     );
@@ -67,7 +67,7 @@ class WebsocketClient {
         });
 
         ws.on('error', msg => {
-          console.log(msg);
+          console.log('[Connector-WebSocket]', msg);
         });
       }
     );
@@ -75,10 +75,10 @@ class WebsocketClient {
     global.websocketClient = {
       ...WebsocketClient.instance,
       clientLocal,
-      clientPublic,
+      clientPublic
     };
 
-    console.log('Websockets connected');
+    console.log('[Connector-WebSocket] Connected');
 
     this.isConnected = true;
   }
@@ -102,7 +102,6 @@ class WebsocketClient {
     const wsClient = this.clients[path === '/wsl' ? 'wsl' : 'ws'];
 
     if (!this.emittersLaunched) {
-      // Set up any additional emitters or operations that need to occur after WebSocket is ready
       this.emittersLaunched = true;
     }
 
@@ -112,8 +111,23 @@ class WebsocketClient {
 
     wsClient.send(isJson ? JSON.stringify(message) : message);
   }
+
+  async close() {
+    console.log('[Connector-WebSocket] Closing connections...');
+
+    if (this.clients.ws && typeof this.clients.ws.close === 'function') {
+      this.clients.ws.close();
+    }
+
+    if (this.clients.wsl && typeof this.clients.wsl.close === 'function') {
+      this.clients.wsl.close();
+    }
+
+    this.isConnected = false;
+    console.log('[Connector-WebSocket] Connections closed');
+  }
 }
 
 module.exports = {
-  websocketClient: new WebsocketClient(),
+  websocketClient: new WebsocketClient()
 };

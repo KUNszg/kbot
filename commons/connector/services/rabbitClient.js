@@ -35,16 +35,16 @@ class RabbitClient {
       RabbitClient.instance.native = this.client;
 
       this.isConnected = true;
-      console.log('RabbitMQ connected');
+      console.log('[Connector-RabbitMQ] Connected');
 
       this.client.on('close', () => {
         this.isConnected = false;
-        console.log('RabbitMQ connection closed');
+        console.log('[Connector-RabbitMQ] Connection closed');
       });
 
       this.client.on('error', error => {
         this.isConnected = false;
-        console.error('RabbitMQ client error:', error);
+        console.error('[Connector-RabbitMQ] Client error:', error);
       });
     }
 
@@ -103,13 +103,23 @@ class RabbitClient {
       return true;
     } else {
       console.error(
-        `${new Date().toISOString()}: ERROR ADDING MESSAGE TO QUEUE: message is empty.\nqueue: ${queue}\nmessage: ${message}\n`
+        `[Connector-RabbitMQ] ${new Date().toISOString()}: ERROR ADDING MESSAGE TO QUEUE: message is empty.\nqueue: ${queue}\nmessage: ${message}\n`
       );
       return false;
+    }
+  }
+
+  async close() {
+    if (this.client) {
+      console.log('[Connector-RabbitMQ] Closing connection...');
+      await this.client.close();
+      this.client = null;
+      this.isConnected = false;
+      console.log('[Connector-RabbitMQ] Connection closed');
     }
   }
 }
 
 module.exports = {
-  rabbitClient: new RabbitClient(),
+  rabbitClient: new RabbitClient()
 };

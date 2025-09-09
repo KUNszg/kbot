@@ -27,11 +27,11 @@ class DiscordClient {
 
       this.client.once('ready', () => {
         this.isConnected = true;
-        console.log('Discord connected');
+        console.log('[Connector-Discord] Connected');
       });
 
       this.client.on('error', error => {
-        console.error('Discord client error:', error);
+        console.error('[Connector-Discord] Client error:', error);
         this.isConnected = false;
       });
 
@@ -39,15 +39,25 @@ class DiscordClient {
         await this.client.login(discordConfig.discordLogin);
         DiscordClient.instance.native = this.client;
       } catch (error) {
-        console.error('Discord connection error:', error);
+        console.error('[Connector-Discord] Connection error:', error);
         this.isConnected = false;
       }
     }
 
     return this.client;
   }
+
+  async close() {
+    if (this.client) {
+      console.log('[Connector-Discord] Closing connection...');
+      await this.client.destroy();
+      this.client = null;
+      this.isConnected = false;
+      console.log('[Connector-Discord] Connection closed');
+    }
+  }
 }
 
 module.exports = {
-  discordClient: new DiscordClient(),
+  discordClient: new DiscordClient()
 };

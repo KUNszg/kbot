@@ -8,12 +8,12 @@ COPY ./data ./data/
 
 COPY ./lib/credentials/config.js ./lib/credentials/config.js
 
-WORKDIR /usr/src/app/kbot-api
+WORKDIR /usr/src/app/kbot-backend
 
-COPY ./api .
+COPY ./lib .
 
 EXPOSE 8080
 
-CMD [ "node", "api.js" ]
+CMD [ "node", "commandManager.js" ]
 
 # for local development manual mount of node_modules in config is required

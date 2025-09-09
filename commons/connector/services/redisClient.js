@@ -32,11 +32,11 @@ class RedisClient {
 
       this.client.on('ready', () => {
         this.isConnected = true;
-        console.log('Redis connected');
+        console.log('[Connector-Redis] Connected');
       });
 
       this.client.on('error', error => {
-        console.error('Redis client error:', error);
+        console.error('[Connector-Redis] Client error:', error);
         this.isConnected = false;
         this.redisEmitter.emit('error', error);
       });
@@ -44,7 +44,7 @@ class RedisClient {
       try {
         await this.client.connect();
       } catch (error) {
-        console.error('Redis connection error:', error);
+        console.error('[Connector-Redis] Connection error:', error);
         this.isConnected = false;
         this.client = null;
       }
@@ -65,7 +65,7 @@ class RedisClient {
       try {
         return JSON.parse(value);
       } catch (error) {
-        console.error('Error parsing Redis value:', error);
+        console.error('[Connector-Redis] Error parsing value:', error);
       }
     }
     return value;
@@ -108,8 +108,18 @@ class RedisClient {
   async sendCommand(args, options) {
     return await this.client.sendCommand(args, options);
   }
+
+  async close() {
+    if (this.client) {
+      console.log('[Connector-Redis] Closing connection...');
+      await this.client.quit();
+      this.client = null;
+      this.isConnected = false;
+      console.log('[Connector-Redis] Connection closed');
+    }
+  }
 }
 
 module.exports = {
-  redisClient: new RedisClient(),
+  redisClient: new RedisClient()
 };
