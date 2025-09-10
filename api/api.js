@@ -25,6 +25,7 @@ const webhookHandler = GithubWebHook({ path: '/webhooks/github', secret: secret 
     {
       enableHealthcheck: true,
       service,
+      disableTMIAutojoin: true
     }
   );
 
@@ -32,14 +33,14 @@ const webhookHandler = GithubWebHook({ path: '/webhooks/github', secret: secret 
 
   const endpoints = requireDir('src', {
     recurse: true,
-    extensions: ['.js'],
+    extensions: ['.js']
   });
 
   _.forEach(endpoints, invocation => {
     initializeMethodRecurse(invocation, {
       Commons,
       app,
-      webhookHandler,
+      webhookHandler
     });
   });
 

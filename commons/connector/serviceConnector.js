@@ -85,6 +85,14 @@ class ServiceConnector {
     }
   }
 
+  setTMIConfig(tmiConfig) {
+    this.customConfigs.tmi = tmiConfig;
+
+    if (this.connectedClients.tmi) {
+      delete this.connectedClients.tmi;
+    }
+  }
+
   get sqlClient() {
     if (this.customConfigs.sql) {
       const { SqlClient } = services.sql;
@@ -150,6 +158,10 @@ class ServiceConnector {
         this.setCustomSqlConfig(connectionArgs.customSqlConfig);
       }
 
+      if (_.get(connectionArgs, 'disableTMIAutojoin')) {
+        this.setTMIConfig({ disableTMIAutojoin: true });
+      }
+
       if (_.get(connectionArgs, 'enableHealthcheck')) {
         const service = _.get(connectionArgs, 'service');
 
@@ -187,6 +199,10 @@ class ServiceConnector {
               'rabbitClient' in clients
             ) {
               client.setServiceConnector(clients);
+
+              if (this.customConfigs.tmi) {
+                client.setTMIConfig(this.customConfigs.tmi);
+              }
             }
 
             await client.connect();
@@ -197,12 +213,6 @@ class ServiceConnector {
         } catch (error) {
           console.error(`[Connector] Failed to connect to ${dep}:`, error.message);
 
-          if (dep === 'rabbit') {
-            console.warn('[Connector] RabbitMQ connection failed, continuing without it...');
-            continue;
-          }
-
-          console.error(`[Connector] Critical service ${dep} failed to connect. Aborting...`);
           await this.closeAllConnections();
           return {};
         }

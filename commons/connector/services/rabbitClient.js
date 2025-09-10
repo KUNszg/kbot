@@ -17,6 +17,9 @@ class RabbitClient {
       this.client = null;
       this.rabbitEmitter = new RabbitEmitter();
       this.isConnected = false;
+
+      this.publishChannel = null;
+      this.consumerChannels = new Map();
     }
 
     return RabbitClient.instance;
@@ -39,16 +42,38 @@ class RabbitClient {
 
       this.client.on('close', () => {
         this.isConnected = false;
+        this.publishChannel = null;
+        this.consumerChannels.clear();
         console.log('[Connector-RabbitMQ] Connection closed');
       });
 
       this.client.on('error', error => {
         this.isConnected = false;
+        this.publishChannel = null;
+        this.consumerChannels.clear();
         console.error('[Connector-RabbitMQ] Client error:', error);
       });
+
+      await this.createPublishChannel();
     }
 
     return this.client;
+  }
+
+  async createPublishChannel() {
+    if (!this.publishChannel) {
+      this.publishChannel = await this.client.createChannel();
+
+      this.publishChannel.on('error', error => {
+        console.error('[Connector-RabbitMQ] Publish channel error:', error);
+        this.publishChannel = null;
+      });
+
+      this.publishChannel.on('close', () => {
+        console.log('[Connector-RabbitMQ] Publish channel closed');
+        this.publishChannel = null;
+      });
+    }
   }
 
   /**
@@ -59,11 +84,28 @@ class RabbitClient {
    * @returns {Promise<void>}
    */
   async createRabbitChannel(queue, messageCallback, config = {}) {
+    if (this.consumerChannels.has(queue)) {
+      console.warn(`[Connector-RabbitMQ] Consumer already exists for queue: ${queue}`);
+      return;
+    }
+
     const prefetchCount = _.get(config, 'prefetchCount');
     const delayProcessing = _.get(config, 'delayProcessing');
 
     const consumer = await this.client.createChannel();
     await consumer.assertQueue(queue);
+
+    this.consumerChannels.set(queue, consumer);
+
+    consumer.on('error', error => {
+      console.error(`[Connector-RabbitMQ] Consumer channel error for queue ${queue}:`, error);
+      this.consumerChannels.delete(queue);
+    });
+
+    consumer.on('close', () => {
+      console.log(`[Connector-RabbitMQ] Consumer channel closed for queue: ${queue}`);
+      this.consumerChannels.delete(queue);
+    });
 
     if (prefetchCount) {
       await consumer.prefetch(prefetchCount);
@@ -74,10 +116,18 @@ class RabbitClient {
         await sleep(delayProcessing);
       }
 
-      const parsedMessage = JSON.parse(_.toString(_.get(rawMsg, 'content')));
+      try {
+        const parsedMessage = JSON.parse(_.toString(_.get(rawMsg, 'content')));
 
-      if (_.isFunction(messageCallback)) {
-        messageCallback(parsedMessage, consumer, rawMsg);
+        if (_.isFunction(messageCallback)) {
+          await messageCallback(parsedMessage, consumer, rawMsg);
+        }
+      } catch (error) {
+        console.error(
+          `[Connector-RabbitMQ] Error processing message from queue ${queue}:`,
+          error
+        );
+        consumer.nack(rawMsg, false, false);
       }
     });
   }
@@ -89,29 +139,90 @@ class RabbitClient {
    * @returns {Promise<boolean>} Whether the message was successfully added to the queue.
    */
   async sendToQueue(queue, message = {}) {
-    const sender = await this.client.createChannel();
+    try {
+      if (!this.publishChannel) {
+        await this.createPublishChannel();
+      }
 
-    const { messageCount } = await sender.assertQueue(queue, { durable: true });
+      const { messageCount } = await this.publishChannel.assertQueue(queue, { durable: true });
 
-    if (messageCount >= 50_000) {
+      if (messageCount >= 50_000) {
+        console.warn(
+          `[Connector-RabbitMQ] Queue ${queue} has reached message limit: ${messageCount}`
+        );
+        return false;
+      }
+
+      if (!_.isNil(message)) {
+        const messageString = JSON.stringify(message);
+        const success = this.publishChannel.sendToQueue(queue, Buffer.from(messageString), {
+          persistent: true
+        });
+
+        if (!success) {
+          await new Promise(resolve => {
+            this.publishChannel.once('drain', resolve);
+          });
+        }
+
+        return true;
+      } else {
+        console.error(
+          `[Connector-RabbitMQ] ${new Date().toISOString()}: ERROR ADDING MESSAGE TO QUEUE: message is empty.\nqueue: ${queue}\nmessage: ${message}\n`
+        );
+        return false;
+      }
+    } catch (error) {
+      console.error(`[Connector-RabbitMQ] Error sending message to queue ${queue}:`, error);
       return false;
     }
+  }
 
-    if (!_.isNil(message)) {
-      message = JSON.stringify(message);
-      sender.sendToQueue(queue, Buffer.from(message));
-      return true;
-    } else {
-      console.error(
-        `[Connector-RabbitMQ] ${new Date().toISOString()}: ERROR ADDING MESSAGE TO QUEUE: message is empty.\nqueue: ${queue}\nmessage: ${message}\n`
-      );
-      return false;
+  /**
+   * Closes a specific consumer channel
+   * @param {string} queue - The queue name whose consumer channel to close
+   */
+  async closeConsumerChannel(queue) {
+    const channel = this.consumerChannels.get(queue);
+    if (channel) {
+      try {
+        await channel.close();
+        this.consumerChannels.delete(queue);
+        console.log(`[Connector-RabbitMQ] Closed consumer channel for queue: ${queue}`);
+      } catch (error) {
+        console.error(
+          `[Connector-RabbitMQ] Error closing consumer channel for queue ${queue}:`,
+          error
+        );
+      }
     }
   }
 
   async close() {
     if (this.client) {
       console.log('[Connector-RabbitMQ] Closing connection...');
+
+      for (const [queue, channel] of this.consumerChannels) {
+        try {
+          await channel.close();
+        } catch (error) {
+          console.error(
+            `[Connector-RabbitMQ] Error closing consumer channel for queue ${queue}:`,
+            error
+          );
+        }
+      }
+      this.consumerChannels.clear();
+
+      if (this.publishChannel) {
+        try {
+          await this.publishChannel.close();
+        } catch (error) {
+          console.error('[Connector-RabbitMQ] Error closing publish channel:', error);
+        }
+        this.publishChannel = null;
+      }
+
       await this.client.close();
       this.client = null;
       this.isConnected = false;

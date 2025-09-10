@@ -20,6 +20,7 @@ class TmiClient {
       this.consumer = this._createConsumer();
       this.sender = this._createSender();
       this.service = null;
+      this.tmiConfig = null;
       this.isConsumerConnected = false;
       this.isSenderConnected = false;
       this.consumerConnectionPromise = null;
@@ -236,7 +237,7 @@ class TmiClient {
         channel = channel[0] === '#' ? channel : `#${channel}`;
         message = message.replace(/\n|\r/g, '');
 
-        if (!_.isString(message)) {
+        if (!_.isString(message) && message !== null && message !== undefined) {
           message = JSON.stringify(message);
         }
 
@@ -358,6 +359,14 @@ class TmiClient {
   }
 
   /**
+   * Sets TMI configuration options
+   * @param {Object} config - TMI configuration options
+   */
+  setTMIConfig(config) {
+    this.tmiConfig = config;
+  }
+
+  /**
    * Establishes connections for both consumer and sender
    * @param {Object} connectionArgs - Connection arguments
    * @returns {Promise<void>}
@@ -401,23 +410,30 @@ class TmiClient {
 
     let channels = [];
 
-    if (process.platform === 'win32') {
-      const owner = await this.service.sqlClient.query(
-        `SELECT * FROM trusted_users WHERE ID="75"`
-      );
-      channels = [_.get(owner, '0.username'), 'nymn', 'forsen'];
-    } else {
-      if (isLogger) {
-        channels = await this.service.sqlClient.query('SELECT * FROM channels_logger');
+    if (!(this.tmiConfig && this.tmiConfig.disableTMIAutojoin)) {
+      if (process.platform === 'win32') {
+        const owner = await this.service.sqlClient.query(
+          `SELECT * FROM trusted_users WHERE ID="75"`
+        );
+        channels = [_.get(owner, '0.username'), 'nymn', 'forsen'];
       } else {
-        channels = await this.service.sqlClient.query('SELECT * FROM channels');
+        if (isLogger) {
+          channels = await this.service.sqlClient.query('SELECT * FROM channels_logger');
+        } else {
+          channels = await this.service.sqlClient.query('SELECT * FROM channels');
+        }
+        channels = channels.map(i => i.channel);
       }
-      channels = channels.map(i => i.channel);
     }
 
     consumerClient.on('connect', () => {
       this.consumer.getEmitter().emit('connected', true);
       this.isConsumerConnected = true;
+
+      if (this.tmiConfig && this.tmiConfig.disableTMIAutojoin) {
+        console.log('[Connector-TMI] Consumer connected with autojoin disabled');
+        return;
+      }
 
       if (MODE === 'production') {
         console.log(
@@ -434,13 +450,16 @@ class TmiClient {
 
     consumerClient.on('close', error => {
       this.consumer.getEmitter().emit('close', error);
-
       this.isConsumerConnected = false;
-
       console.log('[Connector-TMI] Consumer connection closed');
     });
 
     this.consumer.setupEventHandlers(consumerClient);
+
+    if (this.tmiConfig && this.tmiConfig.disableTMIAutojoin) {
+      console.log('[Connector-TMI] Consumer ready (autojoin disabled)');
+      return;
+    }
 
     for (let channel of channels) {
       if (MODE === 'development') {
@@ -472,10 +491,12 @@ class TmiClient {
         `[Connector-TMI] Consumer failed to join ${_.size(notJoinedChannels)}/${_.size(channels)} channels.`
       );
 
-      await this.service.rabbitClient.sendToQueue(
-        'KB_TWITCH_CHANNELS_TO_PART',
-        notJoinedChannels
-      );
+      if (this.service.rabbitClient && this.service.rabbitClient.isConnected) {
+        await this.service.rabbitClient.sendToQueue(
+          'KB_TWITCH_CHANNELS_TO_PART',
+          notJoinedChannels
+        );
+      }
     }
   }
 
@@ -498,7 +519,7 @@ class TmiClient {
 
     await senderClient.connect();
 
-    senderClient.on('close', error => {
+    senderClient.on('close', () => {
       this.isSenderConnected = false;
       console.log('[Connector-TMI] Sender connection closed');
     });
