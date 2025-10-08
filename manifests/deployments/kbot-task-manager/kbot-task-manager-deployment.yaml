@@ -27,5 +27,5 @@ spec:
       volumes:
         - name: node-modules-volume
           hostPath:
-            path: /home/docker/node_modules
+            path: /home/docker/kbot/node_modules
             type: Directory
