@@ -16,5 +16,10 @@ spec:
         - name: kbot-website
           image: docker-registry.kunszg.com/kbot-website:latest
           imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: kbot-config
+            - secretRef:
+                name: nextauth-secret
       imagePullSecrets:
         - name: regcred-v1

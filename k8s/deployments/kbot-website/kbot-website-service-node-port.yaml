@@ -4,7 +4,7 @@ metadata:
   name: kbot-website-service
 spec:
   selector:
-    app: kbot-website-app
+    app: kbot-website
   ports:
     - protocol: TCP
       port: 40100

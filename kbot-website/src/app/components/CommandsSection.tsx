@@ -71,13 +71,13 @@ export default function CommandsSection() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen text-white">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-8"
       >
-        <h1 className="text-5xl font-extrabold mb-2">
+        <h1 className="text-5xl font-extrabold mb-2 text-white">
           <span className="text-white">Bot</span>
           <span className="text-[#9146FF]"> Commands</span>
         </h1>
@@ -224,7 +224,7 @@ export default function CommandsSection() {
             </div>
           </div>
 
-          {filteredCommands.length === 0 && (
+          {filteredCommands.length === 0 && searchTerm && (
             <div className="text-center text-gray-400 py-8">
               No commands found matching &ldquo;{searchTerm}&rdquo;
             </div>

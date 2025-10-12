@@ -1,6 +1,6 @@
 {
   "name": "kbot-website",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "framer-motion": "^12.4.7",
+    "lodash": "^4.17.21",
+    "mysql2": "^3.15.2",
     "next": "15.4.7",
     "next-auth": "^4.24.11",
     "react": "^19.0.0",
