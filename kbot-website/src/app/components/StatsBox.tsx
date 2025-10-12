@@ -33,7 +33,9 @@ export default function StatsBox({ stats }: StatsBoxProps) {
       </button>
 
       <div className="hidden md:block absolute top-4 right-4 bg-gray-800 p-4 rounded-lg shadow-lg w-64 text-left">
-        <h2 className="text-lg font-semibold text-center">Live Stats</h2>
+        <h2 className="text-lg font-semibold text-center">
+          Live Stats <br /> (Work In Progress)
+        </h2>
         <div className="flex justify-between border-b border-gray-600 py-1">
           <span>👥 Users:</span> <span className="font-bold">{stats.users}</span>
         </div>
@@ -61,7 +63,9 @@ export default function StatsBox({ stats }: StatsBoxProps) {
               exit={{ scale: 0.8 }}
               onClick={e => e.stopPropagation()}
             >
-              <h2 className="text-xl font-bold mb-4 text-[#9146FF]">Live Stats</h2>
+              <h2 className="text-xl font-bold mb-4 text-[#9146FF]">
+                Live Stats <br /> (Work In Progress)
+              </h2>
               <div className="grid gap-3">
                 <StatItem icon={<FiUsers />} label="Users" value={stats.users} />
                 <StatItem icon={<FiMessageSquare />} label="Messages" value={stats.messages} />

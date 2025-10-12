@@ -22,19 +22,19 @@ export default function Home() {
 
 function HomeContent() {
   const { data: session } = useSession();
-  const [stats, setStats] = useState({ users: 0, messages: 0, uptime: '0h 0m' });
+  const [stats /*setStats*/] = useState({ users: 0, messages: 0, uptime: '0h 0m' });
   const [activeSection, setActiveSection] = useState('home');
   const [botName, setBotName] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (activeSection === 'home' || activeSection === 'chatbot') {
-      const socket = new WebSocket('wss://your-backend-websocket-url');
-      socket.onmessage = event => {
-        const data = JSON.parse(event.data);
-        setStats(prevStats => ({ ...prevStats, ...data.stats }));
-      };
-      return () => socket.close();
+      // const socket = new WebSocket('wss://your-backend-websocket-url');
+      // socket.onmessage = event => {
+      //   const data = JSON.parse(event.data);
+      //   setStats(prevStats => ({ ...prevStats, ...data.stats }));
+      // };
+      // return () => socket.close();
     }
   }, [activeSection]);
 

@@ -38,7 +38,7 @@ export default function Sidebar({
       </div>
 
       <nav className="flex-grow flex flex-col space-y-3">
-        {['home', 'commands', 'emotechecker', 'docs', 'chatbot'].map(section => (
+        {['home', 'commands', 'emotechecker', 'docs' /*'chatbot'*/].map(section => (
           <button
             key={section}
             onClick={() => {
