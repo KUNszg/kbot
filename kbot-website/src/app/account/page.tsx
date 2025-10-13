@@ -17,6 +17,7 @@ import {
   FiLink
 } from 'react-icons/fi';
 import SessionProvider from '../providers/SessionProvider';
+import SharedLayout from '../components/SharedLayout';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,7 +32,9 @@ interface ConnectedApp {
 export default function AccountPage() {
   return (
     <SessionProvider>
-      <AccountContent />
+      <SharedLayout>
+        <AccountContent />
+      </SharedLayout>
     </SessionProvider>
   );
 }
@@ -74,7 +77,6 @@ function AccountContent() {
   const connectSpotify = async () => {
     setConnecting('spotify');
     try {
-      // Redirect to Spotify OAuth endpoint
       window.location.href = '/api/spotify/connect';
     } catch (error) {
       console.error('Error connecting to Spotify:', error);
