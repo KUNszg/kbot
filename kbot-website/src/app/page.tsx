@@ -11,6 +11,8 @@ import HomeSection from './components/HomeSection';
 import CommandsSection from './components/CommandsSection';
 import EmoteCheckerSection from './components/EmoteCheckerSection';
 import DocsSection from './components/DocsSection';
+import NiedzieleHandloweSection from './components/TradingSundaysSection';
+import PrivacySection from './components/PrivacySection';
 
 export default function Home() {
   return (
@@ -73,7 +75,7 @@ function HomeContent() {
         ></div>
       )}
 
-      <StatsBox stats={stats} />
+      {!activeSection.startsWith('side-projects/') && <StatsBox stats={stats} />}
 
       <main className="flex-1 p-6 md:p-8 bg-gray-800 overflow-auto text-white">
         {activeSection === 'home' && (
@@ -101,6 +103,8 @@ function HomeContent() {
         {activeSection === 'commands' && <CommandsSection />}
         {activeSection === 'emotechecker' && <EmoteCheckerSection />}
         {activeSection === 'docs' && <DocsSection />}
+        {activeSection === 'privacy' && <PrivacySection />}
+        {activeSection === 'side-projects/niedziele-handlowe' && <NiedzieleHandloweSection />}
       </main>
     </div>
   );
