@@ -71,13 +71,13 @@ module.exports = {
 
   REGISTER: {
     SUCCESS: {
-      REGISTER_LINK: `you can connect your apps with KsyncBot at https://kunszg.com/account/connected-apps`
+      REGISTER_LINK: `you can connect your apps with KsyncBot at https://kunszg.com/ by logging in on bottom left corner of your browser`
     }
   },
 
   UNREGISTER: {
     SUCCESS: {
-      UNREGISTER_LINK: `to remove connections with KsyncBot please visit https://kunszg.com/account/connected-apps`
+      UNREGISTER_LINK: `to remove connections with KsyncBot please visit your account page at https://kunszg.com/`
     }
   }
 };
