@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kbot-website
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kbot-website
+  template:
+    metadata:
+      labels:
+        app: kbot-website
+    spec:
+      containers:
+        - name: kbot-website
+          image: docker-registry.kunszg.com/kbot-website:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: kbot-config
+            - secretRef:
+                name: nextauth-secret
+      imagePullSecrets:
+        - name: regcred-v1

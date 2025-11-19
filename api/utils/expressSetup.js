@@ -1,8 +1,7 @@
 const rateLimit = require('express-rate-limit');
-const utils = require('../../lib/utils/utils');
 const bodyParser = require('body-parser');
 
-const expressSetup = (app, webhookHandler) => {
+const expressSetup = (app, webhookHandler, sqlClient) => {
   const apiLimiter = rateLimit({
     windowMs: 60 * 1000,
     max: 100,
@@ -14,7 +13,12 @@ const expressSetup = (app, webhookHandler) => {
   app.use('/api/', apiLimiter);
 
   app.use(async function (req, res, next) {
-    await utils.conLog(req);
+    await sqlClient.query(
+      `
+      INSERT INTO web_connections (url, method, protocol, route, userAgent, date)
+      VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+      [req.originalUrl, req.method, req.protocol, 'API', req.headers['user-agent']]
+    );
     next();
   });
 

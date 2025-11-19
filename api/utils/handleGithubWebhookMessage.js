@@ -1,7 +1,7 @@
 const getFileNames = require('./getFileNames');
 
 const handleGithubWebhookMessage = async (services, event, repo, data) => {
-  const { kb, redisClient } = services;
+  const { kb } = services;
 
   if (event === 'push') {
     await kb.sqlClient.query(
@@ -67,10 +67,10 @@ const handleGithubWebhookMessage = async (services, event, repo, data) => {
   if (event === 'star' && data.action === 'created') {
     const key = 'star-' + data.sender.login;
 
-    const responseRateLimit = await redisClient.get(`kb:api:github-webhook:${key}`);
+    const responseRateLimit = await kb.redisClient.get(`kb:api:github-webhook:${key}`);
 
     if (!responseRateLimit) {
-      await redisClient.set(`kb:api:github-webhook:${key}`, true);
+      await kb.redisClient.set(`kb:api:github-webhook:${key}`, true);
 
       return `[github webhook] ${data.sender.login} just starred the ksyncbot repository for the total of 
         ${data.repository.stargazers_count} stars PogChamp <3 https://github.com/KUNszg/kbot`;

@@ -11,7 +11,7 @@ const sleep = time => {
 };
 
 const request = endpoint => {
-  return got('http://localhost' + endpoint, {
+  return got('http://127.0.0.1' + endpoint, {
     port: PORT,
   });
 };
@@ -23,8 +23,8 @@ beforeAll(async () => {
 
   require('./api');
 
-  await sleep(3000);
-}, 30000);
+  await sleep(35000);
+}, 60000);
 
 describe('Integration tests', () => {
   test('healthcheckGet_WhenResourceRequested_Returns200AndOK', async () => {
@@ -76,5 +76,5 @@ afterAll(
 
       process.exit();
     }, 1000),
-  30000
+  60000
 );

@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kbot-music-bot
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: music-bot
+  template:
+    metadata:
+      labels:
+        app: music-bot
+    spec:
+      containers:
+        - name: music-bot
+          image: docker-registry.kunszg.com/kbot-depl-music-bot:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: options-volume
+              mountPath: /usr/src/app/MusicBot/config/options.ini
+            - name: permissions-volume
+              mountPath: /usr/src/app/MusicBot/config/permissions.ini
+            - name: cookies-volume
+              mountPath: /usr/src/app/MusicBot/data/cookies.txt
+            - name: playlist-volume
+              mountPath: /usr/src/app/MusicBot/config/playlists/default.txt
+            - name: requirements-volume
+              mountPath: /usr/src/app/MusicBot/requirements.txt
+      imagePullSecrets:
+        - name: regcred-v1
+      volumes:
+        - name: options-volume
+          hostPath:
+            path: /home/docker/musicbot/options.ini
+            type: File
+        - name: permissions-volume
+          hostPath:
+            path: /home/docker/musicbot/permissions.ini
+            type: File
+        - name: cookies-volume
+          hostPath:
+            path: /home/docker/musicbot/cookies.txt
+            type: File
+        - name: playlist-volume
+          hostPath:
+            path: /home/docker/musicbot/playlists/default.txt
+            type: File
+        - name: requirements-volume
+          hostPath:
+            path: /home/docker/musicbot/requirements.txt
+            type: File
+

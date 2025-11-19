@@ -1,9 +1,10 @@
-const utils = require('../../../lib/utils/utils');
 const fs = require('fs');
 const _ = require('lodash');
 
 const pageCountdown = services => {
-  const { app, kb } = services;
+  const { app, Commons } = services;
+
+  const kb = Commons.ServiceConnector.Connector;
 
   app.get('/countdown', async (req, res) => {
     try {
@@ -14,10 +15,10 @@ const pageCountdown = services => {
           fs.readFileSync('../../kbot-website/html/express_pages/countdownAlternative.html')
         );
 
-        const page = new utils.Swapper(html, [
+        const page = Commons.UtilityRepository().complementHtmlPageTemplates(html, [
           {
-            verifCode,
-          },
+            verifCode
+          }
         ]);
 
         await kb.sqlClient.query(
@@ -27,7 +28,7 @@ const pageCountdown = services => {
           [verifCode]
         );
 
-        res.send(page.template());
+        res.send(page);
         return;
       }
 
@@ -78,11 +79,11 @@ const pageCountdown = services => {
           secValue: req.query.seconds,
           stringLength:
             `https://kunszg.com/countdown?seconds=${req.query.seconds}&verifCode=${req.query.verifcode}`
-              .length + 8,
-        },
+              .length + 8
+        }
       ]);
 
-      res.send(page.template());
+      res.send(page);
     } catch (err) {
       console.log(err);
     }

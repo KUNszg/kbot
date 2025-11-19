@@ -1,9 +1,10 @@
-const utils = require('../../../lib/utils/utils');
 const fs = require('fs');
 const _ = require('lodash');
 
 const pageLastfm = services => {
-  const { app, kb, redisClient } = services;
+  const { app, Commons } = services;
+
+  const kb = Commons.ServiceConnector.Connector;
 
   app.get('/lastfm', async (req, res) => {
     if (!_.get(req, 'query.code')) {
@@ -11,13 +12,13 @@ const pageLastfm = services => {
       return;
     }
 
-    let verifCode = utils.genString();
+    let verifCode = Commons.UtilityRepository().stringGenerator();
 
-    while ((await redisClient.get(`kb:site:lastfm:code:${verifCode}`))) {
-      verifCode = utils.genString();
+    while (await kb.redisClient.get(`kb:site:lastfm:code:${verifCode}`)) {
+      verifCode = Commons.UtilityRepository().stringGenerator();
     }
 
-    await redisClient.set(`kb:site:lastfm:code:${verifCode}`)
+    await kb.redisClient.set(`kb:site:lastfm:code:${verifCode}`);
 
     await kb.sqlClient.query(
       `
@@ -30,13 +31,13 @@ const pageLastfm = services => {
       fs.readFileSync('../../kbot-website/html/express_pages/lastfm.html')
     );
 
-    const page = new utils.Swapper(html, [
+    const page = Commons.UtilityRepository().complementHtmlPageTemplates(html, [
       {
-        code: verifCode,
-      },
+        code: verifCode
+      }
     ]);
 
-    res.send(page.template());
+    res.send(page);
   });
 };
 
