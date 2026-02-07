@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: ads-scraper
-          image: docker-registry.kunszg.com/ads-scraper:latest
+          image: docker-registry.app.kunszg.com/ads-scraper:latest
           imagePullPolicy: Always
       imagePullSecrets:
         - name: regcred-v1

@@ -86,7 +86,7 @@ module.exports = {
     restTimeOffset: 500
   },
   redditConfig: {
-    userAgent: 'linux:ksyncbot:3.4.8 (by /u/kunszg)',
+    userAgent: 'linux:ksyncbot:3.4.9 (by /u/kunszg)',
     clientId: process.env.redditUID || creds.redditUID,
     clientSecret: process.env.redditSecret || creds.redditSecret,
     username: process.env.redditUsername || creds.redditUsername,

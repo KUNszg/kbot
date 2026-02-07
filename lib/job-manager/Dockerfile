@@ -1,4 +1,4 @@
-FROM node:20.12.2-alpine
+FROM docker-registry.app.kunszg.com/kbot-base:latest
 
 WORKDIR /usr/src/app
 
@@ -15,5 +15,3 @@ WORKDIR /usr/src/app/kbot-job-manager/lib
 EXPOSE 8080
 
 CMD [ "node", "taskManager.js" ]
-
-# for local development manual mount of node_modules in config is required

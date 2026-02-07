@@ -11,7 +11,7 @@ spec:
         spec:
           containers:
             - name: mysql-backup
-              image: docker-registry.kunszg.com/kbot-cron-mysql-backup:latest
+              image: docker-registry.app.kunszg.com/kbot-cron-mysql-backup:latest
               volumeMounts:
                 - name: node-modules-volume
                   mountPath: /usr/src/app/mysql-backup/node_modules

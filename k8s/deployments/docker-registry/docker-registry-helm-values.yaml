@@ -1,0 +1,59 @@
+replicaCount: 1
+
+persistence:
+  enabled: true
+  size: 10Gi
+  deleteEnabled: true
+  existingClaim: docker-registry-pvc
+  accessMode: ReadWriteOnce
+
+secrets:
+  htpasswd: xxxxx
+
+service:
+  type: ClusterIP
+  port: 5000
+
+ingress:
+  enabled: true
+  className: nginx
+  path: /
+  hosts:
+    - docker-registry.app.kunszg.com
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+
+extraInitContainers:
+  - name: fix-permissions
+    image: busybox
+    command:
+      - sh
+      - -c
+      - chmod -R 777 /var/lib/registry
+    securityContext:
+      runAsUser: 0
+    volumeMounts:
+      - name: data
+        mountPath: /var/lib/registry
+
+configData:
+  version: 0.1
+  log:
+    level: info
+    fields:
+      service: registry
+  storage:
+    filesystem:
+      rootdirectory: /var/lib/registry
+    delete:
+      enabled: true
+  http:
+    addr: :5000
+    relativeurls: true
+  otel:
+    sdk:
+      disabled: true

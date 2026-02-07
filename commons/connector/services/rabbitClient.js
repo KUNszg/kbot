@@ -153,7 +153,7 @@ class RabbitClient {
    * Sends a message to the specified RabbitMQ queue.
    * @param {string} queue - The name of the queue.
    * @param {Object} [message={}] - The message to be sent, which will be stringified.
-   * @param {Object} [options={}] - Options eg. checkLimit, maxQueueSize
+   * @param {Object} [options={}] - Options ex. checkLimit, maxQueueSize
    * @returns {Promise<boolean>} Whether the message was successfully added to the queue.
    */
   async sendToQueue(queue, message = {}, options = {}) {

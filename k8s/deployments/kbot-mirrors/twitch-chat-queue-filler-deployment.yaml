@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: kbot-mirrors-twitch-chat-queue-filler
-          image: docker-registry.kunszg.com/kbot-mirrors:latest
+          image: docker-registry.app.kunszg.com/kbot-mirrors:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: node-modules-volume

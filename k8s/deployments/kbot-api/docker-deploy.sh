@@ -1,2 +1,2 @@
-docker build -t docker-registry.kunszg.com/kbot-api:latest -f ../../../api/Dockerfile ../../../
-docker push docker-registry.kunszg.com/kbot-api:latest
+docker build -t docker-registry.app.kunszg.com/kbot-api:latest -f ../../../api/Dockerfile ../../../
+docker push docker-registry.app.kunszg.com/kbot-api:latest
