@@ -9,13 +9,12 @@ import {
   FiUser,
   FiMail,
   FiCalendar,
-  FiLogOut,
   FiShield,
   FiTrash2,
-  FiMusic,
   FiExternalLink,
   FiLink
 } from 'react-icons/fi';
+import { FaSpotify, FaDiscord } from 'react-icons/fa';
 import SessionProvider from '../providers/SessionProvider';
 import SharedLayout from '../components/SharedLayout';
 
@@ -50,7 +49,7 @@ function AccountContent() {
   useEffect(() => {
     if (status === 'loading') return;
     if (!session) {
-      router.push('/login');
+      router.push('/');
       return;
     }
 
@@ -109,9 +108,9 @@ function AccountContent() {
   const getAppIcon = (appType: string) => {
     switch (appType) {
       case 'spotify':
-        return <FiMusic className="w-6 h-6 text-green-500" />;
+        return <FaSpotify className="w-6 h-6 text-green-500" />;
       case 'discord':
-        return <div className="w-6 h-6 text-blue-500">🎮</div>;
+        return <FaDiscord className="w-6 h-6 text-blue-500" />;
       default:
         return <FiExternalLink className="w-6 h-6 text-gray-400" />;
     }
@@ -155,7 +154,6 @@ function AccountContent() {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* User Info Section */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -173,6 +171,7 @@ function AccountContent() {
                     height={100}
                     className="rounded-full mb-4"
                     onError={() => setImageError(true)}
+                    unoptimized
                   />
                 ) : (
                   <div className="w-[100px] h-[100px] bg-gray-700 rounded-full flex items-center justify-center mb-4">
@@ -197,18 +196,9 @@ function AccountContent() {
                   <span>Member since: {new Date().toLocaleDateString()}</span>
                 </div>
               </div>
-
-              <button
-                onClick={() => signOut({ callbackUrl: '/login' })}
-                className="w-full mt-6 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center"
-              >
-                <FiLogOut className="mr-2" />
-                Sign Out
-              </button>
             </div>
           </motion.div>
 
-          {/* Connected Apps Section */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -276,7 +266,6 @@ function AccountContent() {
               )}
             </div>
 
-            {/* Available Integrations */}
             <div className="bg-gray-800 rounded-lg p-6 mt-6">
               <h2 className="text-xl font-semibold text-white mb-4">Available Integrations</h2>
 
@@ -285,7 +274,7 @@ function AccountContent() {
                   className={`border border-gray-700 rounded-lg p-4 ${isSpotifyConnected ? 'opacity-50' : ''}`}
                 >
                   <div className="flex items-center mb-2">
-                    <FiMusic className="w-6 h-6 text-green-500 mr-3" />
+                    <FaSpotify className="w-6 h-6 text-green-500 mr-3" />
                     <h3 className="text-white font-medium">Spotify</h3>
                   </div>
                   <p className="text-gray-400 text-sm mb-3">
@@ -306,7 +295,7 @@ function AccountContent() {
 
                 <div className="border border-gray-700 rounded-lg p-4 opacity-50">
                   <div className="flex items-center mb-2">
-                    <div className="w-6 h-6 text-blue-500 mr-3">🎮</div>
+                    <FaDiscord className="w-6 h-6 text-blue-500 mr-3" />
                     <h3 className="text-white font-medium">Discord</h3>
                   </div>
                   <p className="text-gray-400 text-sm mb-3">

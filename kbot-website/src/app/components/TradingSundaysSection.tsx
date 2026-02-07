@@ -1,8 +1,11 @@
 'use client';
 
+import _ from 'lodash';
+import moment from 'moment';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { FiCalendar, FiClock, FiShoppingCart } from 'react-icons/fi';
+import 'moment/locale/pl';
 
 interface WorkingSunday {
   date: Date;
@@ -40,7 +43,7 @@ const translations: Record<string, Translations> = {
     title: 'Niedziele Handlowe',
     subtitle: 'Niedziele handlowe w Polsce - kiedy sklepy są otwarte',
     nextWorkingSunday: 'Najbliższa Niedziela Handlowa',
-    timeRemaining: 'Pozostały czas:',
+    timeRemaining: 'POZOSTAŁY CZAS:',
     allWorkingSundays: 'Wszystkie Niedziele Handlowe',
     next: 'NASTĘPNA',
     past: 'PRZESZŁA',
@@ -71,7 +74,7 @@ const translations: Record<string, Translations> = {
     title: 'Trading Sundays',
     subtitle: 'Trading Sundays in Poland - When shops are open',
     nextWorkingSunday: 'Next Working Sunday',
-    timeRemaining: 'Time remaining:',
+    timeRemaining: 'TIME REMAINING:',
     allWorkingSundays: 'All Working Sundays',
     next: 'NEXT',
     past: 'PAST',
@@ -105,51 +108,127 @@ export default function TradingSundaysSection() {
   const [nextWorkingSunday, setNextWorkingSunday] = useState<WorkingSunday | null>(null);
   const [timeUntilNext, setTimeUntilNext] = useState<string>('');
   const [language, setLanguage] = useState<string>('en');
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     const browserLang = navigator.language.toLowerCase();
     const lang = browserLang.startsWith('pl') ? 'pl' : 'en';
     setLanguage(lang);
+    moment.locale(lang);
   }, []);
 
   useEffect(() => {
-    const sundays = getWorkingSundaysForPoland();
-    setWorkingSundays(sundays);
+    const getEasterSunday = (year: number): Date => {
+      const a = year % 19,
+        b = Math.floor(year / 100),
+        c = year % 100,
+        d = Math.floor(b / 4),
+        e = b % 4,
+        f = Math.floor((b + 8) / 25),
+        g = Math.floor((b - f + 1) / 3),
+        h = (19 * a + b - d - g + 15) % 30,
+        i = Math.floor(c / 4),
+        k = c % 4,
+        l = (32 + 2 * e + 2 * i - h - k) % 7,
+        m = Math.floor((a + 11 * h + 22 * l) / 451);
+      const month = Math.floor((h + l - 7 * m + 114) / 31) - 1,
+        day = ((h + l - 7 * m + 114) % 31) + 1;
+      return new Date(year, month, day);
+    };
 
-    const now = new Date();
-    const upcoming = sundays.find(sunday => sunday.date > now);
-    setNextWorkingSunday(upcoming || null);
+    const getSundaysBeforeChristmas = (year: number): Date[] => {
+      const christmas = moment([year, 11, 25]);
+      let currentSunday = christmas.clone().day(0);
+      if (currentSunday.isSame(christmas, 'day')) currentSunday.subtract(7, 'days');
+      return _.times(3, (i: number) =>
+        currentSunday
+          .clone()
+          .subtract(i * 7, 'days')
+          .toDate()
+      ).reverse();
+    };
+
+    const sundays: WorkingSunday[] = [];
+    const currentYear = moment().year();
+
+    _.times(2, (i: number) => {
+      const year = currentYear + i;
+      sundays.push({
+        date: moment([year, 0]).endOf('month').day(0).toDate(),
+        description: 'Last Sunday of January'
+      });
+      sundays.push({
+        date: moment(getEasterSunday(year)).subtract(7, 'days').toDate(),
+        description: 'Sunday before Easter'
+      });
+      sundays.push({
+        date: moment([year, 3]).endOf('month').day(0).toDate(),
+        description: 'Last Sunday of April'
+      });
+      sundays.push({
+        date: moment([year, 5]).endOf('month').day(0).toDate(),
+        description: 'Last Sunday of June'
+      });
+      sundays.push({
+        date: moment([year, 7]).endOf('month').day(0).toDate(),
+        description: 'Last Sunday of August'
+      });
+
+      const christmasSundays = getSundaysBeforeChristmas(year);
+      if (year >= 2025) {
+        const desc = ['Third', 'Second', 'First'];
+        christmasSundays.forEach((s, idx) =>
+          sundays.push({ date: s, description: `${desc[idx]} Sunday before Christmas` })
+        );
+      } else {
+        const desc = ['Second', 'First'];
+        christmasSundays
+          .slice(1)
+          .forEach((s, idx) =>
+            sundays.push({ date: s, description: `${desc[idx]} Sunday before Christmas` })
+          );
+      }
+    });
+
+    const now = moment();
+    const uniqueSundays = _.chain(sundays)
+      .uniqBy(s => moment(s.date).format('YYYY-MM-DD'))
+      .filter(s => moment(s.date).isSameOrAfter(moment().startOf('year')))
+      .sortBy(s => moment(s.date).valueOf())
+      .value();
+
+    const futureSundays = uniqueSundays.filter(s => moment(s.date).isSameOrAfter(now));
+    const pastSundays = uniqueSundays.filter(s => moment(s.date).isBefore(now));
+
+    setWorkingSundays([..._.takeRight(pastSundays, 2), ...futureSundays]);
+    setNextWorkingSunday(_.find(futureSundays, s => moment(s.date).isAfter(now)) || null);
   }, [language]);
 
   useEffect(() => {
     if (!nextWorkingSunday) return;
-
     const updateCountdown = () => {
-      const now = new Date();
-      const diff = nextWorkingSunday.date.getTime() - now.getTime();
-
+      const now = moment();
+      const target = moment(nextWorkingSunday.date);
+      const diff = target.diff(now);
       if (diff <= 0) {
-        setTimeUntilNext(t.started);
+        setTimeUntilNext(translations[language].started);
         return;
       }
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-      setTimeUntilNext(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+      const dur = moment.duration(diff);
+      setTimeUntilNext(
+        `${Math.floor(dur.asDays())}d ${dur.hours()}h ${dur.minutes()}m ${dur.seconds()}s`
+      );
     };
-
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
-
     return () => clearInterval(interval);
   }, [nextWorkingSunday, language]);
 
-  const t = translations[language];
+  if (!isClient) return null;
 
-  const getDescriptionKey = (description: string): string => {
+  const t = translations[language];
+  const translateDescription = (d: string): string => {
     const map: Record<string, keyof Translations> = {
       'Last Sunday of January': 'lastSundayJanuary',
       'Sunday before Easter': 'sundayBeforeEaster',
@@ -160,142 +239,7 @@ export default function TradingSundaysSection() {
       'Second Sunday before Christmas': 'secondSundayBeforeChristmas',
       'First Sunday before Christmas': 'firstSundayBeforeChristmas'
     };
-    return map[description] || description;
-  };
-
-  const translateDescription = (description: string): string => {
-    const key = getDescriptionKey(description);
-    return (t[key as keyof Translations] as string) || description;
-  };
-
-  const getLastSundayOfMonth = (year: number, month: number): Date => {
-    const lastDay = new Date(year, month + 1, 0);
-    const dayOfWeek = lastDay.getDay();
-    const daysToSubtract = dayOfWeek === 0 ? 0 : dayOfWeek;
-    const lastSunday = new Date(year, month, lastDay.getDate() - daysToSubtract);
-    return lastSunday;
-  };
-
-  const getEasterSunday = (year: number): Date => {
-    const a = year % 19;
-    const b = Math.floor(year / 100);
-    const c = year % 100;
-    const d = Math.floor(b / 4);
-    const e = b % 4;
-    const f = Math.floor((b + 8) / 25);
-    const g = Math.floor((b - f + 1) / 3);
-    const h = (19 * a + b - d - g + 15) % 30;
-    const i = Math.floor(c / 4);
-    const k = c % 4;
-    const l = (32 + 2 * e + 2 * i - h - k) % 7;
-    const m = Math.floor((a + 11 * h + 22 * l) / 451);
-    const month = Math.floor((h + l - 7 * m + 114) / 31) - 1;
-    const day = ((h + l - 7 * m + 114) % 31) + 1;
-    return new Date(year, month, day);
-  };
-
-  const getSundayBeforeEaster = (year: number): Date => {
-    const easterSunday = getEasterSunday(year);
-    const sundayBeforeEaster = new Date(easterSunday);
-    sundayBeforeEaster.setDate(easterSunday.getDate() - 7);
-    return sundayBeforeEaster;
-  };
-
-  const getSundaysBeforeChristmas = (year: number): Date[] => {
-    const christmas = new Date(year, 11, 25);
-    const sundays: Date[] = [];
-
-    const currentDate = new Date(christmas);
-    while (currentDate.getDay() !== 0) {
-      currentDate.setDate(currentDate.getDate() - 1);
-    }
-
-    if (currentDate.getTime() === christmas.getTime()) {
-      currentDate.setDate(currentDate.getDate() - 7);
-    }
-
-    for (let i = 0; i < 3; i++) {
-      sundays.unshift(new Date(currentDate));
-      currentDate.setDate(currentDate.getDate() - 7);
-    }
-
-    return sundays.reverse();
-  };
-
-  const getWorkingSundaysForPoland = (): WorkingSunday[] => {
-    const currentYear = new Date().getFullYear();
-    const sundays: WorkingSunday[] = [];
-
-    for (let year = currentYear; year <= currentYear + 1; year++) {
-      sundays.push({
-        date: getLastSundayOfMonth(year, 0),
-        description: 'Last Sunday of January'
-      });
-
-      sundays.push({
-        date: getSundayBeforeEaster(year),
-        description: 'Sunday before Easter'
-      });
-
-      sundays.push({
-        date: getLastSundayOfMonth(year, 3),
-        description: 'Last Sunday of April'
-      });
-
-      sundays.push({
-        date: getLastSundayOfMonth(year, 5),
-        description: 'Last Sunday of June'
-      });
-
-      sundays.push({
-        date: getLastSundayOfMonth(year, 7),
-        description: 'Last Sunday of August'
-      });
-
-      if (year >= 2025) {
-        const christmasSundays = getSundaysBeforeChristmas(year);
-        christmasSundays.forEach((sunday, index) => {
-          sundays.push({
-            date: sunday,
-            description: `${
-              index === 0 ? 'Third' : index === 1 ? 'Second' : 'First'
-            } Sunday before Christmas`
-          });
-        });
-      } else {
-        const christmasSundays = getSundaysBeforeChristmas(year).slice(1);
-        christmasSundays.forEach((sunday, index) => {
-          sundays.push({
-            date: sunday,
-            description: `${index === 0 ? 'Second' : 'First'} Sunday before Christmas`
-          });
-        });
-      }
-    }
-
-    const uniqueSundays = sundays.filter(
-      (sunday, index, self) =>
-        index === self.findIndex(s => s.date.getTime() === sunday.date.getTime())
-    );
-
-    const now = new Date();
-    return uniqueSundays
-      .filter(sunday => sunday.date >= new Date(now.getFullYear(), 0, 1))
-      .sort((a, b) => a.date.getTime() - b.date.getTime());
-  };
-
-  const formatDate = (date: Date): string => {
-    const locale = language === 'pl' ? 'pl-PL' : 'en-US';
-    return date.toLocaleDateString(locale, {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  const isPastDate = (date: Date): boolean => {
-    return date < new Date();
+    return (t[map[d] as keyof Translations] as string) || d;
   };
 
   return (
@@ -309,7 +253,6 @@ export default function TradingSundaysSection() {
         <p className="text-gray-400">{t.subtitle}</p>
       </motion.div>
 
-      {/* Countdown Section */}
       {nextWorkingSunday && (
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -320,26 +263,25 @@ export default function TradingSundaysSection() {
             <FiClock className="w-8 h-8 text-white mr-3" />
             <h2 className="text-2xl font-bold text-white">{t.nextWorkingSunday}</h2>
           </div>
-
           <div className="text-center mb-6">
             <p className="text-3xl font-bold text-white mb-2">
-              {formatDate(nextWorkingSunday.date)}
+              {moment(nextWorkingSunday.date).format('dddd, LL')}
             </p>
             <p className="text-lg text-blue-100">
               {translateDescription(nextWorkingSunday.description)}
             </p>
           </div>
-
-          <div className="bg-white bg-opacity-20 rounded-lg p-6 backdrop-blur-sm">
-            <p className="text-sm text-blue-100 mb-2 text-center">{t.timeRemaining}</p>
-            <p className="text-4xl font-bold text-white text-center font-mono">
+          <div className="bg-gradient-to-br from-white/10 text-white/90 to-transparent rounded-lg p-6 backdrop-blur-md border border-white/20 shadow-inner">
+            <p className="text-xs mb-2 text-center uppercase tracking-widest font-bold">
+              {t.timeRemaining}
+            </p>
+            <p className="text-4xl font-black text-center font-mono tracking-tighter drop-shadow-lg">
               {timeUntilNext}
             </p>
           </div>
         </motion.div>
       )}
 
-      {/* All Working Sundays List */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -350,57 +292,41 @@ export default function TradingSundaysSection() {
           <FiCalendar className="w-6 h-6 text-blue-400 mr-3" />
           <h2 className="text-2xl font-bold text-white">{t.allWorkingSundays}</h2>
         </div>
-
         <div className="space-y-3">
           {workingSundays.map((sunday, index) => {
-            const isPast = isPastDate(sunday.date);
-            const isNext = nextWorkingSunday?.date.getTime() === sunday.date.getTime();
-
+            const isPast = moment(sunday.date).isBefore(moment(), 'day');
+            const isNext = moment(nextWorkingSunday?.date).isSame(moment(sunday.date), 'day');
             return (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className={`p-4 rounded-lg border-2 transition-all ${
-                  isNext
-                    ? 'border-blue-500 bg-blue-500 bg-opacity-10'
-                    : isPast
-                    ? 'border-gray-700 bg-gray-700 bg-opacity-30 opacity-50'
-                    : 'border-gray-700 bg-gray-700 bg-opacity-50 hover:border-gray-600'
-                }`}
+                className={`p-4 rounded-lg border-2 transition-all ${isNext ? 'border-blue-500 bg-blue-500 bg-opacity-25' : isPast ? 'border-gray-700 bg-gray-700 bg-opacity-30 opacity-50' : 'border-gray-700 bg-gray-700 bg-opacity-50 hover:border-gray-600'}`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center flex-1">
                     <FiShoppingCart
-                      className={`w-5 h-5 mr-3 ${
-                        isNext ? 'text-blue-400' : isPast ? 'text-gray-500' : 'text-green-400'
-                      }`}
+                      className={`w-5 h-5 mr-3 ${isNext ? 'text-white' : isPast ? 'text-gray-500' : 'text-green-400'}`}
                     />
                     <div>
                       <p
-                        className={`font-semibold ${
-                          isNext ? 'text-blue-300' : isPast ? 'text-gray-400' : 'text-white'
-                        }`}
+                        className={`font-semibold ${isNext ? 'text-white' : isPast ? 'text-gray-400' : 'text-white'}`}
                       >
-                        {formatDate(sunday.date)}
+                        {moment(sunday.date).format('dddd, LL')}
                       </p>
                       <p
-                        className={`text-sm ${
-                          isNext ? 'text-blue-200' : isPast ? 'text-gray-500' : 'text-gray-400'
-                        }`}
+                        className={`text-sm ${isNext ? 'text-white/80' : isPast ? 'text-gray-500' : 'text-gray-400'}`}
                       >
                         {translateDescription(sunday.description)}
                       </p>
                     </div>
                   </div>
-
                   {isNext && (
-                    <span className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                    <span className="bg-white text-blue-600 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                       {t.next}
                     </span>
                   )}
-
                   {isPast && (
                     <span className="bg-gray-600 text-gray-300 text-xs font-bold px-3 py-1 rounded-full">
                       {t.past}
@@ -413,7 +339,6 @@ export default function TradingSundaysSection() {
         </div>
       </motion.div>
 
-      {/* Info Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -425,8 +350,8 @@ export default function TradingSundaysSection() {
           <p>{t.infoText}</p>
           <p className="font-semibold text-gray-300">{t.rulesTitle}</p>
           <ul className="list-disc list-inside space-y-1 ml-2">
-            {t.rules.map((rule, index) => (
-              <li key={index}>{rule}</li>
+            {t.rules.map((rule, idx) => (
+              <li key={idx}>{rule}</li>
             ))}
           </ul>
           <p className="pt-2">
@@ -434,15 +359,7 @@ export default function TradingSundaysSection() {
           </p>
         </div>
       </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.6 }}
-        className="mt-4 text-center text-gray-500 text-xs"
-      >
-        {t.technicalNote}
-      </motion.div>
+      <div className="mt-4 text-center text-gray-500 text-xs">{t.technicalNote}</div>
     </div>
   );
 }

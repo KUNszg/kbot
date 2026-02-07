@@ -4,15 +4,19 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { motion } from 'framer-motion';
 import { FiMenu } from 'react-icons/fi';
-import SessionProvider from './providers/SessionProvider';
-import Sidebar from './components/Sidebar';
-import StatsBox from './components/StatsBox';
-import HomeSection from './components/HomeSection';
-import CommandsSection from './components/CommandsSection';
-import EmoteCheckerSection from './components/EmoteCheckerSection';
-import DocsSection from './components/DocsSection';
-import NiedzieleHandloweSection from './components/TradingSundaysSection';
-import PrivacySection from './components/PrivacySection';
+import { useParams } from 'next/navigation';
+
+import SessionProvider from '../providers/SessionProvider';
+import Sidebar from '../components/Sidebar';
+import StatsBox from '../components/StatsBox';
+import HomeSection from '../components/HomeSection';
+import CommandsSection from '../components/CommandsSection';
+import EmoteCheckerSection from '../components/EmoteCheckerSection';
+import DocsSection from '../components/DocsSection';
+import NiedzieleHandloweSection from '../components/TradingSundaysSection';
+import PrivacySection from '../components/PrivacySection';
+
+export const dynamic = 'force-dynamic';
 
 export default function Home() {
   return (
@@ -24,21 +28,17 @@ export default function Home() {
 
 function HomeContent() {
   const { data: session } = useSession();
-  const [stats /*setStats*/] = useState({ users: 0, messages: 0, uptime: '0h 0m' });
-  const [activeSection, setActiveSection] = useState('home');
+  const params = useParams();
+
+  const [stats] = useState({ users: 0, messages: 0, uptime: '0h 0m' });
   const [botName, setBotName] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  useEffect(() => {
-    if (activeSection === 'home' || activeSection === 'chatbot') {
-      // const socket = new WebSocket('wss://your-backend-websocket-url');
-      // socket.onmessage = event => {
-      //   const data = JSON.parse(event.data);
-      //   setStats(prevStats => ({ ...prevStats, ...data.stats }));
-      // };
-      // return () => socket.close();
-    }
-  }, [activeSection]);
+  const activeSection = params?.slug
+    ? Array.isArray(params.slug)
+      ? params.slug.join('/')
+      : params.slug
+    : 'home';
 
   useEffect(() => {
     const name = 'KsyncBot';
@@ -49,12 +49,12 @@ function HomeContent() {
       if (i === name.length) clearInterval(interval);
     }, 200);
     return () => clearInterval(interval);
-  }, [activeSection]);
+  }, []);
 
   return (
     <div className="flex min-h-screen relative">
       <button
-        className="absolute top-4 left-4 md:hidden z-50 p-2 bg-gray-800 text-white rounded"
+        className="absolute top-4 left-4 md:hidden z-50 p-2 bg-gray-800 text-white rounded cursor-pointer hover:bg-gray-700 transition-colors"
         onClick={() => setSidebarOpen(true)}
       >
         <FiMenu size={24} />
@@ -62,7 +62,7 @@ function HomeContent() {
 
       <Sidebar
         activeSection={activeSection}
-        setActiveSection={setActiveSection}
+        setActiveSection={() => {}}
         session={session}
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
@@ -70,7 +70,7 @@ function HomeContent() {
 
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden cursor-pointer"
           onClick={() => setSidebarOpen(false)}
         ></div>
       )}

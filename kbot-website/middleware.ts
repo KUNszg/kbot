@@ -1,10 +1,7 @@
-import { withAuth } from 'next-auth/middleware';
+import NextAuth from 'next-auth';
+import { authConfig } from '@/lib/auth.config';
 
-export default withAuth(function middleware(req) {}, {
-  callbacks: {
-    authorized: ({ token }) => !!token
-  }
-});
+export default NextAuth(authConfig).auth;
 
 export const config = {
   matcher: ['/account/:path*', '/api/account/:path*', '/api/connected-apps/:path*']

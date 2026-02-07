@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-const { SqlClient } = require('../../../commons/connector/services/sqlClient');
-const { sqlConfig } = require('../../../commons/connector/consts/serviceConfigs');
+const { SqlClient } = require('commons/connector/services/sqlClient');
+const { sqlConfig } = require('commons/connector/consts/serviceConfigs');
 /* eslint-enable @typescript-eslint/no-require-imports */
 
 export interface SqlClientInterface {
@@ -17,24 +17,21 @@ let serviceConnectorInstance: ServiceConnectorType | null = null;
 export async function getServiceConnector(): Promise<ServiceConnectorType> {
   if (!serviceConnectorInstance) {
     try {
-      const customSqlConfig = {
+      const config = {
         ...sqlConfig,
-        database: 'kbot_website'
+        debug: false
       };
 
-      const sqlClient = SqlClient.withCustomConfig(customSqlConfig);
+      const sqlClient = SqlClient.withCustomConfig(config);
       await sqlClient.connect();
 
       serviceConnectorInstance = {
         sqlClient: sqlClient as SqlClientInterface
       };
 
-      console.log(
-        'ServiceConnector initialized for Next.js with database:',
-        customSqlConfig.database
-      );
+      console.log('ServiceConnector initialized');
     } catch (error) {
-      console.error('Failed to initialize SQL Client:', error);
+      console.error('Failed to initialize ServiceConnector:', error);
       throw error;
     }
   }

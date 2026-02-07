@@ -98,10 +98,13 @@ export default function CommandsSection() {
             placeholder="Search commands..."
             className="w-full bg-gray-800 text-white px-6 py-4 pr-14 rounded-lg border border-gray-700 focus:border-[#9146FF] focus:outline-none transition-colors"
           />
-          <FiSearch
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
-            size={20}
-          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="absolute right-2 cursor-pointer top-1/2 -translate-y-1/2 bg-[#9146FF] hover:bg-[#7c3aed] disabled:bg-gray-600 text-white p-3 rounded-lg transition-colors"
+          >
+            <FiSearch size={20} />
+          </button>
         </div>
       </motion.div>
 
