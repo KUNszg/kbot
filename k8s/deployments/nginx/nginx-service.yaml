@@ -25,3 +25,8 @@ spec:
       port: 6380
       targetPort: 6380
       nodePort: 30079
+    - name: rabbit-stream
+      protocol: TCP
+      port: 5673
+      targetPort: 5673
+      nodePort: 30078

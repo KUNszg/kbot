@@ -33,7 +33,7 @@ extraInitContainers:
     command:
       - sh
       - -c
-      - chmod -R 777 /var/lib/registry
+      - chown -R 1000:1000 /var/lib/registry && chmod -R 777 /var/lib/registry
     securityContext:
       runAsUser: 0
     volumeMounts:

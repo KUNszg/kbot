@@ -1,12 +1,10 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: docker-registry-pvc
-  namespace: default
+  name: duplicati-config-pvc
 spec:
-  storageClassName: standard
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
+      storage: 1Gi
