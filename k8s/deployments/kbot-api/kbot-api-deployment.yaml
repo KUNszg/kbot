@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: kbot-api
-          image: docker-registry.kunszg.com/kbot-api:latest
+          image: docker-registry.app.kunszg.com/kbot-api:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: node-modules-volume

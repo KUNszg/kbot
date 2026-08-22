@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: music-bot
-          image: docker-registry.kunszg.com/kbot-depl-music-bot:latest
+          image: docker-registry.app.kunszg.com/kbot-depl-music-bot:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: options-volume

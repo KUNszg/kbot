@@ -47,6 +47,14 @@ data:
             regex: ^;*([^;]+)(;.*)?$
             action: replace
             target_label: component
+          - source_labels:
+              - __meta_kubernetes_pod_label_logging
+            action: replace
+            target_label: logging
+          - source_labels:
+              - __meta_kubernetes_pod_label_project
+            action: replace
+            target_label: project
           - action: replace
             source_labels:
             - __meta_kubernetes_pod_node_name

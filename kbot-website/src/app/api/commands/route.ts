@@ -21,7 +21,7 @@ export async function GET() {
     const commands = await sqlClient.query<Command[]>(
       `
         SELECT *
-        FROM kbot.commands
+        FROM kbot_website.commands
         WHERE permissions < 5
         ORDER BY command 
       `

@@ -2,6 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kbot-job-manager
+  labels:
+    app: kbot-job-manager
+    logging: "true"
+    project: kbot
 spec:
   replicas: 1
   selector:
@@ -11,21 +15,15 @@ spec:
     metadata:
       labels:
         app: kbot-job-manager
+        logging: "true"
+        component: manager
     spec:
       containers:
         - name: kbot-job-manager
-          image: docker-registry.kunszg.com/kbot-job-manager:latest
+          image: docker-registry.app.kunszg.com/kbot-job-manager:latest
           imagePullPolicy: Always
-          volumeMounts:
-            - name: node-modules-volume
-              mountPath: /usr/src/app/node_modules
           envFrom:
             - configMapRef:
                 name: kbot-config
       imagePullSecrets:
         - name: regcred-v1
-      volumes:
-        - name: node-modules-volume
-          hostPath:
-            path: /home/docker/kbot/node_modules
-            type: Directory

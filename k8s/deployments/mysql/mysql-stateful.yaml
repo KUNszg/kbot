@@ -19,10 +19,11 @@ spec:
       volumes:
         - name: mysql-storage
           hostPath:
-            path: /home/docker/mysql
+            path: /mnt/data
       containers:
         - name: mysql
           image: mysql:8.0.36
+
           ports:
             - name: mysql
               containerPort: 3306

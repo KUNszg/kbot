@@ -1,6 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
 
 :root {
   --background: #0a0a0a;
@@ -9,6 +12,6 @@
 
 @layer base {
   body {
-    @apply text-white bg-background;
+    @apply text-foreground bg-background;
   }
 }

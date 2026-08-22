@@ -199,7 +199,17 @@ class UserRepository extends CommonRepository {
       [platform, userId]
     );
 
-    return _.first(tokenResults);
+    const tokenResultsWebsite = await this.serviceConnector.sqlClient.query(
+      `SELECT access_token AS accessToken, 
+              refresh_token AS refreshToken, 
+              last_renew AS lastRenew, 
+              allow_lookup AS allowLookup
+       FROM kbot_website.connected_apps
+       WHERE app_type=? AND user_id=?`,
+      [platform, userId]
+    );
+
+    return _.first(tokenResults) || _.first(tokenResultsWebsite);
   };
 
   _fetchAndRefreshSpotifyOauthToken = async refreshToken => {
@@ -264,6 +274,13 @@ class UserRepository extends CommonRepository {
         ]
       );
 
+      await this.serviceConnector.sqlClient.query(
+        `UPDATE kbot_website.connected_apps
+         SET access_token=?,last_renew=?
+         WHERE app_type="spotify" AND user_id=?`,
+        [spotifyOauthResult.access_token, moment().format('YYYY-MM-DD HH:mm:ss'), userId]
+      );
+
       accessToken = spotifyOauthResult.access_token;
     }
 
@@ -282,6 +299,13 @@ class UserRepository extends CommonRepository {
          WHERE platform="spotify" AND user=?`,
         [isPremium, userId]
       );
+
+      await this.serviceConnector.sqlClient.query(
+        `UPDATE kbot_website.connected_apps
+         SET premium=?, last_renew = CURRENT_DATE()
+         WHERE app_type="spotify" AND user_id=?`,
+        [isPremium, userId]
+      );
     } catch (err) {
       const error = JSON.parse(err.response.body);
 
@@ -292,6 +316,12 @@ class UserRepository extends CommonRepository {
         await this.serviceConnector.sqlClient.query(
           `DELETE FROM access_token
            WHERE platform="spotify" AND user=?`,
+          [userId]
+        );
+
+        await this.serviceConnector.sqlClient.query(
+          `DELETE FROM kbot_website.connected_apps
+           WHERE app_type="spotify" AND user_id=?`,
           [userId]
         );
       }

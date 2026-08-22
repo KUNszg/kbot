@@ -1,4 +1,4 @@
-FROM node:20.12.2-alpine AS builder
+FROM node:24.12.0-alpine AS builder
 
 WORKDIR /build
 
@@ -8,11 +8,14 @@ COPY kbot-website ./kbot-website
 
 WORKDIR /build/kbot-website
 
-RUN npm install
+RUN npm ci
+
+RUN cp -R ../commons ./commons
+RUN cp -R ../lib ./lib
 
 RUN npm run build
 
-FROM node:20.12.2-alpine AS runner
+FROM node:24.12.0-alpine AS runner
 
 WORKDIR /app
 
@@ -22,9 +25,8 @@ COPY --from=builder /build/kbot-website/package.json ./
 COPY --from=builder /build/kbot-website/.next ./.next
 COPY --from=builder /build/kbot-website/node_modules ./node_modules
 COPY --from=builder /build/kbot-website/public ./public
-
-COPY --from=builder /build/commons ../commons
-COPY --from=builder /build/lib ../lib
+COPY --from=builder /build/commons ./commons
+COPY --from=builder /build/lib ./lib
 
 EXPOSE 3000
 

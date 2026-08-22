@@ -2,6 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kbot-website
+  labels:
+    app: kbot-website
+    project: kbot
+    logging: "true"
 spec:
   replicas: 1
   selector:
@@ -11,14 +15,19 @@ spec:
     metadata:
       labels:
         app: kbot-website
+        project: kbot
+        logging: "true"
     spec:
       containers:
         - name: kbot-website
-          image: docker-registry.kunszg.com/kbot-website:latest
+          image: docker-registry.app.kunszg.com/kbot-website:latest
           imagePullPolicy: Always
+          env:
+            - name: AUTH_TRUST_HOST
+              value: "true"
           envFrom:
             - configMapRef:
-                name: kbot-config
+                name: kbot-website-config
             - secretRef:
                 name: nextauth-secret
       imagePullSecrets:

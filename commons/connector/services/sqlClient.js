@@ -101,8 +101,6 @@ class SqlClient {
       const [result] = await this._sqlPool.execute(query, data);
       return result;
     } catch (error) {
-      console.error('[Connector-SQL] Query error:', error);
-
       if (error.message && error.message.includes('closed state')) {
         console.warn('[Connector-SQL] Database connection closed, retrying...');
         this.isConnected = false;

@@ -1,2 +1,2 @@
-docker build -t docker-registry.kunszg.com/kbot-backend:latest -f ../../../Dockerfile ../../../
-docker push docker-registry.kunszg.com/kbot-backend:latest
+docker build -t docker-registry.app.kunszg.com/kbot-backend:latest -f ../../../Dockerfile ../../../
+docker push docker-registry.app.kunszg.com/kbot-backend:latest

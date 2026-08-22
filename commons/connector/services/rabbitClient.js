@@ -20,6 +20,8 @@ class RabbitClient {
 
       this.publishChannel = null;
       this.consumerChannels = new Map();
+      this.queueSizeCache = new Map();
+      this.queueSizeTimestamps = new Map();
     }
 
     return RabbitClient.instance;
@@ -132,25 +134,45 @@ class RabbitClient {
     });
   }
 
+  async getQueueSize(queue, maxAge = 5000) {
+    const now = Date.now();
+    const lastCheck = this.queueSizeTimestamps.get(queue) || 0;
+
+    if (now - lastCheck < maxAge) {
+      return this.queueSizeCache.get(queue) || 0;
+    }
+
+    const { messageCount } = await this.publishChannel.checkQueue(queue);
+    this.queueSizeCache.set(queue, messageCount);
+    this.queueSizeTimestamps.set(queue, now);
+
+    return messageCount;
+  }
+
   /**
    * Sends a message to the specified RabbitMQ queue.
    * @param {string} queue - The name of the queue.
    * @param {Object} [message={}] - The message to be sent, which will be stringified.
+   * @param {Object} [options={}] - Options ex. checkLimit, maxQueueSize
    * @returns {Promise<boolean>} Whether the message was successfully added to the queue.
    */
-  async sendToQueue(queue, message = {}) {
+  async sendToQueue(queue, message = {}, options = {}) {
     try {
       if (!this.publishChannel) {
         await this.createPublishChannel();
       }
 
-      const { messageCount } = await this.publishChannel.assertQueue(queue, { durable: true });
+      await this.publishChannel.assertQueue(queue, { durable: true });
 
-      if (messageCount >= 50_000) {
-        console.warn(
-          `[Connector-RabbitMQ] Queue ${queue} has reached message limit: ${messageCount}`
-        );
-        return false;
+      const checkLimit = _.get(options, 'checkLimit', false);
+      const maxQueueSize = _.get(options, 'maxQueueSize', 10000);
+
+      if (checkLimit) {
+        const messageCount = await this.getQueueSize(queue);
+
+        if (messageCount >= maxQueueSize) {
+          return false;
+        }
       }
 
       if (!_.isNil(message)) {

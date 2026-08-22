@@ -11,7 +11,7 @@ export default function PrivacySection() {
         className="mb-8"
       >
         <h1 className="text-4xl font-bold text-white mb-4">Privacy Policy</h1>
-        <p className="text-gray-400 mb-8">Last updated: {new Date().toLocaleDateString()}</p>
+        <p className="text-gray-400 mb-8">Last updated: 11.01.2026</p>
 
         <div className="space-y-6 text-gray-300">
           <section>

@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { auth } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -33,18 +32,13 @@ export async function GET(request: NextRequest) {
         state: session.user.id
       });
 
-      const authUrl = `https://accounts.spotify.com/authorize?${params.toString()}`;
-
-      return NextResponse.redirect(authUrl);
+      return NextResponse.redirect(
+        `https://accounts.spotify.com/authorize?${params.toString()}`
+      );
     }
 
     if (code && state === session.user.id) {
       try {
-        console.log('Starting token exchange...');
-        console.log('Code length:', code.length);
-        console.log('State matches user ID:', state === session.user.id);
-        console.log('Redirect URI:', `${process.env.NEXTAUTH_URL}/api/spotify/connect`);
-
         const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
           method: 'POST',
           headers: {
@@ -58,15 +52,9 @@ export async function GET(request: NextRequest) {
           })
         });
 
-        console.log('Token response status:', tokenResponse.status);
-        console.log('Token response status text:', tokenResponse.statusText);
-
         const tokenData = await tokenResponse.json();
-        console.log('Token response data:', tokenData);
 
         if (tokenResponse.ok) {
-          console.log('Token exchange successful, fetching profile...');
-
           const profileResponse = await fetch('https://api.spotify.com/v1/me', {
             headers: {
               Authorization: `Bearer ${tokenData.access_token}`
@@ -75,14 +63,17 @@ export async function GET(request: NextRequest) {
 
           if (profileResponse.ok) {
             const profileData = await profileResponse.json();
-            console.log('Profile fetch successful for user:', profileData.display_name);
 
             const { UserModel } = await import('@/lib/models/User');
             const expiresAt = new Date(Date.now() + tokenData.expires_in * 1000);
 
+            const appName = profileData.display_name
+              ? `${profileData.display_name}`
+              : 'Spotify';
+
             await UserModel.addConnectedApp({
               user_id: session.user.id,
-              app_name: 'Spotify',
+              app_name: appName,
               app_type: 'spotify',
               access_token: tokenData.access_token,
               refresh_token: tokenData.refresh_token,
@@ -94,48 +85,26 @@ export async function GET(request: NextRequest) {
               ]
             });
 
-            console.log('Successfully saved Spotify connection to database');
-
             return NextResponse.redirect(
               `${process.env.NEXTAUTH_URL}/account?connected=spotify`
             );
           } else {
-            const profileError = await profileResponse.json();
-            console.error('Spotify profile fetch failed:', profileError);
-            return NextResponse.json(
-              {
-                error: 'Failed to fetch Spotify profile',
-                details: profileError
-              },
-              { status: 400 }
+            console.error('Spotify profile fetch failed');
+            return NextResponse.redirect(
+              `${process.env.NEXTAUTH_URL}/account?error=spotify_profile_failed`
             );
           }
         } else {
-          console.error('Spotify token exchange failed:', tokenData);
-          return NextResponse.json(
-            {
-              error: 'Failed to connect Spotify',
-              spotifyError: tokenData
-            },
-            { status: 400 }
+          console.error('Spotify token exchange failed', tokenData);
+          return NextResponse.redirect(
+            `${process.env.NEXTAUTH_URL}/account?error=spotify_token_failed`
           );
         }
       } catch (tokenError) {
         console.error('Error during token exchange:', tokenError);
-        return NextResponse.json(
-          {
-            error: 'Token exchange failed',
-            details: tokenError instanceof Error ? tokenError.message : 'Unknown error'
-          },
-          { status: 500 }
-        );
+        return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/account?error=server_error`);
       }
     }
-
-    console.log('Invalid request - missing code or state mismatch');
-    console.log('Code present:', !!code);
-    console.log('State:', state);
-    console.log('Expected state (user ID):', session.user.id);
 
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   } catch (error) {

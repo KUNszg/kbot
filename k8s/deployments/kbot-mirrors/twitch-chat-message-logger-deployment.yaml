@@ -1,15 +1,34 @@
-kind: Service
-apiVersion: v1
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: kbot-api
-  labels:
-    app: kbot-api
+  name: kbot-mirrors-twitch-chat-message-logger
 spec:
-  ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
+  replicas: 1
   selector:
-    app: kbot-api
-  type: NodePort
-
+    matchLabels:
+      app: kbot-mirrors-twitch-chat-message-logger
+  template:
+    metadata:
+      labels:
+        app: kbot-mirrors-twitch-chat-message-logger
+    spec:
+      containers:
+        - name: kbot-mirrors-twitch-chat-message-logger
+          image: docker-registry.app.kunszg.com/kbot-mirrors:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: node-modules-volume
+              mountPath: /usr/src/app/node_modules
+          envFrom:
+            - configMapRef:
+                name: kbot-config
+          env:
+            - name: APP_NAME
+              value: "TWITCH_CHAT_MESSAGE_LOGGER"
+      imagePullSecrets:
+        - name: regcred-v1
+      volumes:
+        - name: node-modules-volume
+          hostPath:
+            path: /home/docker/kbot/node_modules
+            type: Directory

@@ -3,7 +3,7 @@ const creds = require('../../../lib/credentials/config');
 module.exports = {
   rabbitConfig: {
     protocol: 'amqp',
-    hostname: process.env.rabbitHostname || 'localhost',
+    hostname: process.env.rabbitHostname || creds.rabbitHostname,
     port: process.env.rabbitPort || creds.rabbitPort,
     username: process.env.rabbitUsername || creds.rabbitUsername,
     password: process.env.rabbitPassword || creds.rabbitPassword,
@@ -45,8 +45,8 @@ module.exports = {
   },
   redisConfig: {
     socket: {
-      host: process.env.redisHost,
-      port: process.env.redisPort || 12100,
+      host: process.env.redisHost || creds.redisHost,
+      port: process.env.redisPort || creds.redisPort,
       connectTimeout: 10000,
       commandTimeout: 5000
     },
@@ -86,7 +86,7 @@ module.exports = {
     restTimeOffset: 500
   },
   redditConfig: {
-    userAgent: 'linux:ksyncbot:3.4.8 (by /u/kunszg)',
+    userAgent: 'linux:ksyncbot:3.4.9 (by /u/kunszg)',
     clientId: process.env.redditUID || creds.redditUID,
     clientSecret: process.env.redditSecret || creds.redditSecret,
     username: process.env.redditUsername || creds.redditUsername,

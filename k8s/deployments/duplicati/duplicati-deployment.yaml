@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: duplicati
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: duplicati
+  template:
+    metadata:
+      labels:
+        app: duplicati
+    spec:
+      containers:
+        - name: duplicati
+          image: docker-registry.app.kunszg.com/duplicati:latest
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Etc/UTC"
+          ports:
+            - containerPort: 8200
+          volumeMounts:
+            - name: duplicati-config
+              mountPath: /config
+            - name: backup-source
+              mountPath: /source
+      volumes:
+        - name: duplicati-config
+          persistentVolumeClaim:
+            claimName: duplicati-config-pvc
+        - name: backup-source
+          emptyDir: {}
