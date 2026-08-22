@@ -1,10 +1,11 @@
-const utils = require('../../../lib/utils/utils');
 const creds = require('../../../lib/credentials/config');
 const got = require('got');
 const fs = require('fs');
 const _ = require('lodash');
 const pageSpotifyResolved = services => {
-  const { app, kb } = services;
+  const { app, Commons } = services;
+
+  const kb = Commons.ServiceConnector.Connector;
 
   app.get('/resolved', async (req, res) => {
     if (!_.get(req, 'query.code')) {
@@ -12,7 +13,7 @@ const pageSpotifyResolved = services => {
       return;
     }
 
-    const verifCode = utils.genString();
+    const verifCode = Commons.UtilityRepository().stringGenerator();
 
     try {
       await (async () => {
@@ -20,16 +21,16 @@ const pageSpotifyResolved = services => {
         const spotifyToken = await got(api, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
         }).json();
 
         const profile = await got(`https://api.spotify.com/v1/me`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${spotifyToken.access_token}`,
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
         }).json();
 
         await kb.sqlClient.query(
@@ -40,7 +41,7 @@ const pageSpotifyResolved = services => {
             spotifyToken.access_token,
             spotifyToken.refresh_token,
             profile.product === 'open' ? 'N' : 'Y',
-            verifCode,
+            verifCode
           ]
         );
       })();
@@ -54,13 +55,13 @@ const pageSpotifyResolved = services => {
       fs.readFileSync('../../kbot-website/html/express_pages/spotifyResolve.html')
     );
 
-    const page = new utils.Swapper(html, [
+    const page = Commons.UtilityRepository().complementHtmlPageTemplates(html, [
       {
-        code: verifCode,
-      },
+        code: verifCode
+      }
     ]);
 
-    res.send(page.template());
+    res.send(page);
   });
 };
 

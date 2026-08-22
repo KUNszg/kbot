@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-proxy-manager
+  namespace: default
+spec:
+  selector:
+    app: nginx-proxy-manager
+  type: NodePort
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      nodePort: 30080
+    - name: https
+      port: 443
+      targetPort: 443
+      nodePort: 30443
+    - name: admin
+      port: 81
+      targetPort: 81
+      nodePort: 30081
+    - name: redis-stream
+      protocol: TCP
+      port: 6380
+      targetPort: 6380
+      nodePort: 30079
+    - name: rabbit-stream
+      protocol: TCP
+      port: 5673
+      targetPort: 5673
+      nodePort: 30078

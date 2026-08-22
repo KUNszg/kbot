@@ -1,0 +1,40 @@
+{
+  "name": "kbot-website",
+  "version": "1.0.4",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "run-with-build": "next build && next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@auth/core": "^0.41.0",
+    "@next/third-parties": "^16.1.6",
+    "@tailwindcss/postcss": "^4.1.18",
+    "framer-motion": "^12.24.12",
+    "lodash": "4.17.23",
+    "moment": "^2.30.1",
+    "mysql2": "^3.16.0",
+    "next": "16.1.6",
+    "next-auth": "5.0.0-beta.30",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-icons": "^5.5.0",
+    "socket.io-client": "^4.8.3",
+    "spotify-web-api-node": "^5.0.2"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/lodash": "^4.17.21",
+    "@types/node": "^25",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.1",
+    "postcss": "^8",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5"
+  }
+}

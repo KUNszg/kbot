@@ -1,0 +1,24 @@
+{
+  "channelsRestrictingLinks": [
+    "forsen"
+  ],
+  "commandsWithAllowedMassping": [
+    "hug",
+    "dank"
+  ],
+  "receivedNoticeTypesToIgnore": [
+    "raid",
+    "unraid",
+    "host_on",
+    "host_off",
+    "host_target_went_offline",
+    "followers_on",
+    "followers_off",
+    "followers_on_zero",
+    "r9k_on",
+    "r9k_off",
+    "giftpaidupgrade",
+    "communitypayforward",
+    "standardpayforward"
+  ]
+}

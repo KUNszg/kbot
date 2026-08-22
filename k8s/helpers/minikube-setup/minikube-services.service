@@ -1,0 +1,22 @@
+[Unit]
+Description=Minikube Dashboard, Port Forwards and Mounts
+After=network.target
+
+[Service]
+Type=simple
+User=youruser
+Environment="KUBECONFIG=/home/youruser/.kube/config"
+ExecStart=/usr/local/bin/minikube-services.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+
+# Replace 'youruser' with your username
+#sudo sed -i "s/youruser/$USER/g" /etc/systemd/system/minikube-services.service
+
+#sudo systemctl daemon-reload
+#sudo systemctl enable minikube-services
+#sudo systemctl start minikube-services
