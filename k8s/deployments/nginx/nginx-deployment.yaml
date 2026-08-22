@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-proxy-manager
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-proxy-manager
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nginx-proxy-manager
+    spec:
+      containers:
+        - name: nginx-proxy-manager
+          image: 'jc21/nginx-proxy-manager:latest'
+          ports:
+            - name: http
+              containerPort: 80
+            - name: https
+              containerPort: 443
+            - name: admin
+              containerPort: 81
+          env:
+            - name: DISABLE_IPV6
+              value: "true"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: letsencrypt
+              mountPath: /etc/letsencrypt
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: npm-data
+        - name: letsencrypt
+          persistentVolumeClaim:
+            claimName: npm-letsencrypt

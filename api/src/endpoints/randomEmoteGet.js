@@ -1,8 +1,8 @@
 const randomEmoteGet = services => {
-  const { app, kb } = services;
+  const { app, Commons } = services;
 
   app.get('/randomemote', async (req, res) => {
-    const randomemote = await kb.sqlClient.query(`
+    const randomemote = await Commons.ServiceConnector.Connector.sqlClient.query(`
         SELECT *
         FROM emotes
         ORDER BY RAND()

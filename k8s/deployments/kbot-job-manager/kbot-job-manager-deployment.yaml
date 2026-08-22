@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kbot-job-manager
+  labels:
+    app: kbot-job-manager
+    logging: "true"
+    project: kbot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kbot-job-manager
+  template:
+    metadata:
+      labels:
+        app: kbot-job-manager
+        logging: "true"
+        component: manager
+    spec:
+      containers:
+        - name: kbot-job-manager
+          image: docker-registry.app.kunszg.com/kbot-job-manager:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: kbot-config
+      imagePullSecrets:
+        - name: regcred-v1

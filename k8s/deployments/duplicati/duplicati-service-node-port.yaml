@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: duplicati-svc
+spec:
+  selector:
+    app: duplicati
+  ports:
+    - protocol: TCP
+      port: 8200
+      targetPort: 8200

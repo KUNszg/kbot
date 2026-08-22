@@ -1,24 +1,28 @@
-const utils = require('../../lib/utils/utils');
 const handleGithubWebhookMessage = require('../utils/handleGithubWebhookMessage');
 
 const webhookHandlerWildcard = services => {
-  const { redisClient, kb, webhookHandler } = services;
+  const { Commons, webhookHandler } = services;
+
+  const kb = Commons.ServiceConnector.Connector;
 
   webhookHandler.on('*', async function (event, repo, data, head) {
-    new utils.WSocket('wsl').emit({
+    kb.websocketClient.websocketEmitter.emit('wsl', {
       type: 'github',
       data: [{ event }, { repo }, { data }, { head }],
     });
 
     const githubWebhookTwitchResponse = await handleGithubWebhookMessage(
-      { kb, redisClient },
+      { kb },
       event,
       repo,
       data
     );
 
     if (githubWebhookTwitchResponse) {
-      await kb.tmiClient.say(utils.Get.userData.botUsername, githubWebhookTwitchResponse);
+      await kb.tmiClient.sender.say(
+        Commons.CommonRepository.botUsername,
+        githubWebhookTwitchResponse
+      );
     }
   });
 };

@@ -1,15 +1,20 @@
-const shell = require('child_process');
-const fs = require('fs');
+const _ = require('lodash');
+const got = require('got');
+
+const creds = require('../../../lib/credentials/config');
 
 const getModuleData = require('../../utils/getModuleData');
-const _ = require('lodash');
 
 const statsGet = services => {
-  const { app, kb } = services;
+  const { app, Commons } = services;
+
+  const kb = Commons.ServiceConnector.Connector;
 
   app.get('/api/stats', async (req, res) => {
-    const modules = await kb.redisClient.get(`kb:global:stats`);
-    const channels = await kb.redisClient.get('kb:global:channel-list');
+    const modules = (await kb.redisClient.get(`kb:global:stats`)) || [];
+    const channels = (await kb.redisClient.get('kb:global:channel-list')) || [];
+    const lines = (await kb.redisClient.get('kb:job-manager:estimatedRepoLines')) || 0;
+    const uptimeData = (await kb.redisClient.get('kb:command-manager:botUptime')) || process.uptime();
 
     const executions = await kb.sqlClient.query(
       'SELECT count FROM stats WHERE type="statsApi" AND sha="commandExecs"'
@@ -30,35 +35,23 @@ const statsGet = services => {
       0
     );
 
+    const githubResponse = await got(
+      {
+        url: 'https://api.github.com/repos/kunszg/kbot/commits?per_page=1&page=1',
+        headers: {
+          Authorization: process.env.githubAppAccessToken || creds.githubAppAccessToken,
+        },
+      }
+    ).json();
+
     const commits =
-      process.platform === 'linux'
-        ? _.toInteger(shell.execSync('sudo git rev-list --count master'))
-        : 0;
-
-    const lines =
-      process.platform === 'linux'
-        ? shell.execSync(
-            `find ../ -name '*.js' -not -path "../node_modules*" | xargs wc -l | tail -1`
-          )
-        : 0;
-
-    const uptimeData =
-      process.platform === 'linux'
-        ? _.toString(fs.readFileSync('../data/temp_api_uptime.txt'))
-        : 0;
-
-    const restartData =
-      process.platform === 'linux'
-        ? _.toString(fs.readFileSync('../data/temp_api_restarting.txt'))
-        : 0;
-
-    const isRestarting =
-      0.9 * channels.length > Math.trunc(Date.now() - _.toInteger(restartData)) / 1000;
+      _.toNumber(
+        _.last(_.split(_.get(githubResponse, 'headers.link'), '&')).replace(/[^0-9]/g, '')
+      ) || 0;
 
     const linesOfCode = _.toInteger(_.get(_.split(_.toString(lines), ' '), '1'));
     const _usersLogged = _.toInteger(_.get(_.first(usersLogged), 'count'));
     const commandExecutions = _.toInteger(_.get(_.first(executions), 'count'));
-    const uptime = Date.now() - Math.trunc(_.toInteger(uptimeData) * 1000);
 
     res.send({
       modules: {
@@ -68,8 +61,8 @@ const statsGet = services => {
         botLastSeen: getModuleData('bot', modules),
       },
       bot: {
-        isRestarting,
-        codeUptime: uptime,
+        isRestarting: false,
+        codeUptime:  Date.now() - Math.trunc(_.toInteger(uptimeData) * 1000),
         linesOfCode,
         usersLogged: _usersLogged,
         commandExecutions,

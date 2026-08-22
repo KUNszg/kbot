@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kbot-website-service
+spec:
+  selector:
+    app: kbot-website
+  ports:
+    - protocol: TCP
+      port: 40100
+      targetPort: 3000
+  type: NodePort

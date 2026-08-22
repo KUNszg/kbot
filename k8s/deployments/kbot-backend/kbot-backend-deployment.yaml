@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kbot-backend
+  labels:
+    app: kbot-backend
+    project: kbot
+    logging: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kbot-backend
+  template:
+    metadata:
+      labels:
+        app: kbot-backend
+        project: kbot
+        logging: "true"
+    spec:
+      containers:
+        - name: kbot-backend
+          image: docker-registry.app.kunszg.com/kbot-backend:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: kbot-config
+      imagePullSecrets:
+        - name: regcred-v1

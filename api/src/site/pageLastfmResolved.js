@@ -1,11 +1,12 @@
 const got = require('got');
 const creds = require('../../../lib/credentials/config');
 const fs = require('fs');
-const utils = require('../../../lib/utils/utils');
 const _ = require('lodash');
 
 const pageLastfmResolved = services => {
-  const { app, kb } = services;
+  const { app, Commons } = services;
+
+  const kb = Commons.ServiceConnector.Connector;
 
   app.get('/lastfmresolved', async (req, res) => {
     if (!_.get(req, 'query.verifcode') || !_.get(req, 'query.user')) {
@@ -26,15 +27,15 @@ const pageLastfmResolved = services => {
       fs.readFileSync('../../kbot-website/html/express_pages/lastfmResolve.html')
     );
 
-    const page = new utils.Swapper(html, [
+    const page = Commons.UtilityRepository.complementHtmlPageTemplates(html, [
       {
-        code: _.get(req, 'query.verifcode'),
-      },
+        code: _.get(req, 'query.verifcode')
+      }
     ]);
 
     try {
       await (async () => {
-        res.send(page.template());
+        res.send(page);
 
         await kb.sqlClient.query(
           `
