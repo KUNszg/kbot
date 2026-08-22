@@ -13,8 +13,8 @@
   "author": "kunszg",
   "license": "ISC",
   "dependencies": {
+    "amqplib": "^0.10.5",
     "@mastondzn/dank-twitch-irc": "^7.2.0",
-    "amqplib": "^0.10.3",
     "body-parser": "1.20.3",
     "buffer-equal-constant-time": "^1.0.1",
     "discord.js": "^14.16.3",
