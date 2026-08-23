@@ -2,7 +2,14 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiUsers, FiMessageSquare, FiClock, FiRadio, FiActivity, FiCode } from 'react-icons/fi';
+import {
+  FiUsers,
+  FiMessageSquare,
+  FiClock,
+  FiRadio,
+  FiActivity,
+  FiCode
+} from 'react-icons/fi';
 
 interface Stats {
   users: number;
@@ -36,7 +43,11 @@ const REFRESH_INTERVAL_MS = 15000;
 const DELTA_VISIBLE_MS = 5000;
 
 const compactNumber = (value: number) =>
-  new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
+  new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(
+    value
+  );
+
+const exactNumber = (value: number) => new Intl.NumberFormat('pl-PL').format(value);
 
 const STAT_DEFS: {
   key: keyof Stats;
@@ -48,13 +59,13 @@ const STAT_DEFS: {
     key: 'users',
     label: 'Users',
     icon: <FiUsers size={20} />,
-    format: v => compactNumber(Number(v))
+    format: v => exactNumber(Number(v))
   },
   {
     key: 'messages',
     label: 'Commands run',
     icon: <FiMessageSquare size={20} />,
-    format: v => compactNumber(Number(v))
+    format: v => exactNumber(Number(v))
   },
   {
     key: 'channelsMonitored',
@@ -79,7 +90,11 @@ const STAT_DEFS: {
 
 function formatDelta(key: NumericStatKey, delta: number): string {
   const sign = delta > 0 ? '+' : '';
-  return key === 'messageRate' ? `${sign}${delta.toFixed(2)}` : `${sign}${compactNumber(delta)}`;
+
+  if (key === 'messageRate') return `${sign}${delta.toFixed(2)}`;
+  if (key === 'users' || key === 'messages') return `${sign}${exactNumber(delta)}`;
+
+  return `${sign}${compactNumber(delta)}`;
 }
 
 function DeltaBadge({ delta, deltaKey }: { delta: number; deltaKey: NumericStatKey }) {
@@ -173,7 +188,9 @@ export default function LiveStatsSection() {
                   {def.icon}
                 </div>
               </div>
-              <div className="text-2xl font-semibold text-white">{def.format(stats[def.key])}</div>
+              <div className="text-2xl font-semibold text-white">
+                {def.format(stats[def.key])}
+              </div>
               <div className="mt-1 text-xs text-gray-400">{def.label}</div>
               <div className="h-4 mt-1">
                 <AnimatePresence>
