@@ -16,9 +16,6 @@ spec:
         - name: kbot-mirrors-twitch-chat-message-logger
           image: docker-registry.app.kunszg.com/kbot-mirrors:latest
           imagePullPolicy: Always
-          volumeMounts:
-            - name: node-modules-volume
-              mountPath: /usr/src/app/node_modules
           envFrom:
             - configMapRef:
                 name: kbot-config
@@ -27,8 +24,3 @@ spec:
               value: "TWITCH_CHAT_MESSAGE_LOGGER"
       imagePullSecrets:
         - name: regcred-v1
-      volumes:
-        - name: node-modules-volume
-          hostPath:
-            path: /home/docker/kbot/node_modules
-            type: Directory
