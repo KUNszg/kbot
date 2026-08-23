@@ -59,16 +59,21 @@ class RedisClient {
    * @returns {Promise<string|null>} The value associated with the key, or null if not found.
    */
   async get(key) {
-    const value = await this.client.get(key);
+    try {
+      const value = await this.client.get(key);
 
-    if (value && typeof value === 'string' && value.trim() !== '') {
-      try {
-        return JSON.parse(value);
-      } catch (error) {
-        console.error('[Connector-Redis] Error parsing value:', error);
+      if (value && typeof value === 'string' && value.trim() !== '') {
+        try {
+          return JSON.parse(value);
+        } catch (error) {
+          console.error('[Connector-Redis] Error parsing value:', error);
+        }
       }
+      return value;
+    } catch (error) {
+      console.error(`[Connector-Redis] Error getting key "${key}":`, error);
+      return null;
     }
-    return value;
   }
 
   /**
@@ -76,19 +81,29 @@ class RedisClient {
    * @param {string} key - The key to set.
    * @param {Object} data - The data to store, which will be stringified.
    * @param {number} [expire=30] - The expiration time in seconds (default is 30 seconds).
-   * @returns {Promise<string>} The result of the set operation.
+   * @returns {Promise<string|null>} The result of the set operation, or null on failure.
    */
   async set(key, data = {}, expire = 30) {
-    return await this.client.set(key, JSON.stringify(data), { EX: expire });
+    try {
+      return await this.client.set(key, JSON.stringify(data), { EX: expire });
+    } catch (error) {
+      console.error(`[Connector-Redis] Error setting key "${key}":`, error);
+      return null;
+    }
   }
 
   /**
    * Deletes a value from Redis by key.
    * @param {string} key - The key of the value to delete.
-   * @returns {Promise<number>} The number of keys that were removed.
+   * @returns {Promise<number>} The number of keys that were removed, or 0 on failure.
    */
   async del(key) {
-    return await this.client.del(key);
+    try {
+      return await this.client.del(key);
+    } catch (error) {
+      console.error(`[Connector-Redis] Error deleting key "${key}":`, error);
+      return 0;
+    }
   }
 
   /**
@@ -103,10 +118,15 @@ class RedisClient {
    * Sends a custom Redis command.
    * @param {Array} args - The command arguments.
    * @param {Object} [options] - Optional additional options for the command.
-   * @returns {Promise<any>} The result of the command.
+   * @returns {Promise<any>} The result of the command, or null on failure.
    */
   async sendCommand(args, options) {
-    return await this.client.sendCommand(args, options);
+    try {
+      return await this.client.sendCommand(args, options);
+    } catch (error) {
+      console.error('[Connector-Redis] Error sending command:', error);
+      return null;
+    }
   }
 
   async close() {
