@@ -1,4 +1,5 @@
 name: Build & Deploy
+run-name: ${{ inputs.service }} Build & Deploy
 
 # SECURITY: this workflow runs on a self-hosted runner living on the production VPS.
 # It must NEVER be triggered by pull_request / pull_request_target — those events run
