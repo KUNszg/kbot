@@ -7,12 +7,12 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
   FiUser,
-  FiMail,
   FiCalendar,
   FiShield,
   FiTrash2,
   FiExternalLink,
-  FiLink
+  FiLink,
+  FiAlertTriangle
 } from 'react-icons/fi';
 import { FaSpotify, FaDiscord } from 'react-icons/fa';
 import SessionProvider from '../providers/SessionProvider';
@@ -45,6 +45,7 @@ function AccountContent() {
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState<string | null>(null);
   const [imageError, setImageError] = useState(false);
+  const [unlinking, setUnlinking] = useState(false);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -127,6 +128,31 @@ function AccountContent() {
     }
   };
 
+  const unlinkAccount = async () => {
+    if (
+      !confirm(
+        'Are you sure you want to unlink your account from KsyncBot? This permanently deletes your linked profile and connected apps.'
+      )
+    ) {
+      return;
+    }
+
+    setUnlinking(true);
+    try {
+      const response = await fetch('/api/account', { method: 'DELETE' });
+
+      if (response.ok) {
+        await signOut({ callbackUrl: '/' });
+      } else {
+        console.error('Failed to unlink account');
+        setUnlinking(false);
+      }
+    } catch (error) {
+      console.error('Error unlinking account:', error);
+      setUnlinking(false);
+    }
+  };
+
   const isSpotifyConnected = connectedApps.some(app => app.app_type === 'spotify');
 
   if (status === 'loading' || loading) {
@@ -157,7 +183,7 @@ function AccountContent() {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="lg:col-span-1"
+            className="lg:col-span-1 flex flex-col"
           >
             <div className="bg-gray-800 rounded-lg p-6">
               <h2 className="text-xl font-semibold text-white mb-4">Profile Information</h2>
@@ -188,21 +214,34 @@ function AccountContent() {
                   <span>Username: {session.user?.name}</span>
                 </div>
                 <div className="flex items-center text-gray-300">
-                  <FiMail className="mr-3" />
-                  <span>Email: {session.user?.email || 'Not available'}</span>
-                </div>
-                <div className="flex items-center text-gray-300">
                   <FiCalendar className="mr-3" />
                   <span>Member since: {new Date().toLocaleDateString()}</span>
                 </div>
               </div>
+            </div>
+
+            <div className="bg-gray-800 border border-red-500/30 rounded-lg p-6 mt-6 flex-1 flex flex-col">
+              <div className="flex items-center mb-2">
+                <FiAlertTriangle className="text-red-500 mr-2" />
+                <h2 className="text-xl font-semibold text-white">Danger Zone</h2>
+              </div>
+              <p className="text-gray-400 text-sm mb-4">
+                Permanently unlink your account from KsyncBot.
+              </p>
+              <button
+                onClick={unlinkAccount}
+                disabled={unlinking}
+                className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-600/50 text-white py-2 px-4 rounded transition-colors mt-auto"
+              >
+                {unlinking ? 'Unlinking...' : 'Unlink Account'}
+              </button>
             </div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="lg:col-span-2"
+            className="lg:col-span-2 flex flex-col"
           >
             <div className="bg-gray-800 rounded-lg p-6">
               <div className="flex justify-between items-center mb-4">
@@ -266,7 +305,7 @@ function AccountContent() {
               )}
             </div>
 
-            <div className="bg-gray-800 rounded-lg p-6 mt-6">
+            <div className="bg-gray-800 rounded-lg p-6 mt-6 flex-1">
               <h2 className="text-xl font-semibold text-white mb-4">Available Integrations</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

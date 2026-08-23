@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kbot-api
+  name: kbot-mirrors-reddit-live-thread-to-discord
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kbot-api
+      app: kbot-mirrors-reddit-live-thread-to-discord
   template:
     metadata:
       labels:
-        app: kbot-api
+        app: kbot-mirrors-reddit-live-thread-to-discord
     spec:
       containers:
-        - name: kbot-api
-          image: docker-registry.app.kunszg.com/kbot-api:latest
+        - name: kbot-mirrors-reddit-live-thread-to-discord
+          image: docker-registry.app.kunszg.com/kbot-mirrors:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: node-modules-volume
@@ -22,10 +22,13 @@ spec:
           envFrom:
             - configMapRef:
                 name: kbot-config
+          env:
+            - name: APP_NAME
+              value: "REDDIT_LIVE_THREAD_TO_DISCORD"
       imagePullSecrets:
         - name: regcred-v1
       volumes:
         - name: node-modules-volume
           hostPath:
-            path: /home/docker/node_modules
+            path: /home/docker/kbot/node_modules
             type: Directory

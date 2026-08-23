@@ -14,7 +14,7 @@ const statsGet = services => {
     const modules = (await kb.redisClient.get(`kb:global:stats`)) || [];
     const channels = (await kb.redisClient.get('kb:global:channel-list')) || [];
     const lines = (await kb.redisClient.get('kb:job-manager:estimatedRepoLines')) || 0;
-    const uptimeData = (await kb.redisClient.get('kb:command-manager:botUptime')) || process.uptime();
+    const botStartedAt = await kb.redisClient.get('kb:command-manager:botStartedAt');
 
     const executions = await kb.sqlClient.query(
       'SELECT count FROM stats WHERE type="statsApi" AND sha="commandExecs"'
@@ -62,7 +62,9 @@ const statsGet = services => {
       },
       bot: {
         isRestarting: false,
-        codeUptime:  Date.now() - Math.trunc(_.toInteger(uptimeData) * 1000),
+        codeUptime: botStartedAt
+          ? Date.now() - _.toInteger(botStartedAt)
+          : Math.trunc(process.uptime() * 1000),
         linesOfCode,
         usersLogged: _usersLogged,
         commandExecutions,

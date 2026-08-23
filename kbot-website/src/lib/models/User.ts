@@ -40,7 +40,7 @@ export class UserModel {
   static async findById(id: string): Promise<User | null> {
     try {
       const { sqlClient } = await getServiceConnector();
-      const result = await sqlClient.query<User[]>('SELECT * FROM users WHERE id = ?', [id]);
+      const result = await sqlClient.query<User[]>('SELECT * FROM kbot_website.users WHERE id = ?', [id]);
       const rows = Array.isArray(result) ? result : [];
       return rows.length > 0 ? rows[0] : null;
     } catch (error) {
@@ -52,7 +52,7 @@ export class UserModel {
   static async findByTwitchId(twitchId: string): Promise<User | null> {
     try {
       const { sqlClient } = await getServiceConnector();
-      const result = await sqlClient.query<User[]>('SELECT * FROM users WHERE twitch_id = ?', [
+      const result = await sqlClient.query<User[]>('SELECT * FROM kbot_website.users WHERE twitch_id = ?', [
         twitchId
       ]);
       const rows = Array.isArray(result) ? result : [];
@@ -69,7 +69,7 @@ export class UserModel {
     try {
       const { sqlClient } = await getServiceConnector();
       await sqlClient.query(
-        'INSERT INTO users (id, username, email, image, twitch_id) VALUES (?, ?, ?, ?, ?)',
+        'INSERT INTO kbot_website.users (id, username, email, image, twitch_id) VALUES (?, ?, ?, ?, ?)',
         [userData.id, userData.username, userData.email, userData.image, userData.twitch_id]
       );
       return await this.findById(userData.id);
@@ -86,7 +86,10 @@ export class UserModel {
       const values = fields.map(key => userData[key as keyof User]);
       const setClause = fields.map(field => `${field} = ?`).join(', ');
 
-      await sqlClient.query(`UPDATE users SET ${setClause} WHERE id = ?`, [...values, id]);
+      await sqlClient.query(`UPDATE kbot_website.users SET ${setClause} WHERE id = ?`, [
+        ...values,
+        id
+      ]);
       return await this.findById(id);
     } catch (error) {
       console.error('Error updating user:', error);
@@ -98,7 +101,7 @@ export class UserModel {
     try {
       const { sqlClient } = await getServiceConnector();
       const result = await sqlClient.query<UserSetting[]>(
-        'SELECT * FROM user_settings WHERE user_id = ?',
+        'SELECT * FROM kbot_website.user_settings WHERE user_id = ?',
         [userId]
       );
       return Array.isArray(result) ? result : [];
@@ -112,7 +115,7 @@ export class UserModel {
     try {
       const { sqlClient } = await getServiceConnector();
       await sqlClient.query(
-        'INSERT INTO user_settings (user_id, setting_key, setting_value) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)',
+        'INSERT INTO kbot_website.user_settings (user_id, setting_key, setting_value) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)',
         [userId, key, value]
       );
       return true;
@@ -126,7 +129,7 @@ export class UserModel {
     try {
       const { sqlClient } = await getServiceConnector();
       const result = await sqlClient.query<ConnectedAppRow[]>(
-        'SELECT * FROM connected_apps WHERE user_id = ?',
+        'SELECT * FROM kbot_website.connected_apps WHERE user_id = ?',
         [userId]
       );
       const rows = Array.isArray(result) ? result : [];
@@ -150,7 +153,7 @@ export class UserModel {
     try {
       const { sqlClient } = await getServiceConnector();
       await sqlClient.query(
-        'INSERT INTO connected_apps (user_id, app_name, app_type, access_token, refresh_token, expires_at, permissions) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE access_token = VALUES(access_token), refresh_token = VALUES(refresh_token), expires_at = VALUES(expires_at), permissions = VALUES(permissions)',
+        'INSERT INTO kbot_website.connected_apps (user_id, app_name, app_type, access_token, refresh_token, expires_at, permissions) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE access_token = VALUES(access_token), refresh_token = VALUES(refresh_token), expires_at = VALUES(expires_at), permissions = VALUES(permissions)',
         [
           appData.user_id,
           appData.app_name,
@@ -171,13 +174,26 @@ export class UserModel {
   static async removeConnectedApp(userId: string, appType: string): Promise<boolean> {
     try {
       const { sqlClient } = await getServiceConnector();
-      await sqlClient.query('DELETE FROM connected_apps WHERE user_id = ? AND app_type = ?', [
-        userId,
-        appType
-      ]);
+      await sqlClient.query(
+        'DELETE FROM kbot_website.connected_apps WHERE user_id = ? AND app_type = ?',
+        [userId, appType]
+      );
       return true;
     } catch (error) {
       console.error('Error removing connected app:', error);
+      return false;
+    }
+  }
+
+  static async delete(id: string): Promise<boolean> {
+    try {
+      const { sqlClient } = await getServiceConnector();
+      await sqlClient.query('DELETE FROM kbot_website.connected_apps WHERE user_id = ?', [id]);
+      await sqlClient.query('DELETE FROM kbot_website.user_settings WHERE user_id = ?', [id]);
+      await sqlClient.query('DELETE FROM kbot_website.users WHERE id = ?', [id]);
+      return true;
+    } catch (error) {
+      console.error('Error deleting user:', error);
       return false;
     }
   }

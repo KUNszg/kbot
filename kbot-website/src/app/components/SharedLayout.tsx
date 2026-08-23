@@ -4,17 +4,14 @@ import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { FiMenu } from 'react-icons/fi';
 import Sidebar from './Sidebar';
-import StatsBox from './StatsBox';
 
 interface SharedLayoutProps {
   children: React.ReactNode;
-  showStats?: boolean;
 }
 
-export default function SharedLayout({ children, showStats = false }: SharedLayoutProps) {
+export default function SharedLayout({ children }: SharedLayoutProps) {
   const { data: session } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [stats] = useState({ users: 0, messages: 0, uptime: '0h 0m' });
 
   return (
     <div className="flex min-h-screen relative">
@@ -39,8 +36,6 @@ export default function SharedLayout({ children, showStats = false }: SharedLayo
           onClick={() => setSidebarOpen(false)}
         ></div>
       )}
-
-      {showStats && <StatsBox stats={stats} />}
 
       <main className="flex-1 bg-gray-800 overflow-auto text-white">{children}</main>
     </div>

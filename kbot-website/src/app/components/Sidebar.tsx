@@ -80,7 +80,7 @@ export default function Sidebar({
           </button>
         ))}
 
-        <div className="pt-2">
+        <div>
           <button
             type="button"
             onClick={() => setSideProjectsOpen(!sideProjectsOpen)}
