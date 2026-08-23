@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const { SqlClient } = require('commons/connector/services/sqlClient');
 const { sqlConfig } = require('commons/connector/consts/serviceConfigs');
+const { redisClient } = require('commons/connector/services/redisClient');
 /* eslint-enable @typescript-eslint/no-require-imports */
 
 export interface SqlClientInterface {
@@ -8,8 +9,14 @@ export interface SqlClientInterface {
   isConnected: boolean;
 }
 
+export interface RedisClientInterface {
+  get(key: string): Promise<unknown>;
+  isConnected: boolean;
+}
+
 export interface ServiceConnectorType {
   sqlClient: SqlClientInterface;
+  redisClient: RedisClientInterface;
 }
 
 let serviceConnectorInstance: ServiceConnectorType | null = null;
@@ -24,9 +31,11 @@ export async function getServiceConnector(): Promise<ServiceConnectorType> {
 
       const sqlClient = SqlClient.withCustomConfig(config);
       await sqlClient.connect();
+      await redisClient.connect();
 
       serviceConnectorInstance = {
-        sqlClient: sqlClient as SqlClientInterface
+        sqlClient: sqlClient as SqlClientInterface,
+        redisClient: redisClient as RedisClientInterface
       };
 
       console.log('ServiceConnector initialized');

@@ -3,6 +3,7 @@ const requireDir = require('require-dir');
 const _ = require('lodash');
 
 const Commons = require('../commons/Commons');
+const { startHeartbeat } = require('../commons/connector/utils/heartbeat');
 
 const expressSetup = require('./utils/expressSetup');
 const initializeMethodRecurse = require('./utils/initializeMethodRecurse');
@@ -28,6 +29,8 @@ const webhookHandler = GithubWebHook({ path: '/webhooks/github', secret: secret 
       disableTMIAutojoin: true
     }
   );
+
+  startHeartbeat(kb, 'kbot-api');
 
   expressSetup(app, webhookHandler, kb.sqlClient);
 

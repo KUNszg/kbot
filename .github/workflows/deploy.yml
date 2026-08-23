@@ -1,0 +1,102 @@
+name: Build & Deploy
+
+# SECURITY: this workflow runs on a self-hosted runner living on the production VPS.
+# It must NEVER be triggered by pull_request / pull_request_target — those events run
+# against untrusted fork contributions on a public repo, which would hand shell access
+# on the VPS to anyone who opens a PR. workflow_dispatch is the only trigger, and it is
+# further gated to the repo owner below. Do not add other triggers to this file.
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        description: 'Service to build and deploy'
+        required: true
+        type: choice
+        options:
+          - kbot-backend
+          - kbot-api
+          - kbot-website
+          - kbot-job-manager
+          - twitch-chat-message-logger
+          - twitch-chat-queue-filler
+
+env:
+  KUBE_CONTEXT: kbot3
+
+jobs:
+  deploy:
+    if: github.actor == 'KUNszg'
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify cluster context
+        run: kubectl --context "$KUBE_CONTEXT" cluster-info
+
+      - name: Resolve build config
+        id: config
+        shell: bash
+        run: |
+          case "${{ inputs.service }}" in
+            kbot-backend)
+              echo "image=kbot-backend" >> "$GITHUB_OUTPUT"
+              echo "dockerfile=Dockerfile" >> "$GITHUB_OUTPUT"
+              echo "extra_build_args=" >> "$GITHUB_OUTPUT"
+              echo "deployment=kbot-backend" >> "$GITHUB_OUTPUT"
+              ;;
+            kbot-api)
+              echo "image=kbot-api" >> "$GITHUB_OUTPUT"
+              echo "dockerfile=api/Dockerfile" >> "$GITHUB_OUTPUT"
+              echo "extra_build_args=" >> "$GITHUB_OUTPUT"
+              echo "deployment=kbot-api" >> "$GITHUB_OUTPUT"
+              ;;
+            kbot-website)
+              echo "image=kbot-website" >> "$GITHUB_OUTPUT"
+              echo "dockerfile=kbot-website/Dockerfile" >> "$GITHUB_OUTPUT"
+              echo "extra_build_args=--no-cache --pull" >> "$GITHUB_OUTPUT"
+              echo "deployment=kbot-website" >> "$GITHUB_OUTPUT"
+              ;;
+            kbot-job-manager)
+              echo "image=kbot-job-manager" >> "$GITHUB_OUTPUT"
+              echo "dockerfile=lib/job-manager/Dockerfile" >> "$GITHUB_OUTPUT"
+              echo "extra_build_args=" >> "$GITHUB_OUTPUT"
+              echo "deployment=kbot-job-manager" >> "$GITHUB_OUTPUT"
+              ;;
+            twitch-chat-message-logger)
+              echo "image=kbot-mirrors" >> "$GITHUB_OUTPUT"
+              echo "dockerfile=lib/mirrors/Dockerfile" >> "$GITHUB_OUTPUT"
+              echo "extra_build_args=" >> "$GITHUB_OUTPUT"
+              echo "deployment=kbot-mirrors-twitch-chat-message-logger" >> "$GITHUB_OUTPUT"
+              ;;
+            twitch-chat-queue-filler)
+              echo "image=kbot-mirrors" >> "$GITHUB_OUTPUT"
+              echo "dockerfile=lib/mirrors/Dockerfile" >> "$GITHUB_OUTPUT"
+              echo "extra_build_args=" >> "$GITHUB_OUTPUT"
+              echo "deployment=kbot-mirrors-twitch-chat-queue-filler" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "Unknown service: ${{ inputs.service }}" >&2
+              exit 1
+              ;;
+          esac
+
+      - name: Build image
+        run: |
+          docker build \
+            ${{ steps.config.outputs.extra_build_args }} \
+            -t docker-registry.app.kunszg.com/${{ steps.config.outputs.image }}:latest \
+            -f ${{ steps.config.outputs.dockerfile }} \
+            .
+
+      - name: Push image
+        run: docker push docker-registry.app.kunszg.com/${{ steps.config.outputs.image }}:latest
+
+      - name: Restart deployment
+        run: >
+          kubectl --context "$KUBE_CONTEXT" rollout restart
+          deployment/${{ steps.config.outputs.deployment }}
+
+      - name: Wait for rollout
+        run: >
+          kubectl --context "$KUBE_CONTEXT" rollout status
+          deployment/${{ steps.config.outputs.deployment }} --timeout=180s

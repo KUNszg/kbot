@@ -8,7 +8,8 @@ import { useParams } from 'next/navigation';
 
 import SessionProvider from '../providers/SessionProvider';
 import Sidebar from '../components/Sidebar';
-import StatsBox from '../components/StatsBox';
+import LiveStatsSection from '../components/LiveStatsSection';
+import ConnectedModulesSection from '../components/ConnectedModulesSection';
 import HomeSection from '../components/HomeSection';
 import CommandsSection from '../components/CommandsSection';
 import EmoteCheckerSection from '../components/EmoteCheckerSection';
@@ -30,7 +31,6 @@ function HomeContent() {
   const { data: session } = useSession();
   const params = useParams();
 
-  const [stats] = useState({ users: 0, messages: 0, uptime: '0h 0m' });
   const [botName, setBotName] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -75,30 +75,32 @@ function HomeContent() {
         ></div>
       )}
 
-      {!activeSection.startsWith('side-projects/') && <StatsBox stats={stats} />}
-
       <main className="flex-1 p-6 md:p-8 bg-gray-800 overflow-auto text-white">
         {activeSection === 'home' && (
-          <HomeSection
-            botName={
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1.5 }}
-              >
-                {botName.split('').map((char, index) => (
-                  <motion.span
-                    key={index}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    {char}
-                  </motion.span>
-                ))}
-              </motion.span>
-            }
-          />
+          <div className="min-h-full flex flex-col justify-center gap-16 py-12">
+            <HomeSection
+              botName={
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1.5 }}
+                >
+                  {botName.split('').map((char, index) => (
+                    <motion.span
+                      key={index}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      {char}
+                    </motion.span>
+                  ))}
+                </motion.span>
+              }
+            />
+            <LiveStatsSection />
+            <ConnectedModulesSection />
+          </div>
         )}
         {activeSection === 'commands' && <CommandsSection />}
         {activeSection === 'emotechecker' && <EmoteCheckerSection />}
