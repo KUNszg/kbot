@@ -22,10 +22,10 @@ export async function GET() {
       messageRate
     ] = await Promise.all([
       sqlClient.query<{ count: number }[]>(
-        'SELECT count FROM stats WHERE type="statsApi" AND sha="totalUsers"'
+        'SELECT count FROM kbot.stats WHERE type="statsApi" AND sha="totalUsers"'
       ),
       sqlClient.query<{ count: number }[]>(
-        'SELECT count FROM stats WHERE type="statsApi" AND sha="commandExecs"'
+        'SELECT count FROM kbot.stats WHERE type="statsApi" AND sha="commandExecs"'
       ),
       redisClient.get('kb:command-manager:botStartedAt'),
       redisClient.get('kb:heartbeat:kbot-backend'),
