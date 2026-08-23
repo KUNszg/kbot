@@ -20,6 +20,7 @@ on:
           - kbot-job-manager
           - twitch-chat-message-logger
           - twitch-chat-queue-filler
+          - update-emotes-list
 
 env:
   KUBE_CONTEXT: kbot3
@@ -74,6 +75,12 @@ jobs:
               echo "dockerfile=lib/mirrors/Dockerfile" >> "$GITHUB_OUTPUT"
               echo "extra_build_args=" >> "$GITHUB_OUTPUT"
               echo "deployment=kbot-mirrors-twitch-chat-queue-filler" >> "$GITHUB_OUTPUT"
+              ;;
+            update-emotes-list)
+              echo "image=kbot-mirrors" >> "$GITHUB_OUTPUT"
+              echo "dockerfile=lib/mirrors/Dockerfile" >> "$GITHUB_OUTPUT"
+              echo "extra_build_args=" >> "$GITHUB_OUTPUT"
+              echo "deployment=kbot-mirrors-update-emotes-list" >> "$GITHUB_OUTPUT"
               ;;
             *)
               echo "Unknown service: ${{ inputs.service }}" >&2
