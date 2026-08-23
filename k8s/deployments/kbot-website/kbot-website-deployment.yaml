@@ -27,6 +27,8 @@ spec:
               value: "true"
           envFrom:
             - configMapRef:
+                name: kbot-config
+            - configMapRef:
                 name: kbot-website-config
             - secretRef:
                 name: nextauth-secret

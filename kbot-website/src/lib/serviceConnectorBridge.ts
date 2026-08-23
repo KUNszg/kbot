@@ -33,6 +33,12 @@ export async function getServiceConnector(): Promise<ServiceConnectorType> {
       await sqlClient.connect();
       await redisClient.connect();
 
+      if (!redisClient.isConnected) {
+        throw new Error(
+          'Redis connection failed (check redisHost/redisPort are set for this deployment)'
+        );
+      }
+
       serviceConnectorInstance = {
         sqlClient: sqlClient as SqlClientInterface,
         redisClient: redisClient as RedisClientInterface

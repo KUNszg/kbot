@@ -77,7 +77,7 @@ function HomeContent() {
 
       <main className="flex-1 p-6 md:p-8 bg-gray-800 overflow-auto text-white">
         {activeSection === 'home' && (
-          <div className="min-h-full flex flex-col justify-center gap-16 py-12">
+          <div className="min-h-full flex flex-col justify-center gap-[clamp(1rem,10vh,14rem)] py-12">
             <HomeSection
               botName={
                 <motion.span
@@ -98,8 +98,10 @@ function HomeContent() {
                 </motion.span>
               }
             />
-            <LiveStatsSection />
-            <ConnectedModulesSection />
+            <div className="flex flex-col gap-10">
+              <LiveStatsSection />
+              <ConnectedModulesSection />
+            </div>
           </div>
         )}
         {activeSection === 'commands' && <CommandsSection />}
