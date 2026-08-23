@@ -22,6 +22,7 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-icons": "^5.5.0",
+    "redis": "^4.6.10",
     "socket.io-client": "^4.8.3",
     "spotify-web-api-node": "^5.0.2"
   },
