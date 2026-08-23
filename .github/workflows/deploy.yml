@@ -45,42 +45,49 @@ jobs:
               echo "dockerfile=Dockerfile" >> "$GITHUB_OUTPUT"
               echo "extra_build_args=" >> "$GITHUB_OUTPUT"
               echo "deployment=kbot-backend" >> "$GITHUB_OUTPUT"
+              echo "manifest=k8s/deployments/kbot-backend/kbot-backend-deployment.yaml" >> "$GITHUB_OUTPUT"
               ;;
             kbot-api)
               echo "image=kbot-api" >> "$GITHUB_OUTPUT"
               echo "dockerfile=api/Dockerfile" >> "$GITHUB_OUTPUT"
               echo "extra_build_args=" >> "$GITHUB_OUTPUT"
               echo "deployment=kbot-api" >> "$GITHUB_OUTPUT"
+              echo "manifest=k8s/deployments/kbot-api/kbot-api-deployment.yaml" >> "$GITHUB_OUTPUT"
               ;;
             kbot-website)
               echo "image=kbot-website" >> "$GITHUB_OUTPUT"
               echo "dockerfile=kbot-website/Dockerfile" >> "$GITHUB_OUTPUT"
               echo "extra_build_args=--no-cache --pull" >> "$GITHUB_OUTPUT"
               echo "deployment=kbot-website" >> "$GITHUB_OUTPUT"
+              echo "manifest=k8s/deployments/kbot-website/kbot-website-deployment.yaml" >> "$GITHUB_OUTPUT"
               ;;
             kbot-job-manager)
               echo "image=kbot-job-manager" >> "$GITHUB_OUTPUT"
               echo "dockerfile=lib/job-manager/Dockerfile" >> "$GITHUB_OUTPUT"
               echo "extra_build_args=" >> "$GITHUB_OUTPUT"
               echo "deployment=kbot-job-manager" >> "$GITHUB_OUTPUT"
+              echo "manifest=k8s/deployments/kbot-job-manager/kbot-job-manager-deployment.yaml" >> "$GITHUB_OUTPUT"
               ;;
             twitch-chat-message-logger)
               echo "image=kbot-mirrors" >> "$GITHUB_OUTPUT"
               echo "dockerfile=lib/mirrors/Dockerfile" >> "$GITHUB_OUTPUT"
               echo "extra_build_args=" >> "$GITHUB_OUTPUT"
               echo "deployment=kbot-mirrors-twitch-chat-message-logger" >> "$GITHUB_OUTPUT"
+              echo "manifest=k8s/deployments/kbot-mirrors/twitch-chat-message-logger-deployment.yaml" >> "$GITHUB_OUTPUT"
               ;;
             twitch-chat-queue-filler)
               echo "image=kbot-mirrors" >> "$GITHUB_OUTPUT"
               echo "dockerfile=lib/mirrors/Dockerfile" >> "$GITHUB_OUTPUT"
               echo "extra_build_args=" >> "$GITHUB_OUTPUT"
               echo "deployment=kbot-mirrors-twitch-chat-queue-filler" >> "$GITHUB_OUTPUT"
+              echo "manifest=k8s/deployments/kbot-mirrors/twitch-chat-queue-filler-deployment.yaml" >> "$GITHUB_OUTPUT"
               ;;
             update-emotes-list)
               echo "image=kbot-mirrors" >> "$GITHUB_OUTPUT"
               echo "dockerfile=lib/mirrors/Dockerfile" >> "$GITHUB_OUTPUT"
               echo "extra_build_args=" >> "$GITHUB_OUTPUT"
               echo "deployment=kbot-mirrors-update-emotes-list" >> "$GITHUB_OUTPUT"
+              echo "manifest=k8s/deployments/kbot-mirrors/update-emotes-list-deployment.yaml" >> "$GITHUB_OUTPUT"
               ;;
             *)
               echo "Unknown service: ${{ inputs.service }}" >&2
@@ -103,6 +110,11 @@ jobs:
 
       - name: Push image
         run: docker push docker-registry.app.kunszg.com/${{ steps.config.outputs.image }}:latest
+
+      - name: Apply manifest
+        run: >
+          kubectl --context "$KUBE_CONTEXT" apply
+          -f ${{ steps.config.outputs.manifest }}
 
       - name: Restart deployment
         run: >
