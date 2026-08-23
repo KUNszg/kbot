@@ -28,7 +28,7 @@ jobs:
     if: github.actor == 'KUNszg'
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Verify cluster context
         run: kubectl --context "$KUBE_CONTEXT" cluster-info
@@ -79,6 +79,11 @@ jobs:
               exit 1
               ;;
           esac
+
+      - name: Write credentials file
+        env:
+          KBOT_CREDENTIALS_CONFIG: ${{ secrets.KBOT_CREDENTIALS_CONFIG }}
+        run: printf '%s' "$KBOT_CREDENTIALS_CONFIG" > lib/credentials/config.js
 
       - name: Build image
         run: |
