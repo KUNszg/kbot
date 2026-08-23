@@ -15,6 +15,7 @@ export async function GET() {
     const [
       usersResult,
       messagesResult,
+      commandExecutionsCountRedis,
       botStartedAt,
       backendHeartbeat,
       channelList,
@@ -27,6 +28,7 @@ export async function GET() {
       sqlClient.query<{ count: number }[]>(
         'SELECT count FROM kbot.stats WHERE type="statsApi" AND sha="commandExecs"'
       ),
+      redisClient.get('kb:global:commandExecutionsCount'),
       redisClient.get('kb:command-manager:botStartedAt'),
       redisClient.get('kb:heartbeat:kbot-backend'),
       redisClient.get('kb:global:channel-list'),
@@ -37,9 +39,14 @@ export async function GET() {
     const isBackendOnline = backendHeartbeat !== null;
     const uptimeMs = isBackendOnline && botStartedAt ? Date.now() - Number(botStartedAt) : 0;
 
+    const messages =
+      commandExecutionsCountRedis !== null
+        ? Number(commandExecutionsCountRedis) || 0
+        : Number(messagesResult?.[0]?.count) || 0;
+
     return NextResponse.json({
       users: Number(usersResult?.[0]?.count) || 0,
-      messages: Number(messagesResult?.[0]?.count) || 0,
+      messages,
       uptime: isBackendOnline ? formatUptime(uptimeMs) : 'Offline',
       channelsMonitored: Array.isArray(channelList) ? channelList.length : 0,
       linesOfCode: Number(linesOfCode) || 0,
