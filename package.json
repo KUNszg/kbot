@@ -29,7 +29,7 @@
     "moment-timezone": "^0.5.43",
     "mysql2": "3.9.8",
     "os": "^0.1.2",
-    "redis": "^4.6.10",
+    "redis": "^6.2.1",
     "require-dir": "^1.2.0",
     "snoowrap": "^1.23.0",
     "socket.io": "^4.8.1",
