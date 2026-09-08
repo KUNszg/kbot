@@ -30,3 +30,13 @@ spec:
       port: 5673
       targetPort: 5673
       nodePort: 30078
+    - name: valheim-game
+      protocol: UDP
+      nodePort: 30082
+      port: 2456
+      targetPort: 2456
+    - name: valheim-query
+      protocol: UDP
+      nodePort: 30083
+      port: 2457
+      targetPort: 2457
