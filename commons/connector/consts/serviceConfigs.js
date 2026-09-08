@@ -48,12 +48,9 @@ module.exports = {
       host: process.env.redisHost || creds.redisHost,
       port: process.env.redisPort || creds.redisPort,
       connectTimeout: 10000,
-      commandTimeout: 5000
+      keepAlive: 10000
     },
-    retry: {
-      attempts: 3,
-      delay: Math.min(1000, 50)
-    }
+    pingInterval: 30000
   },
   tmiConfig: {
     anonymous: {

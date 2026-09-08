@@ -40,3 +40,8 @@ spec:
       nodePort: 30083
       port: 2457
       targetPort: 2457
+    - name: valheim-map
+      protocol: TCP
+      port: 2460
+      targetPort: 2460
+      nodePort: 30084
