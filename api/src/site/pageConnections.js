@@ -7,7 +7,7 @@ const pageConnections = services => {
   const kb = Commons.ServiceConnector.Connector;
 
   app.get('/connections', async (req, res) => {
-    const [commandExecutionsCount, spotifyAndLastfmUserLoggedInCount] = await kb
+    const [commandExecutionsCount, spotifyAndLastfmUserLoggedInCount] = await kb.redisClient
       .multi()
       .get('kb:api:website-pages:command-executions-count')
       .get('kb:api:website-pages:spotify-and-lastfm-user-logged-in-count')

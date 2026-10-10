@@ -3,9 +3,24 @@ import getServiceConnector from '@/lib/serviceConnectorBridge';
 
 function formatUptime(ms: number): string {
   const totalMinutes = Math.floor(ms / 60000);
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  return `${hours}h ${minutes}m`;
+  const units: [string, number][] = [
+    ['y', 365 * 24 * 60],
+    ['mo', 30 * 24 * 60],
+    ['d', 24 * 60],
+    ['h', 60],
+    ['m', 1]
+  ];
+
+  let remaining = totalMinutes;
+  const parts: string[] = [];
+  for (const [label, size] of units) {
+    const value = Math.floor(remaining / size);
+    remaining %= size;
+    if (value > 0 || parts.length > 0) parts.push(`${value}${label}`);
+  }
+
+  // Show the three most significant units, e.g. "1mo 2d 20h" or "4h 12m"
+  return parts.length ? parts.slice(0, 3).join(' ') : '0m';
 }
 
 export async function GET() {
