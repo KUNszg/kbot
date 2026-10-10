@@ -22,9 +22,6 @@ module.exports = {
     waitForConnections: true,
     connectionLimit: parseInt(process.env.db_connection_limit) || 10,
     queueLimit: 0,
-    acquireTimeout: 60000,
-    timeout: 60000,
-    reconnect: true,
     idleTimeout: 300000,
     maxIdle: parseInt(process.env.db_max_idle) || 10,
 

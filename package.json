@@ -27,7 +27,7 @@
     "lodash": "^4.17.23",
     "moment": "^2.31.0",
     "moment-timezone": "^0.5.43",
-    "mysql2": "3.9.8",
+    "mysql2": "3.24.5",
     "os": "^0.1.2",
     "redis": "6.2.1",
     "require-dir": "^1.2.0",
