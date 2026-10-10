@@ -48,7 +48,8 @@ module.exports = {
       host: process.env.redisHost || creds.redisHost,
       port: process.env.redisPort || creds.redisPort,
       connectTimeout: 10000,
-      keepAlive: 10000
+      keepAlive: true,
+      keepAliveInitialDelay: 10000
     },
     pingInterval: 30000
   },
