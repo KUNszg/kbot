@@ -85,7 +85,9 @@ class RedisClient {
    */
   async set(key, data = {}, expire = 30) {
     try {
-      return await this.client.set(key, JSON.stringify(data), { EX: expire });
+      return await this.client.set(key, JSON.stringify(data), {
+        expiration: { type: 'EX', value: expire }
+      });
     } catch (error) {
       console.error(`[Connector-Redis] Error setting key "${key}":`, error);
       return null;
@@ -132,7 +134,7 @@ class RedisClient {
   async close() {
     if (this.client) {
       console.log('[Connector-Redis] Closing connection...');
-      await this.client.quit();
+      await this.client.close();
       this.client = null;
       this.isConnected = false;
       console.log('[Connector-Redis] Connection closed');

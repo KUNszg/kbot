@@ -25,6 +25,12 @@ spec:
               containerPort: 443
             - name: admin
               containerPort: 81
+            - name: valheim-game
+              containerPort: 2456
+              protocol: UDP
+            - name: valheim-query
+              containerPort: 2457
+              protocol: UDP
           env:
             - name: DISABLE_IPV6
               value: "true"

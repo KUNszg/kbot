@@ -22,9 +22,6 @@ module.exports = {
     waitForConnections: true,
     connectionLimit: parseInt(process.env.db_connection_limit) || 10,
     queueLimit: 0,
-    acquireTimeout: 60000,
-    timeout: 60000,
-    reconnect: true,
     idleTimeout: 300000,
     maxIdle: parseInt(process.env.db_max_idle) || 10,
 
@@ -48,12 +45,10 @@ module.exports = {
       host: process.env.redisHost || creds.redisHost,
       port: process.env.redisPort || creds.redisPort,
       connectTimeout: 10000,
-      commandTimeout: 5000
+      keepAlive: true,
+      keepAliveInitialDelay: 10000
     },
-    retry: {
-      attempts: 3,
-      delay: Math.min(1000, 50)
-    }
+    pingInterval: 30000
   },
   tmiConfig: {
     anonymous: {
