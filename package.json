@@ -19,7 +19,7 @@
     "buffer-equal-constant-time": "^1.0.1",
     "discord.js": "^14.27.0",
     "express": "5.0.1",
-    "express-rate-limit": "^7.1.3",
+    "express-rate-limit": "^8.7.1",
     "googleapis": "^144.0.0",
     "got": "^11.8.5",
     "humanize-duration": "^3.32.1",
